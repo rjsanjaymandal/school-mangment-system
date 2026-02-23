@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { healthProfileSchema, infirmaryLogSchema, ValidHealthProfile, ValidInfirmaryLog } from "../validations";
+import { handleServiceError } from "../error-handler";
 import { z } from "zod";
 
 /**
@@ -9,43 +10,56 @@ import { z } from "zod";
 export const HealthService = {
   async getHealthProfile(studentId: string) {
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from("health_profiles")
-      .select("*")
-      .eq("id", studentId)
-      .single();
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("health_profiles")
+        .select("*")
+        .eq("id", studentId)
+        .single();
 
-    if (error && error.code !== 'PGRST116') throw error; // Handle not found as null
-    if (!data) return null;
-    return healthProfileSchema.parse(data);
+      if (error && error.code !== 'PGRST116') throw error; // Handle not found as null
+      if (!data) return null;
+      return healthProfileSchema.parse(data);
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   async updateHealthProfile(profile: ValidHealthProfile) {
-    const supabase = createClient();
-    const validated = healthProfileSchema.parse(profile);
+    try {
+      const supabase = createClient();
+      const validated = healthProfileSchema.parse(profile);
 
-    const { data, error } = await supabase
-      .from("health_profiles")
-      .upsert(validated)
-      .select()
-      .single();
+      const { data, error } = await supabase
+        .from("health_profiles")
+        .upsert(validated)
+        .select()
+        .single();
 
-    if (error) throw error;
-    return data;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   async recordInfirmaryVisit(log: Omit<ValidInfirmaryLog, "id">) {
-    const supabase = createClient();
-    const validated = infirmaryLogSchema.parse(log);
+    try {
+      const supabase = createClient();
+      const validated = infirmaryLogSchema.parse(log);
 
-    const { data, error } = await supabase
-      .from("infirmary_logs")
-      .insert([validated])
-      .select()
-      .single();
+      const { data, error } = await supabase
+        .from("infirmary_logs")
+        .insert([validated])
+        .select()
+        .single();
 
-    if (error) throw error;
-    return data;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   async getInfirmaryLogs(studentId?: string) {
@@ -64,27 +78,34 @@ export const HealthService = {
 
     if (studentId) query = query.eq("student_id", studentId);
 
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   async getHealthAlerts() {
-    const supabase = createClient();
-    // Fetch students with critical allergies or chronic conditions
-    const { data, error } = await supabase
-      .from("health_profiles")
-      .select(`
-        id,
-        allergies,
-        chronic_conditions,
-        student:students(
-          profile:profiles(first_name, last_name)
-        )
-      `)
-      .or('allergies.neq.{},chronic_conditions.neq.{}');
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("health_profiles")
+        .select(`
+          id,
+          allergies,
+          chronic_conditions,
+          student:students(
+            profile:profiles(first_name, last_name)
+          )
+        `)
+        .or('allergies.neq.{},chronic_conditions.neq.{}');
 
-    if (error) throw error;
-    return data;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 };

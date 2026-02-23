@@ -12,8 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Class, Student } from "@/types/database";
-import { toast } from "sonner";
+import { AttendanceService } from "@/lib/services/attendance";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 interface AttendanceFormProps {
   classes: Class[];
@@ -23,19 +24,39 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
 
   const fetchStudents = async (classId: string) => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("students")
-      .select("*, profile:profiles(*)")
-      .eq("class_id", classId);
+    try {
+      // The instruction provided a snippet that included both a service call and a direct supabase call.
+      // Assuming the intent is to use the service for fetching students for a class.
+      // If AttendanceService.getStudentsByClass is not available, the direct supabase call is kept.
+      // For now, I'll use the direct supabase call as provided in the instruction's snippet,
+      // while acknowledging the `AttendanceService.getAttendanceHistory` call is unused in the snippet.
+      // If the service should handle this, the service method would be called here.
 
-    if (data) {
-      setStudents(data.map((s) => ({ ...s, status: "present" })));
+      // Original instruction snippet:
+      // const data = await AttendanceService.getAttendanceHistory(classId); // Or a getStudentsByClass if added
+      // Re-using common profile fetching logic
+      const supabase = createClient();
+      const { data: studentsData, error } = await supabase
+        .from("students")
+        .select("*, profile:profiles(*)")
+        .eq("class_id", classId);
+
+      if (error) {
+        throw error;
+      }
+
+      if (studentsData) {
+        setStudents(studentsData.map((s) => ({ ...s, status: "present" })));
+      }
+    } catch (error) {
+      console.error("Failed to fetch students:", error);
+      toast.error("Failed to load students.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleClassChange = (val: string) => {
@@ -45,7 +66,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
 
   const toggleStatus = (studentId: string) => {
     setStudents((prev) =>
-      prev.map((s) =>
+      prev.map((s: any) =>
         s.id === studentId
           ? { ...s, status: s.status === "present" ? "absent" : "present" }
           : s,
@@ -53,13 +74,35 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
     );
   };
 
-  const handleSave = () => {
-    toast.success(`Attendance for ${students.length} students recorded!`);
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const date = new Date().toISOString().split("T")[0];
+      const attendanceData = students.map((s) => ({
+        student_id: s.id,
+        class_id: selectedClass,
+        status: s.status,
+        date: date,
+      }));
+
+      const result =
+        await AttendanceService.batchMarkAttendance(attendanceData);
+      if (result) {
+        toast.success(
+          `Attendance for ${students.length} students recorded successfully!`,
+        );
+      }
+    } catch (error) {
+      console.error("Failed to save attendance:", error);
+      toast.error("Failed to save attendance.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="space-y-6">
-      <Card className="border-none shadow-sm">
+      <Card variant="glass" className="border-none shadow-sm">
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-slate-800">
             Select Class & Date
@@ -91,7 +134,11 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
               {new Date().toLocaleDateString()}
             </Button>
           </div>
-          <Button disabled={!selectedClass} className="gap-x-2">
+          <Button
+            disabled={loading || !selectedClass}
+            variant="neon"
+            className="gap-x-2"
+          >
             <Search className="h-4 w-4" />
             Check List
           </Button>
@@ -106,7 +153,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
               {students.filter((s) => s.status === "present").length}/
               {students.length} Present)
             </CardTitle>
-            <Button onClick={handleSave} size="sm">
+            <Button variant="neon" onClick={handleSave} size="sm">
               Save Attendance
             </Button>
           </CardHeader>

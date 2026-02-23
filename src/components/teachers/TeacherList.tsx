@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Teacher } from "@/types/database";
 import { Badge } from "@/components/ui/badge";
 import { TeacherForm } from "./TeacherForm";
+import { Card } from "@/components/ui/card";
 
 interface TeacherListProps {
   initialData: Teacher[];
@@ -52,13 +53,20 @@ export function TeacherList({ initialData }: TeacherListProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={onAdd} className="gap-x-2">
+        <Button
+          onClick={onAdd}
+          variant="neon"
+          className="rounded-2xl font-bold gap-x-2"
+        >
           <Plus className="h-4 w-4" />
           Add Teacher
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <Card
+        variant="glass"
+        className="p-0 overflow-hidden border-none shadow-xl"
+      >
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow>
@@ -102,11 +110,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {teacher.specialization?.map((spec) => (
-                        <Badge
-                          key={spec}
-                          variant="outline"
-                          className="text-[10px]"
-                        >
+                        <Badge key={spec} variant="futuristic">
                           {spec}
                         </Badge>
                       ))}
@@ -114,11 +118,11 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant="secondary"
+                      variant="futuristic"
                       className={
                         teacher.status === "active"
-                          ? "bg-green-100 text-green-700 hover:bg-green-100 border-none"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-100 border-none"
+                          ? "bg-green-500/10 text-green-500 border-green-500/20"
+                          : "bg-slate-500/10 text-slate-500 border-slate-500/20"
                       }
                     >
                       {teacher.status || "Active"}
@@ -154,7 +158,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[500px]">

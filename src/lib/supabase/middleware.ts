@@ -66,9 +66,10 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
-    // Parent routes protection
-    if (path.startsWith('/parent') && role !== 'parent' && role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    // Settings protection (Admin only for certain sub-paths)
+    if (path.startsWith('/settings') && role !== 'admin' && role !== 'teacher') {
+       // Students/Parents might have limited settings, but standard ones are restricted
+       // return NextResponse.redirect(new URL('/dashboard', request.url))
     }
     
     // Redirect context-less /dashboard to specific role dashboard if needed

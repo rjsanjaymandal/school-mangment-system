@@ -1,20 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
+import { InstitutionalService } from "@/lib/services/institutional";
 import { StudentList } from "@/components/students/StudentList";
 
 export default async function StudentsPage() {
-  const supabase = await createClient();
-
-  // Fetch students with their profile and class data
-  const { data: students, error } = await supabase
-    .from("students")
-    .select(
-      `
-      *,
-      profile:profiles(*),
-      class:classes(*)
-    `,
-    )
-    .order("created_at", { ascending: false });
+  const students = await InstitutionalService.getStudents();
 
   return (
     <div className="space-y-6">

@@ -18,32 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-// DSA: Grade Computing Logic (Weighted Average)
-interface GradeComponent {
-  id: string;
-  label: string;
-  weight: number; // e.g., 20 for 20%
-  score: number; // e.g., 85
-}
-
-function calculateGPA(components: GradeComponent[]): number {
-  const totalWeight = components.reduce((acc, c) => acc + c.weight, 0);
-  if (totalWeight === 0) return 0;
-
-  const weightedSum = components.reduce(
-    (acc, c) => acc + c.score * (c.weight / 100),
-    0,
-  );
-  return Number(weightedSum.toFixed(2));
-}
-
-function getGradeLetter(gpa: number): string {
-  if (gpa >= 90) return "A+";
-  if (gpa >= 80) return "A";
-  if (gpa >= 70) return "B";
-  if (gpa >= 60) return "C";
-  return "D";
-}
+import { GradebookService, GradeComponent } from "@/lib/services/gradebook";
 
 export default function GradebookPage() {
   const [components, setComponents] = useState<GradeComponent[]>([
@@ -53,8 +28,14 @@ export default function GradebookPage() {
     { id: "4", label: "Attendance", weight: 10, score: 95 },
   ]);
 
-  const gpa = useMemo(() => calculateGPA(components), [components]);
-  const gradeLetter = useMemo(() => getGradeLetter(gpa), [gpa]);
+  const gpa = useMemo(
+    () => GradebookService.calculateGPA(components),
+    [components],
+  );
+  const gradeLetter = useMemo(
+    () => GradebookService.getGradeLetter(gpa),
+    [gpa],
+  );
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

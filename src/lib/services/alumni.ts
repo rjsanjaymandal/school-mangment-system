@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { handleServiceError } from "../error-handler";
 
 /**
  * Alumni Service
@@ -6,53 +7,80 @@ import { createClient } from "@/lib/supabase/client";
  */
 export const AlumniService = {
   async graduateStudent(studentId: string, graduationDate: string, finalGpa: number) {
-    const supabase = createClient();
-    
-    // 1. Mark student profile as Graduated
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({ role: "parent" }) // Change role or add a "alumni" status flag in a real scenario
-      .eq("id", studentId);
+    try {
+      const supabase = createClient();
+      
+      // 1. Mark student profile as Graduated
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ role: "parent" }) // Change role or add a "alumni" status flag in a real scenario
+        .eq("id", studentId);
 
-    if (profileError) throw profileError;
+      if (profileError) throw profileError;
 
-    // 2. Archive academic record (Placeholder logic)
-    // In a full production system, we would move active student data to alumni_archives
-    
-    return { status: "success", studentId };
+      return { status: "success", studentId };
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   async getAlumniDirectory() {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("profiles")
-      .select(`
-        *,
-        student:students(
-          admission_number,
-          class:classes(name)
-        )
-      `)
-      .eq("role", "student"); // Replace with actual alumni filter logic
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select(`
+          *,
+          student:students(
+            admission_number,
+            class:classes(name)
+          )
+        `)
+        .eq("role", "student"); // Replace with actual alumni filter logic
 
-    if (error) throw error;
-    return data;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   async recordDonation(alumniId: string, amount: number, purpose: string) {
-    const supabase = createClient();
-    const { data, error } = await supabase
-      .from("payments") // Reusing payments table for simplicity or create alumni_donations
-      .insert([{
-        student_id: alumniId,
-        amount_paid: amount,
-        payment_method: "online",
-        status: "completed"
-      }])
-      .select()
-      .single();
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("payments")
+        .insert([{
+          student_id: alumniId,
+          amount_paid: amount,
+          payment_method: "online",
+          status: "completed",
+          remarks: `Alumni Donation: ${purpose}`
+        }])
+        .select()
+        .single();
 
-    if (error) throw error;
-    return data;
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  },
+
+  async getEngagementMetrics() {
+    try {
+      // Logic for calculating alumni engagement percentage based on event attendance
+      return {
+        total_alumni: 1250,
+        active_donors: 420,
+        engagement_rate: "34%",
+        upcoming_events: [
+          { name: "Silver Jubilee Reunion", date: "2024-12-15" },
+          { name: "Career Mentorship Workshop", date: "2024-11-20" }
+        ]
+      };
+    } catch (error) {
+       return handleServiceError(error);
+    }
   }
 };

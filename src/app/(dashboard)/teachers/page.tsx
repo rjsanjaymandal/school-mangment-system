@@ -1,22 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { InstitutionalService } from "@/lib/services/institutional";
 import { TeacherList } from "@/components/teachers/TeacherList";
 import { StaffHRManagement } from "@/components/teachers/StaffHRManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Briefcase } from "lucide-react";
 
 export default async function TeachersPage() {
-  const supabase = await createClient();
-
-  // Fetch teachers with their profile data
-  const { data: teachers, error } = await supabase
-    .from("teachers")
-    .select(
-      `
-      *,
-      profile:profiles(*)
-    `,
-    )
-    .order("joining_date", { ascending: false });
+  const teachers = await InstitutionalService.getTeachers();
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

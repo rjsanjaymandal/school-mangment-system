@@ -135,6 +135,25 @@ export const infirmaryLogSchema = z.object({
   status: z.enum(['under_observation', 'discharged', 'referral']),
 });
 
+// --- Inventory & Procurement ---
+export const inventoryItemSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(2),
+  quantity_in_stock: z.number().int().nonnegative(),
+  unit_price: z.number().positive(),
+  category_id: z.string().uuid().optional().nullable(),
+  sku: z.string().optional(),
+});
+
+export const procurementOrderSchema = z.object({
+  id: z.string().uuid().optional(),
+  item_id: z.string().uuid(),
+  quantity: z.number().int().positive(),
+  total_cost: z.number().nonnegative(),
+  status: z.enum(['pending', 'ordered', 'received', 'cancelled']),
+  order_date: z.string().optional(),
+});
+
 // TYPES derived from Zod
 export type ValidProfile = z.infer<typeof profileSchema>;
 export type ValidTimetableSlot = z.infer<typeof timetableSlotSchema>;

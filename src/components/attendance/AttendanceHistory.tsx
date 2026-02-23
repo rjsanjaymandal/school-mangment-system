@@ -21,8 +21,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Class } from "@/types/database";
+import { AttendanceService } from "@/lib/services/attendance";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface AttendanceHistoryProps {
   classes: Class[];
@@ -70,7 +74,10 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+      <Card
+        variant="glass"
+        className="flex flex-wrap gap-4 items-end p-4 border-none shadow-sm"
+      >
         <div className="space-y-2 flex-1 min-w-[200px]">
           <label className="text-sm font-medium text-slate-600">Class</label>
           <Select onValueChange={setSelectedClass}>
@@ -96,6 +103,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
           />
         </div>
         <Button
+          variant="neon"
           onClick={fetchHistory}
           disabled={!selectedClass}
           size="sm"
@@ -104,9 +112,9 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
           <Filter className="h-4 w-4" />
           Apply Filters
         </Button>
-      </div>
+      </Card>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <Card variant="glass" className="overflow-hidden border-none shadow-sm">
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow>
@@ -146,18 +154,12 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={
+                      variant="futuristic"
+                      className={cn(
                         record.status === "present"
-                          ? "default"
-                          : record.status === "absent"
-                            ? "destructive"
-                            : "outline"
-                      }
-                      className={
-                        record.status === "present"
-                          ? "bg-green-100 text-green-700 hover:bg-green-100"
-                          : ""
-                      }
+                          ? "bg-green-500/10 text-green-500 border-green-500/20"
+                          : "bg-red-500/10 text-red-500 border-red-500/20",
+                      )}
                     >
                       {record.status.toUpperCase()}
                     </Badge>
@@ -170,7 +172,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 }

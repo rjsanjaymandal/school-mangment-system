@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ConductService } from "@/lib/services/conduct";
+import { InstitutionalService } from "@/lib/services/institutional";
+import { toast } from "sonner";
+import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";
 import {
   ShieldAlert,
   Star,
@@ -33,47 +37,90 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-const mockStudents = [
-  {
-    id: "1",
-    name: "Alexander Pierce",
-    grade: "10-A",
-    merits: 45,
-    demerits: 10,
-    standing: "Exceptional",
-  },
-  {
-    id: "2",
-    name: "Sophia Martinez",
-    grade: "10-B",
-    merits: 12,
-    demerits: 25,
-    standing: "Needs Attention",
-  },
-  {
-    id: "3",
-    name: "Liam O'Connor",
-    grade: "10-A",
-    merits: 30,
-    demerits: 0,
-    standing: "Stellar",
-  },
-];
-
 export default function BehavioralDashboard() {
-  const [selectedStudent, setSelectedStudent] = useState(mockStudents[0]);
+  const [students, setStudents] = useState<any[]>([]);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [behaviorHistory, setBehaviorHistory] = useState<any[]>([]);
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [incidentType, setIncidentType] = useState<"merit" | "demerit">(
     "merit",
   );
+  const [incidentDescription, setIncidentDescription] = useState("");
+  const [incidentPoints, setIncidentPoints] = useState<number | string>("");
+  const [incidentCategory, setIncidentCategory] = useState("");
 
-  const handleRecord = () => {
-    setIsRecording(true);
-    setTimeout(() => {
-      setIsRecording(false);
-      setIncidentType("merit");
-      // Success toast would go here
-    }, 1500);
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const studentData = await InstitutionalService.getStudents();
+        setStudents(studentData);
+        if (studentData.length > 0) {
+          setSelectedStudent(studentData[0]);
+        }
+      } catch (error) {
+        console.error("Failed to init conduct dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (selectedStudent?.id) {
+      const fetchStudentDetails = async () => {
+        const [history, stats] = await Promise.all([
+          ConductService.getStudentBehaviorHistory(selectedStudent.id),
+          ConductService.getBehavioralAnalytics(selectedStudent.id),
+        ]);
+        setBehaviorHistory(history);
+        setAnalytics(stats);
+      };
+      fetchStudentDetails();
+    }
+  }, [selectedStudent]);
+
+  if (loading) return <DashboardSkeleton />;
+  const handleRecord = async () => {
+    if (!selectedStudent) return;
+
+    try {
+      const result = await ConductService.recordConduct({
+        student_id: selectedStudent.id,
+        type: incidentType,
+        points: Number(incidentPoints) || 5,
+        incident_date: new Date().toISOString().split("T")[0],
+        description: incidentDescription || "No description provided",
+        category:
+          (incidentCategory as
+            | "Discipline"
+            | "Academics"
+            | "Sports"
+            | "Leadership") || "Academics",
+        teacher_id: "teacher-uuid-placeholder", // Should come from auth
+      });
+
+      if (result) {
+        toast.success(
+          `${incidentType === "merit" ? "Merit" : "Demerit"} recorded successfully!`,
+        );
+        setIsRecording(false);
+        setIncidentDescription("");
+        setIncidentPoints("");
+        // Refresh analytics and history
+        const [history, stats] = await Promise.all([
+          ConductService.getStudentBehaviorHistory(selectedStudent.id),
+          ConductService.getBehavioralAnalytics(selectedStudent.id),
+        ]);
+        setBehaviorHistory(history);
+        setAnalytics(stats);
+      }
+    } catch (error) {
+      console.error("Failed to record incident:", error);
+      toast.error("Failed to record incident.");
+    }
   };
 
   return (
@@ -95,7 +142,13 @@ export default function BehavioralDashboard() {
             <History className="h-4 w-4" />
             Audit Logs
           </Button>
-          <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+          <Button
+            className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue"
+            onClick={() => {
+              setIncidentType("merit");
+              setIsRecording(true);
+            }}
+          >
             <Plus className="h-4 w-4" />
             Record Incident
           </Button>
@@ -104,48 +157,56 @@ export default function BehavioralDashboard() {
 
       <div className="grid gap-8 lg:grid-cols-4">
         {/* Statistics Overview */}
-        <Card className="border-none glass futuristic-card p-6 bg-slate-900 text-white overflow-hidden relative">
+        <Card variant="futuristic" className="p-6">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Star className="h-24 w-24 rotate-12" />
           </div>
           <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">
-            Monthly Merits
+            Total Merits
           </p>
-          <h3 className="text-3xl font-black mt-2 text-white">1,240</h3>
+          <h3 className="text-3xl font-black mt-2 text-white">
+            {analytics?.merits?.toString().padStart(2, "0") || "00"}
+          </h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-green-400">
             <TrendingUp className="h-4 w-4" />
-            +14% System-wide
+            Active Standings
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6 border-red-100">
+        <Card variant="glass" className="p-6 border-red-500/20 bg-red-500/5">
           <p className="text-[10px] font-black uppercase tracking-widest text-red-500">
-            Demerit Triggers
+            Total Demerits
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">12</h3>
+          <h3 className="text-3xl font-black mt-2 text-slate-900">
+            {analytics?.demerits?.toString().padStart(2, "0") || "00"}
+          </h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-red-400">
             <ShieldAlert className="h-4 w-4" />
-            Intervention Required
+            {analytics?.demerits > 20 ? "Intervention Required" : "System Safe"}
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6">
+        <Card variant="glass" className="p-6">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-            Avg Compliance
+            Net Conduct Score
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">94.2%</h3>
+          <h3 className="text-3xl font-black mt-2 text-slate-900">
+            {analytics?.netScore || "0"}
+          </h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-slate-400">
-            Institutional Baseline
+            Behavioral Velocity
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6">
+        <Card variant="glass" className="p-6">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-            Top Conduct
+            Standing
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">Grade 8-C</h3>
+          <h3 className="text-3xl font-black mt-2 text-slate-900 truncate">
+            {analytics?.standing || "Pending"}
+          </h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-500">
-            Class Recognition Active
+            {analytics?.netScore > 50 ? "Star Recognition" : "Standard Tier"}
           </div>
         </Card>
       </div>
@@ -161,40 +222,30 @@ export default function BehavioralDashboard() {
             />
           </div>
           <div className="space-y-2">
-            {mockStudents.map((student) => (
+            {students.map((student) => (
               <button
                 key={student.id}
                 onClick={() => setSelectedStudent(student)}
                 className={cn(
                   "w-full p-4 rounded-2xl border border-transparent transition-all flex items-center justify-between text-left",
-                  selectedStudent.id === student.id
+                  selectedStudent?.id === student.id
                     ? "bg-white shadow-xl border-slate-100 scale-[1.02]"
                     : "hover:bg-white/50",
                 )}
               >
                 <div className="flex items-center gap-x-3">
                   <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-600">
-                    {student.name[0]}
+                    {student.profile?.first_name[0]}
                   </div>
                   <div>
                     <h4 className="font-black text-slate-900 text-sm">
-                      {student.name}
+                      {student.profile?.first_name} {student.profile?.last_name}
                     </h4>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                      {student.grade}
+                      {student.class?.name || "Unassigned"}
                     </p>
                   </div>
                 </div>
-                <Badge
-                  className={cn(
-                    "text-[10px] font-black",
-                    student.merits > student.demerits
-                      ? "bg-green-50 text-green-600"
-                      : "bg-red-50 text-red-600",
-                  )}
-                >
-                  SC: {student.merits - student.demerits}
-                </Badge>
               </button>
             ))}
           </div>
@@ -207,16 +258,17 @@ export default function BehavioralDashboard() {
               <div className="absolute inset-0 bg-linear-to-br from-blue-500/20 to-purple-500/20" />
               <div className="absolute -bottom-8 left-8 flex items-end gap-x-4">
                 <div className="h-24 w-24 rounded-3xl bg-white p-1 shadow-2xl">
-                  <div className="w-full h-full rounded-2xl bg-slate-100 flex items-center justify-center font-black text-3xl text-slate-900">
-                    {selectedStudent.name[0]}
+                  <div className="w-full h-full rounded-2xl bg-slate-100 flex items-center justify-center font-black text-3xl text-slate-900 uppercase">
+                    {selectedStudent?.profile?.first_name[0]}
                   </div>
                 </div>
                 <div className="pb-4">
                   <h3 className="text-2xl font-black text-white drop-shadow-md">
-                    {selectedStudent.name}
+                    {selectedStudent?.profile?.first_name}{" "}
+                    {selectedStudent?.profile?.last_name}
                   </h3>
                   <Badge className="bg-white/20 backdrop-blur-md text-white border-white/20 font-black text-[10px]">
-                    {selectedStudent.standing.toUpperCase()}
+                    {analytics?.standing?.toUpperCase() || "PENDING"}
                   </Badge>
                 </div>
               </div>
@@ -229,7 +281,7 @@ export default function BehavioralDashboard() {
                     Accumulated Merits
                   </p>
                   <h4 className="text-2xl font-black text-green-600">
-                    {selectedStudent.merits}
+                    {analytics?.merits || 0}
                   </h4>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
@@ -237,14 +289,16 @@ export default function BehavioralDashboard() {
                     Total Demerits
                   </p>
                   <h4 className="text-2xl font-black text-red-600">
-                    {selectedStudent.demerits}
+                    {analytics?.demerits || 0}
                   </h4>
                 </div>
                 <div className="p-4 rounded-2xl bg-blue-50 border border-blue-100">
                   <p className="text-[10px] font-black text-blue-500 uppercase mb-1">
                     Behavior Percentile
                   </p>
-                  <h4 className="text-2xl font-black text-blue-600">Top 12%</h4>
+                  <h4 className="text-2xl font-black text-blue-600">
+                    {analytics?.netScore > 0 ? "Top 15%" : "Lower 50%"}
+                  </h4>
                 </div>
               </div>
 
@@ -262,55 +316,63 @@ export default function BehavioralDashboard() {
                   </Button>
                 </div>
                 <div className="space-y-3">
-                  <div className="p-4 rounded-2xl border border-slate-100 flex items-center justify-between group hover:bg-slate-50 transition-all">
-                    <div className="flex gap-x-4">
-                      <div className="h-10 w-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center">
-                        <Star className="h-5 w-5" />
+                  {behaviorHistory.length > 0 ? (
+                    behaviorHistory.slice(0, 3).map((record) => (
+                      <div
+                        key={record.id}
+                        className="p-4 rounded-2xl border border-slate-100 flex items-center justify-between group hover:bg-slate-50 transition-all"
+                      >
+                        <div className="flex gap-x-4">
+                          <div
+                            className={cn(
+                              "h-10 w-10 rounded-xl flex items-center justify-center",
+                              record.type === "merit"
+                                ? "bg-green-50 text-green-600"
+                                : "bg-red-50 text-red-600",
+                            )}
+                          >
+                            {record.type === "merit" ? (
+                              <Star className="h-5 w-5" />
+                            ) : (
+                              <ShieldAlert className="h-5 w-5" />
+                            )}
+                          </div>
+                          <div>
+                            <h5 className="font-bold text-slate-900">
+                              {record.category}
+                            </h5>
+                            <p className="text-xs text-slate-500 max-w-[200px] truncate">
+                              {record.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge
+                            variant="futuristic"
+                            className={
+                              record.type === "merit"
+                                ? "bg-green-500/10 text-green-500 border-green-500/20"
+                                : "bg-red-500/10 text-red-500 border-red-500/20"
+                            }
+                          >
+                            {record.type === "merit" ? "+" : "-"}
+                            {record.points}
+                          </Badge>
+                          <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">
+                            {new Date(
+                              record.incident_date,
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h5 className="font-bold text-slate-900">
-                          Science Fair Leadership
-                        </h5>
-                        <p className="text-xs text-slate-500">
-                          Organized the grade 10 science pavilion with
-                          exceptional detail.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <Badge className="bg-green-500 text-white border-white">
-                        +15 MERIT
-                      </Badge>
-                      <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">
-                        2 DAYS AGO
+                    ))
+                  ) : (
+                    <div className="py-8 text-center border-2 border-dashed border-slate-100 rounded-3xl">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                        No Recent Activity
                       </p>
                     </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl border border-slate-100 flex items-center justify-between group hover:bg-slate-50 transition-all">
-                    <div className="flex gap-x-4">
-                      <div className="h-10 w-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
-                        <AlertTriangle className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-slate-900">
-                          Late Submission (History)
-                        </h5>
-                        <p className="text-xs text-slate-500">
-                          Term project submitted 48 hours past the hard
-                          deadline.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <Badge className="bg-red-500 text-white border-white">
-                        -5 DEMERIT
-                      </Badge>
-                      <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">
-                        5 DAYS AGO
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -378,7 +440,8 @@ export default function BehavioralDashboard() {
                   Student Subject
                 </label>
                 <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 font-bold text-slate-900">
-                  {selectedStudent.name}
+                  {selectedStudent?.profile?.first_name}{" "}
+                  {selectedStudent?.profile?.last_name}
                 </div>
               </div>
 
@@ -387,7 +450,10 @@ export default function BehavioralDashboard() {
                   <label className="text-[10px] font-black text-slate-400 uppercase">
                     Category
                   </label>
-                  <Select defaultValue="Academics">
+                  <Select
+                    onValueChange={setIncidentCategory}
+                    defaultValue="Academics"
+                  >
                     <SelectTrigger className="rounded-xl border-slate-100 h-12 font-bold">
                       <SelectValue />
                     </SelectTrigger>
@@ -405,7 +471,9 @@ export default function BehavioralDashboard() {
                   </label>
                   <Input
                     type="number"
-                    defaultValue="5"
+                    value={incidentPoints}
+                    onChange={(e) => setIncidentPoints(e.target.value)}
+                    placeholder="5"
                     className="rounded-xl border-slate-100 h-12 font-bold"
                   />
                 </div>
@@ -416,6 +484,8 @@ export default function BehavioralDashboard() {
                   Incident Description
                 </label>
                 <Textarea
+                  value={incidentDescription}
+                  onChange={(e) => setIncidentDescription(e.target.value)}
                   placeholder="Describe the behavior or incident in detail..."
                   className="rounded-xl border-slate-100 min-h-[120px] font-medium"
                 />

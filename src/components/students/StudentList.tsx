@@ -35,8 +35,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Student } from "@/types/database";
 import { Badge } from "@/components/ui/badge";
-import { StudentForm } from "./StudentForm";
 import { ParentForm } from "../parents/ParentForm";
+import { StudentForm } from "./StudentForm";
+import { Card } from "@/components/ui/card";
 
 interface StudentListProps {
   initialData: Student[];
@@ -67,13 +68,20 @@ export function StudentList({ initialData }: StudentListProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={onAdd} className="gap-x-2">
+        <Button
+          onClick={onAdd}
+          variant="neon"
+          className="rounded-2xl font-bold gap-x-2"
+        >
           <Plus className="h-4 w-4" />
           Add Student
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <Card
+        variant="glass"
+        className="p-0 overflow-hidden border-none shadow-xl"
+      >
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow>
@@ -119,8 +127,8 @@ export function StudentList({ initialData }: StudentListProps) {
                   <TableCell>{student.roll_number || "N/A"}</TableCell>
                   <TableCell>
                     <Badge
-                      variant="secondary"
-                      className="bg-green-100 text-green-700 hover:bg-green-100 border-none"
+                      variant="futuristic"
+                      className="bg-green-500/10 text-green-500 border-green-500/20"
                     >
                       Active
                     </Badge>
@@ -161,7 +169,7 @@ export function StudentList({ initialData }: StudentListProps) {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[500px]">

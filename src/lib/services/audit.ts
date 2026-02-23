@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { auditLogSchema } from "../validations";
+import { handleServiceError } from "../error-handler";
 
 /**
  * Audit Service
@@ -25,25 +26,29 @@ export const AuditService = {
 
     if (error) {
         console.error("Critical: Failed to record audit log", error);
-        // In a production scenario, we might want to alert a secondary security system
+        // We log it but don't strictly throw as it's a side-effect log
     }
   },
 
   async getAuditEntries(entityType?: string, entityId?: string) {
-    const supabase = createClient();
-    let query = supabase
-      .from("audit_logs")
-      .select(`
-        *,
-        actor:profiles!actor_id(first_name, last_name, role)
-      `)
-      .order("created_at", { ascending: false });
+    try {
+      const supabase = createClient();
+      let query = supabase
+        .from("audit_logs")
+        .select(`
+          *,
+          actor:profiles!actor_id(first_name, last_name, role)
+        `)
+        .order("created_at", { ascending: false });
 
-    if (entityType) query = query.eq("entity_type", entityType);
-    if (entityId) query = query.eq("entity_id", entityId);
+      if (entityType) query = query.eq("entity_type", entityType);
+      if (entityId) query = query.eq("entity_id", entityId);
 
-    const { data, error } = await query.limit(50);
-    if (error) throw error;
-    return data;
+      const { data, error } = await query.limit(50);
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 };

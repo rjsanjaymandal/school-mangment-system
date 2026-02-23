@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { InventoryService } from "@/lib/services/inventory";
+import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";
 import {
   Package,
   ShoppingCart,
@@ -25,46 +27,49 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-const mockInventory = [
-  {
-    id: "1",
-    name: "Institutional Laptops",
-    category: "Hardware",
-    stock: 12,
-    minStock: 10,
-    status: "Optimal",
-    price: 850,
-  },
-  {
-    id: "2",
-    name: "Premium Science Kits",
-    category: "Lab Equipment",
-    stock: 4,
-    minStock: 15,
-    status: "Critical",
-    price: 120,
-  },
-  {
-    id: "3",
-    name: "Neural Interface Pens",
-    category: "Stationary",
-    stock: 45,
-    minStock: 20,
-    status: "Optimal",
-    price: 15,
-  },
-  {
-    id: "4",
-    name: "Smart Whiteboard Markers",
-    category: "Stationary",
-    stock: 8,
-    minStock: 25,
-    status: "Low",
-    price: 5,
-  },
-];
-
 export default function ProcurementHub() {
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await InventoryService.getStockTelemetry();
+        setInventory(data);
+      } catch (error) {
+        console.error("Failed to fetch inventory:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+
+    // Subscribe to realtime updates
+    const subscription = InventoryService.subscribeToStockUpdates((payload) => {
+      setInventory((prev) =>
+        prev.map((item) =>
+          item.id === payload.new.id
+            ? {
+                ...payload.new,
+                status:
+                  payload.new.quantity_in_stock < 10
+                    ? "Critical"
+                    : payload.new.quantity_in_stock < 50
+                      ? "Low"
+                      : "Optimal",
+              }
+            : item,
+        ),
+      );
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  if (loading) return <DashboardSkeleton />;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
@@ -84,7 +89,7 @@ export default function ProcurementHub() {
             <Truck className="h-4 w-4" />
             Suppliers
           </Button>
-          <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+          <Button variant="neon" className="rounded-2xl font-bold gap-x-2">
             <Plus className="h-4 w-4" />
             New Asset
           </Button>
@@ -92,23 +97,35 @@ export default function ProcurementHub() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="border-none glass futuristic-card p-6 border-red-100 bg-red-50/10">
+        <Card variant="glass" className="p-6 border-red-500/20 bg-red-500/5">
           <div className="flex justify-between items-start mb-4">
             <AlertCircle className="h-8 w-8 text-red-500" />
-            <Badge className="bg-red-500 text-white border-none text-[10px] font-black">
+            <Badge
+              variant="futuristic"
+              className="bg-red-500 text-white border-none"
+            >
               IMMEDIATE
             </Badge>
           </div>
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Critical Shortages
           </p>
-          <h3 className="text-3xl font-black mt-1 text-slate-900">02 Items</h3>
+          <h3 className="text-3xl font-black mt-1 text-slate-900">
+            {inventory
+              .filter((i: any) => i.status === "Critical")
+              .length.toString()
+              .padStart(2, "0")}{" "}
+            Items
+          </h3>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6">
+        <Card variant="glass" className="p-6">
           <div className="flex justify-between items-start mb-4">
             <ClipboardList className="h-8 w-8 text-blue-500" />
-            <Badge className="bg-blue-50 text-blue-600 border-none text-[10px] font-black">
+            <Badge
+              variant="futuristic"
+              className="bg-blue-500/10 text-blue-500 border-blue-500/20"
+            >
               PENDING
             </Badge>
           </div>
@@ -118,17 +135,29 @@ export default function ProcurementHub() {
           <h3 className="text-3xl font-black mt-1 text-slate-900">05 Drafts</h3>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6 bg-slate-900 text-white">
+        <Card variant="futuristic" className="p-6">
           <div className="flex justify-between items-start mb-4">
             <ShoppingCart className="h-8 w-8 text-blue-400" />
-            <Badge className="bg-blue-500 text-white border-none text-[10px] font-black">
+            <Badge
+              variant="futuristic"
+              className="bg-blue-500 text-white border-none"
+            >
               ACTIVE
             </Badge>
           </div>
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Total Asset Value
           </p>
-          <h3 className="text-3xl font-black mt-1">$412,500</h3>
+          <h3 className="text-3xl font-black mt-1">
+            $
+            {inventory
+              .reduce(
+                (acc: number, curr: any) =>
+                  acc + curr.quantity_in_stock * (curr.unit_price || 0),
+                0,
+              )
+              .toLocaleString()}
+          </h3>
         </Card>
       </div>
 
@@ -168,7 +197,7 @@ export default function ProcurementHub() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {mockInventory.map((item) => (
+                  {inventory.map((item) => (
                     <tr
                       key={item.id}
                       className="hover:bg-white/60 transition-colors"
@@ -183,7 +212,7 @@ export default function ProcurementHub() {
                               {item.name}
                             </p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                              {item.category}
+                              {item.category?.name || "General"}
                             </p>
                           </div>
                         </div>
@@ -191,27 +220,23 @@ export default function ProcurementHub() {
                       <td className="p-5">
                         <div className="w-32 space-y-2">
                           <div className="flex justify-between text-[10px] font-bold">
-                            <span>
-                              {item.stock} / {item.minStock * 3}
-                            </span>
+                            <span>{item.quantity_in_stock} / 100</span>
                             <span
                               className={cn(
-                                item.stock < item.minStock
+                                item.quantity_in_stock < 20
                                   ? "text-red-500"
                                   : "text-green-500",
                               )}
                             >
-                              {Math.round(
-                                (item.stock / (item.minStock * 3)) * 100,
-                              )}
+                              {Math.round((item.quantity_in_stock / 100) * 100)}
                               %
                             </span>
                           </div>
                           <Progress
-                            value={(item.stock / (item.minStock * 3)) * 100}
+                            value={(item.quantity_in_stock / 100) * 100}
                             className="h-1"
                             indicatorClassName={
-                              item.stock < item.minStock
+                              item.quantity_in_stock < 20
                                 ? "bg-red-500"
                                 : "bg-slate-900"
                             }
@@ -220,14 +245,14 @@ export default function ProcurementHub() {
                       </td>
                       <td className="p-5">
                         <Badge
-                          variant="outline"
+                          variant="futuristic"
                           className={cn(
                             "text-[10px] font-black px-3 py-1",
                             item.status === "Critical"
-                              ? "bg-red-50 text-red-600 border-red-100"
+                              ? "bg-red-500/10 text-red-500 border-red-500/20"
                               : item.status === "Low"
-                                ? "bg-yellow-50 text-yellow-600 border-yellow-100"
-                                : "bg-green-50 text-green-600 border-green-100",
+                                ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                : "bg-green-500/10 text-green-500 border-green-500/20",
                           )}
                         >
                           {item.status.toUpperCase()}
