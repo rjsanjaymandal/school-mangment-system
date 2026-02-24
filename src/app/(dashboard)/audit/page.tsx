@@ -13,7 +13,12 @@ import {
   Filter,
   ShieldCheck,
   AlertCircle,
+  RefreshCw,
 } from "lucide-react";
+import Link from "next/link";
+import { AuditService } from "@/lib/services/audit";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -27,42 +32,38 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
-const mockAuditLogs = [
-  {
-    id: "1",
-    actor: "Sanjay (Admin)",
-    action: "Update Grade",
-    entity: "Mark (Phys-102)",
-    time: "2 mins ago",
-    ip: "192.168.1.45",
-  },
-  {
-    id: "2",
-    actor: "Dr. Elena Vance",
-    action: "Record Conduct",
-    entity: "Conduct (ID: 452)",
-    time: "15 mins ago",
-    ip: "102.14.56.22",
-  },
-  {
-    id: "3",
-    actor: "System Agent",
-    action: "Auto-Procurement",
-    entity: "Order (Draft: 88)",
-    time: "1 hour ago",
-    ip: "Internal",
-  },
-  {
-    id: "4",
-    actor: "Sanjay (Admin)",
-    action: "Login Success",
-    entity: "Auth Session",
-    time: "2 hours ago",
-    ip: "192.168.1.45",
-  },
-];
-
 export default function AuditVault() {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchLogs = async () => {
+    setIsRefreshing(true);
+    const data = await AuditService.getAuditEntries();
+    if (data && !("error" in data)) {
+      setLogs(data);
+    } else {
+      toast.error("Failed to load audit logs");
+    }
+    setLoading(false);
+    setIsRefreshing(false);
+  };
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins} mins ago`;
+    if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hours ago`;
+    return date.toLocaleDateString();
+  };
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
@@ -74,19 +75,21 @@ export default function AuditVault() {
             Institutional Integrity Monitoring & Immutable Activity Logging
           </p>
         </div>
-        <div className="flex gap-x-3">
-          <Button
-            variant="outline"
-            className="rounded-2xl border-slate-200 bg-white font-bold gap-x-2"
-          >
-            <Key className="h-4 w-4" />
-            Key Rotation
-          </Button>
-          <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
-            <Lock className="h-4 w-4" />
-            Lockdown System
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          className="rounded-2xl border-slate-200 bg-white font-bold gap-x-2"
+          onClick={fetchLogs}
+          disabled={isRefreshing}
+        >
+          <RefreshCw
+            className={cn("h-4 w-4", isRefreshing && "animate-spin")}
+          />
+          Sync Logs
+        </Button>
+        <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+          <Lock className="h-4 w-4" />
+          Lockdown System
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
@@ -105,7 +108,9 @@ export default function AuditVault() {
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             Total Audit Logs
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">12,542</h3>
+          <h3 className="text-3xl font-black mt-2 text-slate-900">
+            {logs.length.toLocaleString()}
+          </h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-slate-400">
             Data Retention: 7 Years
           </div>
@@ -164,57 +169,64 @@ export default function AuditVault() {
           <Card className="border-none glass futuristic-card overflow-hidden">
             <ScrollArea className="h-[500px]">
               <div className="divide-y divide-slate-100">
-                {mockAuditLogs.map((log) => (
-                  <div
-                    key={log.id}
-                    className="p-6 flex items-start gap-x-4 hover:bg-white/50 transition-all group"
-                  >
-                    <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center flex-shrink-0 neon-blue">
-                      <Shield className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-black text-slate-900 text-sm tracking-tight">
-                          {log.action}
-                        </h4>
-                        <span className="text-[10px] font-bold text-slate-400">
-                          {log.time}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500">
-                        By{" "}
-                        <span className="font-bold text-slate-700">
-                          {log.actor}
-                        </span>{" "}
-                        on{" "}
-                        <span className="font-bold text-slate-700">
-                          {log.entity}
-                        </span>
-                      </p>
-                      <div className="flex items-center gap-x-2 pt-2">
-                        <Badge
-                          variant="outline"
-                          className="text-[8px] font-black text-slate-400 border-slate-100 bg-slate-50"
-                        >
-                          IP: {log.ip}
-                        </Badge>
-                        <Badge
-                          variant="outline"
-                          className="text-[8px] font-black text-blue-500 border-blue-50 bg-blue-50/50"
-                        >
-                          VERIFIED
-                        </Badge>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-slate-300 hover:text-slate-900"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                {logs.length === 0 ? (
+                  <div className="p-12 text-center text-slate-400 font-bold uppercase tracking-widest">
+                    No audit records in the vault.
                   </div>
-                ))}
+                ) : (
+                  logs.map((log) => (
+                    <div
+                      key={log.id}
+                      className="p-6 flex items-start gap-x-4 hover:bg-white/50 transition-all group"
+                    >
+                      <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center flex-shrink-0 neon-blue">
+                        <Shield className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-black text-slate-900 text-sm tracking-tight">
+                            {log.action.replace(/_/g, " ")}
+                          </h4>
+                          <span className="text-[10px] font-bold text-slate-400">
+                            {formatTime(log.created_at)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          By{" "}
+                          <span className="font-bold text-slate-700">
+                            {log.actor?.first_name}{" "}
+                            {log.actor?.last_name || "System"}
+                          </span>{" "}
+                          on{" "}
+                          <span className="font-bold text-slate-700">
+                            {log.entity_type} ({log.entity_id.split("-")[0]}...)
+                          </span>
+                        </p>
+                        <div className="flex items-center gap-x-2 pt-2">
+                          <Badge
+                            variant="outline"
+                            className="text-[8px] font-black text-slate-400 border-slate-100 bg-slate-50"
+                          >
+                            TYPE: {log.entity_type.toUpperCase()}
+                          </Badge>
+                          <Badge
+                            variant="outline"
+                            className="text-[8px] font-black text-blue-500 border-blue-50 bg-blue-50/50"
+                          >
+                            VERIFIED
+                          </Badge>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-slate-300 hover:text-slate-900"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))
+                )}
               </div>
             </ScrollArea>
             <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
@@ -243,8 +255,11 @@ export default function AuditVault() {
               Visual interface for granular Role-Based Access Control. Tweak
               permissions for teachers, students, and guardians.
             </p>
-            <Button className="mt-6 w-full bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 border-none shadow-xl shadow-blue-900/40">
-              CONFIGURE RBAC
+            <Button
+              asChild
+              className="mt-6 w-full bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 border-none shadow-xl shadow-blue-900/40"
+            >
+              <Link href="/users">CONFIGURE RBAC</Link>
             </Button>
           </Card>
 

@@ -46,34 +46,68 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Role-based access control
+  // Role-based access control & Impersonation Handling
   if (user) {
-    const role = user.app_metadata?.role as string | undefined
+    const cookieStore = request.cookies;
+    const impersonationId = cookieStore.get("impersonation_user_id")?.value;
+
+    // Fetch REAL profile role directly from DB for security
+    const { data: realProfile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    const realRole = realProfile?.role;
+    let effectiveRole = realRole;
+    let effectiveUserId = user.id;
+
+    // Security check for impersonation
+    if (impersonationId) {
+        if (realRole !== 'admin') {
+            // Non-admin trying to impersonate? Clear it immediately.
+            const response = NextResponse.redirect(new URL(request.url))
+            response.cookies.delete("impersonation_user_id")
+            return response
+        }
+
+        // Fetch the target user's role
+        const { data: targetProfile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", impersonationId)
+          .single();
+        
+        if (targetProfile) {
+            effectiveRole = targetProfile.role;
+            effectiveUserId = impersonationId;
+        }
+    }
+
     const path = request.nextUrl.pathname
 
-    // Admin routes protection
-    if (path.startsWith('/admin') && role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
+    // Define role-to-path mapping
+    const rolePaths: Record<string, string> = {
+      admin: '/admin',
+      teacher: '/teacher',
+      student: '/student',
+      parent: '/parent'
+    };
 
-    // Teacher routes protection
-    if (path.startsWith('/teacher') && role !== 'teacher' && role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
+    // Check if the current path starts with a role-restricted prefix
+    const restrictedPrefixes = Object.values(rolePaths);
+    const targetPrefix = restrictedPrefixes.find(p => path.startsWith(p));
 
-    // Student routes protection
-    if (path.startsWith('/student') && role !== 'student' && role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    if (targetPrefix) {
+        // Find which role is allowed for this prefix
+        const allowedRole = Object.keys(rolePaths).find(k => rolePaths[k] === targetPrefix);
+        
+        // Admins can ALWAYS access admin routes, even when impersonating (it switches context)
+        // However, if they are impersonating a student, they should be able to access /student routes
+        if (effectiveRole !== allowedRole && realRole !== 'admin') {
+            return NextResponse.redirect(new URL('/unauthorized', request.url))
+        }
     }
-
-    // Settings protection (Admin only for certain sub-paths)
-    if (path.startsWith('/settings') && role !== 'admin' && role !== 'teacher') {
-       // Students/Parents might have limited settings, but standard ones are restricted
-       // return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-    
-    // Redirect context-less /dashboard to specific role dashboard if needed
-    // For now, let's keep /dashboard as a landing/shared overview
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

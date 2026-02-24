@@ -25,6 +25,7 @@ import {
   ShieldAlert,
   Heart,
   Shield,
+  ShieldCheck,
   Stethoscope,
   Trophy,
   Globe,
@@ -141,6 +142,12 @@ const navigation: NavGroup[] = [
     group: "System",
     roles: ["admin"],
     items: [
+      {
+        name: "Identity & Access",
+        href: "/users",
+        icon: ShieldCheck,
+        roles: ["admin"],
+      },
       { name: "Settings", href: "/settings", icon: Settings },
       { name: "Security Vault", href: "/audit", icon: Shield },
       { name: "Compliance Vault", href: "/compliance", icon: FileText },
@@ -152,11 +159,16 @@ const navigation: NavGroup[] = [
 import { useEffect, useState } from "react";
 import { UserService } from "@/lib/services/user";
 
-export function Sidebar() {
+export function Sidebar({ initialProfile }: { initialProfile?: any }) {
   const pathname = usePathname();
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(initialProfile || null);
 
   useEffect(() => {
+    if (initialProfile) {
+      setUserProfile(initialProfile);
+      return;
+    }
+
     const fetchProfile = async () => {
       const profile = await UserService.getCurrentProfile();
       if (profile && !("error" in profile)) {
@@ -164,7 +176,7 @@ export function Sidebar() {
       }
     };
     fetchProfile();
-  }, []);
+  }, [initialProfile]);
 
   const userRole = userProfile?.role || "student";
 

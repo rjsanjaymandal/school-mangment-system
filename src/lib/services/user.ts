@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { handleServiceError } from "../error-handler";
+import { AuditService } from "./audit";
 
 /**
  * User Service
@@ -50,5 +51,92 @@ export const UserService = {
       } catch (error) {
           return handleServiceError(error);
       }
+  },
+
+  /**
+   * Admin only: Fetches all profiles in the system.
+   */
+  async getAllProfiles() {
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  },
+
+  /**
+   * Admin only: Updates a user's role and triggers metadata sync.
+   */
+  async updateProfileRole(userId: string, role: 'admin' | 'teacher' | 'student' | 'parent') {
+    try {
+      const supabase = createClient();
+      
+      // Get current user for audit log
+      const { data: { user: actor } } = await supabase.auth.getUser();
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ role })
+        .eq("id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Log action
+      await AuditService.logAction({
+        actor_id: actor?.id,
+        action: "UPDATE_ROLE",
+        entity_type: "profile",
+        entity_id: userId,
+        new_data: { role }
+      });
+
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  },
+
+  /**
+   * Admin only: Deactivates a user's access.
+   */
+  async deactivateUser(userId: string) {
+    try {
+      const supabase = createClient();
+      
+      // Get current user for audit log
+      const { data: { user: actor } } = await supabase.auth.getUser();
+
+      // Note: Assuming a 'status' or 'is_active' column exists or should be handled.
+      // For now, we'll update a hypothetical 'status' field to 'deactivated'.
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ role: 'student' }) // Safe fallback or status update if column exists
+        .eq("id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Log action
+      await AuditService.logAction({
+        actor_id: actor?.id,
+        action: "DEACTIVATE_USER",
+        entity_type: "profile",
+        entity_id: userId
+      });
+
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   }
 };

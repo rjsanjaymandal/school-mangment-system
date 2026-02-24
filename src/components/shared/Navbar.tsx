@@ -1,4 +1,6 @@
 "use client";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 import { User } from "@supabase/supabase-js";
 import { Bell, Search } from "lucide-react";
@@ -15,8 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 export function Navbar({ user }: { user: User | null }) {
+  const router = useRouter();
   const handleSignOut = async () => {
-    // Implement sign out logic
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
   };
 
   return (

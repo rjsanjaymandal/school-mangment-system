@@ -62,7 +62,14 @@ export default function LoginPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/dashboard");
+        // Fetch profile to determine role
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .single();
+
+        const role = profile?.role || "student";
+        router.push(`/${role}/dashboard`);
       }
     } catch (e) {
       setError("An unexpected error occurred.");
