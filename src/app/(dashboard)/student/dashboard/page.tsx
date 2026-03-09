@@ -4,7 +4,7 @@ import { InstitutionalService } from "@/lib/services/institutional";
 import { Badge } from "@/components/ui/badge";
 
 export default async function StudentDashboard() {
-  const academicYear = await InstitutionalService.getCurrentAcademicYear();
+  const academicYear = await InstitutionalService.getCurrentAcademicYear().catch((err: any) => ({ error: err.message }));
   const activeYearName =
     academicYear && !("error" in academicYear)
       ? academicYear.name

@@ -33,9 +33,10 @@ export const InstitutionalService = {
         .from("academic_years")
         .select("*")
         .eq("is_current", true)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) return { error: "No active academic year found" };
       return academicYearSchema.parse(data);
     } catch (error) {
       return handleServiceError(error);
@@ -87,6 +88,26 @@ export const InstitutionalService = {
 
       if (error) throw error;
       return (data || []);
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  },
+
+  async getStudentById(id: string) {
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("students")
+        .select(`
+          *,
+          profile:profiles(*),
+          class:classes(*)
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error) throw error;
+      return data;
     } catch (error) {
       return handleServiceError(error);
     }

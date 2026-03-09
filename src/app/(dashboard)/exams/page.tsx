@@ -1,36 +1,41 @@
 import { createClient } from "@/lib/supabase/server";
-import { ExamList } from "@/components/exams/ExamList";
+import { ExamsDashboard } from "@/components/exams/ExamsDashboard";
 
 export default async function ExamsPage() {
   const supabase = await createClient();
 
   const { data: exams } = await supabase
     .from("exams")
-    .select(
-      `
-      *,
-      academic_year:academic_years(*)
-    `,
-    )
-    .order("start_date", { ascending: false });
+    .select("*, subject:subjects(*), class:classes(*), academic_year:academic_years(*)")
+    .order("date", { ascending: false });
+
+  const { data: classes } = await supabase
+    .from("classes")
+    .select("*")
+    .order("name");
+
+  const { data: subjects } = await supabase
+    .from("subjects")
+    .select("*")
+    .order("name");
 
   const { data: academicYears } = await supabase
     .from("academic_years")
     .select("*")
-    .order("name", { ascending: false });
+    .order("is_current", { ascending: false });
+
+  const { data: students } = await supabase
+    .from("students")
+    .select("*, profile:profiles(*)")
+    .order("admission_number");
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-          Exams
-        </h2>
-        <p className="text-slate-500">
-          Schedule examinations and manage student results.
-        </p>
-      </div>
-
-      <ExamList initialData={exams || []} academicYears={academicYears || []} />
-    </div>
+    <ExamsDashboard
+      exams={exams || []}
+      classes={classes || []}
+      subjects={subjects || []}
+      academicYears={academicYears || []}
+      students={students || []}
+    />
   );
 }

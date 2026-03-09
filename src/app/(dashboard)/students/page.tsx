@@ -2,7 +2,9 @@ import { InstitutionalService } from "@/lib/services/institutional";
 import { StudentList } from "@/components/students/StudentList";
 
 export default async function StudentsPage() {
-  const students = await InstitutionalService.getStudents();
+  const students = await InstitutionalService.getStudents().catch((err: any) => {
+    return [];
+  });
 
   return (
     <div className="space-y-6">

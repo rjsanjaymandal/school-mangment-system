@@ -5,7 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Briefcase } from "lucide-react";
 
 export default async function TeachersPage() {
-  const teachers = await InstitutionalService.getTeachers();
+  const teachers = await InstitutionalService.getTeachers().catch((err: any) => {
+    return [];
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

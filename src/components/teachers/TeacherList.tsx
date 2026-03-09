@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { MoreHorizontal, Pencil, Trash2, Eye, Plus } from "lucide-react";
 import {
   Table,
@@ -27,6 +27,18 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Teacher } from "@/types/database";
+import { deleteTeacher } from "@/app/actions/teachers";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { TeacherForm } from "./TeacherForm";
 import { Card } from "@/components/ui/card";
@@ -37,8 +49,11 @@ interface TeacherListProps {
 
 export function TeacherList({ initialData }: TeacherListProps) {
   const [data, setData] = useState<Teacher[]>(initialData);
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const onAdd = () => {
     setEditingTeacher(null);
@@ -48,6 +63,27 @@ export function TeacherList({ initialData }: TeacherListProps) {
   const onEdit = (teacher: Teacher) => {
     setEditingTeacher(teacher);
     setIsOpen(true);
+  };
+
+  const onDeleteClick = (id: string) => {
+    setDeleteId(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const onDeleteConfirm = async () => {
+    if (!deleteId) return;
+
+    startTransition(async () => {
+      const result = await deleteTeacher(deleteId);
+      if (result.success) {
+        toast.success("Teacher record deleted");
+        setData((prevData) => prevData.filter((teacher) => teacher.id !== deleteId));
+      } else {
+        toast.error(result.error || "Failed to delete teacher");
+      }
+      setIsDeleteDialogOpen(false);
+      setDeleteId(null);
+    });
   };
 
   return (
@@ -147,7 +183,10 @@ export function TeacherList({ initialData }: TeacherListProps) {
                           <Pencil className="h-4 w-4" /> Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => onDeleteClick(teacher.id)}
+                          className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer"
+                        >
                           <Trash2 className="h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -178,6 +217,28 @@ export function TeacherList({ initialData }: TeacherListProps) {
           />
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the teacher's
+              profile and all associated academic records.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={onDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isPending ? "Deleting..." : "Delete Permanently"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
+

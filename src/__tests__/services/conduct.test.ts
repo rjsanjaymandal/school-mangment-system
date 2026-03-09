@@ -14,11 +14,11 @@ describe('ConductService', () => {
     it('should successfully record a valid merit incident', async () => {
       const mockIncident = {
         student_id: '550e8400-e29b-41d4-a716-446655440000',
-        type: 'merit',
+        type: 'merit' as "merit",
         points: 10,
         incident_date: '2024-01-01',
         description: 'Excellent project',
-        category: 'Academics',
+        category: 'Academics' as "Academics",
         teacher_id: '550e8400-e29b-41d4-a716-446655440001'
       }
 

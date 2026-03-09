@@ -12,17 +12,17 @@ import { Badge } from "@/components/ui/badge";
 
 export default async function AdminDashboard() {
   const [academicYear, statsData] = await Promise.all([
-    InstitutionalService.getCurrentAcademicYear(),
-    UserService.getSystemStats(),
+    InstitutionalService.getCurrentAcademicYear().catch((e: any) => ({ error: e.message })),
+    UserService.getSystemStats().catch((e: any) => ({ error: e.message })),
   ]);
 
   const realStats =
     statsData && !("error" in statsData)
       ? statsData
       : {
-          studentCount: 0,
-          teacherCount: 0,
-        };
+        studentCount: 0,
+        teacherCount: 0,
+      };
 
   const activeYearName =
     academicYear && !("error" in academicYear)

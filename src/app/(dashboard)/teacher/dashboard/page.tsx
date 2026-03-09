@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 export default async function TeacherDashboard() {
-  const academicYear = await InstitutionalService.getCurrentAcademicYear();
+  const academicYear = await InstitutionalService.getCurrentAcademicYear().catch((err: any) => ({ error: err.message }));
   const activeYearName =
     academicYear && !("error" in academicYear)
       ? academicYear.name

@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Teacher } from "@/types/database";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { useTransition } from "react";
+import { createTeacher, updateTeacher } from "@/app/actions/teachers";
 
 const teacherSchema = z.object({
   first_name: z.string().min(2, "First name is too short"),
@@ -34,7 +33,7 @@ interface TeacherFormProps {
 }
 
 export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
-  const supabase = createClient();
+  const [isPending, startTransition] = useTransition();
   const form = useForm<TeacherFormValues>({
     resolver: zodResolver(teacherSchema),
     defaultValues: {
@@ -48,24 +47,25 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
   });
 
   async function onSubmit(values: TeacherFormValues) {
-    try {
-      // Convert comma-separated string back to array for the database
-      const payload = {
-        ...values,
-        specialization: values.specialization
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-      };
+    const specializationArray = values.specialization
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-      console.log("Submitting payload:", payload);
-      toast.success(
-        initialData ? "Teacher record updated" : "Teacher added to faculty",
-      );
-      onSuccess();
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
+    startTransition(async () => {
+      const result = initialData
+        ? await updateTeacher(initialData.id, { ...values, specialization: specializationArray })
+        : await createTeacher({ ...values, specialization: specializationArray });
+
+      if (result.success) {
+        toast.success(
+          initialData ? "Teacher record updated" : "Teacher added to faculty"
+        );
+        onSuccess();
+      } else {
+        toast.error(result.error || "Something went wrong");
+      }
+    });
   }
 
   return (

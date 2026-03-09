@@ -1,5 +1,6 @@
 "use client";
 
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -15,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Student } from "@/types/database";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { createStudent, updateStudent } from "@/app/actions/students";
 
 const studentSchema = z.object({
   first_name: z.string().min(2, "First name is too short"),
@@ -34,44 +35,51 @@ interface StudentFormProps {
 }
 
 export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
-  const supabase = createClient();
+  const [isPending, startTransition] = useTransition();
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentSchema),
     defaultValues: initialData
       ? {
-          first_name: initialData.profile?.first_name || "",
-          last_name: initialData.profile?.last_name || "",
-          email: initialData.profile?.email || "",
-          admission_number: initialData.admission_number || "",
-          roll_number: initialData.roll_number || "",
-          class_id: initialData.class_id || "",
-        }
+        first_name: initialData.profile?.first_name || "",
+        last_name: initialData.profile?.last_name || "",
+        email: initialData.profile?.email || "",
+        admission_number: initialData.admission_number || "",
+        roll_number: initialData.roll_number || "",
+        class_id: initialData.class_id || "",
+      }
       : {
-          first_name: "",
-          last_name: "",
-          email: "",
-          admission_number: "",
-          roll_number: "",
-          class_id: "",
-        },
+        first_name: "",
+        last_name: "",
+        email: "",
+        admission_number: "",
+        roll_number: "",
+        class_id: "",
+      },
   });
 
-  async function onSubmit(values: StudentFormValues) {
-    try {
-      // In a real app, you'd call a server action or API route to handle
-      // profile creation + student creation in a transaction (Supabase RPC or Edge Function)
-      // For this demonstration, we'll mock the success
-      console.log("Submitting values:", values);
-
-      toast.success(
-        initialData
-          ? "Student updated successfully"
-          : "Student added successfully",
-      );
-      onSuccess();
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
+  function onSubmit(values: StudentFormValues) {
+    startTransition(async () => {
+      try {
+        if (initialData?.id) {
+          const res = await updateStudent(initialData.id, values);
+          if (res.error) {
+            toast.error(res.error);
+            return;
+          }
+          toast.success("Student updated successfully");
+        } else {
+          const res = await createStudent(values);
+          if (res.error) {
+            toast.error(res.error);
+            return;
+          }
+          toast.success("Student added successfully");
+        }
+        onSuccess();
+      } catch (error) {
+        toast.error("Something went wrong");
+      }
+    });
   }
 
   return (
@@ -150,8 +158,8 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
           <Button variant="outline" type="button" onClick={() => onSuccess()}>
             Cancel
           </Button>
-          <Button type="submit">
-            {initialData ? "Save Changes" : "Create Student"}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Saving..." : initialData ? "Save Changes" : "Create Student"}
           </Button>
         </div>
       </form>

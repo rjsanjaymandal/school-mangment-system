@@ -20,7 +20,9 @@ export class AppError extends Error {
 export const handleServiceError = (error: any): never => {
   // Handle Supabase/Postgrest Errors
   if (isPostgrestError(error)) {
-    console.error(`[DB_ERROR] ${error.code}: ${error.message}`, error.details);
+    if (error.code !== "PGRST205") {
+      console.error(`[DB_ERROR] ${error.code}: ${error.message}`, error.details);
+    }
     throw new AppError(
       error.message,
       `DB_${error.code}`,

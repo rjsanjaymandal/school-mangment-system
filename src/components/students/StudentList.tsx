@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useState, useTransition } from "react";
 import {
   MoreHorizontal,
   Pencil,
@@ -38,13 +39,15 @@ import { Badge } from "@/components/ui/badge";
 import { ParentForm } from "../parents/ParentForm";
 import { StudentForm } from "./StudentForm";
 import { Card } from "@/components/ui/card";
+import { deleteStudent } from "@/app/actions/students";
+import { toast } from "sonner";
 
 interface StudentListProps {
   initialData: Student[];
 }
 
 export function StudentList({ initialData }: StudentListProps) {
-  const [data, setData] = useState<Student[]>(initialData);
+  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [isParentOpen, setIsParentOpen] = useState(false);
@@ -94,7 +97,7 @@ export function StudentList({ initialData }: StudentListProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.length === 0 ? (
+            {initialData.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -104,7 +107,7 @@ export function StudentList({ initialData }: StudentListProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              data.map((student) => (
+              initialData.map((student) => (
                 <TableRow
                   key={student.id}
                   className="hover:bg-slate-50/50 transition-colors"
@@ -142,8 +145,10 @@ export function StudentList({ initialData }: StudentListProps) {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem className="gap-x-2 cursor-pointer">
-                          <Eye className="h-4 w-4" /> View Details
+                        <DropdownMenuItem asChild className="gap-x-2 cursor-pointer">
+                          <Link href={`/students/${student.id}`}>
+                            <Eye className="h-4 w-4" /> View Details
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => onEdit(student)}
@@ -157,8 +162,18 @@ export function StudentList({ initialData }: StudentListProps) {
                         >
                           <UserPlus className="h-4 w-4" /> Link Parent
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            if (confirm("Are you sure you want to delete this student?")) {
+                              startTransition(async () => {
+                                const res = await deleteStudent(student.id);
+                                if (res.error) toast.error(res.error);
+                                else toast.success("Student deleted successfully");
+                              });
+                            }
+                          }}
+                          className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer"
+                        >
                           <Trash2 className="h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
