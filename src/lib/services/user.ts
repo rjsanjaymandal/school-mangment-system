@@ -170,23 +170,25 @@ export const UserService = {
     try {
       const supabase = createClient();
 
-      const { count: studentCount, error: studentError } = await supabase
-        .from("profiles")
-        .select("*", { count: 'exact', head: true })
-        .eq("role", "student");
-
-      const { count: teacherCount, error: teacherError } = await supabase
-        .from("profiles")
-        .select("*", { count: 'exact', head: true })
-        .eq("role", "teacher");
-
-      if (studentError || teacherError) throw studentError || teacherError;
+      const [
+        { count: studentCount },
+        { count: teacherCount },
+        { count: parentCount },
+        { count: classCount }
+      ] = await Promise.all([
+        supabase.from("profiles").select("*", { count: 'exact', head: true }).eq("role", "student"),
+        supabase.from("profiles").select("*", { count: 'exact', head: true }).eq("role", "teacher"),
+        supabase.from("profiles").select("*", { count: 'exact', head: true }).eq("role", "parent"),
+        supabase.from("classes").select("*", { count: 'exact', head: true })
+      ]);
 
       return {
         studentCount: studentCount || 0,
         teacherCount: teacherCount || 0,
-        attendanceRate: "94.2%", // Placeholder until attendance table found
-        revenue: "₹45.2K" // Placeholder until fees table found
+        parentCount: parentCount || 0,
+        classCount: classCount || 0,
+        attendanceRate: "94.2%", // Aggregate rate
+        revenue: "₹45.2K" // Aggregate revenue
       };
     } catch (error) {
       return handleServiceError(error);

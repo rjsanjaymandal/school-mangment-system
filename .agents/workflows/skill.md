@@ -1,66 +1,66 @@
+---
+description: EduFox Technology Stack and Application Architecture
+---
 # Skill Context
 
-This project is a **School Management System (SMS)** built with modern web technologies.
-
-The AI must use the following technology stack.
+This project is a **School Management System (SMS)** built with modern web technologies. 
+The AI must act as a Senior Full-Stack Next.js 14 Engineer.
 
 ## Frontend
-- Next.js 14 (App Router)
-- React
-- TypeScript
-- Tailwind CSS
-- Shadcn UI
+- **Next.js 14** (App Router)
+- **React 18+** (Server Components, Suspense boundaries)
+- **TypeScript** (Strict Mode enforced, no `any`)
+- **Tailwind CSS**
+- **Shadcn UI** (Radix UI primitives)
 
 Skills required:
-- component architecture
-- server components
-- client components
-- layouts
-- form handling
-- API integration
+- Advanced App Router component architecture (Server vs. Client boundaries)
+- Layouts, `loading.tsx`, `error.tsx`, and Suspense for streamed rendering
+- Form handling with React Hook Form & Zod validation
+- API integration & Server Actions
 
 Libraries:
-- React Hook Form
-- Zod validation
-- TanStack Table
-- Recharts
+- `react-hook-form` + `zod`
+- `@tanstack/react-table` (for data grids)
+- `recharts` (for analytics and dashboards)
+- `lucide-react` (icons)
+- `date-fns` (date formatting)
+- `clsx` & `tailwind-merge` (utility styling via a `cn` utility)
 
 ## Backend
 
-Backend is handled by Supabase.
+Backend is handled natively by Supabase interacting with Next.js.
 
 Services used:
-- Supabase Auth
-- PostgreSQL database
-- Supabase Storage
-- Row Level Security (RLS)
+- **Supabase Auth** (using `@supabase/ssr` for secure Server-Side Rendering)
+- **PostgreSQL database** (accessed via Supabase JS Client)
+- **Supabase Storage**
+- **Row Level Security (RLS)**
 
 The AI must implement:
-- secure CRUD operations
-- server actions
-- API interaction with Supabase
+- Secure CRUD operations exclusively through **Next.js Server Actions**
+- Standardized error handling returning `{ error?: string; success?: boolean }`
+- Revalidation via `revalidatePath` after server mutations
 
 ## Authentication
 
 Authentication system requirements:
+- Single login route (`/login`)
+- Role-based routing protected via Next.js `middleware.ts`
+- Secure sessions stored in HTTP-only cookies
+- System accounts are created by Admins (no public registration)
 
-- single login page
-- admin created accounts
-- password setup email
-- secure sessions
-- role based login
+Roles supported: `admin`, `teacher`, `student`, `parent`
 
-Roles supported:
+## UI / UX Aesthetics
 
-admin  
-teacher  
-student  
-parent
+The School Management System features a **Premium, Glassmorphic Aesthetic**:
+- Use translucent glass backgrounds (`bg-white/40 backdrop-blur-md border hover:bg-white/60`)
+- Consistent smooth borders (`rounded-2xl`, `rounded-3xl`)
+- Smooth micro-animations (`transition-all duration-300 hover:scale-[1.02]`)
+- Do not use generic block colors; utilize gradients and `slate` themes for depth.
 
 ## Deployment
 
-Frontend hosting:
-- Vercel
-
-Backend hosting:
-- Supabase Cloud
+Frontend hosting: **Vercel**
+Backend hosting: **Supabase Cloud**

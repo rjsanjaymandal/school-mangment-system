@@ -9,6 +9,7 @@ import {
   Eye,
   Plus,
   UserPlus,
+  FileUp,
 } from "lucide-react";
 import {
   Table,
@@ -41,6 +42,7 @@ import { StudentForm } from "./StudentForm";
 import { Card } from "@/components/ui/card";
 import { deleteStudent } from "@/app/actions/students";
 import { toast } from "sonner";
+import { BulkImportModal } from "./BulkImportModal";
 
 interface StudentListProps {
   initialData: Student[];
@@ -51,6 +53,7 @@ export function StudentList({ initialData }: StudentListProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [isParentOpen, setIsParentOpen] = useState(false);
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
   const [linkingStudentId, setLinkingStudentId] = useState<string | null>(null);
 
   const onAdd = () => {
@@ -70,7 +73,15 @@ export function StudentList({ initialData }: StudentListProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <Button
+          onClick={() => setIsBulkImportOpen(true)}
+          variant="outline"
+          className="rounded-2xl font-bold gap-x-2 bg-white/50 backdrop-blur-md border-white/20 hover:bg-white/80"
+        >
+          <FileUp className="h-4 w-4" />
+          Bulk Import CSV
+        </Button>
         <Button
           onClick={onAdd}
           variant="neon"
@@ -219,6 +230,15 @@ export function StudentList({ initialData }: StudentListProps) {
               onSuccess={() => setIsParentOpen(false)}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isBulkImportOpen} onOpenChange={setIsBulkImportOpen}>
+        <DialogContent className="sm:max-w-[600px] glass border-white/20">
+          <BulkImportModal
+            onSuccess={() => setIsBulkImportOpen(false)}
+            onCancel={() => setIsBulkImportOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>

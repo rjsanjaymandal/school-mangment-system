@@ -62,13 +62,14 @@ export async function deleteExam(id: string) {
 export async function saveMarks(rows: {
     exam_id: string;
     student_id: string;
+    subject_id: string;
     marks_obtained: number;
 }[]) {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase
             .from("marks")
-            .upsert(rows, { onConflict: "exam_id,student_id" });
+            .upsert(rows, { onConflict: "exam_id,student_id,subject_id" });
 
         if (error) throw error;
         revalidatePath("/exams");

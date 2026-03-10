@@ -15,7 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Class } from "@/types/database";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { createClass, updateClass } from "@/app/actions/classes";
+import { useRouter } from "next/navigation";
 
 const classSchema = z.object({
   name: z.string().min(2, "Class name is too short"),
@@ -34,9 +35,8 @@ interface ClassFormProps {
 }
 
 export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
-  const supabase = createClient();
+  const router = useRouter();
 
-  // Create a type that matches the form's input state (where capacity is a string)
   type RawFormValues = {
     name: string;
     capacity: string;
@@ -54,17 +54,28 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
 
   async function onSubmit(data: RawFormValues) {
     try {
-      // Data will already be transformed to number by Zod because of the resolver
-      // But we cast it here for clarity in the console log if needed
-      console.log("Submitting class values:", data);
-      toast.success(
-        initialData
-          ? "Class updated successfully"
-          : "Class created successfully",
-      );
-      onSuccess();
+      const payload = {
+        name: data.name,
+        capacity: Number(data.capacity),
+        room_number: data.room_number,
+      };
+
+      let result;
+      if (initialData) {
+        result = await updateClass(initialData.id, payload);
+      } else {
+        result = await createClass(payload);
+      }
+
+      if (result.success) {
+        toast.success(initialData ? "Class updated successfully" : "Class created successfully");
+        router.refresh();
+        onSuccess();
+      } else {
+        toast.error(result.error || "Failed to save class");
+      }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("An unexpected error occurred");
     }
   }
 

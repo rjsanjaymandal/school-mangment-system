@@ -29,12 +29,15 @@ import { Button } from "@/components/ui/button";
 import { Class } from "@/types/database";
 import { toast } from "sonner";
 import { ClassForm } from "./ClassForm";
+import { deleteClass } from "@/app/actions/classes";
+import { useRouter } from "next/navigation";
 
 interface ClassListProps {
   initialData: Class[];
 }
 
 export function ClassList({ initialData }: ClassListProps) {
+  const router = useRouter();
   const [data, setData] = useState<Class[]>(initialData);
   const [isOpen, setIsOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<Class | null>(null);
@@ -47,6 +50,18 @@ export function ClassList({ initialData }: ClassListProps) {
   const onEdit = (cls: Class) => {
     setEditingClass(cls);
     setIsOpen(true);
+  };
+
+  const onDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this class?")) return;
+    const res = await deleteClass(id);
+    if (res.success) {
+      toast.success("Class deleted successfully");
+      router.refresh();
+      setData(data.filter(c => c.id !== id));
+    } else {
+      toast.error(res.error || "Failed to delete class");
+    }
   };
 
   return (
@@ -110,7 +125,10 @@ export function ClassList({ initialData }: ClassListProps) {
                           <Pencil className="h-4 w-4" /> Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => onDelete(cls.id)}
+                          className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer"
+                        >
                           <Trash2 className="h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

@@ -1,0 +1,92 @@
+/* 
+  Custom Overrides for react-big-calendar to match EduFox Glassmorphic Theme 
+*/
+
+.rbc-calendar {
+    font-family: inherit;
+  }
+  
+  .rbc-header {
+    padding: 12px 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: #94a3b8; /* text-slate-400 */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .rbc-month-view, .rbc-time-view, .rbc-agenda-view {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+  }
+  
+  .rbc-day-bg {
+    border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .rbc-month-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .rbc-off-range-bg {
+    background: rgba(248, 250, 252, 0.4); /* slate-50 with opacity */
+  }
+  
+  .rbc-today {
+    background: rgba(59, 130, 246, 0.05) !important; /* blue-500 light */
+  }
+  
+  .rbc-event {
+    border-radius: 6px;
+    padding: 2px 6px;
+    background-color: transparent; /* Overridden by inline styles */
+  }
+  
+  .rbc-show-more {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #3b82f6;
+  }
+  
+  /* Toolbar styling */
+  .rbc-toolbar {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .rbc-toolbar button {
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #475569;
+    font-weight: 600;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+  }
+  
+  .rbc-toolbar button:hover {
+    background: rgba(255, 255, 255, 0.8);
+    color: #0f172a;
+  }
+  
+  .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
+    background: #0f172a;
+    color: white;
+    border-color: #0f172a;
+    box-shadow: none;
+  }
+  
+  .rbc-toolbar .rbc-toolbar-label {
+    font-weight: 900;
+    font-size: 1.25rem;
+    color: #0f172a;
+  }
+  

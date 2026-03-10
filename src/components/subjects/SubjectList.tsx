@@ -29,12 +29,15 @@ import { Button } from "@/components/ui/button";
 import { Subject } from "@/types/database";
 import { toast } from "sonner";
 import { SubjectForm } from "./SubjectForm";
+import { deleteSubject } from "@/app/actions/subjects";
+import { useRouter } from "next/navigation";
 
 interface SubjectListProps {
   initialData: Subject[];
 }
 
 export function SubjectList({ initialData }: SubjectListProps) {
+  const router = useRouter();
   const [data, setData] = useState<Subject[]>(initialData);
   const [isOpen, setIsOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
@@ -47,6 +50,18 @@ export function SubjectList({ initialData }: SubjectListProps) {
   const onEdit = (subject: Subject) => {
     setEditingSubject(subject);
     setIsOpen(true);
+  };
+
+  const onDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this subject?")) return;
+    const res = await deleteSubject(id);
+    if (res.success) {
+      toast.success("Subject deleted successfully");
+      router.refresh();
+      setData(data.filter((s) => s.id !== id));
+    } else {
+      toast.error(res.error || "Failed to delete subject");
+    }
   };
 
   return (
@@ -108,8 +123,10 @@ export function SubjectList({ initialData }: SubjectListProps) {
                         >
                           <Pencil className="h-4 w-4" /> Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer">
+                        <DropdownMenuItem
+                          onClick={() => onDelete(subject.id)}
+                          className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer"
+                        >
                           <Trash2 className="h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>

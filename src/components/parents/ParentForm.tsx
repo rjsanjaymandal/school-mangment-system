@@ -16,6 +16,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 
+import { useTransition } from "react";
+import { createParent } from "@/app/actions/parents";
+
 const parentSchema = z.object({
   first_name: z.string().min(2, "First name is too short"),
   last_name: z.string().min(2, "Last name is too short"),
@@ -35,7 +38,7 @@ interface ParentFormProps {
 }
 
 export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
-  const supabase = createClient();
+  const [isPending, startTransition] = useTransition();
   const form = useForm<ParentFormValues>({
     resolver: zodResolver(parentSchema),
     defaultValues: {
@@ -49,13 +52,19 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
   });
 
   async function onSubmit(values: ParentFormValues) {
-    try {
-      console.log("Creating parent for student:", studentId, values);
-      toast.success("Parent profile created and linked successfully");
-      onSuccess();
-    } catch (error) {
-      toast.error("Something went wrong");
-    }
+    startTransition(async () => {
+      try {
+        const res = await createParent({ ...values, studentId });
+        if (res.error) {
+          toast.error(res.error);
+          return;
+        }
+        toast.success("Parent profile created and linked successfully");
+        onSuccess();
+      } catch (error) {
+        toast.error("Something went wrong");
+      }
+    });
   }
 
   return (
@@ -147,7 +156,9 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
           <Button variant="outline" type="button" onClick={() => onSuccess()}>
             Cancel
           </Button>
-          <Button type="submit">Register Parent</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Registering..." : "Register Parent"}
+          </Button>
         </div>
       </form>
     </Form>

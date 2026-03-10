@@ -15,7 +15,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { saveMarks } from "@/app/actions/exams";
+import { useRouter } from "next/navigation";
 import { Save, FileDown, FileUp, Sparkles, BrainCircuit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -41,7 +42,7 @@ export function MarksEntryForm({
   students,
 }: MarksEntryFormProps) {
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  const router = useRouter();
 
   const form = useForm<MarkFormValues>({
     resolver: zodResolver(markSchema) as any,
@@ -59,12 +60,31 @@ export function MarksEntryForm({
   async function onSubmit(values: MarkFormValues) {
     setLoading(true);
     try {
-      console.log("Saving marks:", values);
-      toast.success("Marks recorded successfully for all students", {
-        description: "Database synchronized via neural bridge.",
-      });
+      const rows = Object.entries(values.marks)
+        .filter(([_, mark]) => mark !== "")
+        .map(([studentId, mark]) => ({
+          exam_id: examId,
+          student_id: studentId,
+          subject_id: subjectId,
+          marks_obtained: Number(mark),
+        }));
+
+      if (rows.length === 0) {
+        toast.info("No marks to save");
+        return;
+      }
+
+      const result = await saveMarks(rows);
+      if (result.success) {
+        toast.success("Marks recorded successfully for all students", {
+          description: "Database synchronized via neural bridge.",
+        });
+        router.refresh();
+      } else {
+        toast.error(result.error || "Failed to sync marks");
+      }
     } catch (error) {
-      toast.error("Failed to save marks");
+      toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
     }

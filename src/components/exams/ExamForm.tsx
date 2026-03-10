@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { createExam, updateExam } from "@/app/actions/exams";
+import { useRouter } from "next/navigation";
 
 const examSchema = z.object({
   name: z.string().min(2, "Exam name is too short"),
@@ -43,7 +44,7 @@ export function ExamForm({
   academicYears,
   onSuccess,
 }: ExamFormProps) {
-  const supabase = createClient();
+  const router = useRouter();
   const form = useForm<ExamFormValues>({
     resolver: zodResolver(examSchema),
     defaultValues: {
@@ -56,13 +57,22 @@ export function ExamForm({
 
   async function onSubmit(values: ExamFormValues) {
     try {
-      console.log("Submitting exam values:", values);
-      toast.success(
-        initialData ? "Exam schedule updated" : "Exam scheduled successfully",
-      );
-      onSuccess();
+      let result;
+      if (initialData) {
+        result = await updateExam(initialData.id, values);
+      } else {
+        result = await createExam(values);
+      }
+
+      if (result.success) {
+        toast.success(initialData ? "Exam schedule updated" : "Exam scheduled successfully");
+        router.refresh();
+        onSuccess();
+      } else {
+        toast.error(result.error || "Failed to save exam");
+      }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("An unexpected error occurred");
     }
   }
 

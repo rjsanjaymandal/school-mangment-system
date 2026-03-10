@@ -3,312 +3,120 @@ description: Coding Patterns Guide
 ---
 # Coding Patterns Guide
 
-This document defines the coding patterns and reusable structures
-that must be followed when generating code for the School Management System (SMS).
-
-The AI must follow these patterns to ensure the codebase remains
-clean, consistent, and scalable.
+This document defines the strict, modern Next.js 14 patterns that the AI must follow when building features for the School Management System (SMS).
 
 ---
 
-# 1. Project Structure Pattern
+# 1. Component Architecture (RSC Pattern)
 
-The project follows a modular Next.js architecture.
+Separate data fetching from interactivity by wrapping Client Components within Server Components.
 
-Structure:
+**Server Component (Data Fetcher):**
+```tsx
+// app/(dashboard)/students/page.tsx
+import { getStudents } from "@/app/actions/students";
+import { StudentTableClient } from "@/components/students/StudentTableClient";
 
-app/
-  admin/
-  teacher/
-  student/
-
-components/
-  ui/
-  forms/
-  tables/
-  charts/
-
-modules/
-  students/
-  teachers/
-  attendance/
-  exams/
-  fees/
-
-lib/
-  supabase/
-  auth/
-  utils/
-
-database/
-  queries/
-  schema/
-
-middleware.ts
-
----
-
-# 2. Module Pattern
-
-Each module must follow a consistent structure.
-
-Example module: students
-
-modules/students/
-
-files:
-
-students.service.ts
-students.repository.ts
-students.types.ts
-students.validation.ts
-
-Responsibilities:
-
-repository
-- handles database queries
-
-service
-- contains business logic
-
-validation
-- validates input data
-
-types
-- defines TypeScript interfaces
-
----
-
-# 3. CRUD Pattern
-
-Every major module must support CRUD operations.
-
-Example: Student Module
-
-Create student
-Read student
-Update student
-Delete student
-
-Example structure:
-
-students.service.ts
-
-export async function createStudent(data) {}
-
-export async function getStudentById(id) {}
-
-export async function updateStudent(id,data) {}
-
-export async function deleteStudent(id) {}
-
----
-
-# 4. Database Query Pattern
-
-Database logic should be separated from UI.
-
-Example query file:
-
-database/queries/students.ts
-
-export async function getStudents() {
-  return supabase
-    .from("students")
-    .select("*")
+export default async function StudentsPage() {
+  const students = await getStudents(); // Fetched on server
+  return <StudentTableClient initialData={students} />;
 }
+```
 
-Never mix UI code with database logic.
+**Client Component (Interactive):**
+```tsx
+// components/students/StudentTableClient.tsx
+"use client";
+import { useState } from "react";
 
----
-
-# 5. Form Pattern
-
-Forms must use:
-
-React Hook Form
-Zod validation
-
-Example:
-
-StudentForm.tsx
-
-useForm()
-
-z.object({
- name: z.string(),
- email: z.string().email()
-})
-
-All forms must validate inputs before submitting.
-
----
-
-# 6. Table Pattern
-
-Tables should use TanStack Table.
-
-Tables must support:
-
-sorting  
-pagination  
-search filtering  
-
-Example tables:
-
-students table  
-teachers table  
-attendance table  
-
----
-
-# 7. Dashboard Pattern
-
-Each role must have its own dashboard layout.
-
-Example:
-
-admin dashboard
-
-stats cards
-recent activity
-analytics charts
-
-teacher dashboard
-
-class list
-attendance summary
-recent submissions
-
-student dashboard
-
-attendance stats
-grades
-notifications
-
----
-
-# 8. API Call Pattern
-
-All API calls should use centralized functions.
-
-Example:
-
-lib/api/students.ts
-
-export async function fetchStudents() {}
-
-export async function createStudent(data) {}
-
-This keeps network logic reusable.
-
----
-
-# 9. Error Handling Pattern
-
-All functions must handle errors.
-
-Example:
-
-try {
-  const result = await query()
-} catch(error) {
-  console.error(error)
+export function StudentTableClient({ initialData }) {
+  const [data, setData] = useState(initialData);
+  return <div>...render table with sorting...</div>;
 }
-
-User-friendly error messages must be shown in UI.
+```
 
 ---
 
-# 10. Role Protection Pattern
+# 2. Server Action Pattern
 
-Pages must enforce role checks.
+Use Server Actions for all mutations (Create, Update, Delete). Do not use `/api` routes unless building a public webhook.
 
-Example:
+```typescript
+// app/actions/fees.ts
+"use server";
 
-if(user.role !== "admin") {
- redirect("/unauthorized")
+import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const PaymentSchema = z.object({ id: z.string(), amount: z.number() });
+
+export async function processPayment(payload: z.infer<typeof PaymentSchema>) {
+  try {
+    const data = PaymentSchema.parse(payload);
+    const supabase = await createClient();
+    
+    const { error } = await supabase.from("payments").insert(data);
+    if (error) throw error;
+
+    revalidatePath("/fees"); // Crucial: Revalidates the page to show new data
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Payment failed" };
+  }
 }
-
-Protected routes:
-
-admin pages  
-teacher pages  
-student pages  
+```
 
 ---
 
-# 11. Naming Conventions
+# 3. Form Validation Pattern
 
-Use clear naming conventions.
+Always combine `react-hook-form` with `zod` for flawless client-side validation, combined with a Server Action for submission.
 
-Components
+```tsx
+"use client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { processPayment } from "@/app/actions/fees";
+import { toast } from "sonner"; // or any toast library
 
-StudentForm
-TeacherTable
-AttendanceChart
+export function PaymentForm() {
+  const form = useForm({
+    resolver: zodResolver(PaymentSchema),
+  });
 
-Functions
-
-getStudents
-createTeacher
-markAttendance
-
-Database tables
-
-students
-teachers
-attendance
-
----
-
-# 12. Reusable UI Pattern
-
-Shared UI components should be reused.
-
-Example components:
-
-DataTable
-FormField
-Modal
-DashboardCard
-
-Avoid duplicating UI logic.
+  async function onSubmit(data) {
+    const result = await processPayment(data);
+    if (result.error) {
+       toast.error(result.error);
+    } else {
+       toast.success("Payment recorded!");
+    }
+  }
+}
+```
 
 ---
 
-# 13. State Management Pattern
+# 4. Styling Pattern
 
-Prefer server state over client state.
+Consistently use the `cn()` utility for conditional Tailwind classes.
 
-Use:
+```tsx
+import { cn } from "@/lib/utils";
 
-Server Components
-Supabase queries
+export function Badge({ active, className }) {
+  return (
+    <span className={cn(
+      "px-3 py-1 rounded-full text-xs font-bold",
+      active ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500",
+      className
+    )}>
+      {active ? "Active" : "Inactive"}
+    </span>
+  );
+}
+```
 
-Avoid unnecessary client state.
-
----
-
-# 14. Testing Pattern
-
-Critical features should be tested.
-
-Test areas:
-
-authentication
-student creation
-attendance submission
-grade uploads
-
----
-
-# 15. Final Rule
-
-Code generated by the AI must be:
-
-modular  
-type-safe  
-secure  
-maintainable  
-consistent with this pattern
+Ensure all glassmorphic dashboard cards follow this premium styling:
+`className="glass border-white/20 p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all"`

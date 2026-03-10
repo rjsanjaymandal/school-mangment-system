@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { UserService } from "@/lib/services/user";
 import { Badge } from "@/components/ui/badge";
+import { AdminCharts } from "./AdminCharts";
 
 export default async function AdminDashboard() {
   const [academicYear, statsData] = await Promise.all([
@@ -22,6 +23,8 @@ export default async function AdminDashboard() {
       : {
         studentCount: 0,
         teacherCount: 0,
+        parentCount: 0,
+        classCount: 0,
       };
 
   const activeYearName =
@@ -53,16 +56,16 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-4">
         <Card className="border-none glass futuristic-card bg-slate-900 text-white p-6">
           <CardHeader className="p-0 mb-4">
             <CardTitle className="text-[10px] font-black uppercase tracking-widest text-blue-400">
-              Operational Status
+              Parental Network
             </CardTitle>
           </CardHeader>
-          <div className="text-3xl font-black">ACTIVE</div>
+          <div className="text-3xl font-black">{realStats.parentCount}</div>
           <p className="text-xs text-blue-300/60 mt-2 font-medium">
-            Institutional kernels operational
+            Verified Guardians
           </p>
         </Card>
 
@@ -93,6 +96,21 @@ export default async function AdminDashboard() {
           <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-slate-500">
             <Layout className="h-3 w-3" />
             Academic Staff
+          </div>
+        </Card>
+
+        <Card className="border-none glass futuristic-card bg-white/40 p-6">
+          <CardHeader className="p-0 mb-4">
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+              Active Classes
+            </CardTitle>
+          </CardHeader>
+          <div className="text-3xl font-black text-slate-900">
+            {realStats.classCount}
+          </div>
+          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-slate-500">
+            <BookOpen className="h-3 w-3" />
+            Live Sections
           </div>
         </Card>
       </div>
@@ -139,6 +157,15 @@ export default async function AdminDashboard() {
             </p>
           </div>
         </Card>
+      </div>
+
+      {/* Analytics Section using Recharts */}
+      <div className="mt-8">
+        <h3 className="text-xl font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center gap-x-2">
+          <Layout className="h-5 w-5 text-blue-500" />
+          System Analytics
+        </h3>
+        <AdminCharts />
       </div>
     </div>
   );

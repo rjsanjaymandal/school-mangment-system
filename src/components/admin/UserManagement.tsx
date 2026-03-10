@@ -133,6 +133,15 @@ export function UserManagement() {
             <Users className="h-3 w-3 mr-1" /> STUDENT
           </Badge>
         );
+      case "parent":
+        return (
+          <Badge
+            variant="futuristic"
+            className="bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-xs shadow-amber-500/10"
+          >
+            <Shield className="h-3 w-3 mr-1" /> PARENT
+          </Badge>
+        );
       default:
         return (
           <Badge

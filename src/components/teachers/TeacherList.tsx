@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { MoreHorizontal, Pencil, Trash2, Eye, Plus } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Eye, Plus, FileUp } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -42,6 +42,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { TeacherForm } from "./TeacherForm";
 import { Card } from "@/components/ui/card";
+import { BulkImportTeacherModal } from "./BulkImportTeacherModal";
 
 interface TeacherListProps {
   initialData: Teacher[];
@@ -53,6 +54,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const onAdd = () => {
@@ -88,7 +90,15 @@ export function TeacherList({ initialData }: TeacherListProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <Button
+          onClick={() => setIsBulkImportOpen(true)}
+          variant="outline"
+          className="rounded-2xl font-bold gap-x-2 bg-white/50 backdrop-blur-md border-white/20 hover:bg-white/80"
+        >
+          <FileUp className="h-4 w-4" />
+          Bulk Import CSV
+        </Button>
         <Button
           onClick={onAdd}
           variant="neon"
@@ -238,6 +248,15 @@ export function TeacherList({ initialData }: TeacherListProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={isBulkImportOpen} onOpenChange={setIsBulkImportOpen}>
+        <DialogContent className="sm:max-w-[600px] glass border-white/20">
+          <BulkImportTeacherModal
+            onSuccess={() => setIsBulkImportOpen(false)}
+            onCancel={() => setIsBulkImportOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

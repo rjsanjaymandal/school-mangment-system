@@ -76,6 +76,35 @@ export async function addStop(data: {
     }
 }
 
+export async function updateStop(id: string, data: Partial<{
+    name: string;
+    pickup_time: string;
+    drop_time: string;
+    stop_order: number;
+}>) {
+    try {
+        const supabase = createAdminClient();
+        const { error } = await supabase.from("bus_stops").update(data).eq("id", id);
+        if (error) throw error;
+        revalidatePath("/transport");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function deleteStop(id: string) {
+    try {
+        const supabase = createAdminClient();
+        const { error } = await supabase.from("bus_stops").delete().eq("id", id);
+        if (error) throw error;
+        revalidatePath("/transport");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
 // ===== STUDENT TRANSPORT ASSIGNMENT =====
 
 export async function assignStudentTransport(data: {
@@ -88,6 +117,21 @@ export async function assignStudentTransport(data: {
         const { error } = await supabase
             .from("student_transport")
             .upsert(data, { onConflict: "student_id" });
+        if (error) throw error;
+        revalidatePath("/transport");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function unassignStudentTransport(student_id: string) {
+    try {
+        const supabase = createAdminClient();
+        const { error } = await supabase
+            .from("student_transport")
+            .delete()
+            .eq("student_id", student_id);
         if (error) throw error;
         revalidatePath("/transport");
         return { success: true };

@@ -18,6 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import dynamic from 'next/dynamic';
+import { CertificatePDF } from "./CertificatePDF";
+
+const PDFDownloadLink = dynamic(
+    () => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink),
+    { ssr: false, loading: () => <Button variant="ghost" size="icon" disabled className="h-8 w-8 text-slate-300"><Download className="h-4 w-4" /></Button> }
+);
 
 export default function CertificatesDashboardClient({ initialCertificates }: { initialCertificates: any[] }) {
     const [isGenerating, setIsGenerating] = useState(false);
@@ -159,13 +166,26 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                                                     >
                                                         <Printer className="h-4 w-4" />
                                                     </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg"
+                                                    <PDFDownloadLink
+                                                        document={<CertificatePDF certificate={cert} />}
+                                                        fileName={`${cert.reference_number}.pdf`}
                                                     >
-                                                        <Download className="h-4 w-4" />
-                                                    </Button>
+                                                        {({ loading }) => (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                disabled={loading}
+                                                                className={cn(
+                                                                    "h-8 w-8 rounded-lg transition-colors",
+                                                                    loading
+                                                                        ? "text-slate-300 pointer-events-none"
+                                                                        : "text-slate-400 hover:text-slate-900 hover:bg-slate-100"
+                                                                )}
+                                                            >
+                                                                <Download className="h-4 w-4" />
+                                                            </Button>
+                                                        )}
+                                                    </PDFDownloadLink>
                                                 </div>
                                             </td>
                                         </tr>

@@ -16,7 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Subject } from "@/types/database";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { createSubject, updateSubject } from "@/app/actions/subjects";
+import { useRouter } from "next/navigation";
 
 const subjectSchema = z.object({
   name: z.string().min(2, "Subject name is too short"),
@@ -32,7 +33,7 @@ interface SubjectFormProps {
 }
 
 export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
-  const supabase = createClient();
+  const router = useRouter();
   const form = useForm<SubjectFormValues>({
     resolver: zodResolver(subjectSchema),
     defaultValues: {
@@ -44,15 +45,22 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
 
   async function onSubmit(values: SubjectFormValues) {
     try {
-      console.log("Submitting subject values:", values);
-      toast.success(
-        initialData
-          ? "Subject updated successfully"
-          : "Subject created successfully",
-      );
-      onSuccess();
+      let result;
+      if (initialData) {
+        result = await updateSubject(initialData.id, values);
+      } else {
+        result = await createSubject(values);
+      }
+
+      if (result.success) {
+        toast.success(initialData ? "Subject updated successfully" : "Subject created successfully");
+        router.refresh();
+        onSuccess();
+      } else {
+        toast.error(result.error || "Failed to save subject");
+      }
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("An unexpected error occurred");
     }
   }
 
