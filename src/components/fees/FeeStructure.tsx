@@ -82,7 +82,7 @@ export function FeeStructure() {
                   </TableCell>
                   <TableCell>
                     <span className="font-mono font-bold text-slate-700">
-                      ${fee.amount.toLocaleString()}
+                      ₹{fee.amount.toLocaleString()}
                     </span>
                   </TableCell>
                   <TableCell className="text-slate-500">

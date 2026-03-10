@@ -49,7 +49,7 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Compliance Vault</h2>
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Legal & Documents</h2>
                     <p className="text-slate-500 font-medium tracking-tight">Institutional Archives & Regulatory Document Management</p>
                 </div>
                 <div className="flex gap-x-3">

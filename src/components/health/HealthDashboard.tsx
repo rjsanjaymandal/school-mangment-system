@@ -48,8 +48,8 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: Hea
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Health & Infirmary</h2>
-                    <p className="text-slate-500 font-medium tracking-tight">Student Health Records & Infirmary Management</p>
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Health Center</h2>
+                    <p className="text-slate-500 font-medium tracking-tight">Student Health Records & Medical Management</p>
                 </div>
                 <div className="flex gap-x-3">
                     <Badge variant="outline" className="rounded-full px-4 py-1.5 border-red-200 text-red-600 bg-red-50 gap-x-2 font-bold uppercase text-[10px]">

@@ -61,8 +61,8 @@ export function PaymentForm() {
                   <SelectValue placeholder="Select fee item" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="f1">Annual Tuition ($2,500)</SelectItem>
-                  <SelectItem value="f2">Laboratory Fee ($300)</SelectItem>
+                  <SelectItem value="f1">Annual Tuition (₹2,500)</SelectItem>
+                  <SelectItem value="f2">Laboratory Fee (₹300)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -112,7 +112,7 @@ export function PaymentForm() {
           <div className="text-sm text-slate-500">
             <p>
               Outstanding Balance:{" "}
-              <span className="text-red-500 font-bold">$2,800</span>
+              <span className="text-red-500 font-bold">₹2,800</span>
             </p>
           </div>
           <Button

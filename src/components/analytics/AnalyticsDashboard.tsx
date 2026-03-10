@@ -88,7 +88,7 @@ export function AnalyticsDashboard({
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Neural Insights</h2>
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Analytics</h2>
                     <p className="text-slate-500 font-medium tracking-tight">Real-time academic & institutional telemetry</p>
                 </div>
                 <Button onClick={handleExportCSV} className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">

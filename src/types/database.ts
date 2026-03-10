@@ -309,3 +309,65 @@ export interface InfirmaryLog {
   student?: Student;
   recorder?: Profile;
 }
+
+export interface Activity {
+  id: string;
+  name: string;
+  description?: string;
+  category?: string;
+  teacher_in_charge?: string;
+  location?: string;
+  schedule?: string;
+  max_participants?: number;
+  created_at: string;
+  updated_at: string;
+  teacher?: Profile;
+}
+
+export interface Alumni {
+  id: string;
+  first_name: string;
+  last_name: string;
+  graduation_year: number;
+  email?: string;
+  phone?: string;
+  current_profession?: string;
+  company?: string;
+  achievements?: string;
+  profile_picture_url?: string;
+  created_at: string;
+}
+
+export interface ActivityEnrollment {
+  id: string;
+  activity_id: string;
+  student_id: string;
+  enrollment_date: string;
+  status: "enrolled" | "completed" | "dropped";
+  activity?: Activity;
+  student?: Student;
+}
+
+export interface InventoryCategory {
+  id: string;
+  name: string;
+  description?: string;
+  created_at: string;
+}
+
+export interface Certificate {
+  id: string;
+  student_id: string;
+  type: string;
+  reference_number: string;
+  issued_date: string;
+  issued_by?: string;
+  status: "issued" | "revoked";
+  remarks?: string;
+  student?: Student;
+  issuer?: Profile;
+}
+
+
+export interface SchoolSettings { id: string; school_name: string; academic_year_start?: string; academic_year_end?: string; contact_email?: string; contact_phone?: string; address?: string; timezone: string; currency: string; features: any; created_at: string; updated_at: string; }
+export interface PaymentGateway { id: string; name: string; provider: string; is_active: boolean; config?: any; created_at: string; updated_at: string; }

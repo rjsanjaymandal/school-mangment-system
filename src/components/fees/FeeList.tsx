@@ -43,7 +43,7 @@ export function FeeList({ initialData }: FeeListProps) {
               <p className="text-sm text-blue-100 italic">Expected Revenue</p>
               <DollarSign className="h-5 w-5 text-blue-200" />
             </div>
-            <h2 className="text-3xl font-bold">$125,000</h2>
+            <h2 className="text-3xl font-bold">₹125,000</h2>
             <p className="text-xs text-blue-200 mt-2">Annual total expected</p>
           </CardContent>
         </Card>
@@ -53,7 +53,7 @@ export function FeeList({ initialData }: FeeListProps) {
               <p className="text-sm text-green-100 italic">Collected</p>
               <ArrowUpRight className="h-5 w-5 text-green-200" />
             </div>
-            <h2 className="text-3xl font-bold">$98,450</h2>
+            <h2 className="text-3xl font-bold">₹98,450</h2>
             <p className="text-xs text-green-200 mt-2">78.7% collection rate</p>
           </CardContent>
         </Card>
@@ -63,7 +63,7 @@ export function FeeList({ initialData }: FeeListProps) {
               <p className="text-sm text-red-100 italic">Outstanding</p>
               <CreditCard className="h-5 w-5 text-red-200" />
             </div>
-            <h2 className="text-3xl font-bold">$26,550</h2>
+            <h2 className="text-3xl font-bold">₹26,550</h2>
             <p className="text-xs text-red-200 mt-2">Follow up required</p>
           </CardContent>
         </Card>
@@ -109,7 +109,7 @@ export function FeeList({ initialData }: FeeListProps) {
                       {fee.name}
                     </TableCell>
                     <TableCell className="font-bold text-slate-700">
-                      ${fee.amount}
+                      ₹{fee.amount}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-x-2 text-slate-500">

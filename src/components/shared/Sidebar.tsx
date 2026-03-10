@@ -52,14 +52,14 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Command Center", href: "/", icon: LayoutDashboard },
       {
-        name: "Neural Insights",
+        name: "Analytics",
         href: "/analytics",
         icon: Zap,
         futuristic: true,
         roles: ["admin", "teacher"],
       },
       {
-        name: "Institutional Oracle",
+        name: "AI Insights",
         href: "/oracle",
         icon: BrainCircuit,
         futuristic: true,
@@ -79,10 +79,10 @@ const navigation: NavGroup[] = [
         roles: ["admin"],
       },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
-      { name: "Conduct Hub", href: "/conduct", icon: ShieldAlert },
-      { name: "Health Vault", href: "/health", icon: Stethoscope },
+      { name: "Behavior", href: "/conduct", icon: ShieldAlert },
+      { name: "Health Center", href: "/health", icon: Stethoscope },
       {
-        name: "Heritage Hub",
+        name: "Alumni",
         href: "/heritage",
         icon: GraduationCap,
         roles: ["admin"],
@@ -123,7 +123,7 @@ const navigation: NavGroup[] = [
       { name: "Fees", href: "/fees", icon: CreditCard },
       { name: "Library", href: "/library", icon: Library },
       {
-        name: "Procurement Hub",
+        name: "Inventory",
         href: "/inventory",
         icon: Package,
         roles: ["admin"],
@@ -149,9 +149,9 @@ const navigation: NavGroup[] = [
         roles: ["admin"],
       },
       { name: "Settings", href: "/settings", icon: Settings },
-      { name: "Security Vault", href: "/audit", icon: Shield },
-      { name: "Compliance Vault", href: "/compliance", icon: FileText },
-      { name: "Ecosystem Gateways", href: "/gateways", icon: Globe },
+      { name: "Audit Logs", href: "/audit", icon: Shield },
+      { name: "Legal & Documents", href: "/compliance", icon: FileText },
+      { name: "Payment Gateways", href: "/gateways", icon: Globe },
     ],
   },
 ];
@@ -220,9 +220,9 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                   className={cn(
                     "group flex items-center gap-x-3 text-slate-500 text-sm font-medium px-3 py-2.5 rounded-xl transition-all duration-300 hover:bg-white hover:shadow-sm hover:text-slate-900",
                     pathname === item.href &&
-                      "bg-white shadow-md text-slate-900 border border-slate-100",
+                    "bg-white shadow-md text-slate-900 border border-slate-100",
                     item.futuristic &&
-                      "border border-blue-100/50 bg-blue-50/10",
+                    "border border-blue-100/50 bg-blue-50/10",
                   )}
                 >
                   <div

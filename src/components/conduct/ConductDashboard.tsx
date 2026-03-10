@@ -41,7 +41,7 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Student Conduct</h2>
+                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Student Behavior</h2>
                     <p className="text-slate-500 font-medium tracking-tight">Merit & Demerit Behavioral Tracking</p>
                 </div>
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
@@ -49,7 +49,7 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
                         <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Record</Button>
                     </DialogTrigger>
                     <DialogContent className="glass border-none">
-                        <DialogHeader><DialogTitle className="font-black text-2xl">Add Conduct Record</DialogTitle></DialogHeader>
+                        <DialogHeader><DialogTitle className="font-black text-2xl">Add Behavior Record</DialogTitle></DialogHeader>
                         <div className="space-y-4 pt-4">
                             <div className="space-y-2">
                                 <Label className="text-xs font-bold uppercase text-slate-400">Student</Label>
@@ -115,7 +115,7 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
                     </thead>
                     <tbody className="divide-y">
                         {records.length === 0 ? (
-                            <tr><td colSpan={6} className="py-12 text-center text-slate-400 font-medium">No conduct records yet.</td></tr>
+                            <tr><td colSpan={6} className="py-12 text-center text-slate-400 font-medium">No behavior records yet.</td></tr>
                         ) : (
                             records.map((r) => (
                                 <tr key={r.id} className="hover:bg-white/60 transition-colors">

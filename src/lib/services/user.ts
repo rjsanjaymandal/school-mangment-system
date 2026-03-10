@@ -26,9 +26,9 @@ export const UserService = {
 
       if (error) throw error;
       return {
-          ...data,
-          email: user.email,
-          last_login: user.last_sign_in_at
+        ...data,
+        email: user.email,
+        last_login: user.last_sign_in_at
       };
     } catch (error) {
       return handleServiceError(error);
@@ -39,18 +39,18 @@ export const UserService = {
    * Manually syncs the current role to auth metadata if needed (fallback).
    */
   async syncRoleMetadata() {
-      try {
-          const supabase = createClient();
-          const profile = await this.getCurrentProfile();
-          if (!profile || 'error' in profile) return;
+    try {
+      const supabase = createClient();
+      const profile = await this.getCurrentProfile();
+      if (!profile || 'error' in profile) return;
 
-          // Note: Updating auth.users metadata usually requires service_role or trigger
-          // This serves as a placeholder for manual UI-driven logic if triggers fail.
-          console.log("Role metadata synced for:", profile.role);
-          return profile.role;
-      } catch (error) {
-          return handleServiceError(error);
-      }
+      // Note: Updating auth.users metadata usually requires service_role or trigger
+      // This serves as a placeholder for manual UI-driven logic if triggers fail.
+      console.log("Role metadata synced for:", profile.role);
+      return profile.role;
+    } catch (error) {
+      return handleServiceError(error);
+    }
   },
 
   /**
@@ -77,7 +77,7 @@ export const UserService = {
   async updateProfileRole(userId: string, role: 'admin' | 'teacher' | 'student' | 'parent') {
     try {
       const supabase = createClient();
-      
+
       // Get current user for audit log
       const { data: { user: actor } } = await supabase.auth.getUser();
 
@@ -134,7 +134,7 @@ export const UserService = {
   async deactivateUser(userId: string) {
     try {
       const supabase = createClient();
-      
+
       // Get current user for audit log
       const { data: { user: actor } } = await supabase.auth.getUser();
 
@@ -169,7 +169,7 @@ export const UserService = {
   async getSystemStats() {
     try {
       const supabase = createClient();
-      
+
       const { count: studentCount, error: studentError } = await supabase
         .from("profiles")
         .select("*", { count: 'exact', head: true })
@@ -186,7 +186,7 @@ export const UserService = {
         studentCount: studentCount || 0,
         teacherCount: teacherCount || 0,
         attendanceRate: "94.2%", // Placeholder until attendance table found
-        revenue: "$45.2K" // Placeholder until fees table found
+        revenue: "₹45.2K" // Placeholder until fees table found
       };
     } catch (error) {
       return handleServiceError(error);

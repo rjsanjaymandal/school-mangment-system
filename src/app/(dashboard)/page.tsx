@@ -27,38 +27,38 @@ export default async function DashboardPage() {
     statsData && !("error" in statsData)
       ? statsData
       : {
-          studentCount: 1234,
-          teacherCount: 84,
-          attendanceRate: "94.2%",
-          revenue: "$45.2K",
-        };
+        studentCount: 1234,
+        teacherCount: 84,
+        attendanceRate: "94.2%",
+        revenue: "₹45.2K",
+      };
 
   const activityFeed = Array.isArray(recentLogs)
     ? recentLogs.slice(0, 3).map((log) => ({
-        title: log.action.replace(/_/g, " "),
-        desc: `Updated by ${log.actor?.first_name || "System"}`,
-        icon:
-          log.action.includes("USER") || log.action.includes("PROFILE")
-            ? Users
-            : Zap,
-      }))
+      title: log.action.replace(/_/g, " "),
+      desc: `Updated by ${log.actor?.first_name || "System"}`,
+      icon:
+        log.action.includes("USER") || log.action.includes("PROFILE")
+          ? Users
+          : Zap,
+    }))
     : [
-        {
-          title: "Admission Open",
-          desc: "Term 2 portal is active.",
-          icon: GraduationCap,
-        },
-        {
-          title: "System Heartbeat",
-          desc: "All nodes operational.",
-          icon: Activity,
-        },
-        {
-          title: "Asset Audit",
-          desc: "Lab equipment verified.",
-          icon: Zap,
-        },
-      ];
+      {
+        title: "Admission Open",
+        desc: "Term 2 portal is active.",
+        icon: GraduationCap,
+      },
+      {
+        title: "System Heartbeat",
+        desc: "All nodes operational.",
+        icon: Activity,
+      },
+      {
+        title: "Asset Audit",
+        desc: "Lab equipment verified.",
+        icon: Zap,
+      },
+    ];
 
   const stats = [
     {
