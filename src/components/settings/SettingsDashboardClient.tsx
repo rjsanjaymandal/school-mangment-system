@@ -11,6 +11,10 @@ import {
     Lock,
     RefreshCw,
     Save,
+    GraduationCap,
+    Banknote,
+    Mail,
+    ShieldCheck,
     CheckCircle2,
     XCircle
 } from "lucide-react";
@@ -26,30 +30,67 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { updateGatewayStatus, updateSettings } from "@/app/actions/settings-gateway-actions";
+import { updateSettings } from "@/app/actions/settings";
+import { updateGatewayStatus } from "@/app/actions/gateways";
+import { toast } from "sonner";
 
 export default function SettingsDashboardClient({
     initialSettings,
     initialGateways,
+    academicYears,
 }: {
     initialSettings: any;
     initialGateways: any[];
+    academicYears: any[];
 }) {
-    const [activeTab, setActiveTab] = useState("general");
-    const [settings, setSettings] = useState(initialSettings || { school_name: "", contact_email: "", currency: "USD", timezone: "UTC" });
+    const [activeTab, setActiveTab] = useState("identity");
+    const [settings, setSettings] = useState(initialSettings);
     const [gateways, setGateways] = useState(initialGateways || []);
     const [isSaving, setIsSaving] = useState(false);
 
-    const handleSaveSettings = async () => {
+    const handleSaveSettings = async (category: string, keys: string[]) => {
         setIsSaving(true);
-        // Simulate server call for now since we haven't wired the exact server action wrapper here yet
-        setTimeout(() => setIsSaving(false), 1000);
+        const settingsToSave: Record<string, string> = {};
+        keys.forEach(key => {
+            settingsToSave[key] = settings[key] || "";
+        });
+
+        const result = await updateSettings(settingsToSave, category);
+        setIsSaving(false);
+
+        if (result.success) {
+            toast.success(`${category.charAt(0).toUpperCase() + category.slice(1)} settings updated`);
+        } else {
+            toast.error(result.error);
+        }
     };
 
-    const toggleGateway = (id: string) => {
-        setGateways(gateways.map(g => g.id === id ? { ...g, is_active: !g.is_active } : g));
+    const handleToggleGateway = async (id: string, currentStatus: boolean) => {
+        const result = await updateGatewayStatus(id, !currentStatus);
+        if (result.success) {
+            setGateways(gateways.map(g => g.id === id ? { ...g, is_active: !currentStatus } : g));
+            toast.success("Gateway status updated");
+        } else {
+            toast.error(result.error);
+        }
     };
+
+    const tabs = [
+        { id: "identity", label: "Identity", icon: Building2 },
+        { id: "academic", label: "Academic", icon: GraduationCap },
+        { id: "financial", label: "Financial", icon: Banknote },
+        { id: "gateways", label: "Payment Gateways", icon: CreditCard },
+        { id: "communication", label: "Communication", icon: Mail },
+        { id: "security", label: "Security & Policy", icon: ShieldCheck },
+    ];
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
@@ -59,35 +100,15 @@ export default function SettingsDashboardClient({
                         System Settings
                     </h2>
                     <p className="text-slate-500 font-medium tracking-tight">
-                        Global Configuration & Core Integrations
+                        Configure your institution's core infrastructure and behavior
                     </p>
-                </div>
-                <div className="flex gap-x-3">
-                    <Button
-                        onClick={handleSaveSettings}
-                        disabled={isSaving}
-                        className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue min-w-[140px]"
-                    >
-                        {isSaving ? (
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                        ) : (
-                            <Save className="h-4 w-4" />
-                        )}
-                        {isSaving ? "Applying..." : "Apply Defaults"}
-                    </Button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Navigation Sidebar */}
                 <div className="md:col-span-1 space-y-2">
-                    {[
-                        { id: "general", label: "General", icon: Building2 },
-                        { id: "gateways", label: "Gateways", icon: CreditCard },
-                        { id: "notifications", label: "Notifications", icon: Bell },
-                        { id: "security", label: "Security", icon: Lock },
-                        { id: "system", label: "System Core", icon: ActivitySquare },
-                    ].map((item) => (
+                    {tabs.map((item) => (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
@@ -104,73 +125,184 @@ export default function SettingsDashboardClient({
 
                 {/* Content Area */}
                 <div className="md:col-span-3 space-y-6">
-                    {activeTab === "general" && (
+                    {activeTab === "identity" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white">
+                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <Globe className="h-4 w-4 text-blue-400" />
                                     Institutional Identity
                                 </CardTitle>
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleSaveSettings('identity', ['school_name', 'contact_email', 'contact_phone', 'school_address', 'logo_url'])}
+                                    disabled={isSaving}
+                                    className="rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold gap-x-2"
+                                >
+                                    {isSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                                    Save Changes
+                                </Button>
                             </CardHeader>
                             <CardContent className="p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2 col-span-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">
-                                            Institution Name
-                                        </Label>
+                                        <Label className="text-xs font-black uppercase text-slate-500">Institution Name</Label>
                                         <Input
-                                            value={settings.school_name}
+                                            value={settings.school_name || ""}
                                             onChange={(e) => setSettings({ ...settings, school_name: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-12 rounded-xl font-medium"
-                                            placeholder="e.g. Cambridge International"
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
                                         />
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">
-                                            Primary Contact Email
-                                        </Label>
+                                        <Label className="text-xs font-black uppercase text-slate-500">Contact Email</Label>
                                         <Input
-                                            value={settings.contact_email}
+                                            value={settings.contact_email || ""}
                                             onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-12 rounded-xl font-medium"
-                                            placeholder="admin@school.edu"
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
                                         />
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">
-                                            Contact Phone
-                                        </Label>
+                                        <Label className="text-xs font-black uppercase text-slate-500">Contact Phone</Label>
                                         <Input
                                             value={settings.contact_phone || ""}
                                             onChange={(e) => setSettings({ ...settings, contact_phone: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-12 rounded-xl font-medium"
-                                            placeholder="+1 (555) 000-0000"
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
                                         />
                                     </div>
-
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">
-                                            Base Currency
-                                        </Label>
+                                    <div className="space-y-2 col-span-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Address</Label>
                                         <Input
-                                            value={settings.currency}
+                                            value={settings.school_address || ""}
+                                            onChange={(e) => setSettings({ ...settings, school_address: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                        />
+                                    </div>
+                                    <div className="space-y-2 col-span-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Logo URL</Label>
+                                        <Input
+                                            value={settings.logo_url || ""}
+                                            onChange={(e) => setSettings({ ...settings, logo_url: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            placeholder="https://..."
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {activeTab === "academic" && (
+                        <Card className="border-none glass futuristic-card overflow-hidden">
+                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
+                                    <GraduationCap className="h-4 w-4 text-purple-400" />
+                                    Academic Configuration
+                                </CardTitle>
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleSaveSettings('academic', ['current_academic_year_id', 'result_visibility'])}
+                                    disabled={isSaving}
+                                    className="rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold gap-x-2"
+                                >
+                                    {isSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                                    Save Changes
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-8 space-y-6">
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Current Academic Session</Label>
+                                        <Select
+                                            value={settings.current_academic_year_id || ""}
+                                            onValueChange={(val) => setSettings({ ...settings, current_academic_year_id: val })}
+                                        >
+                                            <SelectTrigger className="h-11 rounded-xl bg-slate-50/50">
+                                                <SelectValue placeholder="Select active session" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {academicYears.map(year => (
+                                                    <SelectItem key={year.id} value={year.id}>{year.name}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-[10px] text-slate-400 font-medium">This will be the default session for all new enrollments and grading.</p>
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                                        <div className="space-y-0.5">
+                                            <Label className="text-sm font-bold text-slate-900">Publish Exam Results</Label>
+                                            <p className="text-xs text-slate-500">Enable to allow parents and students to view results.</p>
+                                        </div>
+                                        <Switch
+                                            checked={settings.result_visibility === "true"}
+                                            onCheckedChange={(checked) => setSettings({ ...settings, result_visibility: checked ? "true" : "false" })}
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {activeTab === "financial" && (
+                        <Card className="border-none glass futuristic-card overflow-hidden">
+                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
+                                    <Banknote className="h-4 w-4 text-emerald-400" />
+                                    Financial & Fees
+                                </CardTitle>
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleSaveSettings('finance', ['currency', 'currency_symbol', 'late_fee_per_day', 'tax_label', 'tax_rate'])}
+                                    disabled={isSaving}
+                                    className="rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold gap-x-2"
+                                >
+                                    {isSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                                    Save Changes
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-8 space-y-6">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Currency Code</Label>
+                                        <Input
+                                            value={settings.currency || ""}
                                             onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-12 rounded-xl font-medium"
-                                            placeholder="USD, INR, EUR"
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            placeholder="USD"
                                         />
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">
-                                            Timezone
-                                        </Label>
+                                        <Label className="text-xs font-black uppercase text-slate-500">Currency Symbol</Label>
                                         <Input
-                                            value={settings.timezone}
-                                            onChange={(e) => setSettings({ ...settings, timezone: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-12 rounded-xl font-medium"
-                                            placeholder="UTC"
+                                            value={settings.currency_symbol || ""}
+                                            onChange={(e) => setSettings({ ...settings, currency_symbol: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            placeholder="$"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Late Fee (Per Day)</Label>
+                                        <Input
+                                            type="number"
+                                            value={settings.late_fee_per_day || ""}
+                                            onChange={(e) => setSettings({ ...settings, late_fee_per_day: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Tax/VAT Label</Label>
+                                        <Input
+                                            value={settings.tax_label || "VAT"}
+                                            onChange={(e) => setSettings({ ...settings, tax_label: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Tax/VAT Percentage (%)</Label>
+                                        <Input
+                                            type="number"
+                                            value={settings.tax_rate || "0"}
+                                            onChange={(e) => setSettings({ ...settings, tax_rate: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                 </div>
@@ -203,12 +335,15 @@ export default function SettingsDashboardClient({
                                                 <Badge variant="outline" className={cn("text-[10px] uppercase font-black tracking-widest", gateway.is_active ? "text-emerald-500 bg-emerald-50 border-emerald-200" : "text-slate-400 bg-slate-50 border-slate-200")}>
                                                     {gateway.is_active ? "ACTIVE" : "DISABLED"}
                                                 </Badge>
-                                                <Switch checked={gateway.is_active} onCheckedChange={() => toggleGateway(gateway.id)} />
+                                                <Switch
+                                                    checked={gateway.is_active}
+                                                    onCheckedChange={() => handleToggleGateway(gateway.id, gateway.is_active)}
+                                                />
                                             </div>
                                         </div>
                                     )) : (
                                         <div className="p-12 text-center text-slate-500 font-medium">
-                                            No payment gateways detected in routing logic. Run SQL seeds to install base providers.
+                                            No payment gateways detected.
                                         </div>
                                     )}
                                 </div>
@@ -216,16 +351,96 @@ export default function SettingsDashboardClient({
                         </Card>
                     )}
 
-                    {/* Placeholder for other tabs (Security, Notifications, etc.) */}
-                    {["security", "notifications", "system"].includes(activeTab) && (
-                        <Card className="border-none glass futuristic-card p-12 flex flex-col items-center justify-center text-center">
-                            <div className="h-20 w-20 bg-slate-100 rounded-3xl flex items-center justify-center mb-6 border border-white">
-                                <Settings className="h-10 w-10 text-slate-300 animate-spin-slow" />
-                            </div>
-                            <h3 className="text-2xl font-black text-slate-900 mb-2">Module Offline</h3>
-                            <p className="text-slate-500 font-medium max-w-sm">
-                                The {activeTab} routing module is awaiting kernel update. Check the orchestrator for deployment status.
-                            </p>
+                    {activeTab === "communication" && (
+                        <Card className="border-none glass futuristic-card overflow-hidden">
+                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
+                                    <Mail className="h-4 w-4 text-yellow-400" />
+                                    Email & SMS
+                                </CardTitle>
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleSaveSettings('communication', ['smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass'])}
+                                    disabled={isSaving}
+                                    className="rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold gap-x-2"
+                                >
+                                    {isSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                                    Save Changes
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-8 space-y-6">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2 col-span-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">SMTP Host</Label>
+                                        <Input
+                                            value={settings.smtp_host || ""}
+                                            onChange={(e) => setSettings({ ...settings, smtp_host: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            placeholder="smtp.gmail.com"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">SMTP Port</Label>
+                                        <Input
+                                            value={settings.smtp_port || ""}
+                                            onChange={(e) => setSettings({ ...settings, smtp_port: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            placeholder="587"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">SMTP User</Label>
+                                        <Input
+                                            value={settings.smtp_user || ""}
+                                            onChange={(e) => setSettings({ ...settings, smtp_user: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {activeTab === "security" && (
+                        <Card className="border-none glass futuristic-card overflow-hidden">
+                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
+                                    <ShieldCheck className="h-4 w-4 text-red-400" />
+                                    Security & System Policy
+                                </CardTitle>
+                                <Button
+                                    size="sm"
+                                    onClick={() => handleSaveSettings('security', ['session_timeout', 'password_complexity'])}
+                                    disabled={isSaving}
+                                    className="rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold gap-x-2"
+                                >
+                                    {isSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                                    Save Changes
+                                </Button>
+                            </CardHeader>
+                            <CardContent className="p-8 space-y-6">
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-black uppercase text-slate-500">Session Timeout (Minutes)</Label>
+                                        <Input
+                                            type="number"
+                                            value={settings.session_timeout || "60"}
+                                            onChange={(e) => setSettings({ ...settings, session_timeout: e.target.value })}
+                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                        />
+                                    </div>
+                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                                        <div className="space-y-0.5">
+                                            <Label className="text-sm font-bold text-slate-900">Enforce Strong Passwords</Label>
+                                            <p className="text-xs text-slate-500">Require uppercase, numbers, and symbols.</p>
+                                        </div>
+                                        <Switch
+                                            checked={settings.password_complexity === "true"}
+                                            onCheckedChange={(checked) => setSettings({ ...settings, password_complexity: checked ? "true" : "false" })}
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
                         </Card>
                     )}
                 </div>

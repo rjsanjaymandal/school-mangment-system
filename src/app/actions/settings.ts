@@ -3,37 +3,55 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
+/**
+ * Fetches all school settings and returns them as a keyed object.
+ */
 export async function getSettings() {
     try {
         const supabase = createAdminClient();
         const { data, error } = await supabase
             .from("school_settings")
-            .select("*")
-            .single();
+            .select("*");
 
-        if (error && error.code !== 'PGRST116') throw error; // PGRST116 is 'not found', handled via returning null
-        return { data };
+        if (error) throw error;
+
+        // Map array of {key, value} to { [key]: value }
+        const settingsMap = (data || []).reduce((acc: any, curr) => {
+            acc[curr.key] = curr.value;
+            return acc;
+        }, {});
+
+        return { data: settingsMap };
     } catch (error) {
         console.error("Error fetching school settings:", error);
         return { error: "Failed to fetch settings" };
     }
 }
 
-export async function updateSettings(id: string | undefined, data: any) {
+/**
+ * Updates multiple settings at once using upsert.
+ */
+export async function updateSettings(settings: Record<string, string | null>, category: string = 'general') {
     try {
         const supabase = createAdminClient();
-        if (id) {
-            const { error } = await supabase.from("school_settings").update(data).eq("id", id);
-            if (error) throw error;
-        } else {
-            const { error } = await supabase.from("school_settings").insert(data);
-            if (error) throw error;
-        }
+
+        // Prepare rows for upsert
+        const rows = Object.entries(settings).map(([key, value]) => ({
+            key,
+            value,
+            category
+        }));
+
+        const { error } = await supabase
+            .from("school_settings")
+            .upsert(rows, { onConflict: 'key' });
+
+        if (error) throw error;
 
         revalidatePath("/settings");
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error updating settings:", error);
-        return { error: "Failed to update settings" };
+        return { success: false, error: error.message || "Failed to update settings" };
     }
 }
