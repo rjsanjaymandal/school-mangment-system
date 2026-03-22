@@ -9,20 +9,21 @@ export default function UnauthorizedPage() {
         <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-red-100 text-red-600 mb-4">
           <ShieldAlert className="h-10 w-10" />
         </div>
-        <h1 className="text-4xl font-black text-slate-900 uppercase tracking-tight">
+        <h1 className="text-4xl font-black text-foreground uppercase tracking-tight">
           Access Restricted
         </h1>
-        <p className="text-slate-500 font-medium">
+        <p className="text-muted-foreground font-medium">
           Your credentials do not grant access to this secure segment. Please
           contact administration if you believe this is an error.
         </p>
         <Button
           asChild
-          className="rounded-2xl h-12 px-8 bg-slate-900 font-bold shadow-xl"
+          className="rounded-2xl h-12 px-8 bg-card font-bold shadow-xl"
         >
-          <Link href="/">Back to Command Center</Link>
+          <Link href="/">Back to Dashboard</Link>
         </Button>
       </div>
     </div>
   );
 }
+

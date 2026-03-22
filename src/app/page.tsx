@@ -23,3 +23,4 @@ export default async function Home() {
   // Dashboard routing based on role
   redirect("/launcher");
 }
+

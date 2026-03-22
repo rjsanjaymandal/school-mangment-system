@@ -146,7 +146,7 @@ export function UserManagement() {
         return (
           <Badge
             variant="futuristic"
-            className="bg-slate-500/10 text-slate-500 border-slate-500/20 tracking-tighter uppercase font-black"
+            className="bg-slate-500/10 text-muted-foreground border-slate-500/20 tracking-tighter uppercase font-black"
           >
             {role || "USER"}
           </Badge>
@@ -166,7 +166,7 @@ export function UserManagement() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search identity vault..."
             className="pl-10 rounded-2xl border-white/10 bg-white/50 backdrop-blur-md shadow-xl focus:ring-slate-900 transition-all font-medium"
@@ -192,18 +192,18 @@ export function UserManagement() {
         className="overflow-hidden border-none shadow-2xl bg-white/30 backdrop-blur-xl"
       >
         <Table>
-          <TableHeader className="bg-slate-900/5">
+          <TableHeader className="bg-card/5">
             <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Identity Details
               </TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Access Tier
               </TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Registered
               </TableHead>
-              <TableHead className="text-right text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <TableHead className="text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Actions
               </TableHead>
             </TableRow>
@@ -213,7 +213,7 @@ export function UserManagement() {
               <TableRow>
                 <TableCell
                   colSpan={4}
-                  className="h-32 text-center text-slate-400 font-bold uppercase tracking-widest"
+                  className="h-32 text-center text-muted-foreground font-bold uppercase tracking-widest"
                 >
                   No records found in current segment.
                 </TableCell>
@@ -226,14 +226,14 @@ export function UserManagement() {
                 >
                   <TableCell>
                     <div className="flex items-center gap-x-4">
-                      <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black shadow-lg neon-blue">
+                      <div className="h-10 w-10 rounded-xl bg-card text-white flex items-center justify-center font-black shadow-lg neon-blue">
                         {user.first_name?.[0] || "U"}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-slate-900 leading-tight">
+                        <span className="font-bold text-foreground leading-tight">
                           {user.first_name} {user.last_name}
                         </span>
-                        <span className="text-[10px] font-medium text-slate-400 tracking-tight font-mono">
+                        <span className="text-[10px] font-medium text-muted-foreground tracking-tight font-mono">
                           {user.id}
                         </span>
                       </div>
@@ -242,10 +242,10 @@ export function UserManagement() {
                   <TableCell>{getRoleBadge(user.role)}</TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="text-xs font-bold text-slate-600">
+                      <span className="text-xs font-bold text-foreground/70">
                         {new Date(user.created_at).toLocaleDateString()}
                       </span>
-                      <span className="text-[10px] text-slate-400 uppercase font-black">
+                      <span className="text-[10px] text-muted-foreground uppercase font-black">
                         {new Date(user.created_at).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -258,7 +258,7 @@ export function UserManagement() {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-slate-900 hover:text-white rounded-lg transition-all"
+                          className="h-8 w-8 p-0 hover:bg-card hover:text-white rounded-lg transition-all"
                         >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -267,14 +267,14 @@ export function UserManagement() {
                         align="end"
                         className="w-56 rounded-2xl border-white/10 bg-white/80 backdrop-blur-xl shadow-2xl animate-in zoom-in-95 duration-200"
                       >
-                        <DropdownMenuLabel className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <DropdownMenuLabel className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
                           Access Management
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-slate-100" />
                         <DropdownMenuItem
                           onClick={() => handleImpersonate(user.id)}
                           disabled={isImpersonating === user.id}
-                          className="gap-x-2 font-bold cursor-pointer hover:bg-slate-900 hover:text-white focus:bg-slate-900 focus:text-white rounded-xl transition-colors"
+                          className="gap-x-2 font-bold cursor-pointer hover:bg-card hover:text-white focus:bg-card focus:text-white rounded-xl transition-colors"
                         >
                           <Eye className="h-4 w-4" />{" "}
                           {isImpersonating === user.id
@@ -317,7 +317,7 @@ export function UserManagement() {
         </Table>
       </Card>
 
-      <div className="p-4 rounded-3xl bg-slate-900 border border-white/10 shadow-2xl relative overflow-hidden group">
+      <div className="p-4 rounded-3xl bg-card border border-white/10 shadow-2xl relative overflow-hidden group">
         <div className="absolute inset-0 bg-linear-to-tr from-blue-500/10 to-transparent opacity-50" />
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-x-4 text-white">
@@ -346,3 +346,4 @@ export function UserManagement() {
     </div>
   );
 }
+

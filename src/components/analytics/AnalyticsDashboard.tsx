@@ -88,10 +88,17 @@ export function AnalyticsDashboard({
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Analytics</h2>
-                    <p className="text-slate-500 font-medium tracking-tight">Real-time academic & institutional telemetry</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground">
+                        Institutional Analytics
+                    </h2>
+                    <p className="text-foreground/70 font-bold tracking-tight">
+                        Real-time academic & institutional telemetry
+                    </p>
                 </div>
-                <Button onClick={handleExportCSV} className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+                <Button 
+                    onClick={handleExportCSV} 
+                    className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]"
+                >
                     <Download className="h-4 w-4" /> Export Report
                 </Button>
             </div>
@@ -99,13 +106,13 @@ export function AnalyticsDashboard({
             {/* Top Stats */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {topMetrics.map((m) => (
-                    <Card key={m.title} className="border-none glass futuristic-card group">
+                    <Card key={m.title} className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl group transition-all hover:bg-card/60">
                         <CardContent className="p-6">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{m.title}</p>
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tighter">{m.value}</h3>
-                            <p className="text-[10px] font-bold text-slate-400 mt-1">{m.sub}</p>
-                            <div className="mt-4 h-1 w-full bg-slate-100 rounded-full overflow-hidden">
-                                <div className={cn("h-full rounded-full bg-slate-900 neon-blue transition-all duration-1000")} style={{ width: m.value.replace("+", "") }} />
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">{m.title}</p>
+                            <h3 className="text-3xl font-black text-foreground tracking-tighter">{m.value}</h3>
+                            <p className="text-[10px] font-bold text-foreground/50 uppercase tracking-tighter mt-1">{m.sub}</p>
+                            <div className="mt-4 h-1 w-full bg-primary/10 rounded-full overflow-hidden">
+                                <div className={cn("h-full rounded-full bg-primary emerald-glow transition-all duration-1000")} style={{ width: m.value.includes('%') ? m.value : '100%' }} />
                             </div>
                         </CardContent>
                     </Card>
@@ -114,11 +121,11 @@ export function AnalyticsDashboard({
 
             <div className="grid gap-6 lg:grid-cols-3">
                 {/* Monthly Attendance Chart */}
-                <Card className="lg:col-span-2 border-none glass futuristic-card min-h-[400px]">
-                    <CardHeader className="flex flex-row items-center justify-between">
+                <Card className="lg:col-span-2 border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl min-h-[400px]">
+                    <CardHeader className="flex flex-row items-center justify-between border-b border-border bg-primary/5">
                         <div>
-                            <CardTitle className="text-lg font-black">Monthly Attendance Trend</CardTitle>
-                            <p className="text-xs text-slate-500">Real attendance data for the current year</p>
+                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Monthly Attendance Trend</CardTitle>
+                            <p className="text-[8px] font-bold text-foreground/40 uppercase tracking-widest">Real attendance data for the current year</p>
                         </div>
                     </CardHeader>
                     <CardContent className="flex flex-col justify-end h-[300px] mt-4 px-8">
@@ -126,89 +133,99 @@ export function AnalyticsDashboard({
                             {monthlyRates.slice(0, currentMonth + 1).map((h, i) => (
                                 <div key={i} className="flex-1 flex flex-col items-center gap-y-2 group/bar">
                                     <div className="relative w-full" style={{ height: "200px" }}>
-                                        <div className="absolute bottom-0 w-full bg-slate-50 border border-slate-100 rounded-t-xl" style={{ height: "200px", opacity: 0.3 }} />
-                                        <div className={cn("absolute bottom-0 w-full rounded-t-xl neon-blue transition-all duration-1000 group-hover/bar:scale-x-105", h > 0 ? "bg-slate-900" : "bg-slate-200")} style={{ height: `${h}%` }} />
-                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold py-1 px-2 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all shadow-xl">{h}%</div>
+                                        <div className="absolute bottom-0 w-full bg-primary/5 border border-primary/10 rounded-t-sm" style={{ height: "200px" }} />
+                                        <div className={cn("absolute bottom-0 w-full rounded-t-sm transition-all duration-1000 group-hover/bar:brightness-125", h > 0 ? "bg-primary emerald-glow" : "bg-foreground/10")} style={{ height: `${h}%` }} />
+                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-black py-1 px-2 rounded-xs opacity-0 group-hover/bar:opacity-100 transition-all shadow-xl emerald-glow">{h}%</div>
                                     </div>
-                                    <span className="text-[10px] font-bold text-slate-400">{months[i]}</span>
+                                    <span className="text-[10px] font-black text-foreground/50 uppercase tracking-tighter">{months[i]}</span>
                                 </div>
                             ))}
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Summary Panel */}
-                <Card className="lg:col-span-1 border-none glass futuristic-card bg-slate-900 text-white">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-black flex items-center gap-x-2"><BrainCircuit className="h-5 w-5 text-blue-400" /> Institutional Overview</CardTitle>
+                {/* Summary Panel */}                <Card className="lg:col-span-1 border-border bg-card/40 backdrop-blur-xl rounded-sm shadow-2xl overflow-hidden">
+                    <CardHeader className="bg-primary text-primary-foreground p-6">
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-x-2">
+                            <BrainCircuit className="h-4 w-4" /> 
+                            Institutional Overview
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="p-6 space-y-8 bg-background/20 backdrop-blur-md">
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
-                                <GraduationCap className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-                                <p className="text-2xl font-black">{studentCount}</p>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase">Students</p>
+                            <div className="p-5 rounded-sm bg-primary/10 border border-primary/20 text-center transition-all hover:bg-primary/20">
+                                <GraduationCap className="h-6 w-6 text-primary mx-auto mb-3" />
+                                <p className="text-3xl font-black text-foreground">{studentCount}</p>
+                                <p className="text-[10px] font-black text-primary uppercase tracking-widest">Students</p>
                             </div>
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
-                                <Users className="h-6 w-6 text-green-400 mx-auto mb-2" />
-                                <p className="text-2xl font-black">{teacherCount}</p>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase">Teachers</p>
+                            <div className="p-5 rounded-sm bg-primary/10 border border-primary/20 text-center transition-all hover:bg-primary/20">
+                                <Users className="h-6 w-6 text-primary mx-auto mb-3" />
+                                <p className="text-3xl font-black text-foreground">{teacherCount}</p>
+                                <p className="text-[10px] font-black text-primary uppercase tracking-widest">Teachers</p>
                             </div>
                         </div>
-
-                        <div className="space-y-4">
-                            <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Resource Utilization</h4>
+ 
+                        <div className="space-y-6">
+                            <h4 className="text-[10px] uppercase font-black tracking-[0.2em] text-primary">Resource Utilization</h4>
                             {[
                                 { name: "Library", val: totalBooks > 0 ? Math.round(((totalBooks - activeLoans) / totalBooks) * 100) : 100, icon: Library },
                                 { name: "Fee Collection", val: Math.round(feeCollectionRate), icon: CreditCard },
                                 { name: "Conduct Health", val: merits + demerits > 0 ? Math.round((merits / (merits + demerits)) * 100) : 100, icon: ShieldCheck },
                             ].map((d) => (
-                                <div key={d.name} className="space-y-2">
-                                    <div className="flex justify-between text-[10px] font-bold">
-                                        <span className="flex items-center gap-x-1"><d.icon className="h-3 w-3" /> {d.name.toUpperCase()}</span>
-                                        <span>{d.val}%</span>
+                                <div key={d.name} className="space-y-3">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-tighter">
+                                        <span className="flex items-center gap-x-2 text-foreground/70"><d.icon className="h-3 w-3" /> {d.name}</span>
+                                        <span className="text-primary">{d.val}%</span>
                                     </div>
-                                    <Progress value={d.val} className="h-1 bg-white/10" indicatorClassName="bg-blue-500" />
+                                    <Progress value={d.val} className="h-1 bg-white/5" indicatorClassName="bg-primary emerald-glow" />
                                 </div>
                             ))}
                         </div>
                     </CardContent>
                 </Card>
+
             </div>
 
             {/* Bottom Row */}
             <div className="grid gap-6 md:grid-cols-3">
-                <Card className="border-none glass futuristic-card p-6 bg-green-50/50">
-                    <div className="flex items-center gap-x-3 mb-4">
-                        <div className="h-10 w-10 rounded-xl bg-green-500 text-white flex items-center justify-center"><CreditCard className="h-5 w-5" /></div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden p-6 shadow-2xl transition-all hover:bg-primary/5">
+                    <div className="flex items-center gap-x-4 mb-4">
+                        <div className="h-12 w-12 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow">
+                            <CreditCard className="h-6 w-6" />
+                        </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-green-600">Revenue Collected</p>
-                            <h3 className="text-xl font-black text-slate-900">₹{totalFeesPaid.toLocaleString()}</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Revenue Collected</p>
+                            <h3 className="text-2xl font-black text-foreground tracking-tight">₹{totalFeesPaid.toLocaleString()}</h3>
                         </div>
                     </div>
-                    <p className="text-xs text-slate-500">₹{totalFeesPending.toLocaleString()} pending</p>
+                    <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest">₹{totalFeesPending.toLocaleString()} pending in ledger</p>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6 bg-blue-50/50">
-                    <div className="flex items-center gap-x-3 mb-4">
-                        <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center"><BookOpen className="h-5 w-5" /></div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden p-6 shadow-2xl transition-all hover:bg-primary/5">
+                    <div className="flex items-center gap-x-4 mb-4">
+                        <div className="h-12 w-12 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow">
+                            <BookOpen className="h-6 w-6" />
+                        </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">Library Catalog</p>
-                            <h3 className="text-xl font-black text-slate-900">{totalBooks} Books</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Library Catalog</p>
+                            <h3 className="text-2xl font-black text-foreground tracking-tight">{totalBooks} Items</h3>
                         </div>
                     </div>
-                    <p className="text-xs text-slate-500">{activeLoans} currently issued</p>
+                    <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest">{activeLoans} currently issued</p>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6 bg-purple-50/50">
-                    <div className="flex items-center gap-x-3 mb-4">
-                        <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center"><Activity className="h-5 w-5" /></div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden p-6 shadow-2xl transition-all hover:bg-primary/5">
+                    <div className="flex items-center gap-x-4 mb-4">
+                        <div className="h-12 w-12 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow">
+                            <Activity className="h-6 w-6" />
+                        </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-purple-600">Exam Results</p>
-                            <h3 className="text-xl font-black text-slate-900">{totalMarks} Records</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Academic Velocity</p>
+                            <h3 className="text-2xl font-black text-foreground tracking-tight">{totalMarks} Records</h3>
                         </div>
                     </div>
-                    <p className="text-xs text-slate-500">{passRate}% pass rate across all exams</p>
+                    <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest">{passRate}% pass rate threshold</p>
                 </Card>
             </div>
         </div>
     );
 }
+

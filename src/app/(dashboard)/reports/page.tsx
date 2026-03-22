@@ -73,22 +73,22 @@ export default function ReportsPage() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-slate-900">
+          <h2 className="text-4xl font-black tracking-tight text-foreground">
             Institutional Reports
           </h2>
-          <p className="text-slate-500 font-medium">
+          <p className="text-muted-foreground font-medium">
             Generate and verify academic credentials
           </p>
         </div>
         <div className="flex gap-x-3">
           <Button
             variant="outline"
-            className="rounded-2xl border-slate-200 font-bold gap-x-2 bg-white"
+            className="rounded-2xl border-border font-bold gap-x-2 bg-white"
           >
             <ClipboardCheck className="h-4 w-4" />
             Verify Certificate
           </Button>
-          <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+          <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
             <Filter className="h-4 w-4" />
             Bulk Generate
           </Button>
@@ -102,10 +102,10 @@ export default function ReportsPage() {
               <Award className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-black text-slate-900 leading-none">
+              <p className="text-2xl font-black text-foreground leading-none">
                 124
               </p>
-              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
                 Certificates Issued
               </p>
             </div>
@@ -117,10 +117,10 @@ export default function ReportsPage() {
               <FileText className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-black text-slate-900 leading-none">
+              <p className="text-2xl font-black text-foreground leading-none">
                 842
               </p>
-              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
                 Report Cards Ready
               </p>
             </div>
@@ -132,10 +132,10 @@ export default function ReportsPage() {
               <GraduationCap className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-black text-slate-900 leading-none">
+              <p className="text-2xl font-black text-foreground leading-none">
                 92%
               </p>
-              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
                 Completion Rate
               </p>
             </div>
@@ -145,13 +145,13 @@ export default function ReportsPage() {
 
       <div className="flex gap-x-4 items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search students by name or enrollment ID..."
-            className="pl-9 bg-white border-slate-100 rounded-2xl h-12 shadow-sm"
+            className="pl-9 bg-white border-border rounded-2xl h-12 shadow-sm"
           />
         </div>
-        <Button className="h-12 rounded-2xl px-6 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold border-none transition-all">
+        <Button className="h-12 rounded-2xl px-6 bg-slate-100 hover:bg-slate-200 text-foreground/70 font-bold border-none transition-all">
           Search Neural Library
         </Button>
       </div>
@@ -160,19 +160,19 @@ export default function ReportsPage() {
         <table className="w-full text-sm">
           <thead className="bg-slate-50/50">
             <tr className="border-b">
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                 Student Identity
               </th>
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                 Class Node
               </th>
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                 GPA Rank
               </th>
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                 Status
               </th>
-              <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+              <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                 Credential Export
               </th>
             </tr>
@@ -184,14 +184,14 @@ export default function ReportsPage() {
                 className="hover:bg-white/60 transition-colors group"
               >
                 <td className="py-6 px-8 flex items-center gap-x-4">
-                  <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold neon-blue">
+                  <div className="h-10 w-10 rounded-xl bg-card text-white flex items-center justify-center font-bold neon-blue">
                     {student.name[0]}
                   </div>
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-foreground">
                     {student.name}
                   </span>
                 </td>
-                <td className="py-6 px-8 text-slate-500 font-medium">
+                <td className="py-6 px-8 text-muted-foreground font-medium">
                   {student.class}
                 </td>
                 <td className="py-6 px-8">
@@ -205,7 +205,7 @@ export default function ReportsPage() {
                     className={
                       student.status === "Honors"
                         ? "bg-blue-50 text-blue-600 border-blue-100 font-bold"
-                        : "border-slate-100 text-slate-400 font-bold"
+                        : "border-border text-muted-foreground font-bold"
                     }
                   >
                     {student.status.toUpperCase()}
@@ -217,7 +217,7 @@ export default function ReportsPage() {
                       onClick={() => handleCertDownload(student.name)}
                       variant="ghost"
                       size="sm"
-                      className="rounded-xl font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-all gap-x-2"
+                      className="rounded-xl font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-blue-500 hover:bg-blue-50 transition-all gap-x-2"
                     >
                       <Award className="h-3 w-3" />
                       Cert
@@ -226,7 +226,7 @@ export default function ReportsPage() {
                       onClick={() => handleReportDownload(student)}
                       variant="ghost"
                       size="sm"
-                      className="rounded-xl font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-primary hover:bg-slate-50 transition-all gap-x-2"
+                      className="rounded-xl font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-slate-50 transition-all gap-x-2"
                     >
                       <Download className="h-3 w-3" />
                       Report
@@ -241,3 +241,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+

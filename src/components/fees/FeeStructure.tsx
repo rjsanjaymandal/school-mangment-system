@@ -63,7 +63,7 @@ export function FeeStructure() {
       </div>
 
       <div className="grid gap-6">
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-border shadow-sm overflow-hidden">
           <Table>
             <TableHeader className="bg-slate-50">
               <TableRow>
@@ -77,7 +77,7 @@ export function FeeStructure() {
             <TableBody>
               {fees.map((fee) => (
                 <TableRow key={fee.id}>
-                  <TableCell className="font-semibold text-slate-900">
+                  <TableCell className="font-semibold text-foreground">
                     {fee.name}
                   </TableCell>
                   <TableCell>
@@ -85,13 +85,13 @@ export function FeeStructure() {
                       ₹{fee.amount.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell className="text-slate-500">
+                  <TableCell className="text-muted-foreground">
                     <div className="flex items-center gap-x-1">
                       <Calendar className="h-3 w-3" />
                       {fee.due_date}
                     </div>
                   </TableCell>
-                  <TableCell className="text-slate-500 text-sm italic">
+                  <TableCell className="text-muted-foreground text-sm italic">
                     {fee.description}
                   </TableCell>
                   <TableCell className="text-right">
@@ -99,14 +99,14 @@ export function FeeStructure() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-slate-600"
+                        className="h-8 w-8 text-muted-foreground hover:text-foreground/70"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-red-500"
+                        className="h-8 w-8 text-muted-foreground hover:text-red-500"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -128,7 +128,7 @@ export function FeeStructure() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <p className="text-sm text-slate-500 italic">
+            <p className="text-sm text-muted-foreground italic">
               Fee form configuration UI goes here...
             </p>
             <div className="flex justify-end gap-x-2">
@@ -143,3 +143,4 @@ export function FeeStructure() {
     </div>
   );
 }
+

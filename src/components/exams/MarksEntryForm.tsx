@@ -111,10 +111,10 @@ export function MarksEntryForm({
         <Card className="border-none glass futuristic-card overflow-hidden">
           <CardHeader className="bg-slate-50/30 flex flex-row items-center justify-between py-6 px-8">
             <div className="flex flex-col">
-              <CardTitle className="text-xl font-black text-slate-900">
+              <CardTitle className="text-xl font-black text-foreground">
                 Performance Registry
               </CardTitle>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mt-1">
+              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mt-1">
                 Bulk Score Entry Interface
               </p>
             </div>
@@ -124,7 +124,7 @@ export function MarksEntryForm({
                 variant="outline"
                 size="sm"
                 onClick={handleExport}
-                className="hidden md:flex gap-x-2 rounded-xl border-slate-200 font-bold bg-white/50 backdrop-blur-sm"
+                className="hidden md:flex gap-x-2 rounded-xl border-border font-bold bg-white/50 backdrop-blur-sm"
               >
                 <FileDown className="h-4 w-4" />
                 Export
@@ -134,7 +134,7 @@ export function MarksEntryForm({
                 variant="outline"
                 size="sm"
                 onClick={handleImport}
-                className="hidden md:flex gap-x-2 rounded-xl border-slate-200 font-bold bg-white/50 backdrop-blur-sm"
+                className="hidden md:flex gap-x-2 rounded-xl border-border font-bold bg-white/50 backdrop-blur-sm"
               >
                 <FileUp className="h-4 w-4" />
                 Import
@@ -143,7 +143,7 @@ export function MarksEntryForm({
                 type="submit"
                 disabled={loading}
                 size="sm"
-                className="gap-x-2 rounded-xl bg-slate-900 neon-blue font-bold px-6 py-5"
+                className="gap-x-2 rounded-xl bg-card neon-blue font-bold px-6 py-5"
               >
                 <Save className="h-4 w-4" />
                 {loading ? "Syncing..." : "Sync All Nodes"}
@@ -154,17 +154,17 @@ export function MarksEntryForm({
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-50/50 border-y border-slate-100">
-                    <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                  <tr className="bg-slate-50/50 border-y border-border">
+                    <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                       Roll Node
                     </th>
-                    <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                    <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                       Subject Identity
                     </th>
-                    <th className="text-center py-4 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400 w-40">
+                    <th className="text-center py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground w-40">
                       Score (Max 100)
                     </th>
-                    <th className="text-center py-4 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                    <th className="text-center py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
                       System Status
                     </th>
                   </tr>
@@ -177,21 +177,21 @@ export function MarksEntryForm({
                     >
                       <td className="py-5 px-8">
                         <div className="flex flex-col">
-                          <span className="font-bold text-slate-900">
+                          <span className="font-bold text-foreground">
                             {student.roll_number || "SYS-0"}
                           </span>
-                          <span className="text-[10px] text-slate-400 font-mono">
+                          <span className="text-[10px] text-muted-foreground font-mono">
                             ID: {student.id.slice(0, 8)}
                           </span>
                         </div>
                       </td>
                       <td className="py-5 px-8">
                         <div className="flex flex-col">
-                          <span className="font-bold text-slate-900 group-hover:text-primary transition-colors">
+                          <span className="font-bold text-foreground group-hover:text-primary transition-colors">
                             {student.profile?.first_name}{" "}
                             {student.profile?.last_name}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-medium tracking-tight">
+                          <span className="text-[10px] text-muted-foreground font-medium tracking-tight">
                             Grade 10-A • Physics Core
                           </span>
                         </div>
@@ -205,7 +205,7 @@ export function MarksEntryForm({
                               <FormControl>
                                 <Input
                                   type="number"
-                                  className="text-center bg-white border-2 border-slate-100 rounded-xl font-black text-lg focus-visible:ring-2 focus-visible:ring-blue-100 transition-all h-12"
+                                  className="text-center bg-white border-2 border-border rounded-xl font-black text-lg focus-visible:ring-2 focus-visible:ring-blue-100 transition-all h-12"
                                   placeholder="00"
                                   {...field}
                                 />
@@ -224,7 +224,7 @@ export function MarksEntryForm({
                         ) : form.watch(`marks.${student.id}`) === "" ? (
                           <Badge
                             variant="outline"
-                            className="border-slate-100 text-slate-300 font-bold text-[10px] tracking-widest"
+                            className="border-border text-slate-300 font-bold text-[10px] tracking-widest"
                           >
                             PENDING
                           </Badge>
@@ -245,3 +245,4 @@ export function MarksEntryForm({
     </Form>
   );
 }
+

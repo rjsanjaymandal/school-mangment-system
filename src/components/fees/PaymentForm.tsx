@@ -39,7 +39,7 @@ export function PaymentForm() {
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">
+              <label className="text-sm font-medium text-foreground/70">
                 Select Student
               </label>
               <Select>
@@ -53,7 +53,7 @@ export function PaymentForm() {
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">
+              <label className="text-sm font-medium text-foreground/70">
                 Fee Category
               </label>
               <Select>
@@ -70,11 +70,11 @@ export function PaymentForm() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">
+              <label className="text-sm font-medium text-foreground/70">
                 Amount to Pay
               </label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="0.00"
                   className="pl-9 bg-slate-50 border-none"
@@ -83,7 +83,7 @@ export function PaymentForm() {
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">
+              <label className="text-sm font-medium text-foreground/70">
                 Payment Method
               </label>
               <Select defaultValue="cash">
@@ -109,7 +109,7 @@ export function PaymentForm() {
         </div>
 
         <div className="mt-8 pt-6 border-t flex items-center justify-between">
-          <div className="text-sm text-slate-500">
+          <div className="text-sm text-muted-foreground">
             <p>
               Outstanding Balance:{" "}
               <span className="text-red-500 font-bold">₹2,800</span>
@@ -128,3 +128,4 @@ export function PaymentForm() {
     </Card>
   );
 }
+

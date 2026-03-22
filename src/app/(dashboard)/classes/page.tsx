@@ -12,10 +12,10 @@ export default async function ClassesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">
           Classes
         </h2>
-        <p className="text-slate-500">
+        <p className="text-muted-foreground">
           Manage grade levels and class sections.
         </p>
       </div>
@@ -24,3 +24,4 @@ export default async function ClassesPage() {
     </div>
   );
 }
+

@@ -36,11 +36,11 @@ export default async function AdminDashboard() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-slate-900 uppercase">
+          <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
             Admin Mission Control
           </h2>
           <div className="flex items-center gap-x-2 mt-1">
-            <p className="text-slate-500 font-medium tracking-tight">
+            <p className="text-muted-foreground font-medium tracking-tight">
               Institutional Governance & Strategic System Management
             </p>
             <Badge
@@ -51,13 +51,13 @@ export default async function AdminDashboard() {
             </Badge>
           </div>
         </div>
-        <div className="h-12 w-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-2xl neon-blue">
+        <div className="h-12 w-12 rounded-2xl bg-card text-white flex items-center justify-center shadow-2xl neon-blue">
           <GraduationCap className="h-6 w-6" />
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <Card className="border-none glass futuristic-card bg-slate-900 text-white p-6">
+        <Card className="border-none glass futuristic-card bg-card text-white p-6">
           <CardHeader className="p-0 mb-4">
             <CardTitle className="text-[10px] font-black uppercase tracking-widest text-blue-400">
               Parental Network
@@ -71,14 +71,14 @@ export default async function AdminDashboard() {
 
         <Card className="border-none glass futuristic-card bg-white/40 p-6">
           <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
               Global Enrollment
             </CardTitle>
           </CardHeader>
-          <div className="text-3xl font-black text-slate-900">
+          <div className="text-3xl font-black text-foreground">
             {realStats.studentCount}
           </div>
-          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-slate-500">
+          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-muted-foreground">
             <Users className="h-3 w-3" />
             Verified Identities
           </div>
@@ -86,14 +86,14 @@ export default async function AdminDashboard() {
 
         <Card className="border-none glass futuristic-card bg-white/40 p-6">
           <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
               Faculty Pool
             </CardTitle>
           </CardHeader>
-          <div className="text-3xl font-black text-slate-900">
+          <div className="text-3xl font-black text-foreground">
             {realStats.teacherCount}
           </div>
-          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-slate-500">
+          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-muted-foreground">
             <Layout className="h-3 w-3" />
             Academic Staff
           </div>
@@ -101,14 +101,14 @@ export default async function AdminDashboard() {
 
         <Card className="border-none glass futuristic-card bg-white/40 p-6">
           <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
               Active Classes
             </CardTitle>
           </CardHeader>
-          <div className="text-3xl font-black text-slate-900">
+          <div className="text-3xl font-black text-foreground">
             {realStats.classCount}
           </div>
-          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-slate-500">
+          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-muted-foreground">
             <BookOpen className="h-3 w-3" />
             Live Sections
           </div>
@@ -122,8 +122,8 @@ export default async function AdminDashboard() {
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900">Academic Integrity</h3>
-              <p className="text-xs text-slate-500">
+              <h3 className="font-bold text-foreground">Academic Integrity</h3>
+              <p className="text-xs text-muted-foreground">
                 Curriculum and syllabus sync status
               </p>
             </div>
@@ -132,7 +132,7 @@ export default async function AdminDashboard() {
             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
               <div className="h-full bg-blue-500 w-[85%] rounded-full" />
             </div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
               85% Syllabus Completion
             </p>
           </div>
@@ -145,7 +145,7 @@ export default async function AdminDashboard() {
             </div>
             <div>
               <h3 className="font-bold">Security Oversight</h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 Threat detection & access monitoring
               </p>
             </div>
@@ -161,7 +161,7 @@ export default async function AdminDashboard() {
 
       {/* Analytics Section using Recharts */}
       <div className="mt-8">
-        <h3 className="text-xl font-black text-slate-900 mb-6 uppercase tracking-widest flex items-center gap-x-2">
+        <h3 className="text-xl font-black text-foreground mb-6 uppercase tracking-widest flex items-center gap-x-2">
           <Layout className="h-5 w-5 text-blue-500" />
           System Analytics
         </h3>
@@ -170,3 +170,4 @@ export default async function AdminDashboard() {
     </div>
   );
 }
+

@@ -19,10 +19,11 @@ export function LogoutButton() {
     <Button
       variant="ghost"
       onClick={handleLogout}
-      className="gap-x-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold"
+      className="gap-x-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold"
     >
       <LogOut className="h-4 w-4" />
       Sign Out
     </Button>
   );
 }
+

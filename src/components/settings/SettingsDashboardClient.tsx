@@ -96,10 +96,10 @@ export default function SettingsDashboardClient({
         <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">
+                    <h2 className="text-4xl font-black tracking-tight text-foreground">
                         System Settings
                     </h2>
-                    <p className="text-slate-500 font-medium tracking-tight">
+                    <p className="text-muted-foreground font-medium tracking-tight">
                         Configure your institution's core infrastructure and behavior
                     </p>
                 </div>
@@ -113,8 +113,8 @@ export default function SettingsDashboardClient({
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
                             className={`w-full flex items-center gap-x-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${activeTab === item.id
-                                ? "bg-slate-900 text-white shadow-lg neon-blue"
-                                : "text-slate-500 hover:bg-slate-100/50 hover:text-slate-900"
+                                ? "bg-card text-white shadow-lg neon-blue"
+                                : "text-muted-foreground hover:bg-slate-100/50 hover:text-foreground"
                                 }`}
                         >
                             <item.icon className="h-5 w-5" />
@@ -127,7 +127,7 @@ export default function SettingsDashboardClient({
                 <div className="md:col-span-3 space-y-6">
                     {activeTab === "identity" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                            <CardHeader className="bg-card text-white flex flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <Globe className="h-4 w-4 text-blue-400" />
                                     Institutional Identity
@@ -145,43 +145,43 @@ export default function SettingsDashboardClient({
                             <CardContent className="p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2 col-span-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Institution Name</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Institution Name</Label>
                                         <Input
                                             value={settings.school_name || ""}
                                             onChange={(e) => setSettings({ ...settings, school_name: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Contact Email</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Contact Email</Label>
                                         <Input
                                             value={settings.contact_email || ""}
                                             onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Contact Phone</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Contact Phone</Label>
                                         <Input
                                             value={settings.contact_phone || ""}
                                             onChange={(e) => setSettings({ ...settings, contact_phone: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                     <div className="space-y-2 col-span-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Address</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Address</Label>
                                         <Input
                                             value={settings.school_address || ""}
                                             onChange={(e) => setSettings({ ...settings, school_address: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                     <div className="space-y-2 col-span-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Logo URL</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Logo URL</Label>
                                         <Input
                                             value={settings.logo_url || ""}
                                             onChange={(e) => setSettings({ ...settings, logo_url: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                             placeholder="https://..."
                                         />
                                     </div>
@@ -192,7 +192,7 @@ export default function SettingsDashboardClient({
 
                     {activeTab === "academic" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                            <CardHeader className="bg-card text-white flex flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <GraduationCap className="h-4 w-4 text-purple-400" />
                                     Academic Configuration
@@ -210,7 +210,7 @@ export default function SettingsDashboardClient({
                             <CardContent className="p-8 space-y-6">
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Current Academic Session</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Current Academic Session</Label>
                                         <Select
                                             value={settings.current_academic_year_id || ""}
                                             onValueChange={(val) => setSettings({ ...settings, current_academic_year_id: val })}
@@ -224,13 +224,13 @@ export default function SettingsDashboardClient({
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className="text-[10px] text-slate-400 font-medium">This will be the default session for all new enrollments and grading.</p>
+                                        <p className="text-[10px] text-muted-foreground font-medium">This will be the default session for all new enrollments and grading.</p>
                                     </div>
 
-                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-border">
                                         <div className="space-y-0.5">
-                                            <Label className="text-sm font-bold text-slate-900">Publish Exam Results</Label>
-                                            <p className="text-xs text-slate-500">Enable to allow parents and students to view results.</p>
+                                            <Label className="text-sm font-bold text-foreground">Publish Exam Results</Label>
+                                            <p className="text-xs text-muted-foreground">Enable to allow parents and students to view results.</p>
                                         </div>
                                         <Switch
                                             checked={settings.result_visibility === "true"}
@@ -244,7 +244,7 @@ export default function SettingsDashboardClient({
 
                     {activeTab === "financial" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                            <CardHeader className="bg-card text-white flex flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <Banknote className="h-4 w-4 text-emerald-400" />
                                     Financial & Fees
@@ -262,47 +262,47 @@ export default function SettingsDashboardClient({
                             <CardContent className="p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Currency Code</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Currency Code</Label>
                                         <Input
                                             value={settings.currency || ""}
                                             onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                             placeholder="USD"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Currency Symbol</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Currency Symbol</Label>
                                         <Input
                                             value={settings.currency_symbol || ""}
                                             onChange={(e) => setSettings({ ...settings, currency_symbol: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                             placeholder="$"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Late Fee (Per Day)</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Late Fee (Per Day)</Label>
                                         <Input
                                             type="number"
                                             value={settings.late_fee_per_day || ""}
                                             onChange={(e) => setSettings({ ...settings, late_fee_per_day: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Tax/VAT Label</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Tax/VAT Label</Label>
                                         <Input
                                             value={settings.tax_label || "VAT"}
                                             onChange={(e) => setSettings({ ...settings, tax_label: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Tax/VAT Percentage (%)</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Tax/VAT Percentage (%)</Label>
                                         <Input
                                             type="number"
                                             value={settings.tax_rate || "0"}
                                             onChange={(e) => setSettings({ ...settings, tax_rate: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                 </div>
@@ -312,7 +312,7 @@ export default function SettingsDashboardClient({
 
                     {activeTab === "gateways" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white">
+                            <CardHeader className="bg-card text-white">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <CreditCard className="h-4 w-4 text-emerald-400" />
                                     Payment Infrastructure
@@ -323,16 +323,16 @@ export default function SettingsDashboardClient({
                                     {gateways.length > 0 ? gateways.map((gateway) => (
                                         <div key={gateway.id} className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                                             <div className="flex items-center gap-x-4">
-                                                <div className={`h-12 w-12 rounded-xl border flex items-center justify-center ${gateway.is_active ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-100 border-slate-200 text-slate-400'}`}>
+                                                <div className={`h-12 w-12 rounded-xl border flex items-center justify-center ${gateway.is_active ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-100 border-border text-muted-foreground'}`}>
                                                     <CreditCard className="h-6 w-6" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-slate-900 text-lg">{gateway.name}</h4>
-                                                    <p className="text-xs text-slate-500 font-medium">Provider: {gateway.provider.toUpperCase()} • {gateway.is_active ? 'Accepting Live Routing' : 'Offline'}</p>
+                                                    <h4 className="font-black text-foreground text-lg">{gateway.name}</h4>
+                                                    <p className="text-xs text-muted-foreground font-medium">Provider: {gateway.provider.toUpperCase()} • {gateway.is_active ? 'Accepting Live Routing' : 'Offline'}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-x-4">
-                                                <Badge variant="outline" className={cn("text-[10px] uppercase font-black tracking-widest", gateway.is_active ? "text-emerald-500 bg-emerald-50 border-emerald-200" : "text-slate-400 bg-slate-50 border-slate-200")}>
+                                                <Badge variant="outline" className={cn("text-[10px] uppercase font-black tracking-widest", gateway.is_active ? "text-emerald-500 bg-emerald-50 border-emerald-200" : "text-muted-foreground bg-slate-50 border-border")}>
                                                     {gateway.is_active ? "ACTIVE" : "DISABLED"}
                                                 </Badge>
                                                 <Switch
@@ -342,7 +342,7 @@ export default function SettingsDashboardClient({
                                             </div>
                                         </div>
                                     )) : (
-                                        <div className="p-12 text-center text-slate-500 font-medium">
+                                        <div className="p-12 text-center text-muted-foreground font-medium">
                                             No payment gateways detected.
                                         </div>
                                     )}
@@ -353,7 +353,7 @@ export default function SettingsDashboardClient({
 
                     {activeTab === "communication" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                            <CardHeader className="bg-card text-white flex flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <Mail className="h-4 w-4 text-yellow-400" />
                                     Email & SMS
@@ -371,29 +371,29 @@ export default function SettingsDashboardClient({
                             <CardContent className="p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-2 col-span-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">SMTP Host</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">SMTP Host</Label>
                                         <Input
                                             value={settings.smtp_host || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_host: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                             placeholder="smtp.gmail.com"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">SMTP Port</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">SMTP Port</Label>
                                         <Input
                                             value={settings.smtp_port || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_port: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                             placeholder="587"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">SMTP User</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">SMTP User</Label>
                                         <Input
                                             value={settings.smtp_user || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_user: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
                                 </div>
@@ -403,7 +403,7 @@ export default function SettingsDashboardClient({
 
                     {activeTab === "security" && (
                         <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader className="bg-slate-900 text-white flex flex-row items-center justify-between space-y-0">
+                            <CardHeader className="bg-card text-white flex flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                                     <ShieldCheck className="h-4 w-4 text-red-400" />
                                     Security & System Policy
@@ -421,18 +421,18 @@ export default function SettingsDashboardClient({
                             <CardContent className="p-8 space-y-6">
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-black uppercase text-slate-500">Session Timeout (Minutes)</Label>
+                                        <Label className="text-xs font-black uppercase text-muted-foreground">Session Timeout (Minutes)</Label>
                                         <Input
                                             type="number"
                                             value={settings.session_timeout || "60"}
                                             onChange={(e) => setSettings({ ...settings, session_timeout: e.target.value })}
-                                            className="bg-slate-50/50 border-slate-200 h-11 rounded-xl font-medium"
+                                            className="bg-slate-50/50 border-border h-11 rounded-xl font-medium"
                                         />
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100">
+                                    <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-border">
                                         <div className="space-y-0.5">
-                                            <Label className="text-sm font-bold text-slate-900">Enforce Strong Passwords</Label>
-                                            <p className="text-xs text-slate-500">Require uppercase, numbers, and symbols.</p>
+                                            <Label className="text-sm font-bold text-foreground">Enforce Strong Passwords</Label>
+                                            <p className="text-xs text-muted-foreground">Require uppercase, numbers, and symbols.</p>
                                         </div>
                                         <Switch
                                             checked={settings.password_complexity === "true"}
@@ -448,3 +448,4 @@ export default function SettingsDashboardClient({
         </div>
     );
 }
+

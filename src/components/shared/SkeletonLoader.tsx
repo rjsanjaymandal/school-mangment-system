@@ -43,14 +43,15 @@ export function DashboardSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="h-32 rounded-3xl bg-white border border-slate-100 shadow-sm"
+            className="h-32 rounded-3xl bg-white border border-border shadow-sm"
           />
         ))}
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-1 h-[400px] rounded-3xl bg-white border border-slate-100" />
-        <div className="lg:col-span-2 h-[400px] rounded-3xl bg-slate-900 overflow-hidden" />
+        <div className="lg:col-span-1 h-[400px] rounded-3xl bg-white border border-border" />
+        <div className="lg:col-span-2 h-[400px] rounded-3xl bg-card overflow-hidden" />
       </div>
     </div>
   );
 }
+

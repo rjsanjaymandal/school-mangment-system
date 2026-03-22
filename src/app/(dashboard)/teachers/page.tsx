@@ -13,10 +13,10 @@ export default async function TeachersPage() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-slate-900">
+          <h2 className="text-4xl font-black tracking-tight text-foreground">
             Faculty Hub
           </h2>
-          <p className="text-slate-500 font-medium tracking-tight">
+          <p className="text-muted-foreground font-medium tracking-tight">
             Comprehensive Management of Academic & Administrative Staff
           </p>
         </div>
@@ -26,14 +26,14 @@ export default async function TeachersPage() {
         <TabsList className="bg-white/40 backdrop-blur-md border border-white/20 p-1.5 rounded-2xl h-14 w-fit">
           <TabsTrigger
             value="list"
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-bold transition-all gap-x-2"
+            className="rounded-xl px-8 py-3 data-[state=active]:bg-card data-[state=active]:text-white font-bold transition-all gap-x-2"
           >
             <Users className="h-4 w-4" />
             Teacher Directory
           </TabsTrigger>
           <TabsTrigger
             value="hr"
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-bold transition-all gap-x-2"
+            className="rounded-xl px-8 py-3 data-[state=active]:bg-card data-[state=active]:text-white font-bold transition-all gap-x-2"
           >
             <Briefcase className="h-4 w-4" />
             Staff HR & Logistics
@@ -57,3 +57,4 @@ export default async function TeachersPage() {
     </div>
   );
 }
+

@@ -15,3 +15,4 @@ export default async function CertificatesPage() {
 
   return <CertificatesDashboardClient initialCertificates={certificates || []} />;
 }
+

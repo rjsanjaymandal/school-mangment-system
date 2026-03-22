@@ -93,13 +93,13 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Institutional Scheduling</h2>
-                    <p className="text-slate-500 font-medium tracking-tight">Timetable & Resource Allocation</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground">Institutional Scheduling</h2>
+                    <p className="text-muted-foreground font-medium tracking-tight">Timetable & Resource Allocation</p>
                 </div>
                 <div className="flex gap-x-2">
                     {classes.length > 0 && (
                         <Select value={selectedClass} onValueChange={setSelectedClass}>
-                            <SelectTrigger className="w-[180px] rounded-2xl border-slate-200 bg-white font-bold">
+                            <SelectTrigger className="w-[180px] rounded-2xl border-border bg-white font-bold">
                                 <SelectValue placeholder="Select Class" />
                             </SelectTrigger>
                             <SelectContent>
@@ -111,7 +111,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                     )}
                     <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
                         <DialogTrigger asChild>
-                            <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+                            <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
                                 <Plus className="h-4 w-4" /> New Slot
                             </Button>
                         </DialogTrigger>
@@ -126,14 +126,14 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Subject</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Subject</Label>
                                     <Select value={slotForm.subject_id} onValueChange={(v) => setSlotForm({ ...slotForm, subject_id: v })}>
                                         <SelectTrigger><SelectValue placeholder="Select subject" /></SelectTrigger>
                                         <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Teacher</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Teacher</Label>
                                     <Select value={slotForm.teacher_id} onValueChange={(v) => setSlotForm({ ...slotForm, teacher_id: v })}>
                                         <SelectTrigger><SelectValue placeholder="Select teacher" /></SelectTrigger>
                                         <SelectContent>{teachers.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.profile?.first_name} {t.profile?.last_name}</SelectItem>)}</SelectContent>
@@ -141,19 +141,19 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-slate-400">Start Time</Label>
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Start Time</Label>
                                         <Input type="time" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-slate-400">End Time</Label>
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">End Time</Label>
                                         <Input type="time" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Room</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Room</Label>
                                     <Input value={slotForm.room_number} onChange={(e) => setSlotForm({ ...slotForm, room_number: e.target.value })} placeholder="Lab 302" />
                                 </div>
-                                <Button onClick={handleCreateSlot} disabled={loading} className="w-full rounded-xl py-6 bg-slate-900 text-white font-bold">
+                                <Button onClick={handleCreateSlot} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
                                     {loading ? "Creating..." : "Add Slot"}
                                 </Button>
                             </div>
@@ -165,7 +165,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
             <div className="grid gap-8 lg:grid-cols-4">
                 {/* Day Selector */}
                 <Card className="lg:col-span-1 border-none glass futuristic-card overflow-hidden">
-                    <CardHeader className="bg-slate-900 text-white">
+                    <CardHeader className="bg-card text-white">
                         <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-x-2">
                             <Calendar className="h-4 w-4 text-blue-400" /> Academic Week
                         </CardTitle>
@@ -175,7 +175,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                             <button
                                 key={day}
                                 onClick={() => setSelectedDay(day)}
-                                className={`w-full flex items-center justify-between p-4 rounded-xl transition-all font-bold ${selectedDay === day ? "bg-white shadow-md text-slate-900 border border-slate-100" : "text-slate-400 hover:text-slate-600 hover:bg-white/50"}`}
+                                className={`w-full flex items-center justify-between p-4 rounded-xl transition-all font-bold ${selectedDay === day ? "bg-white shadow-md text-foreground border border-border" : "text-muted-foreground hover:text-foreground/70 hover:bg-white/50"}`}
                             >
                                 {day}
                                 {selectedDay === day && <div className="h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />}
@@ -192,7 +192,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                             return (
                                 <div key={time} className="flex-1 min-w-[150px] space-y-4">
                                     <div className="text-center">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{time}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{time}</p>
                                         <div className="h-0.5 w-full bg-slate-100 rounded-full" />
                                     </div>
                                     {matchingSlots.map((s: any, i: number) => (
@@ -202,10 +202,10 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                     <Badge className={`bg-${COLORS[i % COLORS.length]}-500 text-white border-none text-[8px] font-black tracking-widest px-1.5`}>LECTURE</Badge>
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-black text-slate-900 text-xs truncate">{s.subject?.name || "—"}</h4>
-                                                    <p className="text-[10px] text-slate-500 font-medium">{s.teacher?.profile?.first_name} {s.teacher?.profile?.last_name}</p>
+                                                    <h4 className="font-black text-foreground text-xs truncate">{s.subject?.name || "—"}</h4>
+                                                    <p className="text-[10px] text-muted-foreground font-medium">{s.teacher?.profile?.first_name} {s.teacher?.profile?.last_name}</p>
                                                 </div>
-                                                <div className="flex items-center justify-between pt-2 border-t border-slate-50 text-[10px] font-bold text-slate-400">
+                                                <div className="flex items-center justify-between pt-2 border-t border-slate-50 text-[10px] font-bold text-muted-foreground">
                                                     <div className="flex items-center gap-x-1">
                                                         <MapPin className="h-3 w-3" />
                                                         {s.room_number || "TBD"}
@@ -219,7 +219,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                         </Card>
                                     ))}
                                     {matchingSlots.length === 0 && (
-                                        <div className="h-32 rounded-2xl border-2 border-dashed border-slate-100/50 flex items-center justify-center group hover:border-blue-200 transition-colors cursor-pointer" onClick={() => { setSlotForm({ ...slotForm, start_time: time, end_time: `${String(parseInt(time) + 1).padStart(2, "0")}:00` }); setIsAddSlotOpen(true); }}>
+                                        <div className="h-32 rounded-2xl border-2 border-dashed border-border/50 flex items-center justify-center group hover:border-blue-200 transition-colors cursor-pointer" onClick={() => { setSlotForm({ ...slotForm, start_time: time, end_time: `${String(parseInt(time) + 1).padStart(2, "0")}:00` }); setIsAddSlotOpen(true); }}>
                                             <Plus className="h-5 w-5 text-slate-200 group-hover:text-blue-300 transition-colors" />
                                         </div>
                                     )}
@@ -229,7 +229,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2">
-                        <Card className="border-none glass futuristic-card bg-slate-900 text-white">
+                        <Card className="border-none glass futuristic-card bg-card text-white">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-xs font-bold uppercase tracking-widest opacity-60">Schedule Health</CardTitle>
                             </CardHeader>
@@ -243,14 +243,14 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                         </Card>
                         <Card className="border-none glass futuristic-card">
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-400">Total Slots</CardTitle>
+                                <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Total Slots</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-2xl font-black text-slate-900">{totalSlots}</span>
+                                    <span className="text-2xl font-black text-foreground">{totalSlots}</span>
                                     <Zap className="h-6 w-6 text-blue-500" />
                                 </div>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1">Across all days for this class.</p>
+                                <p className="text-[10px] font-bold text-muted-foreground mt-1">Across all days for this class.</p>
                             </CardContent>
                         </Card>
                     </div>
@@ -259,3 +259,4 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         </div>
     );
 }
+

@@ -25,60 +25,60 @@ export function StaffHRManagement() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-none glass futuristic-card bg-slate-900 text-white">
+        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl transition-all hover:bg-primary/5">
           <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center">
-              <div className="h-10 w-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow">
                 <Briefcase className="h-5 w-5" />
               </div>
-              <Badge className="bg-green-500 text-white border-none font-black text-[10px]">
+              <Badge className="bg-primary text-primary-foreground border-none font-black text-[10px] emerald-glow">
                 ALL CLEAR
               </Badge>
             </div>
             <div>
-              <h3 className="text-xl font-black">Staff Health</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-xl font-black text-foreground">Staff Health</h3>
+              <p className="text-sm font-bold text-foreground/50 tracking-tight">
                 94% Attendance / 2 Pending Leaves
               </p>
             </div>
-            <Button className="w-full bg-white text-slate-900 font-bold rounded-xl h-12 shadow-xl hover:bg-white/90">
+            <Button className="w-full bg-primary text-primary-foreground font-black rounded-sm h-12 shadow-xl emerald-glow uppercase tracking-widest text-[10px]">
               Generate HR Report
             </Button>
           </CardContent>
         </Card>
 
-        <Card className="border-none glass futuristic-card">
+        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl transition-all hover:bg-primary/5">
           <CardContent className="p-6 flex items-center gap-x-6">
-            <div className="h-14 w-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center neon-blue">
+            <div className="h-14 w-14 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow">
               <Calendar className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">
                 Pending Requests
               </p>
-              <h4 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h4 className="text-3xl font-black text-foreground tracking-tighter">
                 08
               </h4>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-tighter">
                 Leave & Permissions
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-none glass futuristic-card">
+        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl transition-all hover:bg-primary/5">
           <CardContent className="p-6 flex items-center gap-x-6">
-            <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="h-14 w-14 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow">
               <DollarSign className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">
                 Payroll Disbursement
               </p>
-              <h4 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h4 className="text-3xl font-black text-foreground tracking-tighter">
                 28th Oct
               </h4>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-tighter">
                 Scheduled Cycle
               </p>
             </div>
@@ -87,46 +87,46 @@ export function StaffHRManagement() {
       </div>
 
       <Tabs defaultValue="leave" className="space-y-6">
-        <TabsList className="bg-white/40 backdrop-blur-md border border-white/20 p-1.5 rounded-2xl h-14">
+        <TabsList className="bg-card/40 backdrop-blur-xl border border-border p-1 rounded-sm h-12">
           <TabsTrigger
             value="leave"
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-bold transition-all gap-x-2"
+            className="rounded-xs px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow-sm"
           >
-            <Clock className="h-4 w-4" />
+            <Clock className="h-3 w-3" />
             Leave Management
           </TabsTrigger>
           <TabsTrigger
             value="payouts"
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-bold transition-all gap-x-2"
+            className="rounded-xs px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow-sm"
           >
-            <DollarSign className="h-4 w-4" />
+            <DollarSign className="h-3 w-3" />
             Payroll Processing
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="leave">
-          <div className="bg-white/40 backdrop-blur-md rounded-3xl border border-white/20 overflow-hidden shadow-2xl">
+          <div className="bg-card/40 backdrop-blur-xl rounded-sm border border-border overflow-hidden shadow-2xl">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50/50">
-                <tr className="border-b">
-                  <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+              <thead className="bg-primary/5">
+                <tr className="border-b border-border">
+                  <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-primary">
                     Staff Member
                   </th>
-                  <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                  <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-primary">
                     Type
                   </th>
-                  <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                  <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-primary">
                     Duration
                   </th>
-                  <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                  <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-primary">
                     Reason
                   </th>
-                  <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-slate-400">
+                  <th className="text-right py-4 px-8 font-black uppercase tracking-widest text-[10px] text-primary">
                     Action
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-border">
                 {[
                   {
                     name: "Dr. Aris",
@@ -141,30 +141,30 @@ export function StaffHRManagement() {
                     reason: "Personal Event",
                   },
                 ].map((leave, i) => (
-                  <tr key={i} className="hover:bg-white/60 transition-colors">
-                    <td className="py-6 px-8 font-bold text-slate-900">
+                  <tr key={i} className="hover:bg-primary/5 transition-colors group">
+                    <td className="py-4 px-8 font-black text-foreground text-xs uppercase tracking-tight">
                       {leave.name}
                     </td>
-                    <td className="py-6 px-8">
+                    <td className="py-4 px-8">
                       <Badge
                         variant="outline"
-                        className="bg-blue-50 text-blue-600 border-blue-100 font-bold"
+                        className="bg-primary/10 text-primary border-primary/20 font-black text-[9px] uppercase tracking-widest"
                       >
                         {leave.type.toUpperCase()}
                       </Badge>
                     </td>
-                    <td className="py-6 px-8 text-slate-400 font-mono text-xs font-bold">
+                    <td className="py-4 px-8 text-foreground/50 font-bold text-[10px] uppercase tracking-tighter">
                       {leave.duration}
                     </td>
-                    <td className="py-6 px-8 text-slate-500 font-medium truncate max-w-[200px]">
+                    <td className="py-4 px-8 text-foreground/40 font-bold text-[10px] uppercase tracking-tighter truncate max-w-[200px]">
                       {leave.reason}
                     </td>
-                    <td className="py-6 px-8 text-right">
+                    <td className="py-4 px-8 text-right">
                       <div className="flex justify-end gap-x-2">
-                        <button className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-all">
+                        <button className="p-2 rounded-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all emerald-glow-sm">
                           <CheckCircle2 className="h-4 w-4" />
                         </button>
-                        <button className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-all">
+                        <button className="p-2 rounded-xs bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
                           <XCircle className="h-4 w-4" />
                         </button>
                       </div>
@@ -177,18 +177,19 @@ export function StaffHRManagement() {
         </TabsContent>
 
         <TabsContent value="payouts">
-          <Card className="border-none glass futuristic-card p-12 text-center flex flex-col items-center">
-            <div className="h-16 w-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center neon-blue mb-6">
+          <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-12 text-center flex flex-col items-center shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div className="h-16 w-16 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-lg emerald-glow mb-6">
               <DollarSign className="h-8 w-8" />
             </div>
-            <h3 className="text-2xl font-black text-slate-900">
+            <h3 className="text-3xl font-black text-foreground uppercase tracking-tight">
               Faculty Payroll Engine
             </h3>
-            <p className="text-slate-500 mt-2 max-w-sm font-medium">
+            <p className="text-foreground/50 mt-4 max-w-sm font-bold uppercase tracking-widest text-[10px]">
               Automated salary computation based on attendance telemetry and
               holiday deductions.
             </p>
-            <Button className="mt-8 rounded-2xl bg-slate-900 px-10 py-6 font-bold shadow-2xl">
+            <Button className="mt-10 rounded-sm bg-primary text-primary-foreground px-12 py-7 font-black shadow-2xl emerald-glow uppercase tracking-[0.2em] text-xs">
               Execute Monthly Payouts
             </Button>
           </Card>
@@ -197,3 +198,4 @@ export function StaffHRManagement() {
     </div>
   );
 }
+

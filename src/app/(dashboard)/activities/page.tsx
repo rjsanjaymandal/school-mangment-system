@@ -16,3 +16,4 @@ export default async function ActivitiesPage() {
 
   return <ActivitiesDashboard initialActivities={(activities as Activity[]) || []} />;
 }
+

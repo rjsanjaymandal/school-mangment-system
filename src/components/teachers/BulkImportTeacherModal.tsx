@@ -133,21 +133,21 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
             {!file && (
                 <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${isDragActive
-                            ? "border-blue-500 bg-blue-50/50"
-                            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                    className={`border-2 border-dashed rounded-sm p-12 text-center cursor-pointer transition-all duration-300 ${isDragActive
+                            ? "border-primary bg-primary/10 shadow-[inner_0_0_20px_rgba(16,185,129,0.1)]"
+                            : "border-border hover:border-primary/40 hover:bg-primary/5 shadow-inner"
                         }`}
                 >
                     <input {...getInputProps()} />
-                    <UploadCloud className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-slate-700 mb-2">
+                    <UploadCloud className="w-14 h-14 text-primary/40 mx-auto mb-6 animate-pulse" />
+                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight mb-2">
                         Upload CSV File
                     </h3>
-                    <p className="text-sm text-slate-500 mb-6">
+                    <p className="text-sm text-muted-foreground mb-6">
                         Drag and drop your spreadsheet here, or click to browse.
                     </p>
-                    <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
-                        <FileType className="w-4 h-4" />
+                    <div className="flex items-center justify-center gap-2 text-[10px] text-foreground/40 font-black uppercase tracking-widest">
+                        <FileType className="w-4 h-4 text-primary/60" />
                         <span>Accepts .csv files only</span>
                     </div>
                 </div>
@@ -161,15 +161,15 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
 
             {file && !importResult && (
                 <div className="space-y-6">
-                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                            <FileType className="w-5 h-5 text-blue-600" />
+                    <div className="flex items-center gap-4 bg-background/20 p-5 rounded-sm border border-border">
+                        <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 shadow-inner">
+                            <FileType className="w-6 h-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-slate-900 truncate">
+                            <p className="text-sm font-bold text-foreground truncate">
                                 {file.name}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted-foreground">
                                 {(file.size / 1024).toFixed(1)} KB
                             </p>
                         </div>
@@ -181,6 +181,7 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                                 setPreviewData([]);
                                 setErrors([]);
                             }}
+                            className="rounded-xs hover:bg-red-500/10 hover:text-red-500 font-black uppercase tracking-widest text-[10px]"
                             disabled={isProcessing}
                         >
                             Remove
@@ -188,41 +189,41 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     </div>
 
                     {errors.length > 0 && (
-                        <div className="bg-red-50 text-red-700 p-4 rounded-2xl text-sm space-y-2 border border-red-100">
-                            <div className="font-bold flex items-center gap-2">
+                        <div className="bg-red-500/10 text-red-500 p-5 rounded-sm text-xs space-y-3 border border-red-500/20 shadow-inner">
+                            <div className="font-black uppercase tracking-widest flex items-center gap-2">
                                 <AlertCircle className="w-4 h-4" /> Validation Errors Found
                             </div>
-                            <ul className="list-disc list-inside space-y-1 max-h-32 overflow-y-auto pl-2">
+                            <ul className="list-disc list-inside space-y-1.5 max-h-32 overflow-y-auto pl-2 font-bold opacity-80">
                                 {errors.map((err, i) => (
                                     <li key={i}>{err}</li>
                                 ))}
                             </ul>
                         </div>
                     )}
-
+ 
                     {previewData.length > 0 && errors.length === 0 && (
-                        <div className="bg-green-50 text-green-700 p-4 rounded-2xl text-sm border border-green-100 flex items-center gap-2 font-medium">
-                            <CheckCircle2 className="w-5 h-5" />
-                            Valid file ready to import {previewData.length} teachers.
+                        <div className="bg-primary/10 text-primary p-5 rounded-sm text-[11px] border border-primary/20 flex items-center gap-3 font-black uppercase tracking-widest shadow-inner">
+                            <CheckCircle2 className="w-5 h-5 animate-pulse" />
+                            Valid file ready to import {previewData.length} records.
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-3 pt-4 border-t">
-                        <Button variant="outline" onClick={onCancel} disabled={isProcessing}>
+                    <div className="flex justify-end gap-3 pt-6 border-t border-border">
+                        <Button variant="outline" onClick={onCancel} disabled={isProcessing} className="rounded-sm font-black uppercase tracking-widest text-[10px] px-6">
                             Cancel
                         </Button>
                         <Button
                             onClick={handleImport}
                             disabled={isProcessing || errors.length > 0 || previewData.length === 0}
-                            className="bg-slate-900 text-white rounded-xl gap-2 font-bold min-w-[120px]"
+                            className="bg-primary text-primary-foreground rounded-sm gap-2 font-black uppercase tracking-[0.2em] text-xs px-8 py-6 h-auto emerald-glow whitespace-nowrap"
                         >
                             {isProcessing ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Importing...
+                                    Processing...
                                 </>
                             ) : (
-                                "Import Data"
+                                "Initiate Import"
                             )}
                         </Button>
                     </div>
@@ -230,38 +231,39 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
             )}
 
             {importResult && (
-                <div className="space-y-6 text-center py-6">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle2 className="w-8 h-8 text-blue-600" />
+                <div className="space-y-8 text-center py-10">
+                    <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 border border-primary/20 shadow-inner">
+                        <CheckCircle2 className="w-10 h-10 text-primary animate-bounce" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900">Import Complete</h3>
-                    <div className="flex justify-center gap-6 mt-4">
-                        <div className="text-center">
-                            <div className="text-3xl font-black text-green-600">{importResult.successCount}</div>
-                            <div className="text-sm font-medium text-slate-500">Success</div>
+                    <h3 className="text-3xl font-black text-foreground uppercase tracking-tight">Import Complete</h3>
+                    <div className="flex justify-center gap-12 mt-6">
+                        <div className="text-center group">
+                            <div className="text-4xl font-black text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">{importResult.successCount}</div>
+                            <div className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] mt-1 group-hover:text-primary transition-colors">Success</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-black text-red-500">{importResult.failCount}</div>
-                            <div className="text-sm font-medium text-slate-500">Failed</div>
+                        <div className="text-center group">
+                            <div className="text-4xl font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">{importResult.failCount}</div>
+                            <div className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] mt-1 group-hover:text-red-500 transition-colors">Failed</div>
                         </div>
                     </div>
 
                     {importResult.errors.length > 0 && (
-                        <div className="mt-6 text-left bg-slate-50 rounded-2xl p-4 border text-sm max-h-40 overflow-y-auto">
-                            <span className="font-bold text-slate-700 block mb-2">Error Log:</span>
-                            <ul className="text-slate-600 space-y-1 text-xs">
+                        <div className="mt-8 text-left bg-background/30 rounded-sm p-5 border border-border text-[11px] max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20">
+                            <span className="font-black text-foreground/60 uppercase tracking-widest block mb-3 border-b border-border pb-1">Error Telemetry:</span>
+                            <ul className="text-foreground/50 space-y-2 font-bold">
                                 {importResult.errors.map((e, i) => (
-                                    <li key={i}>{e}</li>
+                                    <li key={i} className="flex gap-2"><span className="text-red-500/50">›</span> {e}</li>
                                 ))}
                             </ul>
                         </div>
                     )}
 
-                    <Button onClick={onSuccess} className="w-full mt-6 bg-slate-900 rounded-xl font-bold text-white">
-                        Done
+                    <Button onClick={onSuccess} className="w-full mt-8 bg-primary text-primary-foreground rounded-sm font-black uppercase tracking-[0.2em] text-xs py-7 h-auto emerald-glow shadow-xl">
+                        Acknowledge & Sync
                     </Button>
                 </div>
             )}
         </div>
     );
 }
+

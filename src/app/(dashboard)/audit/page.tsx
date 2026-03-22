@@ -16,3 +16,4 @@ export default async function AuditPage() {
 
   return <AuditDashboardClient logs={logs || []} />;
 }
+

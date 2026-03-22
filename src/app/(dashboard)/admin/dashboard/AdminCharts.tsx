@@ -26,7 +26,7 @@ export function AdminCharts() {
         <div className="grid gap-6 lg:grid-cols-2">
             <Card className="border-none glass futuristic-card bg-white/40 p-2">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">
+                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                         Platform Engagement (6 Months)
                     </CardTitle>
                 </CardHeader>
@@ -58,7 +58,7 @@ export function AdminCharts() {
 
             <Card className="border-none glass futuristic-card bg-white/40 p-2">
                 <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">
+                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                         Academic Performance Index
                     </CardTitle>
                 </CardHeader>
@@ -82,3 +82,4 @@ export function AdminCharts() {
         </div>
     );
 }
+

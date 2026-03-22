@@ -73,7 +73,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow>
@@ -88,7 +88,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
               <TableRow>
                 <TableCell
                   colSpan={4}
-                  className="h-24 text-center text-slate-500"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   No subjects found.
                 </TableCell>
@@ -102,10 +102,10 @@ export function SubjectList({ initialData }: SubjectListProps) {
                   <TableCell className="font-mono text-xs font-semibold px-4 py-1.5 bg-slate-100/50 rounded inline-block mt-2 ml-4">
                     {subject.code || "N/A"}
                   </TableCell>
-                  <TableCell className="font-semibold text-slate-900">
+                  <TableCell className="font-semibold text-foreground">
                     {subject.name}
                   </TableCell>
-                  <TableCell className="text-slate-500 text-sm max-w-xs truncate">
+                  <TableCell className="text-muted-foreground text-sm max-w-xs truncate">
                     {subject.description || "N/A"}
                   </TableCell>
                   <TableCell className="text-right">
@@ -158,3 +158,4 @@ export function SubjectList({ initialData }: SubjectListProps) {
     </div>
   );
 }
+

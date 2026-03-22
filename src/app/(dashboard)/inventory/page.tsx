@@ -15,3 +15,4 @@ export default async function ProcurementHub() {
 
   return <InventoryDashboardClient initialInventory={inventoryItems || []} />;
 }
+

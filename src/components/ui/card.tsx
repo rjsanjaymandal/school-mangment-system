@@ -15,7 +15,7 @@ function Card({
       className={cn(
         "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
         variant === "futuristic" &&
-          "border-blue-100/20 bg-slate-900 text-white shadow-2xl shadow-blue-500/10",
+          "border-blue-100/20 bg-card text-white shadow-2xl shadow-blue-500/10",
         variant === "glass" &&
           "bg-white/40 backdrop-blur-xl border-white/20 shadow-xl",
         className,
@@ -100,3 +100,4 @@ export {
   CardDescription,
   CardContent,
 };
+

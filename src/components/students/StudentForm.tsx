@@ -166,3 +166,4 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
     </Form>
   );
 }
+

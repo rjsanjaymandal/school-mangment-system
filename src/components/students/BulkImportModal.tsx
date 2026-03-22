@@ -138,18 +138,18 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                     {...getRootProps()}
                     className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${isDragActive
                             ? "border-blue-500 bg-blue-50/50"
-                            : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                            : "border-border hover:border-slate-300 hover:bg-slate-50/50"
                         }`}
                 >
                     <input {...getInputProps()} />
-                    <UploadCloud className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                    <UploadCloud className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-slate-700 mb-2">
                         Upload CSV File
                     </h3>
-                    <p className="text-sm text-slate-500 mb-6">
+                    <p className="text-sm text-muted-foreground mb-6">
                         Drag and drop your spreadsheet here, or click to browse.
                     </p>
-                    <div className="flex items-center justify-center gap-2 text-xs text-slate-400">
+                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                         <FileType className="w-4 h-4" />
                         <span>Accepts .csv files only</span>
                     </div>
@@ -166,15 +166,15 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
             {/* File Selected State */}
             {file && !importResult && (
                 <div className="space-y-6">
-                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-border">
                         <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                             <FileType className="w-5 h-5 text-blue-600" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-slate-900 truncate">
+                            <p className="text-sm font-bold text-foreground truncate">
                                 {file.name}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted-foreground">
                                 {(file.size / 1024).toFixed(1)} KB
                             </p>
                         </div>
@@ -219,7 +219,7 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                         <Button
                             onClick={handleImport}
                             disabled={isProcessing || errors.length > 0 || previewData.length === 0}
-                            className="bg-slate-900 text-white rounded-xl gap-2 font-bold min-w-[120px]"
+                            className="bg-card text-white rounded-xl gap-2 font-bold min-w-[120px]"
                         >
                             {isProcessing ? (
                                 <>
@@ -240,22 +240,22 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <CheckCircle2 className="w-8 h-8 text-blue-600" />
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900">Import Complete</h3>
+                    <h3 className="text-2xl font-bold text-foreground">Import Complete</h3>
                     <div className="flex justify-center gap-6 mt-4">
                         <div className="text-center">
                             <div className="text-3xl font-black text-green-600">{importResult.successCount}</div>
-                            <div className="text-sm font-medium text-slate-500">Success</div>
+                            <div className="text-sm font-medium text-muted-foreground">Success</div>
                         </div>
                         <div className="text-center">
                             <div className="text-3xl font-black text-red-500">{importResult.failCount}</div>
-                            <div className="text-sm font-medium text-slate-500">Failed</div>
+                            <div className="text-sm font-medium text-muted-foreground">Failed</div>
                         </div>
                     </div>
 
                     {importResult.errors.length > 0 && (
                         <div className="mt-6 text-left bg-slate-50 rounded-2xl p-4 border text-sm max-h-40 overflow-y-auto">
                             <span className="font-bold text-slate-700 block mb-2">Error Log:</span>
-                            <ul className="text-slate-600 space-y-1 text-xs">
+                            <ul className="text-foreground/70 space-y-1 text-xs">
                                 {importResult.errors.map((e, i) => (
                                     <li key={i}>{e}</li>
                                 ))}
@@ -263,7 +263,7 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                         </div>
                     )}
 
-                    <Button onClick={onSuccess} className="w-full mt-6 bg-slate-900 rounded-xl font-bold text-white">
+                    <Button onClick={onSuccess} className="w-full mt-6 bg-card rounded-xl font-bold text-white">
                         Done
                     </Button>
                 </div>
@@ -271,3 +271,4 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
         </div>
     );
 }
+

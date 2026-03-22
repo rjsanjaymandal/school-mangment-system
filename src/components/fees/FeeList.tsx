@@ -78,7 +78,7 @@ export function FeeList({ initialData }: FeeListProps) {
           </Button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
           <Table>
             <TableHeader className="bg-slate-50">
               <TableRow>
@@ -94,7 +94,7 @@ export function FeeList({ initialData }: FeeListProps) {
                 <TableRow>
                   <TableCell
                     colSpan={5}
-                    className="h-24 text-center text-slate-500"
+                    className="h-24 text-center text-muted-foreground"
                   >
                     No fee structures defined.
                   </TableCell>
@@ -105,19 +105,19 @@ export function FeeList({ initialData }: FeeListProps) {
                     key={fee.id}
                     className="hover:bg-slate-50/50 transition-colors"
                   >
-                    <TableCell className="font-semibold text-slate-900">
+                    <TableCell className="font-semibold text-foreground">
                       {fee.name}
                     </TableCell>
                     <TableCell className="font-bold text-slate-700">
                       ₹{fee.amount}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-x-2 text-slate-500">
+                      <div className="flex items-center gap-x-2 text-muted-foreground">
                         <Calendar className="h-4 w-4" />
                         {new Date(fee.due_date).toLocaleDateString()}
                       </div>
                     </TableCell>
-                    <TableCell className="text-slate-500 text-sm max-w-xs truncate">
+                    <TableCell className="text-muted-foreground text-sm max-w-xs truncate">
                       {fee.description || "N/A"}
                     </TableCell>
                     <TableCell className="text-right">
@@ -145,3 +145,4 @@ export function FeeList({ initialData }: FeeListProps) {
     </div>
   );
 }
+

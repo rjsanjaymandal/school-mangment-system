@@ -79,7 +79,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
         className="flex flex-wrap gap-4 items-end p-4 border-none shadow-sm"
       >
         <div className="space-y-2 flex-1 min-w-[200px]">
-          <label className="text-sm font-medium text-slate-600">Class</label>
+          <label className="text-sm font-medium text-foreground/70">Class</label>
           <Select onValueChange={setSelectedClass}>
             <SelectTrigger className="bg-slate-50 border-none">
               <SelectValue placeholder="Select a class" />
@@ -94,7 +94,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
           </Select>
         </div>
         <div className="space-y-2 flex-1 min-w-[200px]">
-          <label className="text-sm font-medium text-slate-600">Date</label>
+          <label className="text-sm font-medium text-foreground/70">Date</label>
           <Input
             type="date"
             value={selectedDate}
@@ -135,7 +135,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
               <TableRow>
                 <TableCell
                   colSpan={4}
-                  className="h-24 text-center text-slate-500"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   {selectedClass
                     ? "No records found for this date."
@@ -164,7 +164,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
                       {record.status.toUpperCase()}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-slate-500 italic text-sm">
+                  <TableCell className="text-muted-foreground italic text-sm">
                     {record.remarks || "-"}
                   </TableCell>
                 </TableRow>
@@ -176,3 +176,4 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
     </div>
   );
 }
+

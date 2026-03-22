@@ -51,7 +51,7 @@ export function ExamList({ initialData, academicYears }: ExamListProps) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {data.length === 0 ? (
-          <div className="col-span-full h-32 flex items-center justify-center text-slate-500 bg-white rounded-xl border border-dashed">
+          <div className="col-span-full h-32 flex items-center justify-center text-muted-foreground bg-white rounded-xl border border-dashed">
             No exams scheduled.
           </div>
         ) : (
@@ -81,13 +81,13 @@ export function ExamList({ initialData, academicYears }: ExamListProps) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">{exam.name}</h3>
-                <p className="text-sm text-slate-500 mb-4">
+                <h3 className="font-bold text-foreground mb-1">{exam.name}</h3>
+                <p className="text-sm text-muted-foreground mb-4">
                   {exam.academic_year?.name || "Academic Year"}
                 </p>
 
                 <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                  <div className="flex items-center text-xs text-slate-400 gap-x-1">
+                  <div className="flex items-center text-xs text-muted-foreground gap-x-1">
                     <Calendar className="h-3 w-3" />
                     {new Date(exam.start_date).toLocaleDateString()}
                   </div>
@@ -132,3 +132,4 @@ export function ExamList({ initialData, academicYears }: ExamListProps) {
     </div>
   );
 }
+

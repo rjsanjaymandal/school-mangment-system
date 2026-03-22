@@ -107,25 +107,25 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="rounded-2xl bg-indigo-600 text-white font-bold gap-x-2 shadow-lg shadow-indigo-200 hover:bg-indigo-700">
+                <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow uppercase tracking-widest text-[10px] min-w-[160px] shadow-xl">
                     <UserPlus className="h-4 w-4" /> Assign Student
                 </Button>
             </DialogTrigger>
-            <DialogContent className="glass border-none sm:max-w-[425px]">
+            <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-[425px] rounded-sm shadow-2xl">
                 <DialogHeader>
-                    <DialogTitle className="font-black text-2xl">Assign Transport</DialogTitle>
+                    <DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Assign Transport</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6 pt-4">
                     {/* Student Selection */}
                     <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase text-slate-400">Select Student</Label>
+                        <Label className="text-xs font-bold uppercase text-muted-foreground">Select Student</Label>
                         <Popover open={studentPopoverOpen} onOpenChange={setStudentPopoverOpen}>
                             <PopoverTrigger asChild>
                                 <Button
                                     variant="outline"
                                     role="combobox"
                                     aria-expanded={studentPopoverOpen}
-                                    className="w-full justify-between rounded-xl bg-white/50 border-slate-200"
+                                    className="w-full justify-between rounded-sm bg-background/50 border-border font-bold uppercase tracking-tight text-xs"
                                     disabled={fetchingStudents}
                                 >
                                     {selectedStudentId
@@ -134,16 +134,17 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-full p-0 glass border-none shadow-2xl">
-                                <Command>
-                                    <CommandInput placeholder="Search student..." className="h-9" />
-                                    <CommandList>
-                                        <CommandEmpty>No student found.</CommandEmpty>
+                             <PopoverContent className="w-full p-0 bg-card border border-border shadow-2xl rounded-sm">
+                                <Command className="bg-transparent">
+                                    <CommandInput placeholder="Search student..." className="h-10 border-none focus:ring-0 font-bold" />
+                                    <CommandList className="scrollbar-thin scrollbar-thumb-primary/20">
+                                        <CommandEmpty className="py-4 text-center text-[10px] font-black text-foreground/30 uppercase tracking-widest">No student found.</CommandEmpty>
                                         <CommandGroup>
                                             {students.map((student) => (
                                                 <CommandItem
                                                     key={student.id}
                                                     value={`${student.profile?.first_name} ${student.profile?.last_name} ${student.id}`}
+                                                    className="py-3 px-4 aria-selected:bg-primary/10 aria-selected:text-primary transition-colors cursor-pointer"
                                                     onSelect={() => {
                                                         setSelectedStudentId(student.id);
                                                         setStudentPopoverOpen(false);
@@ -151,11 +152,11 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                                                 >
                                                     <Check
                                                         className={cn(
-                                                            "mr-2 h-4 w-4",
+                                                            "mr-3 h-4 w-4",
                                                             selectedStudentId === student.id ? "opacity-100" : "opacity-0"
                                                         )}
                                                     />
-                                                    {student.profile?.first_name} {student.profile?.last_name}
+                                                    <span className="font-black uppercase tracking-tight text-[11px]">{student.profile?.first_name} {student.profile?.last_name}</span>
                                                 </CommandItem>
                                             ))}
                                         </CommandGroup>
@@ -167,14 +168,14 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
 
                     {/* Route Selection */}
                     <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase text-slate-400">Select Route</Label>
+                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Select Route</Label>
                         <Select value={selectedRouteId} onValueChange={setSelectedRouteId}>
-                            <SelectTrigger className="rounded-xl bg-white/50 border-slate-200">
+                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold">
                                 <SelectValue placeholder="Select a route" />
                             </SelectTrigger>
-                            <SelectContent className="glass border-none">
+                            <SelectContent className="bg-card border-border rounded-sm">
                                 {routes.map((route) => (
-                                    <SelectItem key={route.id} value={route.id} className="font-medium">
+                                    <SelectItem key={route.id} value={route.id} className="font-black uppercase tracking-tight text-[11px]">
                                         {route.name} ({route.route_number || "No #"})
                                     </SelectItem>
                                 ))}
@@ -184,17 +185,17 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
 
                     {/* Stop Selection */}
                     <div className="space-y-2">
-                        <Label className="text-xs font-bold uppercase text-slate-400">Select Stop (Optional)</Label>
+                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Select Stop (Optional)</Label>
                         <Select value={selectedStopId} onValueChange={setSelectedStopId} disabled={!selectedRouteId}>
-                            <SelectTrigger className="rounded-xl bg-white/50 border-slate-200">
+                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold">
                                 <SelectValue placeholder={selectedRouteId ? "Select a stop" : "Choose route first"} />
                             </SelectTrigger>
-                            <SelectContent className="glass border-none">
+                            <SelectContent className="bg-card border-border rounded-sm">
                                 {filteredStops.length === 0 ? (
-                                    <div className="py-2 px-4 text-xs font-medium text-slate-400">No stops for this route</div>
+                                    <div className="py-4 px-4 text-[10px] font-black text-foreground/30 uppercase tracking-widest text-center">No stops for this route</div>
                                 ) : (
                                     filteredStops.map((stop) => (
-                                        <SelectItem key={stop.id} value={stop.id} className="font-medium">
+                                        <SelectItem key={stop.id} value={stop.id} className="font-black uppercase tracking-tight text-[11px]">
                                             {stop.name}
                                         </SelectItem>
                                     ))
@@ -206,7 +207,7 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                     <Button
                         onClick={handleAssign}
                         disabled={loading || !selectedStudentId || !selectedRouteId}
-                        className="w-full rounded-xl py-6 bg-slate-900 text-white font-bold shadow-xl hover:scale-[1.02] transition-transform"
+                        className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs mt-4"
                     >
                         {loading ? "Assigning..." : "Confirm Assignment"}
                     </Button>
@@ -215,3 +216,4 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
         </Dialog>
     );
 }
+

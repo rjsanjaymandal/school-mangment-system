@@ -186,7 +186,7 @@ export function AttendanceDashboard({
                 "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-x-1",
                 studentRecords[studentId] === status
                     ? `${activeColor} text-white shadow-lg scale-105`
-                    : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+                    : "bg-slate-100 text-muted-foreground hover:bg-slate-200"
             )}
         >
             {icon}{label}
@@ -197,14 +197,14 @@ export function AttendanceDashboard({
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Attendance Nexus</h2>
-                    <p className="text-slate-500 font-medium tracking-tight">Real-Time Precision Tracking & Analytics</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground">Attendance Nexus</h2>
+                    <p className="text-muted-foreground font-medium tracking-tight">Real-Time Precision Tracking & Analytics</p>
                 </div>
             </div>
 
             {/* Stats */}
             <div className="grid gap-6 md:grid-cols-4">
-                <Card className="border-none glass futuristic-card p-6 bg-slate-900 text-white">
+                <Card className="border-none glass futuristic-card p-6 bg-card text-white">
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Weekly Rate</p>
@@ -220,41 +220,41 @@ export function AttendanceDashboard({
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-green-500">Today Present</p>
-                            <h3 className="text-3xl font-black mt-2 text-slate-900">{todayPresent}</h3>
+                            <h3 className="text-3xl font-black mt-2 text-foreground">{todayPresent}</h3>
                         </div>
                         <UserCheck className="h-8 w-8 text-green-500" />
                     </div>
-                    <p className="text-xs font-bold text-slate-400 mt-3">of {todayTotal} marked</p>
+                    <p className="text-xs font-bold text-muted-foreground mt-3">of {todayTotal} marked</p>
                 </Card>
                 <Card className="border-none glass futuristic-card p-6">
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-red-400">Today Absent</p>
-                            <h3 className="text-3xl font-black mt-2 text-slate-900">{todayAbsent}</h3>
+                            <h3 className="text-3xl font-black mt-2 text-foreground">{todayAbsent}</h3>
                         </div>
                         <UserX className="h-8 w-8 text-red-400" />
                     </div>
-                    <p className="text-xs font-bold text-slate-400 mt-3">needs follow-up</p>
+                    <p className="text-xs font-bold text-muted-foreground mt-3">needs follow-up</p>
                 </Card>
                 <Card className="border-none glass futuristic-card p-6">
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Weekly Late</p>
-                            <h3 className="text-3xl font-black mt-2 text-slate-900">{weekLate}</h3>
+                            <h3 className="text-3xl font-black mt-2 text-foreground">{weekLate}</h3>
                         </div>
                         <AlertTriangle className="h-8 w-8 text-amber-500" />
                     </div>
-                    <p className="text-xs font-bold text-slate-400 mt-3">last 7 days</p>
+                    <p className="text-xs font-bold text-muted-foreground mt-3">last 7 days</p>
                 </Card>
             </div>
 
             {/* Tabs */}
             <Tabs defaultValue="mark" className="space-y-6">
                 <TabsList className="bg-white/40 backdrop-blur-md border border-white/20 p-1.5 rounded-2xl h-14 w-fit">
-                    <TabsTrigger value="mark" className="rounded-xl px-8 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-bold transition-all gap-x-2">
+                    <TabsTrigger value="mark" className="rounded-xl px-8 py-3 data-[state=active]:bg-card data-[state=active]:text-white font-bold transition-all gap-x-2">
                         <ClipboardCheck className="h-4 w-4" /> Mark Attendance
                     </TabsTrigger>
-                    <TabsTrigger value="history" className="rounded-xl px-8 py-3 data-[state=active]:bg-slate-900 data-[state=active]:text-white font-bold transition-all gap-x-2">
+                    <TabsTrigger value="history" className="rounded-xl px-8 py-3 data-[state=active]:bg-card data-[state=active]:text-white font-bold transition-all gap-x-2">
                         <Calendar className="h-4 w-4" /> Attendance Logs
                     </TabsTrigger>
                 </TabsList>
@@ -264,20 +264,20 @@ export function AttendanceDashboard({
                     <Card className="border-none glass futuristic-card">
                         <CardContent className="flex flex-wrap gap-4 items-end p-6">
                             <div className="space-y-2 flex-1 min-w-[200px]">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Class</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Class</Label>
                                 <Select value={selectedClass} onValueChange={handleClassChange}>
                                     <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select a class" /></SelectTrigger>
                                     <SelectContent>{classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2 flex-1 min-w-[200px]">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Date</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Date</Label>
                                 <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="rounded-xl" />
                             </div>
                             <div className="space-y-2 flex-1 min-w-[200px]">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Search Student</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Search Student</Label>
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Name or admission no..." className="pl-9 rounded-xl" />
                                 </div>
                             </div>
@@ -308,7 +308,7 @@ export function AttendanceDashboard({
                             <Card className="border-none glass futuristic-card overflow-hidden">
                                 <div className="divide-y divide-slate-100">
                                     {filteredStudents.length === 0 ? (
-                                        <div className="p-12 text-center text-slate-400 font-medium">No students found.</div>
+                                        <div className="p-12 text-center text-muted-foreground font-medium">No students found.</div>
                                     ) : (
                                         filteredStudents.map((student, idx) => (
                                             <div key={student.id} className="p-5 flex items-center justify-between hover:bg-white/40 transition-all group">
@@ -322,11 +322,11 @@ export function AttendanceDashboard({
                                                         )}>
                                                             {student.profile?.first_name?.[0] || "?"}
                                                         </div>
-                                                        <span className="absolute -top-1 -left-1 text-[8px] font-black bg-slate-900 text-white rounded px-1">{idx + 1}</span>
+                                                        <span className="absolute -top-1 -left-1 text-[8px] font-black bg-card text-white rounded px-1">{idx + 1}</span>
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-bold text-slate-900">{student.profile?.first_name} {student.profile?.last_name}</h4>
-                                                        <p className="text-[10px] font-bold text-slate-400 uppercase">
+                                                        <h4 className="font-bold text-foreground">{student.profile?.first_name} {student.profile?.last_name}</h4>
+                                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">
                                                             {student.admission_number || "N/A"} • {student.class?.name || "—"}
                                                         </p>
                                                     </div>
@@ -345,7 +345,7 @@ export function AttendanceDashboard({
 
                             {/* Save Button */}
                             <div className="flex justify-end">
-                                <Button onClick={handleSave} disabled={loading} className="rounded-2xl bg-slate-900 text-white font-bold px-12 py-6 gap-x-2 neon-blue text-sm">
+                                <Button onClick={handleSave} disabled={loading} className="rounded-2xl bg-card text-white font-bold px-12 py-6 gap-x-2 neon-blue text-sm">
                                     <ClipboardCheck className="h-5 w-5" />
                                     {loading ? "Saving..." : `Save Attendance (${Object.keys(studentRecords).length} students)`}
                                 </Button>
@@ -357,7 +357,7 @@ export function AttendanceDashboard({
                         <Card className="border-none glass futuristic-card p-12 text-center">
                             <Users className="h-12 w-12 mx-auto text-slate-200 mb-4" />
                             <h3 className="font-black text-lg text-slate-300">No students in this class</h3>
-                            <p className="text-xs text-slate-400 mt-1">Add students to this class first.</p>
+                            <p className="text-xs text-muted-foreground mt-1">Add students to this class first.</p>
                         </Card>
                     )}
                 </TabsContent>
@@ -367,21 +367,21 @@ export function AttendanceDashboard({
                     <Card className="border-none glass futuristic-card">
                         <CardContent className="flex flex-wrap gap-4 items-end p-6">
                             <div className="space-y-2 flex-1 min-w-[200px]">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Class</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Class</Label>
                                 <Select value={historyClass} onValueChange={setHistoryClass}>
                                     <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select a class" /></SelectTrigger>
                                     <SelectContent>{classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2 flex-1 min-w-[200px]">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Date</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Date</Label>
                                 <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="rounded-xl" />
                             </div>
-                            <Button onClick={fetchHistory} disabled={!historyClass || historyLoading} className="rounded-xl bg-slate-900 text-white font-bold gap-x-2">
+                            <Button onClick={fetchHistory} disabled={!historyClass || historyLoading} className="rounded-xl bg-card text-white font-bold gap-x-2">
                                 <Filter className="h-4 w-4" /> {historyLoading ? "Loading..." : "Fetch Records"}
                             </Button>
                             {historyRecords.length > 0 && (
-                                <Button variant="outline" onClick={handleExportCSV} className="rounded-xl font-bold gap-x-2 border-slate-200">
+                                <Button variant="outline" onClick={handleExportCSV} className="rounded-xl font-bold gap-x-2 border-border">
                                     <Download className="h-4 w-4" /> Export CSV
                                 </Button>
                             )}
@@ -416,24 +416,24 @@ export function AttendanceDashboard({
                             <table className="w-full text-sm">
                                 <thead className="bg-slate-50/50">
                                     <tr className="border-b">
-                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">#</th>
-                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Student</th>
-                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Admission No</th>
-                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Status</th>
-                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Remarks</th>
+                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">#</th>
+                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Student</th>
+                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Admission No</th>
+                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Status</th>
+                                        <th className="text-left py-4 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Remarks</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
                                     {historyRecords.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="py-12 text-center text-slate-400 font-medium">
+                                            <td colSpan={5} className="py-12 text-center text-muted-foreground font-medium">
                                                 {historyClass ? "No records found. Select a class and date, then click Fetch." : "Select a class and date to view attendance logs."}
                                             </td>
                                         </tr>
                                     ) : (
                                         historyRecords.map((record, idx) => (
                                             <tr key={record.id} className="hover:bg-white/60 transition-colors">
-                                                <td className="py-4 px-6 font-mono text-xs text-slate-400">{idx + 1}</td>
+                                                <td className="py-4 px-6 font-mono text-xs text-muted-foreground">{idx + 1}</td>
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-x-3">
                                                         <div className={cn(
@@ -444,10 +444,10 @@ export function AttendanceDashboard({
                                                         )}>
                                                             {record.student?.profile?.first_name?.[0] || "?"}
                                                         </div>
-                                                        <span className="font-bold text-slate-900">{record.student?.profile?.first_name} {record.student?.profile?.last_name}</span>
+                                                        <span className="font-bold text-foreground">{record.student?.profile?.first_name} {record.student?.profile?.last_name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="py-4 px-6 font-mono text-xs text-slate-500">{record.student?.admission_number || "—"}</td>
+                                                <td className="py-4 px-6 font-mono text-xs text-muted-foreground">{record.student?.admission_number || "—"}</td>
                                                 <td className="py-4 px-6">
                                                     <Badge className={cn(
                                                         "font-bold text-[10px] border-none",
@@ -458,7 +458,7 @@ export function AttendanceDashboard({
                                                         {record.status.toUpperCase()}
                                                     </Badge>
                                                 </td>
-                                                <td className="py-4 px-6 text-slate-400 text-xs italic">{record.remarks || "—"}</td>
+                                                <td className="py-4 px-6 text-muted-foreground text-xs italic">{record.remarks || "—"}</td>
                                             </tr>
                                         ))
                                     )}
@@ -471,3 +471,4 @@ export function AttendanceDashboard({
         </div>
     );
 }
+

@@ -16,3 +16,4 @@ export default async function HeritagePage() {
 
   return <HeritageDashboard initialAlumni={(alumni as Alumni[]) || []} />;
 }
+

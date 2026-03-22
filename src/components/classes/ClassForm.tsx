@@ -135,3 +135,4 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
     </Form>
   );
 }
+

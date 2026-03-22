@@ -6,3 +6,4 @@ export default async function OracleHub() {
 
   return <OracleDashboardClient systemMetrics={metrics} />;
 }
+

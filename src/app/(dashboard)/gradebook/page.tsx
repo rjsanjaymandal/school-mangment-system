@@ -41,22 +41,22 @@ export default function GradebookPage() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-slate-900">
-            Advanced Gradebook
+          <h2 className="text-4xl font-black tracking-tight text-foreground">
+            Academic Grades
           </h2>
-          <p className="text-slate-500 font-medium tracking-tight">
+          <p className="text-muted-foreground font-medium tracking-tight">
             Weighted Computation & Academic Analytics
           </p>
         </div>
         <div className="flex gap-x-2">
           <Button
             variant="outline"
-            className="rounded-2xl border-slate-200 bg-white font-bold gap-x-2"
+            className="rounded-2xl border-border bg-white font-bold gap-x-2"
           >
             <Download className="h-4 w-4" />
             Transcript PDF
           </Button>
-          <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+          <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
             <Save className="h-4 w-4" />
             Commit Grades
           </Button>
@@ -65,7 +65,7 @@ export default function GradebookPage() {
 
       <div className="grid gap-8 lg:grid-cols-3">
         {/* GPA Summary Card */}
-        <Card className="lg:col-span-1 border-none glass futuristic-card bg-slate-900 text-white overflow-hidden relative">
+        <Card className="lg:col-span-1 border-none glass futuristic-card bg-card text-white overflow-hidden relative">
           <div className="absolute top-0 right-0 p-8 opacity-10">
             <GraduationCap className="h-32 w-32" />
           </div>
@@ -110,7 +110,7 @@ export default function GradebookPage() {
               <CardTitle className="text-lg font-black tracking-tight">
                 Assessment Weights
               </CardTitle>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-muted-foreground font-medium">
                 Define parameters for academic computation
               </p>
             </div>
@@ -127,9 +127,9 @@ export default function GradebookPage() {
             {components.map((c, idx) => (
               <div
                 key={c.id}
-                className="group flex items-center gap-x-4 p-4 rounded-2xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:shadow-md transition-all"
+                className="group flex items-center gap-x-4 p-4 rounded-2xl bg-slate-50/50 border border-border hover:bg-white hover:shadow-md transition-all"
               >
-                <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center font-black text-slate-400">
+                <div className="h-10 w-10 rounded-xl bg-white border border-border flex items-center justify-center font-black text-muted-foreground">
                   0{idx + 1}
                 </div>
                 <div className="flex-1">
@@ -140,15 +140,15 @@ export default function GradebookPage() {
                       newComp[idx].label = e.target.value;
                       setComponents(newComp);
                     }}
-                    className="bg-transparent border-none font-bold text-slate-900 focus-visible:ring-0 p-0 h-auto"
+                    className="bg-transparent border-none font-bold text-foreground focus-visible:ring-0 p-0 h-auto"
                   />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Weight: {c.weight}%
                   </p>
                 </div>
                 <div className="flex items-center gap-x-4">
                   <div className="w-24">
-                    <p className="text-[10px] font-black uppercase text-slate-400 mb-1 text-right">
+                    <p className="text-[10px] font-black uppercase text-muted-foreground mb-1 text-right">
                       SCORE
                     </p>
                     <Input
@@ -159,10 +159,10 @@ export default function GradebookPage() {
                         newComp[idx].score = Number(e.target.value);
                         setComponents(newComp);
                       }}
-                      className="text-right font-black text-slate-900 bg-white rounded-xl border-slate-100"
+                      className="text-right font-black text-foreground bg-white rounded-xl border-border"
                     />
                   </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400 opacity-20" />
+                  <ChevronRight className="h-4 w-4 text-muted-foreground opacity-20" />
                 </div>
               </div>
             ))}
@@ -224,3 +224,4 @@ export default function GradebookPage() {
     </div>
   );
 }
+

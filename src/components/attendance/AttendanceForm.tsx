@@ -110,7 +110,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
         </CardHeader>
         <CardContent className="flex flex-wrap gap-4 items-end">
           <div className="space-y-2 flex-1 min-w-[200px]">
-            <label className="text-sm font-medium text-slate-600">Class</label>
+            <label className="text-sm font-medium text-foreground/70">Class</label>
             <Select onValueChange={handleClassChange}>
               <SelectTrigger className="bg-slate-50 border-none">
                 <SelectValue placeholder="Select a class" />
@@ -125,7 +125,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
             </Select>
           </div>
           <div className="space-y-2 flex-1 min-w-[200px]">
-            <label className="text-sm font-medium text-slate-600">Date</label>
+            <label className="text-sm font-medium text-foreground/70">Date</label>
             <Button
               variant="outline"
               className="w-full justify-start text-left font-normal bg-slate-50 border-none"
@@ -165,15 +165,15 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
                   className="py-4 flex items-center justify-between"
                 >
                   <div className="flex items-center gap-x-3">
-                    <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500">
+                    <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-muted-foreground">
                       {student.profile?.first_name[0]}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">
+                      <p className="font-semibold text-foreground">
                         {student.profile?.first_name}{" "}
                         {student.profile?.last_name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-muted-foreground">
                         Roll No: {student.roll_number || "N/A"}
                       </p>
                     </div>
@@ -187,7 +187,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
                       className={
                         student.status === "present"
                           ? "bg-green-600 hover:bg-green-700"
-                          : "text-slate-400"
+                          : "text-muted-foreground"
                       }
                       onClick={() => toggleStatus(student.id)}
                     >
@@ -201,7 +201,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
                       className={
                         student.status === "absent"
                           ? "bg-red-600 hover:bg-red-700"
-                          : "text-slate-400"
+                          : "text-muted-foreground"
                       }
                       onClick={() => toggleStatus(student.id)}
                     >
@@ -217,3 +217,4 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
     </div>
   );
 }
+

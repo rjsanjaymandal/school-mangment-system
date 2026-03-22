@@ -73,7 +73,7 @@ export function ClassList({ initialData }: ClassListProps) {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow>
@@ -88,7 +88,7 @@ export function ClassList({ initialData }: ClassListProps) {
               <TableRow>
                 <TableCell
                   colSpan={4}
-                  className="h-24 text-center text-slate-500"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   No classes found.
                 </TableCell>
@@ -99,12 +99,12 @@ export function ClassList({ initialData }: ClassListProps) {
                   key={cls.id}
                   className="hover:bg-slate-50/50 transition-colors"
                 >
-                  <TableCell className="font-semibold text-slate-900">
+                  <TableCell className="font-semibold text-foreground">
                     {cls.name}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-x-2">
-                      <Users className="h-4 w-4 text-slate-400" />
+                      <Users className="h-4 w-4 text-muted-foreground" />
                       {cls.capacity || "N/A"}
                     </div>
                   </TableCell>
@@ -160,3 +160,4 @@ export function ClassList({ initialData }: ClassListProps) {
     </div>
   );
 }
+

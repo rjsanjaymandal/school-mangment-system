@@ -12,13 +12,14 @@ export default async function SubjectsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">
           Subjects
         </h2>
-        <p className="text-slate-500">Manage academic subjects and courses.</p>
+        <p className="text-muted-foreground">Manage academic subjects and courses.</p>
       </div>
 
       <SubjectList initialData={subjects || []} />
     </div>
   );
 }
+

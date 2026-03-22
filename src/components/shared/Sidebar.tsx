@@ -48,9 +48,9 @@ interface NavGroup {
 
 const navigation: NavGroup[] = [
   {
-    group: "Core",
+    group: "Main Dashboard",
     items: [
-      { name: "Command Center", href: "/", icon: LayoutDashboard },
+      { name: "Dashboard", href: "/", icon: LayoutDashboard },
       {
         name: "Analytics",
         href: "/analytics",
@@ -59,7 +59,7 @@ const navigation: NavGroup[] = [
         roles: ["admin", "teacher"],
       },
       {
-        name: "AI Insights",
+        name: "Admin Insights",
         href: "/oracle",
         icon: BrainCircuit,
         futuristic: true,
@@ -68,7 +68,7 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "Personnel",
+    group: "People",
     roles: ["admin", "teacher"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap },
@@ -79,8 +79,8 @@ const navigation: NavGroup[] = [
         roles: ["admin"],
       },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
-      { name: "Behavior", href: "/conduct", icon: ShieldAlert },
-      { name: "Health Center", href: "/health", icon: Stethoscope },
+      { name: "Conduct", href: "/conduct", icon: ShieldAlert },
+      { name: "Health", href: "/health", icon: Stethoscope },
       {
         name: "Alumni",
         href: "/heritage",
@@ -90,7 +90,7 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "Academic",
+    group: "Academics",
     roles: ["admin", "teacher", "student"],
     items: [
       {
@@ -105,12 +105,12 @@ const navigation: NavGroup[] = [
         icon: BookOpen,
         roles: ["admin", "teacher"],
       },
-      { name: "Gradebook", href: "/gradebook", icon: FileText },
+      { name: "Grades", href: "/gradebook", icon: FileText },
       { name: "Exams", href: "/exams", icon: ClipboardCheck },
       { name: "Timetable", href: "/timetable", icon: Calendar },
       { name: "Certificates", href: "/certificates", icon: Award },
       {
-        name: "Activity Pulse",
+        name: "Activities",
         href: "/activities",
         icon: Trophy,
         roles: ["admin", "teacher"],
@@ -118,9 +118,9 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "Enterprise",
+    group: "Operations",
     items: [
-      { name: "Fees", href: "/fees", icon: CreditCard },
+      { name: "Fees & Payments", href: "/fees", icon: CreditCard },
       { name: "Library", href: "/library", icon: Library },
       {
         name: "Inventory",
@@ -131,7 +131,7 @@ const navigation: NavGroup[] = [
       { name: "Transport", href: "/transport", icon: Bus },
       { name: "Messages", href: "/messages", icon: MessageSquare },
       {
-        name: "Parent Pulse",
+        name: "Parents",
         href: "/guardian",
         icon: Heart,
         roles: ["admin", "teacher"],
@@ -139,19 +139,19 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "System",
+    group: "Settings",
     roles: ["admin"],
     items: [
       {
-        name: "Identity & Access",
+        name: "Users",
         href: "/users",
         icon: ShieldCheck,
         roles: ["admin"],
       },
-      { name: "Settings", href: "/settings", icon: Settings },
-      { name: "Audit Logs", href: "/audit", icon: Shield },
-      { name: "Legal & Documents", href: "/compliance", icon: FileText },
-      { name: "Payment Gateways", href: "/gateways", icon: Globe },
+      { name: "System Settings", href: "/settings", icon: Settings },
+      { name: "Activity Logs", href: "/audit", icon: Shield },
+      { name: "Compliance", href: "/compliance", icon: FileText },
+      { name: "Global Gateways", href: "/gateways", icon: Globe },
     ],
   },
 ];
@@ -191,22 +191,25 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
     .filter((group) => group.items.length > 0);
 
   return (
-    <div className="flex h-full flex-col bg-white/40 backdrop-blur-md border-r border-white/20 text-slate-800">
-      <div className="p-6 pb-2 flex items-center gap-x-3">
-        <div className="bg-slate-900 text-white p-2 rounded-xl shadow-lg neon-blue">
+    <div className="flex h-full flex-col bg-card/80 backdrop-blur-xl border-r border-border text-foreground transition-all duration-300">
+      <div className="p-6 pb-2 flex items-center gap-x-3 reveal-0">
+        <div className="bg-primary text-primary-foreground p-2 rounded-sm shadow-xl emerald-glow transition-all duration-500 hover:rotate-3">
           <GraduationCap className="h-6 w-6" />
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-xl tracking-tight text-slate-900">
+          <span className="font-black text-xl tracking-tight text-foreground">
             Edu Maysan
+          </span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 -mt-1">
+            Core System
           </span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto px-4 py-8 space-y-9 scrollbar-hide reveal-1">
         {filteredNavigation.map((group) => (
-          <div key={group.group} className="space-y-2">
-            <h3 className="px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <div key={group.group} className="space-y-3">
+            <h3 className="px-3 text-[10px] font-black uppercase tracking-[0.4em] text-primary/80 whitespace-nowrap">
               {group.group}
             </h3>
             <div className="space-y-1">
@@ -215,26 +218,29 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "group flex items-center gap-x-3 text-slate-500 text-sm font-medium px-3 py-2.5 rounded-xl transition-all duration-300 hover:bg-white hover:shadow-sm hover:text-slate-900",
-                    pathname === item.href &&
-                    "bg-white shadow-md text-slate-900 border border-slate-100",
-                    item.futuristic &&
-                    "border border-blue-100/50 bg-blue-50/10",
+                    "group flex items-center gap-x-3 text-foreground/80 text-sm font-bold px-3 py-2.5 rounded-sm transition-all duration-300",
+                    pathname === item.href 
+                      ? "bg-primary/20 text-primary shadow-[inset_0_0_0_1px_oklch(var(--primary)/0.3)]" 
+                      : "hover:bg-accent hover:text-foreground",
+                    item.futuristic && "relative overflow-hidden"
                   )}
                 >
                   <div
                     className={cn(
-                      "p-1.5 rounded-lg transition-colors duration-300",
+                      "p-1.5 rounded-xs transition-all duration-300",
                       pathname === item.href
-                        ? "bg-slate-900 text-white"
-                        : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600",
+                        ? "bg-primary text-primary-foreground shadow-lg emerald-glow"
+                        : "bg-accent text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary",
                     )}
                   >
-                    <item.icon className="h-4 w-4" />
+                    <item.icon className={cn("h-4 w-4 transition-transform duration-300 group-hover:scale-110", pathname === item.href && "scale-110")} />
                   </div>
-                  {item.name}
-                  {"futuristic" in item && item.futuristic && (
-                    <span className="ml-auto flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+                  <span className="tracking-tight">{item.name}</span>
+                  {item.futuristic && (
+                    <span className="ml-auto flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                  )}
+                  {pathname === item.href && (
+                    <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full" />
                   )}
                 </Link>
               ))}
@@ -243,18 +249,18 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         ))}
       </div>
 
-      <div className="p-4 border-t border-slate-100 bg-white/50 backdrop-blur-sm">
-        <div className="flex items-center gap-x-3 p-3 rounded-2xl bg-slate-900 text-white shadow-xl neon-blue ring-1 ring-white/10 group cursor-pointer hover:bg-slate-800 transition-colors">
-          <div className="h-10 w-10 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg">
+      <div className="p-4 border-t border-border bg-card/60 backdrop-blur-md reveal-3">
+        <div className="flex items-center gap-x-3 p-3 rounded-sm bg-accent/50 border border-border group cursor-pointer hover:bg-accent transition-all duration-300">
+          <div className="h-10 w-10 rounded-xs bg-primary text-primary-foreground flex items-center justify-center font-black text-lg shadow-lg emerald-glow">
             {userProfile?.first_name?.[0] || "U"}
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-semibold truncate">
+            <span className="text-sm font-black tracking-tight truncate text-foreground">
               {userProfile
                 ? `${userProfile.first_name} ${userProfile.last_name}`
-                : "Loading..."}
+                : "Loading Profile..."}
             </span>
-            <span className="text-[10px] opacity-60 uppercase tracking-widest truncate">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary truncate">
               {userRole}
             </span>
           </div>
@@ -263,3 +269,4 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
     </div>
   );
 }
+

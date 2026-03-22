@@ -164,7 +164,7 @@ export const UserService = {
   },
 
   /**
-   * Fetches system-wide statistics for the Command Center.
+   * Fetches system-wide statistics for the Dashboard.
    */
   async getSystemStats() {
     try {

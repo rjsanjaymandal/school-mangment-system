@@ -55,13 +55,14 @@ export default async function DashboardLayout({
           targetRole={impersonationData.role}
         />
       )}
-      <div className="hidden h-full md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-white">
+      <div className="hidden h-full md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-card">
         <Sidebar initialProfile={activeProfile} />
       </div>
-      <main className="md:pl-64 flex flex-col min-h-screen bg-slate-50/50">
+      <main className="md:pl-64 flex flex-col min-h-screen bg-background">
         <Navbar user={user} />
-        <div className="flex-1 p-8">{children}</div>
+        <div className="flex-1 p-8 reveal-1">{children}</div>
       </main>
     </div>
   );
 }
+

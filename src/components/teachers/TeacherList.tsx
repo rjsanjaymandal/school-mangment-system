@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -93,34 +94,30 @@ export function TeacherList({ initialData }: TeacherListProps) {
       <div className="flex justify-end gap-3">
         <Button
           onClick={() => setIsBulkImportOpen(true)}
-          variant="outline"
-          className="rounded-2xl font-bold gap-x-2 bg-white/50 backdrop-blur-md border-white/20 hover:bg-white/80"
+          variant="ghost"
+          className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
         >
           <FileUp className="h-4 w-4" />
           Bulk Import CSV
         </Button>
         <Button
           onClick={onAdd}
-          variant="neon"
-          className="rounded-2xl font-bold gap-x-2"
+          className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]"
         >
           <Plus className="h-4 w-4" />
           Add Teacher
         </Button>
       </div>
 
-      <Card
-        variant="glass"
-        className="p-0 overflow-hidden border-none shadow-xl"
-      >
+      <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
         <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow>
-              <TableHead className="w-[120px]">Employee ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Specialization</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-primary/5">
+            <TableRow className="border-b border-border hover:bg-transparent">
+              <TableHead className="w-[150px] p-5 font-black uppercase tracking-widest text-[10px] text-primary">Employee ID</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Name</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Specialization</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Status</TableHead>
+              <TableHead className="text-right p-5 font-black uppercase tracking-widest text-[10px] text-primary">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -128,7 +125,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-slate-500"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   No teachers found.
                 </TableCell>
@@ -144,11 +141,11 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900">
+                      <span className="font-semibold text-foreground">
                         {teacher.profile?.first_name}{" "}
                         {teacher.profile?.last_name}
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted-foreground">
                         {teacher.profile?.email}
                       </span>
                     </div>
@@ -156,7 +153,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {teacher.specialization?.map((spec) => (
-                        <Badge key={spec} variant="futuristic">
+                        <Badge key={spec} className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-2 py-0.5 rounded-xs uppercase tracking-tighter">
                           {spec}
                         </Badge>
                       ))}
@@ -164,12 +161,12 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant="futuristic"
-                      className={
+                      className={cn(
+                        "text-[10px] font-black px-3 py-1 rounded-xs uppercase tracking-[0.2em] shadow-lg",
                         teacher.status === "active"
-                          ? "bg-green-500/10 text-green-500 border-green-500/20"
-                          : "bg-slate-500/10 text-slate-500 border-slate-500/20"
-                      }
+                          ? "bg-primary text-primary-foreground emerald-glow"
+                          : "bg-destructive text-destructive-foreground"
+                      )}
                     >
                       {teacher.status || "Active"}
                     </Badge>
@@ -260,4 +257,5 @@ export function TeacherList({ initialData }: TeacherListProps) {
     </div>
   );
 }
+
 

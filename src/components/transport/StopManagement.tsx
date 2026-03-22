@@ -104,37 +104,37 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-bold text-slate-900">Bus Stops ({routeName})</h3>
-                    <p className="text-xs text-slate-500 font-medium">Manage pickup and drop points</p>
+                    <h3 className="text-lg font-bold text-foreground">Bus Stops ({routeName})</h3>
+                    <p className="text-xs text-muted-foreground font-medium">Manage pickup and drop points</p>
                 </div>
                 <Dialog open={isAddStopOpen} onOpenChange={setIsAddStopOpen}>
                     <DialogTrigger asChild>
-                        <Button size="sm" className="rounded-xl bg-slate-900 text-white font-bold gap-x-2">
-                            <Plus className="h-4 w-4" /> Add Stop
+                        <Button size="sm" className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow-sm uppercase tracking-widest text-[9px] px-4 py-1.5 h-auto">
+                            <Plus className="h-3 w-3" /> Add Stop
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="glass border-none">
-                        <DialogHeader><DialogTitle className="font-black text-2xl">Add Bus Stop</DialogTitle></DialogHeader>
+                    <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-md rounded-sm shadow-2xl">
+                        <DialogHeader><DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Add Bus Stop</DialogTitle></DialogHeader>
                         <div className="space-y-4 pt-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Stop Name</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Stop Name</Label>
                                 <Input value={stopForm.name} onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} placeholder="Main Gate" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Pickup Time</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Pickup Time</Label>
                                     <Input type="time" value={stopForm.pickup_time} onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Drop Time</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Drop Time</Label>
                                     <Input type="time" value={stopForm.drop_time} onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Stop Order</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Stop Order</Label>
                                 <Input type="number" value={stopForm.stop_order} onChange={(e) => setStopForm({ ...stopForm, stop_order: e.target.value })} />
                             </div>
-                            <Button onClick={handleAddStop} disabled={loading} className="w-full rounded-xl py-6 bg-slate-900 text-white font-bold">
+                            <Button onClick={handleAddStop} disabled={loading} className="w-full rounded-sm py-6 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs">
                                 {loading ? "Adding..." : "Add Stop"}
                             </Button>
                         </div>
@@ -142,31 +142,31 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                 </Dialog>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
                 {stops.length === 0 ? (
-                    <div className="text-center py-6 text-slate-400 font-medium text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                    <div className="text-center py-8 text-foreground/30 font-black uppercase tracking-[0.2em] text-[10px] bg-card/20 rounded-sm border-2 border-dashed border-border p-6 shadow-inner">
                         No stops added to this route yet.
                     </div>
                 ) : (
                     stops.map((stop) => (
-                        <div key={stop.id} className="flex items-center justify-between p-3 rounded-xl bg-white/50 border border-slate-100 hover:shadow-sm transition-all">
-                            <div className="flex items-center gap-x-3">
-                                <div className="p-2 rounded-lg bg-slate-100 text-slate-600">
+                        <div key={stop.id} className="flex items-center justify-between p-4 rounded-sm bg-background/20 border border-border group hover:border-primary/50 transition-all">
+                            <div className="flex items-center gap-x-4">
+                                <div className="p-2.5 rounded-sm bg-primary/10 text-primary border border-primary/20 shadow-inner">
                                     <MapPin className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-slate-900">{stop.name}</p>
-                                    <div className="flex items-center gap-x-3 text-[10px] text-slate-400 font-medium">
-                                        <span className="flex items-center gap-x-1"><Clock className="h-3 w-3" /> {stop.pickup_time || "--:--"}</span>
-                                        <span className="flex items-center gap-x-1"><Clock className="h-3 w-3" /> {stop.drop_time || "--:--"}</span>
+                                    <p className="font-black text-foreground text-[11px] uppercase tracking-tight">{stop.name}</p>
+                                    <div className="flex items-center gap-x-4 text-[9px] text-foreground/40 font-bold uppercase tracking-widest mt-0.5">
+                                        <span className="flex items-center gap-x-1"><Clock className="h-3 w-3 text-primary/50" /> {stop.pickup_time || "--:--"}</span>
+                                        <span className="flex items-center gap-x-1"><Clock className="h-3 w-3 text-red-500/50" /> {stop.drop_time || "--:--"}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-x-1">
-                                <Button variant="ghost" size="icon" onClick={() => openEdit(stop)} className="h-8 w-8 text-slate-400 hover:text-slate-900">
+                            <div className="flex items-center gap-x-2">
+                                <Button variant="ghost" size="icon" onClick={() => openEdit(stop)} className="h-8 w-8 text-foreground/40 hover:text-primary hover:bg-primary/10 rounded-xs transition-all">
                                     <Edit2 className="h-3.5 w-3.5" />
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleDeleteStop(stop.id)} className="h-8 w-8 text-slate-400 hover:text-red-500">
+                                <Button variant="ghost" size="icon" onClick={() => handleDeleteStop(stop.id)} className="h-8 w-8 text-foreground/40 hover:text-red-500 hover:bg-red-500/10 rounded-xs transition-all">
                                     <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
                             </div>
@@ -176,28 +176,28 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
             </div>
 
             <Dialog open={isEditStopOpen} onOpenChange={setIsEditStopOpen}>
-                <DialogContent className="glass border-none">
-                    <DialogHeader><DialogTitle className="font-black text-2xl">Edit Bus Stop</DialogTitle></DialogHeader>
+                <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-md rounded-sm shadow-2xl">
+                    <DialogHeader><DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Edit Bus Stop</DialogTitle></DialogHeader>
                     <div className="space-y-4 pt-4">
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase text-slate-400">Stop Name</Label>
-                            <Input value={stopForm.name} onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} placeholder="Main Gate" />
+                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Stop Name</Label>
+                            <Input value={stopForm.name} onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} placeholder="Main Gate" className="rounded-sm bg-background/50" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Pickup Time</Label>
-                                <Input type="time" value={stopForm.pickup_time} onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Pickup Time</Label>
+                                <Input type="time" value={stopForm.pickup_time} onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} className="rounded-sm bg-background/50" />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Drop Time</Label>
-                                <Input type="time" value={stopForm.drop_time} onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Drop Time</Label>
+                                <Input type="time" value={stopForm.drop_time} onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} className="rounded-sm bg-background/50" />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase text-slate-400">Stop Order</Label>
-                            <Input type="number" value={stopForm.stop_order} onChange={(e) => setStopForm({ ...stopForm, stop_order: e.target.value })} />
+                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Stop Order</Label>
+                            <Input type="number" value={stopForm.stop_order} onChange={(e) => setStopForm({ ...stopForm, stop_order: e.target.value })} className="rounded-sm bg-background/50" />
                         </div>
-                        <Button onClick={handleUpdateStop} disabled={loading} className="w-full rounded-xl py-6 bg-slate-900 text-white font-bold">
+                        <Button onClick={handleUpdateStop} disabled={loading} className="w-full rounded-sm py-6 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs">
                             {loading ? "Updating..." : "Update Stop"}
                         </Button>
                     </div>
@@ -206,3 +206,4 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
         </div>
     );
 }
+

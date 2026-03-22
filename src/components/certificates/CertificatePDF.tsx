@@ -133,3 +133,4 @@ export const CertificatePDF = ({ certificate }: CertificatePDFProps) => (
         </Page>
     </Document>
 );
+

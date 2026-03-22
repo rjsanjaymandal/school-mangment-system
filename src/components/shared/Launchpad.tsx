@@ -126,12 +126,12 @@ export function Launchpad({
   if (filteredNavigation.length === 0 && searchQuery) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="bg-slate-100 dark:bg-slate-900 p-6 rounded-full">
-          <LayoutDashboard className="h-10 w-10 text-slate-400" />
+        <div className="bg-slate-100 dark:bg-card p-6 rounded-full">
+          <LayoutDashboard className="h-10 w-10 text-muted-foreground" />
         </div>
         <div className="space-y-1">
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white">No modules found</h3>
-          <p className="text-slate-500">Try searching for a different keyword or module name.</p>
+          <h3 className="text-xl font-bold text-foreground dark:text-white">No modules found</h3>
+          <p className="text-muted-foreground">Try searching for a different keyword or module name.</p>
         </div>
       </div>
     );
@@ -142,10 +142,10 @@ export function Launchpad({
       {filteredNavigation.map((group) => (
         <div key={group.group} className="space-y-8">
           <div className="flex items-center gap-x-6">
-            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 whitespace-nowrap">
+            <h3 className="text-xs font-black uppercase tracking-[0.4em] text-primary whitespace-nowrap">
               {group.group}
             </h3>
-            <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent" />
+            <div className="h-px flex-1 bg-gradient-to-r from-primary/20 to-transparent" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -153,42 +153,42 @@ export function Launchpad({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative flex flex-col p-8 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/40 dark:border-slate-800/40 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:bg-white dark:hover:bg-slate-900 hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+                className="group relative flex flex-col p-8 bg-card/40 backdrop-blur-xl border border-border rounded-sm shadow-sm hover:shadow-2xl hover:bg-card hover:-translate-y-1.5 transition-all duration-500 overflow-hidden"
               >
                 {/* Visual Accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
 
                 <div className="flex flex-col gap-y-6 relative z-10">
                   <div className={cn(
-                    "w-14 h-14 flex items-center justify-center rounded-2xl transition-all duration-500 group-hover:rotate-6 group-hover:scale-110 shadow-xl",
+                    "w-14 h-14 flex items-center justify-center rounded-sm transition-all duration-500 group-hover:rotate-3 group-hover:scale-110 shadow-xl",
                     item.futuristic 
-                      ? "bg-slate-900 text-blue-400 neon-blue" 
-                      : "bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-900 dark:text-white group-hover:bg-slate-900 group-hover:text-white"
+                      ? "bg-primary text-primary-foreground emerald-glow" 
+                      : "bg-background border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground"
                   )}>
                     <item.icon className="h-7 w-7" />
                   </div>
                   
                   <div className="space-y-2">
                     <div className="flex items-center gap-x-2">
-                      <span className="font-black text-xl text-slate-900 dark:text-white tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      <span className="font-black text-xl text-foreground tracking-tight group-hover:text-primary transition-colors">
                         {item.name}
                       </span>
                       {item.futuristic && (
-                        <div className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                       )}
                     </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity line-clamp-2">
+                    <p className="text-sm text-foreground/70 font-medium leading-relaxed group-hover:text-foreground transition-all line-clamp-2">
                       {item.description}
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
-                  <div className="flex items-center gap-x-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
-                    Access System
+                  <div className="flex items-center gap-x-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 group-hover:text-primary transition-colors">
+                    Initialize Module
                   </div>
-                  <div className="h-10 w-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-all duration-500">
-                    <Plus className="h-5 w-5 rotate-45 group-hover:rotate-90 transition-transform duration-500" />
+                  <div className="h-10 w-10 rounded-xs bg-accent flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">
+                    <Plus className="h-5 w-5 rotate-45 group-hover:rotate-0 transition-transform duration-500" />
                   </div>
                 </div>
               </Link>
@@ -199,3 +199,4 @@ export function Launchpad({
     </div>
   );
 }
+

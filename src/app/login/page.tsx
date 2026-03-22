@@ -79,34 +79,44 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      {/* Background Image could be added here as an absolute div if needed */}
-
-      <Card className="w-full max-w-md border-none shadow-lg">
-        <CardHeader className="space-y-1 flex flex-col items-center">
-          <div className="bg-primary text-primary-foreground p-3 rounded-2xl mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-primary/5 blur-[120px] rounded-full -mr-24 -mt-24 animate-pulse pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-primary/5 blur-[100px] rounded-full -ml-12 -mb-12 animate-pulse pointer-events-none" />
+      
+      <Card className="w-full max-w-sm border-border bg-card/60 backdrop-blur-xl rounded-sm shadow-2xl relative z-10 reveal-0 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary emerald-glow" />
+        
+        <CardHeader className="space-y-4 flex flex-col items-center pt-10 pb-8">
+          <div className="bg-primary text-primary-foreground p-3 rounded-xs shadow-xl emerald-glow transition-all duration-500 hover:rotate-6">
             <GraduationCap className="h-8 w-8" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Welcome back
-          </CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
+          <div className="text-center space-y-1">
+            <CardTitle className="text-3xl font-black tracking-tight uppercase">
+              Identity Node
+            </CardTitle>
+            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Authorize session to access core
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pb-10">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Command: Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="name@school.com" {...field} />
+                      <Input 
+                        placeholder="operator@maysan.sys" 
+                        {...field} 
+                        className="bg-accent/30 border-border rounded-xs h-12 focus-visible:ring-primary focus-visible:ring-1 transition-all font-medium"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px] uppercase font-bold" />
                   </FormItem>
                 )}
               />
@@ -114,32 +124,48 @@ export default function LoginPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Key: Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         placeholder="••••••••"
                         {...field}
+                        className="bg-accent/30 border-border rounded-xs h-12 focus-visible:ring-primary focus-visible:ring-1 transition-all"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[10px] uppercase font-bold" />
                   </FormItem>
                 )}
               />
               {error && (
-                <div className="text-sm font-medium text-destructive text-center">
-                  {error}
+                <div className="text-[10px] font-black text-destructive uppercase tracking-widest text-center animate-pulse">
+                  Authentication Failed: {error}
                 </div>
               )}
-              <Button type="submit" className="w-full h-11" disabled={loading}>
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Sign In
+              <Button 
+                type="submit" 
+                className="w-full h-12 bg-primary text-primary-foreground font-black text-xs uppercase tracking-[0.4em] rounded-xs shadow-2xl hover:bg-primary/90 transition-all emerald-glow" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground" />
+                ) : (
+                  "Initialize Session"
+                )}
               </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
+      
+      {/* Footer Branding */}
+      <div className="absolute bottom-8 text-center w-full reveal-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.6em] text-muted-foreground/40">
+          Edu Maysan Intelligence System • v4.0.0
+        </p>
+      </div>
     </div>
   );
 }
+

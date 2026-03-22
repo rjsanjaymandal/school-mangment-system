@@ -71,10 +71,10 @@ export default function GatewayHub() {
             <Globe className="h-7 w-7" />
           </div>
           <div>
-            <h2 className="text-4xl font-black tracking-tight text-slate-900">
+            <h2 className="text-4xl font-black tracking-tight text-foreground">
               Ecosystem Gateways
             </h2>
-            <p className="text-slate-500 font-medium tracking-tight">
+            <p className="text-muted-foreground font-medium tracking-tight">
               Managing Institutional Connectivity & Global Financial/LMS
               Synchronisation
             </p>
@@ -83,12 +83,12 @@ export default function GatewayHub() {
         <div className="flex gap-x-3">
           <Button
             variant="outline"
-            className="rounded-2xl border-slate-200 bg-white font-bold gap-x-2"
+            className="rounded-2xl border-border bg-white font-bold gap-x-2"
           >
             <Key className="h-4 w-4" />
             API Keys
           </Button>
-          <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+          <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
             <RefreshCw className="h-4 w-4" />
             Sync All
           </Button>
@@ -96,7 +96,7 @@ export default function GatewayHub() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <Card className="border-none glass futuristic-card p-6 bg-slate-900 text-white overflow-hidden relative group">
+        <Card className="border-none glass futuristic-card p-6 bg-card text-white overflow-hidden relative group">
           <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
             <Activity className="h-24 w-24 text-blue-400" />
           </div>
@@ -110,11 +110,11 @@ export default function GatewayHub() {
         </Card>
 
         <Card className="border-none glass futuristic-card p-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
             Total Sync Volume
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">42.5K</h3>
-          <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <h3 className="text-3xl font-black mt-2 text-foreground">42.5K</h3>
+          <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
             Records/Month
           </div>
         </Card>
@@ -123,7 +123,7 @@ export default function GatewayHub() {
           <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">
             Active Bridges
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">08</h3>
+          <h3 className="text-3xl font-black mt-2 text-foreground">08</h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-500">
             <Layers className="h-4 w-4" />
             Multi-Tenant Ready
@@ -131,10 +131,10 @@ export default function GatewayHub() {
         </Card>
 
         <Card className="border-none glass futuristic-card p-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
             Security Layer
           </p>
-          <h3 className="text-3xl font-black mt-2 text-slate-900">V3.0</h3>
+          <h3 className="text-3xl font-black mt-2 text-foreground">V3.0</h3>
           <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-green-500 uppercase tracking-widest leading-none">
             <ShieldCheck className="h-4 w-4" />
             Encrypted Transit
@@ -146,7 +146,7 @@ export default function GatewayHub() {
         {/* Gateway Directory */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-x-2">
+            <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
               <Cloud className="h-4 w-4" />
               External Bridges
             </h3>
@@ -161,7 +161,7 @@ export default function GatewayHub() {
                 >
                   <div
                     className={cn(
-                      "h-14 w-14 rounded-2xl flex items-center justify-center transition-all group-hover:bg-slate-900 group-hover:text-white",
+                      "h-14 w-14 rounded-2xl flex items-center justify-center transition-all group-hover:bg-card group-hover:text-white",
                       gate.type === "Financial"
                         ? "bg-blue-50 text-blue-600"
                         : "bg-purple-50 text-purple-600",
@@ -175,17 +175,17 @@ export default function GatewayHub() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-x-3 mb-1">
-                      <h4 className="font-black text-slate-900 text-lg">
+                      <h4 className="font-black text-foreground text-lg">
                         {gate.name}
                       </h4>
                       <Badge
                         variant="outline"
-                        className="text-[10px] font-black border-slate-200"
+                        className="text-[10px] font-black border-border"
                       >
                         {gate.type.toUpperCase()}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-x-4 text-xs font-bold text-slate-400">
+                    <div className="flex items-center gap-x-4 text-xs font-bold text-muted-foreground">
                       <span className="flex items-center gap-x-1">
                         <Activity className="h-3 w-3" />
                         Latency: {gate.latency}
@@ -210,7 +210,7 @@ export default function GatewayHub() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-slate-300 hover:text-slate-900 rounded-xl"
+                      className="text-slate-300 hover:text-foreground rounded-xl"
                     >
                       <ExternalLink className="h-5 w-5" />
                     </Button>
@@ -218,8 +218,8 @@ export default function GatewayHub() {
                 </div>
               ))}
             </div>
-            <CardFooter className="bg-slate-50 p-4 flex justify-center border-t border-slate-100">
-              <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">
+            <CardFooter className="bg-slate-50 p-4 flex justify-center border-t border-border">
+              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em]">
                 Institutional Hub for Cross-Platform Integrity
               </p>
             </CardFooter>
@@ -228,11 +228,11 @@ export default function GatewayHub() {
 
         {/* Sync Controls */}
         <div className="space-y-6">
-          <h3 className="text-sm font-black uppercase tracking-widest text-slate-400">
+          <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
             Ecosystem Orchestration
           </h3>
 
-          <Card className="border-none glass futuristic-card bg-slate-900 text-white p-8 relative overflow-hidden group">
+          <Card className="border-none glass futuristic-card bg-card text-white p-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
               <RefreshCw className="h-24 w-24 text-blue-400" />
             </div>
@@ -250,7 +250,7 @@ export default function GatewayHub() {
 
           <Card className="border-none glass futuristic-card p-6">
             <CardHeader className="p-0 mb-4 flex items-center justify-between">
-              <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">
+              <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                 Gateway Traffic
               </CardTitle>
               <Zap className="h-4 w-4 text-yellow-500" />
@@ -258,8 +258,8 @@ export default function GatewayHub() {
             <div className="space-y-6 mt-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-black uppercase">
-                  <span className="text-slate-400">Financial Transit</span>
-                  <span className="text-slate-900">82%</span>
+                  <span className="text-muted-foreground">Financial Transit</span>
+                  <span className="text-foreground">82%</span>
                 </div>
                 <Progress
                   value={82}
@@ -269,8 +269,8 @@ export default function GatewayHub() {
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-black uppercase">
-                  <span className="text-slate-400">LMS Data Stream</span>
-                  <span className="text-slate-900">45%</span>
+                  <span className="text-muted-foreground">LMS Data Stream</span>
+                  <span className="text-foreground">45%</span>
                 </div>
                 <Progress
                   value={45}
@@ -306,3 +306,4 @@ export default function GatewayHub() {
     </div>
   );
 }
+

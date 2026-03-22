@@ -65,10 +65,10 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                         <Trophy className="h-7 w-7" />
                     </div>
                     <div>
-                        <h2 className="text-4xl font-black tracking-tight text-slate-900">
-                            The Activity Pulse
+                        <h2 className="text-4xl font-black tracking-tight text-foreground">
+                            Activities Dashboard
                         </h2>
-                        <p className="text-slate-500 font-medium tracking-tight">
+                        <p className="text-muted-foreground font-medium tracking-tight">
                             Orchestrating the Creative & Athletic Life of the Institution
                         </p>
                     </div>
@@ -76,12 +76,12 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                 <div className="flex gap-x-3">
                     <Button
                         variant="outline"
-                        className="rounded-2xl border-slate-200 bg-white font-bold gap-x-2"
+                        className="rounded-2xl border-border bg-white font-bold gap-x-2"
                     >
                         <Calendar className="h-4 w-4" />
                         Hall Bookings
                     </Button>
-                    <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue">
+                    <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
                         <Plus className="h-4 w-4" />
                         Found Society
                     </Button>
@@ -89,7 +89,7 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
             </div>
 
             <div className="grid gap-6 md:grid-cols-4">
-                <Card className="border-none glass futuristic-card p-6 bg-slate-900 text-white overflow-hidden relative group">
+                <Card className="border-none glass futuristic-card p-6 bg-card text-white overflow-hidden relative group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <Users className="h-24 w-24 text-blue-400" />
                     </div>
@@ -106,18 +106,18 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                     <p className="text-[10px] font-black uppercase tracking-widest text-yellow-600">
                         Institutional Trophies
                     </p>
-                    <h3 className="text-3xl font-black mt-2 text-slate-900">42</h3>
+                    <h3 className="text-3xl font-black mt-2 text-foreground">42</h3>
                     <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-yellow-600">
                         Current Term Wins: 05
                     </div>
                 </Card>
 
                 <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                         Total Societies
                     </p>
-                    <h3 className="text-3xl font-black mt-2 text-slate-900">{initialActivities.length}</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-slate-400">
+                    <h3 className="text-3xl font-black mt-2 text-foreground">{initialActivities.length}</h3>
+                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-muted-foreground">
                         4 Tier-1 Chapters
                     </div>
                 </Card>
@@ -126,7 +126,7 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                     <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">
                         Event Budget
                     </p>
-                    <h3 className="text-3xl font-black mt-2 text-slate-900">$12,500</h3>
+                    <h3 className="text-3xl font-black mt-2 text-foreground">$12,500</h3>
                     <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-400">
                         Utilized: 64%
                     </div>
@@ -137,12 +137,12 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                 {/* Societies Explorer */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-x-2">
+                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
                             <Flag className="h-4 w-4" />
                             Society Directory
                         </h3>
                         <div className="relative w-64">
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search clubs & societies..."
                                 className="pl-9 rounded-xl h-10 text-xs"
@@ -168,23 +168,23 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                                     </div>
                                     <Badge
                                         variant="ghost"
-                                        className="text-[10px] font-black uppercase text-slate-400 border-none px-0"
+                                        className="text-[10px] font-black uppercase text-muted-foreground border-none px-0"
                                     >
                                         {activity.max_participants || 0} MAX MEMBERS
                                     </Badge>
                                 </div>
-                                <h4 className="text-xl font-black text-slate-900 mb-1 leading-tight">
+                                <h4 className="text-xl font-black text-foreground mb-1 leading-tight">
                                     {activity.name}
                                 </h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">
                                     {activity.category || "General"}
                                 </p>
                                 <div className="space-y-3">
-                                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-white transition-colors">
-                                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                    <div className="p-3 rounded-xl bg-slate-50 border border-border group-hover:bg-white transition-colors">
+                                        <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">
                                             Current Active Phase
                                         </p>
-                                        <p className="text-xs font-bold text-slate-900 line-clamp-1">
+                                        <p className="text-xs font-bold text-foreground line-clamp-1">
                                             {activity.description || "Active operations underway"}
                                         </p>
                                     </div>
@@ -198,7 +198,7 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                             </Card>
                         ))}
                         {filteredActivities.length === 0 && (
-                            <div className="col-span-2 text-center text-slate-500 py-10 glass rounded-2xl">
+                            <div className="col-span-2 text-center text-muted-foreground py-10 glass rounded-2xl">
                                 No activities match your search.
                             </div>
                         )}
@@ -207,13 +207,13 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
 
                 {/* Athletic Intelligence */}
                 <div className="space-y-6">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-x-2">
-                        <Dumbbell className="h-4 w-4 text-slate-900" />
+                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
+                        <Dumbbell className="h-4 w-4 text-foreground" />
                         Athletic Fixtures
                     </h3>
 
                     <Card className="border-none glass futuristic-card overflow-hidden">
-                        <CardHeader className="bg-slate-900 text-white p-6">
+                        <CardHeader className="bg-card text-white p-6">
                             <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-60">
                                 Upcoming Challenges
                             </CardTitle>
@@ -230,20 +230,20 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                                                 <Trophy className="h-5 w-5" />
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-slate-900 text-sm tracking-tight">
+                                                <h4 className="font-black text-foreground text-sm tracking-tight">
                                                     {fix.team}
                                                 </h4>
-                                                <p className="text-[10px] font-bold text-slate-400">
+                                                <p className="text-[10px] font-bold text-muted-foreground">
                                                     VS {fix.opponent}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-slate-400 uppercase">
+                                                <span className="text-[10px] font-black text-muted-foreground uppercase">
                                                     Sport / Venue
                                                 </span>
-                                                <span className="text-[11px] font-bold text-slate-900">
+                                                <span className="text-[11px] font-bold text-foreground">
                                                     {fix.sport} • {fix.venue}
                                                 </span>
                                             </div>
@@ -251,15 +251,15 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                                                 HOME GAME
                                             </Badge>
                                         </div>
-                                        <Button className="w-full h-10 rounded-xl bg-white border border-slate-100 hover:bg-slate-50 text-slate-900 font-black text-[10px] uppercase tracking-widest shadow-none">
+                                        <Button className="w-full h-10 rounded-xl bg-white border border-border hover:bg-slate-50 text-foreground font-black text-[10px] uppercase tracking-widest shadow-none">
                                             LIVE TELEMETRY
                                         </Button>
                                     </div>
                                 ))}
                             </div>
                         </CardContent>
-                        <CardFooter className="p-4 bg-slate-50 flex flex-col gap-y-2 border-t border-slate-100">
-                            <p className="text-[10px] text-slate-400 font-medium text-center italic leading-tight">
+                        <CardFooter className="p-4 bg-slate-50 flex flex-col gap-y-2 border-t border-border">
+                            <p className="text-[10px] text-muted-foreground font-medium text-center italic leading-tight">
                                 Athletic rosters are auto-synced with academic performance
                                 eligibility.
                             </p>
@@ -268,7 +268,7 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
 
                     <Card className="border-none glass futuristic-card p-6">
                         <CardHeader className="p-0 mb-4 flex items-center justify-between">
-                            <CardTitle className="text-xs font-black uppercase tracking-widest text-slate-400">
+                            <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                                 Participation Analytics
                             </CardTitle>
                             <TrendingUp className="h-4 w-4 text-green-500" />
@@ -276,10 +276,10 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <div className="flex justify-between text-[10px] font-black uppercase">
-                                    <span className="text-slate-400">
+                                    <span className="text-muted-foreground">
                                         Creative Hub utilization
                                     </span>
-                                    <span className="text-slate-900">92%</span>
+                                    <span className="text-foreground">92%</span>
                                 </div>
                                 <Progress
                                     value={92}
@@ -289,8 +289,8 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between text-[10px] font-black uppercase">
-                                    <span className="text-slate-400">Athletic Engagement</span>
-                                    <span className="text-slate-900">65%</span>
+                                    <span className="text-muted-foreground">Athletic Engagement</span>
+                                    <span className="text-foreground">65%</span>
                                 </div>
                                 <Progress
                                     value={65}
@@ -305,3 +305,4 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
         </div>
     );
 }
+

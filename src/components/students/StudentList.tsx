@@ -76,35 +76,31 @@ export function StudentList({ initialData }: StudentListProps) {
       <div className="flex justify-end gap-3">
         <Button
           onClick={() => setIsBulkImportOpen(true)}
-          variant="outline"
-          className="rounded-2xl font-bold gap-x-2 bg-white/50 backdrop-blur-md border-white/20 hover:bg-white/80"
+          variant="ghost"
+          className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
         >
           <FileUp className="h-4 w-4" />
           Bulk Import CSV
         </Button>
         <Button
           onClick={onAdd}
-          variant="neon"
-          className="rounded-2xl font-bold gap-x-2"
+          className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]"
         >
           <Plus className="h-4 w-4" />
           Add Student
         </Button>
       </div>
 
-      <Card
-        variant="glass"
-        className="p-0 overflow-hidden border-none shadow-xl"
-      >
+      <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
         <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow>
-              <TableHead className="w-[100px]">Adm No.</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Class</TableHead>
-              <TableHead>Roll No.</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-primary/5">
+            <TableRow className="border-b border-border hover:bg-transparent">
+              <TableHead className="w-[120px] p-5 font-black uppercase tracking-widest text-[10px] text-primary">Adm No.</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Name</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Class</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Roll No.</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Status</TableHead>
+              <TableHead className="text-right p-5 font-black uppercase tracking-widest text-[10px] text-primary">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,7 +108,7 @@ export function StudentList({ initialData }: StudentListProps) {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-slate-500"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   No students found.
                 </TableCell>
@@ -123,26 +119,25 @@ export function StudentList({ initialData }: StudentListProps) {
                   key={student.id}
                   className="hover:bg-slate-50/50 transition-colors"
                 >
-                  <TableCell className="font-medium">
+                  <TableCell className="p-5 font-bold text-foreground transition-colors group-hover:text-primary">
                     {student.admission_number}
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900">
+                      <span className="font-semibold text-foreground">
                         {student.profile?.first_name}{" "}
                         {student.profile?.last_name}
                       </span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-muted-foreground">
                         {student.profile?.email}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>{student.class?.name || "N/A"}</TableCell>
                   <TableCell>{student.roll_number || "N/A"}</TableCell>
-                  <TableCell>
+                  <TableCell className="p-5">
                     <Badge
-                      variant="futuristic"
-                      className="bg-green-500/10 text-green-500 border-green-500/20"
+                      className="bg-primary text-primary-foreground emerald-glow text-[10px] font-black px-3 py-1 rounded-xs uppercase tracking-[0.2em]"
                     >
                       Active
                     </Badge>
@@ -244,3 +239,4 @@ export function StudentList({ initialData }: StudentListProps) {
     </div>
   );
 }
+

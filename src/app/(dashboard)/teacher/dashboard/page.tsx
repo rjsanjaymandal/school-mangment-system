@@ -21,11 +21,11 @@ export default async function TeacherDashboard() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-slate-900 uppercase">
+          <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
             Educator Workspace
           </h2>
           <div className="flex items-center gap-x-2 mt-1">
-            <p className="text-slate-500 font-medium tracking-tight">
+            <p className="text-muted-foreground font-medium tracking-tight">
               Academic Performance Monitoring & Classroom Engagement
             </p>
             <Badge
@@ -74,10 +74,10 @@ export default async function TeacherDashboard() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
                   {m.title}
                 </p>
-                <div className="text-2xl font-black text-slate-900">
+                <div className="text-2xl font-black text-foreground">
                   {m.val}
                 </div>
               </div>
@@ -93,21 +93,21 @@ export default async function TeacherDashboard() {
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border-none glass bg-white/50 backdrop-blur-xl p-8 group">
-          <h3 className="text-xl font-bold text-slate-900 mb-2">
+          <h3 className="text-xl font-bold text-foreground mb-2">
             Classroom Overview
           </h3>
-          <p className="text-sm text-slate-500 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             Real-time engagement metrics for your primary assigned cohorts.
           </p>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-50 shadow-sm hover:shadow-md transition-all cursor-pointer">
-              <span className="font-bold text-slate-900">
+              <span className="font-bold text-foreground">
                 Advanced Physics (A-102)
               </span>
               <ArrowRight className="h-4 w-4 text-slate-300" />
             </div>
             <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-50 shadow-sm hover:shadow-md transition-all cursor-pointer">
-              <span className="font-bold text-slate-900">
+              <span className="font-bold text-foreground">
                 Quantum Theory (B-204)
               </span>
               <ArrowRight className="h-4 w-4 text-slate-300" />
@@ -115,7 +115,7 @@ export default async function TeacherDashboard() {
           </div>
         </Card>
 
-        <Card className="border-none glass bg-slate-900 text-white p-8">
+        <Card className="border-none glass bg-card text-white p-8">
           <h3 className="text-xl font-bold mb-2">Intellectual Strategy</h3>
           <p className="text-xs text-blue-300 opacity-60 mb-6">
             Upcoming curriculum milestones
@@ -136,3 +136,4 @@ export default async function TeacherDashboard() {
     </div>
   );
 }
+

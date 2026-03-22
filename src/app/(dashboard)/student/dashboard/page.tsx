@@ -14,11 +14,11 @@ export default async function StudentDashboard() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-slate-900 uppercase">
+          <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
             Student Portal
           </h2>
           <div className="flex items-center gap-x-2 mt-1">
-            <p className="text-slate-500 font-medium tracking-tight">
+            <p className="text-muted-foreground font-medium tracking-tight">
               Learning Journey & Academic Achievement Tracking
             </p>
             <Badge
@@ -67,10 +67,10 @@ export default async function StudentDashboard() {
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
                   {m.title}
                 </p>
-                <div className="text-2xl font-black text-slate-900">
+                <div className="text-2xl font-black text-foreground">
                   {m.val}
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default async function StudentDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2 border-none glass bg-white/50 p-8">
-          <h3 className="text-xl font-bold text-slate-900 mb-4">
+          <h3 className="text-xl font-bold text-foreground mb-4">
             Academic Milestones
           </h3>
           <div className="space-y-4">
@@ -108,15 +108,15 @@ export default async function StudentDashboard() {
                 className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-50 group hover:shadow-md transition-all cursor-default"
               >
                 <div>
-                  <p className="font-bold text-slate-900">{m.name}</p>
-                  <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+                  <p className="font-bold text-foreground">{m.name}</p>
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
                     {m.date}
                   </p>
                 </div>
                 <Badge
                   className={
                     m.grade === "Pending"
-                      ? "bg-slate-100 text-slate-400"
+                      ? "bg-slate-100 text-muted-foreground"
                       : "bg-green-100 text-green-600 border-none"
                   }
                 >
@@ -127,7 +127,7 @@ export default async function StudentDashboard() {
           </div>
         </Card>
 
-        <Card className="lg:col-span-1 border-none glass futuristic-card bg-slate-900 text-white p-8 overflow-hidden relative">
+        <Card className="lg:col-span-1 border-none glass futuristic-card bg-card text-white p-8 overflow-hidden relative">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <GraduationCap className="h-32 w-32 -mr-8 -mt-8" />
           </div>
@@ -148,3 +148,4 @@ export default async function StudentDashboard() {
     </div>
   );
 }
+

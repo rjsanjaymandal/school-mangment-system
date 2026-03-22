@@ -139,30 +139,30 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900">Examination Hub</h2>
-                    <p className="text-slate-500 font-medium tracking-tight">Exam Scheduling, Marks Entry & Results Management</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground">Examination Hub</h2>
+                    <p className="text-muted-foreground font-medium tracking-tight">Exam Scheduling, Marks Entry & Results Management</p>
                 </div>
                 <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogTrigger asChild>
-                        <Button className="rounded-2xl bg-slate-900 text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Create Exam</Button>
+                        <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Create Exam</Button>
                     </DialogTrigger>
                     <DialogContent className="glass border-none max-w-lg">
                         <DialogHeader><DialogTitle className="font-black text-2xl">Create Examination</DialogTitle></DialogHeader>
                         <div className="space-y-4 pt-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-slate-400">Exam Name</Label>
+                                <Label className="text-xs font-bold uppercase text-muted-foreground">Exam Name</Label>
                                 <Input value={examForm.name} onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} placeholder="Mid-Term Physics" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Subject</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Subject</Label>
                                     <Select value={examForm.subject_id} onValueChange={(v) => setExamForm({ ...examForm, subject_id: v })}>
                                         <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                                         <SelectContent>{subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Class</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Class</Label>
                                     <Select value={examForm.class_id} onValueChange={(v) => setExamForm({ ...examForm, class_id: v })}>
                                         <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                                         <SelectContent>{classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
@@ -171,19 +171,19 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                             </div>
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Date</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Date</Label>
                                     <Input type="date" value={examForm.date} onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Max Marks</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Max Marks</Label>
                                     <Input type="number" value={examForm.max_marks} onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-slate-400">Passing</Label>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Passing</Label>
                                     <Input type="number" value={examForm.passing_marks} onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} />
                                 </div>
                             </div>
-                            <Button onClick={handleCreateExam} disabled={loading} className="w-full rounded-xl py-6 bg-slate-900 text-white font-bold">
+                            <Button onClick={handleCreateExam} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
                                 {loading ? "Creating..." : "Create Exam"}
                             </Button>
                         </div>
@@ -193,21 +193,21 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
 
             {/* Stats */}
             <div className="grid gap-6 md:grid-cols-4">
-                <Card className="border-none glass futuristic-card p-6 bg-slate-900 text-white">
+                <Card className="border-none glass futuristic-card p-6 bg-card text-white">
                     <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">Total Exams</p>
                     <h3 className="text-3xl font-black">{exams.length}</h3>
                 </Card>
                 <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Upcoming</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Upcoming</p>
                     <h3 className="text-3xl font-black text-blue-600">{upcoming.length}</h3>
                 </Card>
                 <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Completed</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Completed</p>
                     <h3 className="text-3xl font-black text-green-600">{completed.length}</h3>
                 </Card>
                 <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Subjects Covered</p>
-                    <h3 className="text-3xl font-black text-slate-900">{new Set(exams.map(e => e.subject_id)).size}</h3>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Subjects Covered</p>
+                    <h3 className="text-3xl font-black text-foreground">{new Set(exams.map(e => e.subject_id)).size}</h3>
                 </Card>
             </div>
 
@@ -215,14 +215,14 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
             <Dialog open={isMarksOpen} onOpenChange={setIsMarksOpen}>
                 <DialogContent className="glass border-none max-w-2xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader><DialogTitle className="font-black text-2xl">Enter Marks — {selectedExam?.name}</DialogTitle></DialogHeader>
-                    <p className="text-xs text-slate-400 font-bold">Max: {selectedExam?.max_marks} • Pass: {selectedExam?.passing_marks}</p>
+                    <p className="text-xs text-muted-foreground font-bold">Max: {selectedExam?.max_marks} • Pass: {selectedExam?.passing_marks}</p>
                     <div className="space-y-3 pt-4">
                         {examStudents.length === 0 ? (
-                            <p className="text-center text-slate-400 font-medium py-8">No students found for this class.</p>
+                            <p className="text-center text-muted-foreground font-medium py-8">No students found for this class.</p>
                         ) : (
                             examStudents.map((s: any) => (
-                                <div key={s.id} className="flex items-center gap-x-4 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                                    <div className="h-8 w-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs">{s.profile?.first_name?.[0]}</div>
+                                <div key={s.id} className="flex items-center gap-x-4 p-3 rounded-xl bg-slate-50 border border-border">
+                                    <div className="h-8 w-8 rounded-lg bg-card text-white flex items-center justify-center font-bold text-xs">{s.profile?.first_name?.[0]}</div>
                                     <span className="flex-1 text-sm font-bold text-slate-700">{s.profile?.first_name} {s.profile?.last_name}</span>
                                     <Input
                                         type="number"
@@ -233,11 +233,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                         className="w-24 text-center rounded-lg font-bold"
                                         placeholder="—"
                                     />
-                                    <span className="text-[10px] font-bold text-slate-400 w-8">/ {selectedExam?.max_marks}</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground w-8">/ {selectedExam?.max_marks}</span>
                                 </div>
                             ))
                         )}
-                        <Button onClick={handleSaveMarks} disabled={loading} className="w-full rounded-xl py-6 bg-slate-900 text-white font-bold mt-4">
+                        <Button onClick={handleSaveMarks} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold mt-4">
                             {loading ? "Saving..." : "Save All Marks"}
                         </Button>
                     </div>
@@ -260,18 +260,18 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <table className="w-full text-sm">
                             <thead className="bg-slate-50/50">
                                 <tr className="border-b">
-                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Exam</th>
-                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Subject</th>
-                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Class</th>
-                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Date</th>
-                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Max / Pass</th>
-                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Status</th>
-                                    <th className="text-right py-5 px-6 font-black uppercase tracking-widest text-[10px] text-slate-400">Actions</th>
+                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Exam</th>
+                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Subject</th>
+                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Class</th>
+                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Date</th>
+                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Max / Pass</th>
+                                    <th className="text-left py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Status</th>
+                                    <th className="text-right py-5 px-6 font-black uppercase tracking-widest text-[10px] text-muted-foreground">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
                                 {exams.length === 0 ? (
-                                    <tr><td colSpan={7} className="py-12 text-center text-slate-400 font-medium">No exams created yet.</td></tr>
+                                    <tr><td colSpan={7} className="py-12 text-center text-muted-foreground font-medium">No exams created yet.</td></tr>
                                 ) : (
                                     exams.map((exam) => {
                                         const isUpcoming = new Date(exam.date) >= new Date();
@@ -279,15 +279,15 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                             <tr key={exam.id} className="hover:bg-white/60 transition-colors">
                                                 <td className="py-5 px-6">
                                                     <div className="flex items-center gap-x-3">
-                                                        <div className={cn("h-10 w-10 rounded-xl text-white flex items-center justify-center font-bold", isUpcoming ? "bg-blue-500 neon-blue" : "bg-slate-900")}>
+                                                        <div className={cn("h-10 w-10 rounded-xl text-white flex items-center justify-center font-bold", isUpcoming ? "bg-blue-500 neon-blue" : "bg-card")}>
                                                             <ClipboardCheck className="h-5 w-5" />
                                                         </div>
-                                                        <span className="font-bold text-slate-900">{exam.name}</span>
+                                                        <span className="font-bold text-foreground">{exam.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="py-5 px-6 text-slate-600 font-medium">{exam.subject?.name || "—"}</td>
-                                                <td className="py-5 px-6 text-slate-600 font-medium">{exam.class?.name || "—"}</td>
-                                                <td className="py-5 px-6 font-mono text-xs text-slate-500">{exam.date}</td>
+                                                <td className="py-5 px-6 text-foreground/70 font-medium">{exam.subject?.name || "—"}</td>
+                                                <td className="py-5 px-6 text-foreground/70 font-medium">{exam.class?.name || "—"}</td>
+                                                <td className="py-5 px-6 font-mono text-xs text-muted-foreground">{exam.date}</td>
                                                 <td className="py-5 px-6 font-bold text-slate-700">{exam.max_marks} / {exam.passing_marks}</td>
                                                 <td className="py-5 px-6">
                                                     <Badge variant="outline" className={cn("font-bold text-[10px]", isUpcoming ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-green-50 text-green-600 border-green-100")}>
@@ -345,3 +345,4 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
         </div>
     );
 }
+
