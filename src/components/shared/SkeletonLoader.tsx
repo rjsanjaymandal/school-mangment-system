@@ -18,7 +18,7 @@ export function SkeletonLoader({ className, count = 1 }: SkeletonLoaderProps) {
             className,
           )}
         >
-          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
           <div className="p-6 flex gap-x-4">
             <div className="h-12 w-12 rounded-xl bg-slate-100/50 shrink-0" />
             <div className="flex-1 space-y-2">

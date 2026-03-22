@@ -69,7 +69,7 @@ export default function LoginPage() {
           .single();
 
         const role = profile?.role || "student";
-        router.push(`/${role}/dashboard`);
+        router.push("/launcher");
       }
     } catch (e) {
       setError("An unexpected error occurred.");

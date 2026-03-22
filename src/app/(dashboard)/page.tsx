@@ -114,7 +114,7 @@ export default async function DashboardPage() {
           <p className="text-slate-500 font-medium">
             Intelligence overview for{" "}
             <span className="text-slate-900 font-bold">
-              EduSmart Enterprise
+              Edu Maysan Enterprise
             </span>
           </p>
         </div>

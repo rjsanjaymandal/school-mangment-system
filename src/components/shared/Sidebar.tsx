@@ -198,10 +198,7 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         </div>
         <div className="flex flex-col">
           <span className="font-bold text-xl tracking-tight text-slate-900">
-            EduSmart
-          </span>
-          <span className="text-[10px] uppercase tracking-widest text-primary font-bold opacity-70">
-            Enterprise v2.0
+            Edu Maysan
           </span>
         </div>
       </div>

@@ -18,7 +18,7 @@ export const generateCertificate = (studentName: string, achievement: string) =>
   doc.setFont("helvetica", "bold");
   doc.setFontSize(40);
   doc.setTextColor(33, 44, 66);
-  doc.text("EDUSMART ENTERPRISE", 148.5, 45, { align: "center" });
+  doc.text("EDU MAYSAN ENTERPRISE", 148.5, 45, { align: "center" });
 
   doc.setFontSize(20);
   doc.text("CERTIFICATE OF EXCELLENCE", 148.5, 60, { align: "center" });

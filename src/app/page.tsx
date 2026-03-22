@@ -21,5 +21,5 @@ export default async function Home() {
   const role = profile?.role || "student";
 
   // Dashboard routing based on role
-  redirect(`/${role}/dashboard`);
+  redirect("/launcher");
 }

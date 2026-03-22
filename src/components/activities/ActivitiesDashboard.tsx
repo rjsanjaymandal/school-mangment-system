@@ -33,7 +33,7 @@ import { Activity } from "@/types/database";
 const upcomingFixtures = [
     {
         id: "101",
-        team: "EduSmart Lions (Varsity)",
+        team: "Edu Maysan Lions (Varsity)",
         opponent: "Green-Valley High",
         sport: "Basketball",
         venue: "North Court",

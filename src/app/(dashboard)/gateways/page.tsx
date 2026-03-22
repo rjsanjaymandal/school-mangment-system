@@ -290,7 +290,7 @@ export default function GatewayHub() {
               <div>
                 <h4 className="font-black text-lg">Connect New Bridge</h4>
                 <p className="text-xs opacity-80 font-medium">
-                  Extend your ecosystem with the **EduSmart SDK**.
+                  Extend your ecosystem with the **Edu Maysan SDK**.
                 </p>
               </div>
               <Button

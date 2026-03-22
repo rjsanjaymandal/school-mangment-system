@@ -46,7 +46,7 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                             Alumni Directory
                         </h2>
                         <p className="text-slate-500 font-medium tracking-tight">
-                            Preserving Legacy & Community Engagement for EduSmart Alumni
+                            Preserving Legacy & Community Engagement for Edu Maysan Alumni
                         </p>
                     </div>
                 </div>
