@@ -21,7 +21,44 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-export function StaffHRManagement() {
+interface LeaveRequest {
+  id: string;
+  staff_id: string;
+  leave_type: string;
+  start_date: string;
+  end_date: string;
+  reason: string;
+  status: string;
+  staff?: {
+    full_name: string;
+  };
+}
+
+interface StaffPayroll {
+  id: string;
+  staff_id: string;
+  base_salary: number;
+  bonuses: number;
+  deductions: number;
+  net_pay: number;
+  month: number;
+  year: number;
+  status: string;
+}
+
+export function StaffHRManagement({ 
+  leaveRequests = [], 
+  payrolls = [],
+  staffCount = 0
+}: { 
+  leaveRequests?: LeaveRequest[];
+  payrolls?: StaffPayroll[];
+  staffCount?: number;
+}) {
+  const pendingLeaves = leaveRequests.filter(l => l.status === 'pending');
+  const totalPayout = payrolls.reduce((acc, curr) => acc + (curr.net_pay || 0), 0);
+  const paidCount = payrolls.filter(p => p.status === 'paid').length;
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -32,13 +69,13 @@ export function StaffHRManagement() {
                 <Briefcase className="h-5 w-5" />
               </div>
               <Badge className="bg-primary text-primary-foreground border-none font-black text-[10px] emerald-glow">
-                ALL CLEAR
+                {pendingLeaves.length === 0 ? "ALL CLEAR" : "ACTION REQUIRED"}
               </Badge>
             </div>
             <div>
               <h3 className="text-xl font-black text-foreground">Staff Health</h3>
               <p className="text-sm font-bold text-foreground/50 tracking-tight">
-                94% Attendance / 2 Pending Leaves
+                {staffCount} Active Faculty / {pendingLeaves.length} Pending Leaves
               </p>
             </div>
             <Button className="w-full bg-primary text-primary-foreground font-black rounded-sm h-12 shadow-xl emerald-glow uppercase tracking-widest text-[10px]">
@@ -57,7 +94,7 @@ export function StaffHRManagement() {
                 Pending Requests
               </p>
               <h4 className="text-3xl font-black text-foreground tracking-tighter">
-                08
+                {pendingLeaves.length.toString().padStart(2, '0')}
               </h4>
               <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-tighter">
                 Leave & Permissions
@@ -73,13 +110,13 @@ export function StaffHRManagement() {
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">
-                Payroll Disbursement
+                Payroll Liquidated
               </p>
               <h4 className="text-3xl font-black text-foreground tracking-tighter">
-                28th Oct
+                {paidCount}/{payrolls.length || 0}
               </h4>
               <p className="text-[10px] font-bold text-foreground/40 uppercase tracking-tighter">
-                Scheduled Cycle
+                Monthly Cycle
               </p>
             </div>
           </CardContent>
@@ -127,50 +164,54 @@ export function StaffHRManagement() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {[
-                  {
-                    name: "Dr. Aris",
-                    type: "Sick Leave",
-                    duration: "12 Oct - 14 Oct",
-                    reason: "Medical Appointment",
-                  },
-                  {
-                    name: "Prof. Sarah",
-                    type: "Casual Leave",
-                    duration: "16 Oct",
-                    reason: "Personal Event",
-                  },
-                ].map((leave, i) => (
-                  <tr key={i} className="hover:bg-primary/5 transition-colors group">
-                    <td className="py-4 px-8 font-black text-foreground text-xs uppercase tracking-tight">
-                      {leave.name}
-                    </td>
-                    <td className="py-4 px-8">
-                      <Badge
-                        variant="outline"
-                        className="bg-primary/10 text-primary border-primary/20 font-black text-[9px] uppercase tracking-widest"
-                      >
-                        {leave.type.toUpperCase()}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-8 text-foreground/50 font-bold text-[10px] uppercase tracking-tighter">
-                      {leave.duration}
-                    </td>
-                    <td className="py-4 px-8 text-foreground/40 font-bold text-[10px] uppercase tracking-tighter truncate max-w-[200px]">
-                      {leave.reason}
-                    </td>
-                    <td className="py-4 px-8 text-right">
-                      <div className="flex justify-end gap-x-2">
-                        <button className="p-2 rounded-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all emerald-glow-sm">
-                          <CheckCircle2 className="h-4 w-4" />
-                        </button>
-                        <button className="p-2 rounded-xs bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
-                          <XCircle className="h-4 w-4" />
-                        </button>
-                      </div>
+                {leaveRequests.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-foreground/30 font-bold uppercase tracking-widest text-xs">
+                      No active leave requests detected.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  leaveRequests.map((leave) => (
+                    <tr key={leave.id} className="hover:bg-primary/5 transition-colors group">
+                      <td className="py-4 px-8 font-black text-foreground text-xs uppercase tracking-tight">
+                        {leave.staff?.full_name || "Unknown Staff"}
+                      </td>
+                      <td className="py-4 px-8">
+                        <Badge
+                          variant="outline"
+                          className="bg-primary/10 text-primary border-primary/20 font-black text-[9px] uppercase tracking-widest"
+                        >
+                          {leave.leave_type.toUpperCase()}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-8 text-foreground/50 font-bold text-[10px] uppercase tracking-tighter">
+                        {new Date(leave.start_date).toLocaleDateString()} - {new Date(leave.end_date).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-8 text-foreground/40 font-bold text-[10px] uppercase tracking-tighter truncate max-w-[200px]">
+                        {leave.reason}
+                      </td>
+                      <td className="py-4 px-8 text-right">
+                        {leave.status === 'pending' ? (
+                          <div className="flex justify-end gap-x-2">
+                            <button className="p-2 rounded-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all emerald-glow-sm">
+                              <CheckCircle2 className="h-4 w-4" />
+                            </button>
+                            <button className="p-2 rounded-xs bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
+                              <XCircle className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <Badge className={cn(
+                            "font-black text-[8px] uppercase tracking-widest",
+                            leave.status === 'approved' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
+                          )}>
+                            {leave.status}
+                          </Badge>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -185,7 +226,17 @@ export function StaffHRManagement() {
             <h3 className="text-3xl font-black text-foreground uppercase tracking-tight">
               Faculty Payroll Engine
             </h3>
-            <p className="text-foreground/50 mt-4 max-w-sm font-bold uppercase tracking-widest text-[10px]">
+            <div className="grid grid-cols-2 gap-8 mt-6 w-full max-w-md">
+              <div className="text-left space-y-1">
+                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Total Payout</p>
+                <p className="text-2xl font-black text-foreground">₹{totalPayout.toLocaleString()}</p>
+              </div>
+              <div className="text-right space-y-1">
+                <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Staff Count</p>
+                <p className="text-2xl font-black text-foreground">{payrolls.length}</p>
+              </div>
+            </div>
+            <p className="text-foreground/50 mt-8 max-w-sm font-bold uppercase tracking-widest text-[10px]">
               Automated salary computation based on attendance telemetry and
               holiday deductions.
             </p>
@@ -198,4 +249,5 @@ export function StaffHRManagement() {
     </div>
   );
 }
+
 

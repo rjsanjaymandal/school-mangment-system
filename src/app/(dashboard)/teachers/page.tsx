@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/server";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { TeacherList } from "@/components/teachers/TeacherList";
 import { StaffHRManagement } from "@/components/teachers/StaffHRManagement";
@@ -5,9 +6,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Briefcase } from "lucide-react";
 
 export default async function TeachersPage() {
-  const teachers = await InstitutionalService.getTeachers().catch((err: any) => {
-    return [];
-  });
+  const supabase = await createClient();
+
+  const [teachers, leaveRequests, payrolls] = await Promise.all([
+    InstitutionalService.getTeachers().catch(() => []),
+    supabase
+      .from("leave_requests")
+      .select("*, staff:profiles(full_name)")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("staff_payrolls")
+      .select("*")
+      .order("year", { ascending: false })
+      .order("month", { ascending: false })
+  ]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -23,17 +35,17 @@ export default async function TeachersPage() {
       </div>
 
       <Tabs defaultValue="list" className="space-y-8">
-        <TabsList className="bg-white/40 backdrop-blur-md border border-white/20 p-1.5 rounded-2xl h-14 w-fit">
+        <TabsList className="bg-card/40 backdrop-blur-xl border border-border p-1 rounded-sm h-12 w-fit">
           <TabsTrigger
             value="list"
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-card data-[state=active]:text-white font-bold transition-all gap-x-2"
+            className="rounded-xs px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow-sm"
           >
             <Users className="h-4 w-4" />
             Teacher Directory
           </TabsTrigger>
           <TabsTrigger
             value="hr"
-            className="rounded-xl px-8 py-3 data-[state=active]:bg-card data-[state=active]:text-white font-bold transition-all gap-x-2"
+            className="rounded-xs px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow-sm"
           >
             <Briefcase className="h-4 w-4" />
             Staff HR & Logistics
@@ -51,10 +63,15 @@ export default async function TeachersPage() {
           value="hr"
           className="animate-in slide-in-from-bottom-2 duration-500"
         >
-          <StaffHRManagement />
+          <StaffHRManagement 
+            leaveRequests={leaveRequests.data || []} 
+            payrolls={payrolls.data || []} 
+            staffCount={teachers?.length || 0}
+          />
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+
 

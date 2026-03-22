@@ -82,7 +82,7 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                     </p>
                     <h3 className="text-3xl font-black mt-1 text-foreground">
                         {inventory
-                            .filter((i: any) => i.status === "Critical")
+                            .filter((i: any) => i.quantity_in_stock < (i.min_stock_level || 5))
                             .length.toString()
                             .padStart(2, "0")}{" "}
                         Items
@@ -102,9 +102,11 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                         </Badge>
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
-                        Draft Orders
+                        Stock Replenishment
                     </p>
-                    <h3 className="text-3xl font-black mt-1 text-foreground">05 Drafts</h3>
+                    <h3 className="text-3xl font-black mt-1 text-foreground">
+                        {inventory.filter((i: any) => i.quantity_in_stock < (i.min_stock_level || 5)).length.toString().padStart(2, '0')} Drafts
+                    </h3>
                 </Card>
 
                 <Card className="border-border bg-primary/10 rounded-sm p-6 shadow-2xl relative overflow-hidden group">
@@ -133,6 +135,7 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                             .toLocaleString()}
                     </h3>
                 </Card>
+
 
             </div>
 
