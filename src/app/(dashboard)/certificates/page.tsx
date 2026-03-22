@@ -11,6 +11,7 @@ export default async function CertificatesPage() {
 
   if (error) {
     console.error("Error fetching certificates:", error);
+    return <CertificatesDashboardClient initialCertificates={[]} />;
   }
 
   return <CertificatesDashboardClient initialCertificates={certificates || []} />;

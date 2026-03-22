@@ -12,6 +12,7 @@ export default async function HeritagePage() {
 
   if (error) {
     console.error("Error fetching alumni:", error);
+    return <HeritageDashboard initialAlumni={[]} />;
   }
 
   return <HeritageDashboard initialAlumni={(alumni as Alumni[]) || []} />;

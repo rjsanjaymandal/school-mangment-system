@@ -12,6 +12,7 @@ export default async function ActivitiesPage() {
 
   if (error) {
     console.error("Error fetching activities:", error);
+    return <ActivitiesDashboard initialActivities={[]} />;
   }
 
   return <ActivitiesDashboard initialActivities={(activities as Activity[]) || []} />;
