@@ -50,7 +50,7 @@ export function PerformancePredictor() {
           <Badge className="bg-primary text-primary-foreground border-none text-[10px] font-black uppercase tracking-[0.3em] rounded-xs px-2 py-1 emerald-glow">
             AI INSIGHT
           </Badge>
-          <div className="h-1.5 w-1.5 rounded-full bg-primary animate-ping emerald-glow" />
+          <div className="h-1.5 w-1.5 rounded-sm bg-primary animate-ping emerald-glow shadow-sm shadow-primary/50" />
         </div>
         <CardTitle className="text-2xl font-black tracking-tight uppercase">
           Performance Predictor

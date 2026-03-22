@@ -37,7 +37,7 @@ export function Navbar({ user }: { user: User | null }) {
       <div className="flex items-center gap-x-4">
         <Button variant="ghost" size="icon" className="relative group rounded-xs border border-transparent hover:border-border hover:bg-accent transition-all">
           <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-full border-2 border-card shadow-sm emerald-glow" />
+          <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-sm border-2 border-card shadow-sm emerald-glow" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

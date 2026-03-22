@@ -30,7 +30,7 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
 
     const inventory = initialInventory.map((item) => ({
         ...item,
-        status: item.quantity_in_stock < 10 ? "Critical" : item.quantity_in_stock < 50 ? "Low" : "Optimal"
+        status: item.quantity_in_stock < 10 ? "Critical" : item.quantity_in_stock < 50 ? "Volatile" : "Stable"
     }));
 
     const filteredInventory = inventory.filter((item) =>
@@ -182,8 +182,8 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                                         >
                                             <td className="p-5">
                                                 <div className="flex items-center gap-x-3">
-                                                    <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                                                        <Package className="h-5 w-5 text-foreground/70" />
+                                                    <div className="h-10 w-10 rounded-sm bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
+                                                        <Package className="h-5 w-5" />
                                                     </div>
                                                     <div>
                                                         <p className="font-black text-foreground">
@@ -228,7 +228,7 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                                                         "text-[8px] font-black px-3 py-1 rounded-xs uppercase tracking-[0.2em]",
                                                         item.status === "Critical"
                                                             ? "bg-destructive text-destructive-foreground"
-                                                            : item.status === "Low"
+                                                            : item.status === "Volatile"
                                                                 ? "bg-foreground/10 text-foreground"
                                                                 : "bg-primary text-primary-foreground emerald-glow",
                                                     )}

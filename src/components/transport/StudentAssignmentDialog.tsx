@@ -111,10 +111,13 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                     <UserPlus className="h-4 w-4" /> Assign Student
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-[425px] rounded-sm shadow-2xl">
-                <DialogHeader>
-                    <DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Assign Transport</DialogTitle>
-                </DialogHeader>
+            <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-md overflow-hidden ring-1 ring-primary/20">
+                <div className="bg-primary p-8 text-primary-foreground">
+                    <DialogHeader>
+                        <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Provision Transit Node</DialogTitle>
+                        <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Student Logistics Assignment</p>
+                    </DialogHeader>
+                </div>
                 <div className="space-y-6 pt-4">
                     {/* Student Selection */}
                     <div className="space-y-2">
@@ -166,9 +169,8 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                         </Popover>
                     </div>
 
-                    {/* Route Selection */}
                     <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Select Route</Label>
+                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Logistics Channel</Label>
                         <Select value={selectedRouteId} onValueChange={setSelectedRouteId}>
                             <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold">
                                 <SelectValue placeholder="Select a route" />

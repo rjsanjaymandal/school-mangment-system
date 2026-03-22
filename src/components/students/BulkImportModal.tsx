@@ -136,22 +136,22 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
             {!file && (
                 <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-colors ${isDragActive
-                            ? "border-blue-500 bg-blue-50/50"
-                            : "border-border hover:border-slate-300 hover:bg-slate-50/50"
+                    className={`border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-500 rounded-sm bg-background/40 backdrop-blur-md group shadow-2xl ${isDragActive
+                            ? "border-primary bg-primary/10 emerald-glow-sm"
+                            : "border-border/60 hover:border-primary/40 hover:bg-primary/5"
                         }`}
                 >
                     <input {...getInputProps()} />
-                    <UploadCloud className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-slate-700 mb-2">
-                        Upload CSV File
+                    <UploadCloud className="w-16 h-16 text-primary/40 mx-auto mb-6 group-hover:text-primary transition-colors group-hover:scale-110 duration-500" />
+                    <h3 className="text-2xl font-black text-foreground uppercase tracking-widest mb-3 italic">
+                        Initialize Registry Sequence
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-6">
-                        Drag and drop your spreadsheet here, or click to browse.
+                    <p className="text-[10px] text-foreground/40 font-black uppercase tracking-[0.2em] mb-8">
+                        Deploy Data Payload (CSV) via Drag-and-Drop or Browser Ingress
                     </p>
-                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center justify-center gap-3 text-[9px] font-black uppercase tracking-widest text-primary/60 bg-primary/5 px-4 py-2 rounded-full w-fit mx-auto border border-primary/10">
                         <FileType className="w-4 h-4" />
-                        <span>Accepts .csv files only</span>
+                        <span>MIME-SPEC: text/csv only</span>
                     </div>
                 </div>
             )}
@@ -159,23 +159,27 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
             {/* Download Template Help */}
             {!file && (
                 <div className="text-center">
-                    <button onClick={downloadTemplate} className="text-sm text-blue-600 hover:underline font-medium">Download CSV Template</button>
+                    <button onClick={downloadTemplate} className="text-[10px] text-primary hover:text-primary/70 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto decoration-primary/30 underline underline-offset-4">
+                        <Loader2 className="w-3 h-3" />
+                        Protocol Template (CSV)
+                    </button>
                 </div>
             )}
 
             {/* File Selected State */}
             {file && !importResult && (
-                <div className="space-y-6">
-                    <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-border">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                            <FileType className="w-5 h-5 text-blue-600" />
+                <div className="space-y-8 p-1">
+                    <div className="flex items-center gap-6 bg-primary/5 p-6 rounded-sm border border-primary/20 backdrop-blur-md shadow-2xl relative overflow-hidden group">
+                        <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-primary/10 to-transparent pointer-events-none" />
+                        <div className="w-12 h-12 rounded-sm bg-primary/20 flex items-center justify-center shrink-0 border border-primary/30 emerald-glow-sm">
+                            <FileType className="w-6 h-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-foreground truncate">
+                            <p className="text-xs font-black text-foreground uppercase tracking-widest truncate">
                                 {file.name}
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                                {(file.size / 1024).toFixed(1)} KB
+                            <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1 italic">
+                                Payload Status: Ready for Ingress ({(file.size / 1024).toFixed(1)} KB)
                             </p>
                         </div>
                         <Button
@@ -187,17 +191,18 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                                 setErrors([]);
                             }}
                             disabled={isProcessing}
+                            className="text-[10px] font-black uppercase text-foreground/40 hover:text-primary transition-colors"
                         >
-                            Remove
+                            Abort
                         </Button>
                     </div>
 
                     {errors.length > 0 && (
-                        <div className="bg-red-50 text-red-700 p-4 rounded-2xl text-sm space-y-2 border border-red-100">
-                            <div className="font-bold flex items-center gap-2">
-                                <AlertCircle className="w-4 h-4" /> Validation Errors Found
+                        <div className="bg-destructive/10 text-destructive p-6 rounded-sm text-[10px] space-y-3 border border-destructive/20 backdrop-blur-md">
+                            <div className="font-black flex items-center gap-2 uppercase tracking-widest">
+                                <AlertCircle className="w-4 h-4" /> Integrity Violation: Blockers Detected
                             </div>
-                            <ul className="list-disc list-inside space-y-1 max-h-32 overflow-y-auto pl-2">
+                            <ul className="list-disc list-inside space-y-1.5 max-h-40 overflow-y-auto pl-2 font-black uppercase tracking-tight italic opacity-80">
                                 {errors.map((err, i) => (
                                     <li key={i}>{err}</li>
                                 ))}
@@ -206,28 +211,28 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                     )}
 
                     {previewData.length > 0 && errors.length === 0 && (
-                        <div className="bg-green-50 text-green-700 p-4 rounded-2xl text-sm border border-green-100 flex items-center gap-2 font-medium">
-                            <CheckCircle2 className="w-5 h-5" />
-                            Valid file ready to import {previewData.length} students.
+                        <div className="bg-primary/10 text-primary p-6 rounded-sm text-[10px] border border-primary/20 flex items-center gap-3 font-black uppercase tracking-[0.2em] emerald-glow-sm">
+                            <CheckCircle2 className="w-6 h-6 animate-pulse" />
+                            Integrity Verified. Ready to synchronize {previewData.length} Registry Nodes.
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-3 pt-4 border-t">
-                        <Button variant="outline" onClick={onCancel} disabled={isProcessing}>
-                            Cancel
+                    <div className="flex justify-end gap-4 pt-8 border-t border-border/50">
+                        <Button variant="ghost" onClick={onCancel} disabled={isProcessing} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
+                            Abort Operations
                         </Button>
                         <Button
                             onClick={handleImport}
                             disabled={isProcessing || errors.length > 0 || previewData.length === 0}
-                            className="bg-card text-white rounded-xl gap-2 font-bold min-w-[120px]"
+                            className="bg-primary text-primary-foreground rounded-sm gap-2 font-black uppercase tracking-[0.2em] text-[10px] px-10 py-6 h-auto emerald-glow shadow-2xl transition-all hover:scale-[1.02]"
                         >
                             {isProcessing ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Importing...
+                                    Synchronizing...
                                 </>
                             ) : (
-                                "Import Data"
+                                "Execute Ingress"
                             )}
                         </Button>
                     </div>
@@ -236,26 +241,26 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
 
             {/* Import Result State */}
             {importResult && (
-                <div className="space-y-6 text-center py-6">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle2 className="w-8 h-8 text-blue-600" />
+                <div className="space-y-8 text-center py-10 animate-in zoom-in-95 duration-500">
+                    <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 border border-primary/20 emerald-glow shadow-2xl">
+                        <CheckCircle2 className="w-10 h-10 text-primary" />
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground">Import Complete</h3>
-                    <div className="flex justify-center gap-6 mt-4">
-                        <div className="text-center">
-                            <div className="text-3xl font-black text-green-600">{importResult.successCount}</div>
-                            <div className="text-sm font-medium text-muted-foreground">Success</div>
+                    <h3 className="text-3xl font-black text-foreground uppercase tracking-widest italic underline decoration-primary/30 underline-offset-8">Ingress Complete</h3>
+                    <div className="flex justify-center gap-12 mt-8">
+                        <div className="text-center group">
+                            <div className="text-5xl font-black text-primary tracking-tighter group-hover:emerald-glow-sm transition-all">{importResult.successCount}</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40 mt-2">Nodes Synchronized</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-black text-red-500">{importResult.failCount}</div>
-                            <div className="text-sm font-medium text-muted-foreground">Failed</div>
+                        <div className="text-center group">
+                            <div className="text-5xl font-black text-destructive tracking-tighter opacity-80">{importResult.failCount}</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-destructive/40 mt-2">Integrity Hazards</div>
                         </div>
                     </div>
 
                     {importResult.errors.length > 0 && (
-                        <div className="mt-6 text-left bg-slate-50 rounded-2xl p-4 border text-sm max-h-40 overflow-y-auto">
-                            <span className="font-bold text-slate-700 block mb-2">Error Log:</span>
-                            <ul className="text-foreground/70 space-y-1 text-xs">
+                        <div className="mt-10 text-left bg-background/50 backdrop-blur-md rounded-sm p-6 border border-border/50 text-[10px] max-h-48 overflow-y-auto shadow-2xl">
+                            <span className="font-black text-primary uppercase tracking-widest block mb-4 italic">Protocol Violation Log:</span>
+                            <ul className="text-foreground/60 space-y-1.5 font-black uppercase tracking-tight italic pl-2 opacity-80 border-l border-primary/30">
                                 {importResult.errors.map((e, i) => (
                                     <li key={i}>{e}</li>
                                 ))}
@@ -263,8 +268,8 @@ export function BulkImportModal({ onSuccess, onCancel }: BulkImportModalProps) {
                         </div>
                     )}
 
-                    <Button onClick={onSuccess} className="w-full mt-6 bg-card rounded-xl font-bold text-white">
-                        Done
+                    <Button onClick={onSuccess} className="w-full mt-10 bg-primary text-primary-foreground rounded-sm font-black uppercase tracking-[0.3em] py-8 h-auto emerald-glow text-xs shadow-2xl hover:scale-[1.01] transition-all">
+                        Terminate Session
                     </Button>
                 </div>
             )}

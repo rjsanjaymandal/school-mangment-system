@@ -23,42 +23,47 @@ export function GuardianDashboard({ guardianLinks, recentConduct, recentAttendan
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
-            <div className="flex items-center gap-x-4">
-                <div className="h-14 w-14 rounded-2xl bg-card border border-white/10 flex items-center justify-center text-white neon-blue">
-                    <Heart className="h-7 w-7 text-red-500 fill-red-500" />
+            <div className="flex items-center gap-x-6">
+                <div className="h-16 w-16 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg emerald-glow">
+                    <Heart className="h-8 w-8 text-primary group-hover:fill-primary transition-all" />
                 </div>
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground">Parents Portal</h2>
-                    <p className="text-muted-foreground font-medium tracking-tight">Guardian-Student Ecosystem Transparency</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                        Guardian Ecosystem
+                    </h2>
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                        Institutional Transparency & Family-Student Registry Protocols
+                    </p>
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-4">
-                <Card className="border-none glass futuristic-card p-6 bg-card text-white">
-                    <div className="flex justify-between items-start mb-4"><Users className="h-8 w-8 text-blue-400" /><Badge className="bg-blue-500 border-none text-[10px] font-black">LINKED</Badge></div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Guardian Links</p>
-                    <h3 className="text-3xl font-black mt-1">{guardianLinks.length}</h3>
+            <div className="grid gap-6 md:grid-cols-4 pt-4">
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
+                    <Users className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-10 group-hover:scale-110 transition-transform" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Registry Links</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{guardianLinks.length}</h3>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6">
-                    <div className="flex justify-between items-start mb-4"><GraduationCap className="h-8 w-8 text-green-500" /><Badge className="bg-green-50 text-green-600 border-none text-[10px] font-black">ENROLLED</Badge></div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Students Covered</p>
-                    <h3 className="text-3xl font-black mt-1 text-foreground">{totalStudents}</h3>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
+                    <GraduationCap className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Enrolled Progeny</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{totalStudents}</h3>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6">
-                    <div className="flex justify-between items-start mb-4"><Activity className="h-8 w-8 text-blue-600" /><Badge className="bg-blue-50 text-blue-600 border-none text-[10px] font-black">RATE</Badge></div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Attendance Rate</p>
-                    <h3 className="text-3xl font-black mt-1 text-foreground">{attendanceRate}%</h3>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Attendance Rate</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic underline decoration-primary/20 underline-offset-4">{attendanceRate}%</h3>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6">
-                    <div className="flex justify-between items-start mb-4"><ShieldCheck className="h-8 w-8 text-purple-600" /><Badge className="bg-purple-50 text-purple-600 border-none text-[10px] font-black">NET</Badge></div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Conduct Score</p>
-                    <h3 className="text-3xl font-black mt-1 text-foreground">+{merits - demerits}</h3>
+                <Card className="border-secondary/20 bg-secondary/5 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Net Integrity Score</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">+{merits - demerits}</h3>
                 </Card>
             </div>
 
             <div className="grid gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-6">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2"><Zap className="h-4 w-4 text-yellow-500" /> Guardian-Student Links</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-x-3">
+                        <Zap className="h-4 w-4" /> 
+                        Registry Vectors
+                    </h3>
                     <div className="space-y-4">
                         {guardianLinks.length === 0 ? (
                             <Card className="border-none glass futuristic-card p-12 text-center">
@@ -66,22 +71,27 @@ export function GuardianDashboard({ guardianLinks, recentConduct, recentAttendan
                             </Card>
                         ) : (
                             guardianLinks.map((link) => (
-                                <Card key={link.id} className="border-none glass futuristic-card p-6 hover:bg-white hover:shadow-xl transition-all">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-x-4">
-                                            <div className="h-12 w-12 rounded-2xl bg-card text-white flex items-center justify-center font-bold neon-blue">
+                                <Card key={link.id} className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 hover:border-primary transition-all group shadow-2xl relative overflow-hidden">
+                                    <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+                                    <div className="flex items-center justify-between relative z-10">
+                                        <div className="flex items-center gap-x-6">
+                                            <div className="h-12 w-12 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center font-black text-primary shadow-lg emerald-glow uppercase">
                                                 {link.guardian?.first_name?.[0] || "G"}
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-foreground">{link.guardian?.first_name} {link.guardian?.last_name}</h4>
-                                                <p className="text-xs text-muted-foreground font-medium uppercase">{link.relationship || "Parent"}</p>
+                                                <h4 className="font-black text-foreground uppercase tracking-tight italic group-hover:text-primary transition-colors">{link.guardian?.first_name} {link.guardian?.last_name}</h4>
+                                                <p className="text-[9px] font-black text-foreground/40 uppercase tracking-[0.2em] mt-1">{link.relationship || "LIAISON"}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-bold text-slate-700">{link.student?.profile?.first_name} {link.student?.profile?.last_name}</p>
-                                            <p className="text-[10px] text-muted-foreground font-bold">{link.student?.class?.name || "—"}</p>
+                                            <p className="text-xs font-black text-foreground uppercase tracking-widest italic">{link.student?.profile?.first_name} {link.student?.profile?.last_name}</p>
+                                            <p className="text-[9px] font-black text-primary uppercase tracking-widest mt-1 opacity-60">{link.student?.class?.name || "UNASSIGNED"}</p>
                                         </div>
-                                        {link.is_primary && <Badge className="ml-4 bg-blue-50 text-blue-600 border-none text-[10px] font-black">PRIMARY</Badge>}
+                                        {link.is_primary && (
+                                            <Badge className="ml-6 bg-primary text-primary-foreground border-none font-black text-[9px] px-3 py-1 rounded-sm uppercase tracking-[0.2em] emerald-glow">
+                                                PRIMARY
+                                            </Badge>
+                                        )}
                                     </div>
                                 </Card>
                             ))

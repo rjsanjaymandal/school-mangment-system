@@ -72,12 +72,7 @@ const navigation: NavGroup[] = [
     roles: ["admin", "teacher"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap },
-      {
-        name: "Teachers",
-        href: "/teachers",
-        icon: UserSquare2,
-        roles: ["admin"],
-      },
+      { name: "Staff HR", href: "/teachers", icon: UserSquare2, roles: ["admin"] },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
       { name: "Conduct", href: "/conduct", icon: ShieldAlert },
       { name: "Health", href: "/health", icon: Stethoscope },
@@ -123,7 +118,7 @@ const navigation: NavGroup[] = [
       { name: "Fees & Payments", href: "/fees", icon: CreditCard },
       { name: "Library", href: "/library", icon: Library },
       {
-        name: "Inventory",
+        name: "Logistics",
         href: "/inventory",
         icon: Package,
         roles: ["admin"],
@@ -237,10 +232,10 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                   </div>
                   <span className="tracking-tight">{item.name}</span>
                   {item.futuristic && (
-                    <span className="ml-auto flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                    <span className="ml-auto flex h-1.5 w-1.5 rounded-sm bg-primary animate-pulse shadow-sm shadow-primary/50" />
                   )}
                   {pathname === item.href && (
-                    <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full" />
+                    <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-sm shadow-[2px_0_10px_oklch(var(--primary)/0.4)]" />
                   )}
                 </Link>
               ))}

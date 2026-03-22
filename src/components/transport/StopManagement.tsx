@@ -104,8 +104,8 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-lg font-bold text-foreground">Bus Stops ({routeName})</h3>
-                    <p className="text-xs text-muted-foreground font-medium">Manage pickup and drop points</p>
+                    <h3 className="text-lg font-black text-foreground uppercase tracking-tight">Transit Nodes ({routeName})</h3>
+                    <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">Chronological waypoint management</p>
                 </div>
                 <Dialog open={isAddStopOpen} onOpenChange={setIsAddStopOpen}>
                     <DialogTrigger asChild>
@@ -113,8 +113,12 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                             <Plus className="h-3 w-3" /> Add Stop
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-md rounded-sm shadow-2xl">
-                        <DialogHeader><DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Add Bus Stop</DialogTitle></DialogHeader>
+                    <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-md overflow-hidden ring-1 ring-primary/20">
+                        <div className="bg-primary p-6 text-primary-foreground">
+                            <DialogHeader>
+                                <DialogTitle className="font-black text-xl uppercase tracking-tighter text-center">Initialize Transit Node</DialogTitle>
+                            </DialogHeader>
+                        </div>
                         <div className="space-y-4 pt-4">
                             <div className="space-y-2">
                                 <Label className="text-xs font-bold uppercase text-muted-foreground">Stop Name</Label>
@@ -122,12 +126,12 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Pickup Time</Label>
-                                    <Input type="time" value={stopForm.pickup_time} onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} />
+                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Ingress Time</Label>
+                                    <Input type="time" value={stopForm.pickup_time} onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} className="rounded-sm bg-background/50" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Drop Time</Label>
-                                    <Input type="time" value={stopForm.drop_time} onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} />
+                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Egress Time</Label>
+                                    <Input type="time" value={stopForm.drop_time} onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} className="rounded-sm bg-background/50" />
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -156,9 +160,9 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                                 </div>
                                 <div>
                                     <p className="font-black text-foreground text-[11px] uppercase tracking-tight">{stop.name}</p>
-                                    <div className="flex items-center gap-x-4 text-[9px] text-foreground/40 font-bold uppercase tracking-widest mt-0.5">
-                                        <span className="flex items-center gap-x-1"><Clock className="h-3 w-3 text-primary/50" /> {stop.pickup_time || "--:--"}</span>
-                                        <span className="flex items-center gap-x-1"><Clock className="h-3 w-3 text-red-500/50" /> {stop.drop_time || "--:--"}</span>
+                                    <div className="flex items-center gap-x-4 text-[9px] font-black uppercase tracking-widest mt-1">
+                                        <span className="flex items-center gap-x-1.5 px-2 py-0.5 bg-primary/10 text-primary rounded-sm"><Clock className="h-3 w-3" /> {stop.pickup_time || "00:00"}</span>
+                                        <span className="flex items-center gap-x-1.5 px-2 py-0.5 bg-red-500/10 text-red-500 rounded-sm"><Clock className="h-3 w-3" /> {stop.drop_time || "00:00"}</span>
                                     </div>
                                 </div>
                             </div>
@@ -176,8 +180,12 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
             </div>
 
             <Dialog open={isEditStopOpen} onOpenChange={setIsEditStopOpen}>
-                <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-md rounded-sm shadow-2xl">
-                    <DialogHeader><DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Edit Bus Stop</DialogTitle></DialogHeader>
+                <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-md overflow-hidden ring-1 ring-primary/20">
+                    <div className="bg-primary p-6 text-primary-foreground">
+                        <DialogHeader>
+                            <DialogTitle className="font-black text-xl uppercase tracking-tighter text-center">Modify Transit Node</DialogTitle>
+                        </DialogHeader>
+                    </div>
                     <div className="space-y-4 pt-4">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Stop Name</Label>

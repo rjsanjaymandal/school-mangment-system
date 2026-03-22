@@ -49,8 +49,12 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground">Legal & Documents</h2>
-                    <p className="text-muted-foreground font-medium tracking-tight">Institutional Archives & Regulatory Document Management</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                        Regulatory Archives
+                    </h2>
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                        Institutional Governance & Immutable Document Infrastructure
+                    </p>
                 </div>
                 <div className="flex gap-x-3">
                     <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
@@ -87,25 +91,23 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
             </div>
 
             <div className="grid gap-6 md:grid-cols-4">
-                <Card className="border-none glass futuristic-card p-6 bg-card text-white">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Archival Health</p>
-                    <h3 className="text-3xl font-black mt-2">100% Secure</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-300"><CheckCircle2 className="h-4 w-4" /> No Breaches</div>
+                <Card className="border-primary/20 bg-primary/5 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all emerald-glow">
+                    <CheckCircle2 className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary/10 group-hover:text-primary transition-all" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">Archival Integrity</p>
+                    <h3 className="text-4xl font-black text-foreground italic tracking-tighter">100% SECURE</h3>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6 border-yellow-100 bg-yellow-50/10">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-yellow-600">Expiring Soon</p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">{expiringDocs.length} Documents</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-yellow-600"><AlertTriangle className="h-4 w-4" /> Within 90 days</div>
+                <Card className="border-destructive/20 bg-destructive/5 rounded-sm p-8 shadow-2xl relative overflow-hidden group">
+                    <AlertTriangle className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-destructive/10 group-hover:text-destructive transition-all" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2">Protocol Expiry</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{expiringDocs.length} NODES</h3>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Documents</p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">{documents.length}</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-muted-foreground">Institutional Repository</div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Registry Volume</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{documents.length}</h3>
                 </Card>
-                <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Audit Events</p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">{auditLogs.length}</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-green-500">Audit Clear</div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Audit Delta</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{auditLogs.length}</h3>
                 </Card>
             </div>
 
@@ -119,24 +121,24 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
                         </div>
                     </div>
 
-                    <Card className="border-none glass futuristic-card overflow-hidden">
-                        <div className="divide-y divide-slate-100">
+                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
+                        <div className="divide-y divide-primary/10">
                             {filteredDocs.length === 0 ? (
-                                <div className="p-12 text-center text-muted-foreground font-medium">No documents in the archive yet.</div>
+                                <div className="p-16 text-center text-foreground/20 font-black uppercase tracking-[0.3em] italic">No Archival Nodes Detected.</div>
                             ) : (
                                 filteredDocs.map((doc) => (
-                                    <div key={doc.id} className="p-6 flex items-center gap-x-6 hover:bg-white/50 transition-all group">
-                                        <div className="h-14 w-12 rounded-lg bg-slate-100 flex items-center justify-center text-muted-foreground group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                                    <div key={doc.id} className="p-8 flex items-center gap-x-8 hover:bg-primary/5 transition-all group border-b border-primary/5 last:border-0">
+                                        <div className="h-16 w-14 rounded-sm bg-background border border-border flex items-center justify-center text-foreground/20 group-hover:bg-primary group-hover:text-primary-foreground transition-all emerald-glow shadow-md">
                                             <FileText className="h-8 w-8" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-x-2 mb-1">
-                                                <h4 className="font-black text-foreground truncate">{doc.title}</h4>
-                                                <Badge variant="outline" className="text-[8px] font-black border-border">{(doc.category || "General").toUpperCase()}</Badge>
+                                            <div className="flex items-center gap-x-4 mb-2">
+                                                <h4 className="text-lg font-black text-foreground uppercase tracking-tight italic group-hover:text-primary transition-colors">{doc.title}</h4>
+                                                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-primary/20 text-primary bg-primary/5 px-2 py-0.5 rounded-sm italic">{(doc.category || "General").toUpperCase()}</Badge>
                                             </div>
-                                            <div className="flex items-center gap-x-4 text-[10px] font-bold text-muted-foreground uppercase">
-                                                <span className="flex items-center gap-x-1"><Calendar className="h-3 w-3" /> Expiry: {doc.expiry_date || "N/A"}</span>
-                                                <span className="flex items-center gap-x-1"><Shield className="h-3 w-3" /> Version: V{doc.version || 1}</span>
+                                            <div className="flex items-center gap-x-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">
+                                                <span className="flex items-center gap-x-2 italic"><Calendar className="h-3 w-3 text-primary/40" /> Expiry Protocol: {doc.expiry_date || "UNDEFINED"}</span>
+                                                <span className="flex items-center gap-x-2 italic"><Shield className="h-3 w-3 text-primary/40" /> Revision Delta: V{doc.version || 1}</span>
                                             </div>
                                         </div>
                                     </div>

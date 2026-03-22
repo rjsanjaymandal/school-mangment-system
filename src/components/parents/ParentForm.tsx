@@ -69,18 +69,18 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-8">
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="first_name"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Given Identity</FormLabel>
                 <FormControl>
-                  <Input placeholder="Michael" {...field} />
+                  <Input placeholder="Michael" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
@@ -88,12 +88,12 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             control={form.control}
             name="last_name"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Surname</FormLabel>
                 <FormControl>
-                  <Input placeholder="Doe" {...field} />
+                  <Input placeholder="Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
@@ -102,12 +102,12 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
+            <FormItem className="space-y-1">
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Digital Liaison (Email)</FormLabel>
               <FormControl>
-                <Input placeholder="michael.doe@example.com" {...field} />
+                <Input placeholder="michael.doe@institutional.org" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
           )}
         />
@@ -115,12 +115,12 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
           control={form.control}
           name="phone"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
+            <FormItem className="space-y-1">
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Telemetric Contact (Phone)</FormLabel>
               <FormControl>
-                <Input placeholder="+1 234 567 890" {...field} />
+                <Input placeholder="+1 234 567 890" {...field} className="rounded-sm bg-background/50 border-border font-mono font-bold text-xs uppercase tracking-tight" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
           )}
         />
@@ -129,12 +129,12 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             control={form.control}
             name="occupation"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Occupation</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Professional Role</FormLabel>
                 <FormControl>
-                  <Input placeholder="Software Engineer" {...field} />
+                  <Input placeholder="Sector Specialist" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
@@ -142,22 +142,22 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             control={form.control}
             name="relation_to_student"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Relation</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Registry Liaison</FormLabel>
                 <FormControl>
-                  <Input placeholder="Father" {...field} />
+                  <Input placeholder="Guardian" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
         </div>
-        <div className="flex justify-end gap-x-2 pt-4">
-          <Button variant="outline" type="button" onClick={() => onSuccess()}>
-            Cancel
+        <div className="flex justify-end gap-x-3 pt-6">
+          <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
+            Abort
           </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Registering..." : "Register Parent"}
+          <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
+            {isPending ? "Synchronizing..." : "Initialize Profile"}
           </Button>
         </div>
       </form>

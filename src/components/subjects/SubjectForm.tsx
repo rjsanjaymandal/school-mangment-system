@@ -66,56 +66,58 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subject Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Mathematics" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="code"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Subject Code</FormLabel>
-              <FormControl>
-                <Input placeholder="MATH101" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-8">
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Node Identity</FormLabel>
+                <FormControl>
+                  <Input placeholder="Mathematics" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                </FormControl>
+                <FormMessage className="text-[9px] font-bold uppercase" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">ID Code</FormLabel>
+                <FormControl>
+                  <Input placeholder="MATH101" {...field} className="rounded-sm bg-background/50 border-border font-mono font-bold text-xs uppercase tracking-tight" />
+                </FormControl>
+                <FormMessage className="text-[9px] font-bold uppercase" />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
+            <FormItem className="space-y-1">
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Conceptual Framework</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Introductory mathematics for Grade 10"
-                  className="resize-none"
+                  placeholder="Specify the tactical objectives and curriculum scope..."
+                  className="resize-none rounded-sm bg-background/50 border-border min-h-[100px] font-medium text-xs py-3"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
           )}
         />
-        <div className="flex justify-end gap-x-2 pt-4">
-          <Button variant="outline" type="button" onClick={() => onSuccess()}>
-            Cancel
+        <div className="flex justify-end gap-x-3 pt-6">
+          <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
+            Abort
           </Button>
-          <Button type="submit">
-            {initialData ? "Save Changes" : "Create Subject"}
+          <Button type="submit" className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
+            {initialData ? "Apply Modification" : "Initialize Framework"}
           </Button>
         </div>
       </form>

@@ -37,78 +37,60 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-x-4">
-                    <div className="h-14 w-14 rounded-2xl bg-card border border-white/10 flex items-center justify-center text-white neon-purple">
-                        <GraduationCap className="h-7 w-7 text-purple-400" />
+                <div className="flex items-center gap-x-6">
+                    <div className="h-16 w-16 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg emerald-glow">
+                        <GraduationCap className="h-8 w-8" />
                     </div>
                     <div>
-                        <h2 className="text-4xl font-black tracking-tight text-foreground">
-                            Alumni Directory
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                            Institutional Heritage
                         </h2>
-                        <p className="text-muted-foreground font-medium tracking-tight">
-                            Preserving Legacy & Community Engagement for Edu Maysan Alumni
+                        <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                            Preserving Scholastic Genealogy & Institutional Legacy Protocols
                         </p>
                     </div>
                 </div>
                 <div className="flex gap-x-3">
                     <Button
                         variant="outline"
-                        className="rounded-2xl border-border bg-white font-bold gap-x-2"
+                        className="rounded-sm border-border bg-card/40 backdrop-blur-md font-black gap-x-2 uppercase tracking-widest text-[10px] text-foreground/80 hover:text-primary transition-all shadow-xl h-12 px-6"
                     >
                         <Send className="h-4 w-4" />
                         Campaigns
                     </Button>
-                    <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-purple shadow-purple-500/20">
+                    <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow shadow-emerald-500/20 uppercase tracking-widest text-[10px] h-12 px-6">
                         <Plus className="h-4 w-4" />
                         Record Graduation
                     </Button>
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-4 pt-4">
                 {/* Alumni Statistics */}
-                <Card className="border-none glass futuristic-card p-6 bg-linear-to-br from-slate-900 to-slate-800 text-white overflow-hidden relative group">
+                <Card className="border-primary/20 bg-primary/5 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all emerald-glow">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                        <Users2 className="h-24 w-24 text-purple-400" />
+                        <Users2 className="h-24 w-24 text-primary" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-purple-400">
-                        Total Alumni
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-white">{initialAlumni.length}</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-purple-300">
-                        Recorded in Database
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Total Registry Nodes</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{initialAlumni.length}</h3>
+                </Card>
+
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Endowment Delta</p>
+                    <div className="flex items-center gap-x-4">
+                        <h3 className="text-4xl font-black text-foreground tracking-tighter italic">₹2.4M</h3>
+                        <TrendingUp className="h-6 w-6 text-primary" />
                     </div>
                 </Card>
 
-                <Card className="border-none glass futuristic-card p-6 border-purple-100 bg-purple-50/10">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-purple-600">
-                        Endowment Yields
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">₹2.4M</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-purple-600">
-                        <TrendingUp className="h-4 w-4" />
-                        +18% Annual Growth
-                    </div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Scholastic Continuity</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic underline decoration-primary/20 underline-offset-4">84%</h3>
                 </Card>
 
-                <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                        Higher Ed. Placement
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">84%</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-green-500">
-                        Tier-1 University Entry
-                    </div>
-                </Card>
-
-                <Card className="border-none glass futuristic-card p-6 border-blue-100 bg-blue-50/5">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">
-                        Mentorship Active
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">124</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-400">
-                        Institutional Guides
-                    </div>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Mentorship Active</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">124</h3>
                 </Card>
             </div>
 
@@ -116,28 +98,20 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                 {/* Alumni Directory */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
+                        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-x-3">
                             <Users className="h-4 w-4" />
-                            Alumni Directory
+                            Genealogy Registry
                         </h3>
-                        <div className="flex gap-x-2">
+                        <div className="flex gap-x-4">
                             <div className="relative">
-                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-foreground/40" />
                                 <Input
-                                    placeholder="Search alumni..."
-                                    className="pl-9 h-9 text-xs rounded-xl"
+                                    placeholder="Search records..."
+                                    className="pl-9 h-10 text-xs rounded-sm border-border bg-background/50 text-foreground placeholder:text-foreground/40 focus:ring-primary w-64"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                             </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="rounded-xl h-9 border-border"
-                            >
-                                <Filter className="h-3 w-3 mr-2" />
-                                Refine
-                            </Button>
                         </div>
                     </div>
 
@@ -146,18 +120,21 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                             {filteredAlumni.map((alumnus) => (
                                 <div
                                     key={alumnus.id}
-                                    className="p-6 flex items-center gap-x-6 hover:bg-slate-50 transition-all group"
+                                    className="p-8 flex items-center gap-x-8 hover:bg-primary/5 transition-all group border-b border-primary/5 last:border-0"
                                 >
-                                    <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-2xl text-muted-foreground group-hover:bg-purple-900 group-hover:text-white transition-all shadow-inner">
-                                        {alumnus.first_name[0]}
+                                    <div className="h-20 w-20 rounded-sm bg-background border border-border flex items-center justify-center font-black text-3xl text-foreground/20 group-hover:bg-primary group-hover:text-primary-foreground transition-all shadow-md emerald-glow relative overflow-hidden">
+                                        <div className="absolute inset-0 opacity-10 group-hover:opacity-20 flex items-center justify-center">
+                                            <GraduationCap className="h-12 w-12" />
+                                        </div>
+                                        <span className="relative z-10">{alumnus.first_name[0]}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-x-3 mb-1">
-                                            <h4 className="font-black text-foreground text-lg">
+                                        <div className="flex items-center gap-x-4 mb-2">
+                                            <h4 className="font-black text-foreground text-xl uppercase tracking-tighter italic group-hover:text-primary transition-colors">
                                                 {alumnus.first_name} {alumnus.last_name}
                                             </h4>
-                                            <Badge className="bg-card text-white border-none font-black text-[10px] px-2 py-0.5">
-                                                CLASS OF {alumnus.graduation_year}
+                                            <Badge className="bg-primary text-primary-foreground border-none font-black text-[9px] px-3 py-1 rounded-sm uppercase tracking-[0.2em] emerald-glow">
+                                                GEN_NODE_{alumnus.graduation_year}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-x-4 text-xs font-bold text-muted-foreground tracking-tight">

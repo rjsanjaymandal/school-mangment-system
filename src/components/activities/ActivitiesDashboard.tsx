@@ -60,74 +60,65 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-x-4">
-                    <div className="h-14 w-14 rounded-2xl bg-yellow-500 border border-white/10 flex items-center justify-center text-white shadow-lg shadow-yellow-200">
-                        <Trophy className="h-7 w-7" />
+                <div className="flex items-center gap-x-6">
+                    <div className="h-16 w-16 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg emerald-glow transition-all hover:scale-105">
+                        <Trophy className="h-8 w-8" />
                     </div>
                     <div>
-                        <h2 className="text-4xl font-black tracking-tight text-foreground">
-                            Activities Dashboard
+                        <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                            Society Explorer
                         </h2>
-                        <p className="text-muted-foreground font-medium tracking-tight">
-                            Orchestrating the Creative & Athletic Life of the Institution
+                        <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                            Orchestrating Creative & Athletic Institutional Dynamics
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-x-3">
+                <div className="flex gap-x-4">
                     <Button
-                        variant="outline"
-                        className="rounded-2xl border-border bg-white font-bold gap-x-2"
+                        variant="ghost"
+                        className="rounded-sm border border-border bg-card/40 backdrop-blur-xl font-black uppercase tracking-widest text-[10px] px-8 py-6 h-auto hover:border-primary transition-all"
                     >
-                        <Calendar className="h-4 w-4" />
+                        <Calendar className="h-4 w-4 mr-2" />
                         Hall Bookings
                     </Button>
-                    <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
-                        <Plus className="h-4 w-4" />
-                        Found Society
+                    <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 py-6 h-auto emerald-glow shadow-2xl hover:scale-105 transition-all">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Initialize Society
                     </Button>
                 </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-4">
-                <Card className="border-none glass futuristic-card p-6 bg-card text-white overflow-hidden relative group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                        <Users className="h-24 w-24 text-blue-400" />
-                    </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">
-                        Club Participation
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-white">82%</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-300">
+            <div className="grid gap-6 md:grid-cols-4 pt-4">
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
+                    <Users className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-10 group-hover:scale-110 transition-transform" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Club Participation</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">82%</h3>
+                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/60">
                         Active in 1+ Societies
                     </div>
                 </Card>
 
-                <Card className="border-none glass futuristic-card p-6 border-yellow-100 bg-yellow-50/10">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-yellow-600">
-                        Institutional Trophies
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">42</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-yellow-600">
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
+                    <Trophy className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Institutional Trophies</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">42</h3>
+                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/60">
                         Current Term Wins: 05
                     </div>
                 </Card>
 
-                <Card className="border-none glass futuristic-card p-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                        Total Societies
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">{initialActivities.length}</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-muted-foreground">
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Total Societies</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{initialActivities.length}</h3>
+                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-foreground/30">
                         4 Tier-1 Chapters
                     </div>
                 </Card>
 
-                <Card className="border-none glass futuristic-card p-6 border-blue-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">
-                        Event Budget
-                    </p>
-                    <h3 className="text-3xl font-black mt-2 text-foreground">$12,500</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-400">
+                <Card className="border-secondary/20 bg-secondary/5 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Events Budget</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">$12.5k</h3>
+                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/40">
                         Utilized: 64%
                     </div>
                 </Card>
@@ -137,15 +128,15 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                 {/* Societies Explorer */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
+                        <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-x-3">
                             <Flag className="h-4 w-4" />
                             Society Directory
                         </h3>
-                        <div className="relative w-64">
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <div className="relative w-72 group">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
                             <Input
-                                placeholder="Search clubs & societies..."
-                                className="pl-9 rounded-xl h-10 text-xs"
+                                placeholder="Query societies registry..."
+                                className="pl-10 rounded-sm h-12 bg-card/40 border-border font-black text-[10px] uppercase tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -156,43 +147,37 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                         {filteredActivities.map((activity) => (
                             <Card
                                 key={activity.id}
-                                className="border-none glass futuristic-card p-6 group cursor-pointer hover:bg-white transition-all hover:shadow-xl"
+                                className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 group cursor-pointer hover:border-primary transition-all shadow-2xl relative overflow-hidden"
                             >
-                                <div className="flex justify-between items-start mb-6">
-                                    <div
-                                        className={cn(
-                                            "h-14 w-14 rounded-2xl flex items-center justify-center transition-all group-hover:rotate-12 bg-blue-50 text-blue-500"
-                                        )}
-                                    >
+                                <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
+                                <div className="flex justify-between items-start mb-8 relative z-10">
+                                    <div className="h-14 w-14 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg transition-all group-hover:scale-110 group-hover:rotate-3 emerald-glow">
                                         <Zap className="h-7 w-7" />
                                     </div>
-                                    <Badge
-                                        variant="ghost"
-                                        className="text-[10px] font-black uppercase text-muted-foreground border-none px-0"
-                                    >
-                                        {activity.max_participants || 0} MAX MEMBERS
+                                    <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] px-3 py-1 rounded-sm uppercase tracking-[0.2em] italic">
+                                        {activity.max_participants || 0} CAP
                                     </Badge>
                                 </div>
-                                <h4 className="text-xl font-black text-foreground mb-1 leading-tight">
+                                <h4 className="text-2xl font-black text-foreground mb-1 tracking-tight italic group-hover:text-primary transition-colors">
                                     {activity.name}
                                 </h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">
-                                    {activity.category || "General"}
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-6">
+                                    {activity.category || "GENERAL SECTOR"}
                                 </p>
-                                <div className="space-y-3">
-                                    <div className="p-3 rounded-xl bg-slate-50 border border-border group-hover:bg-white transition-colors">
-                                        <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">
-                                            Current Active Phase
+                                <div className="space-y-4">
+                                    <div className="p-4 rounded-sm bg-primary/5 border border-primary/10 group-hover:bg-primary/10 transition-colors">
+                                        <p className="text-[8px] font-black text-primary uppercase tracking-[0.3em] mb-2 italic">
+                                            Operational Nexus
                                         </p>
-                                        <p className="text-xs font-bold text-foreground line-clamp-1">
+                                        <p className="text-[11px] font-black text-foreground line-clamp-2 uppercase tracking-tight opacity-70">
                                             {activity.description || "Active operations underway"}
                                         </p>
                                     </div>
                                     <Button
                                         variant="ghost"
-                                        className="w-full text-blue-500 font-black text-[10px] uppercase tracking-widest justify-start p-0 h-auto gap-x-2"
+                                        className="w-full text-primary font-black text-[10px] uppercase tracking-[0.3em] justify-center p-0 h-auto gap-x-3 hover:text-foreground transition-all"
                                     >
-                                        VIEW MEMBERSHIP <ArrowRight className="h-3 w-3" />
+                                        VERIFY MEMBERSHIP <ArrowRight className="h-3 w-3" />
                                     </Button>
                                 </div>
                             </Card>
@@ -212,90 +197,89 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                         Athletic Fixtures
                     </h3>
 
-                    <Card className="border-none glass futuristic-card overflow-hidden">
-                        <CardHeader className="bg-card text-white p-6">
-                            <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-60">
+                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
+                        <CardHeader className="bg-primary/10 border-b border-primary/20 p-6">
+                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
                                 Upcoming Challenges
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <div className="divide-y divide-slate-100">
+                            <div className="divide-y divide-border">
                                 {upcomingFixtures.map((fix) => (
                                     <div
                                         key={fix.id}
-                                        className="p-5 space-y-4 hover:bg-slate-50 transition-colors"
+                                        className="p-6 space-y-6 hover:bg-primary/5 transition-all group"
                                     >
-                                        <div className="flex items-center gap-x-3">
-                                            <div className="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-                                                <Trophy className="h-5 w-5" />
+                                        <div className="flex items-center gap-x-4">
+                                            <div className="h-12 w-12 rounded-sm bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shadow-lg group-hover:emerald-glow transition-all">
+                                                <Trophy className="h-6 w-6" />
                                             </div>
                                             <div>
-                                                <h4 className="font-black text-foreground text-sm tracking-tight">
+                                                <h4 className="font-black text-foreground text-sm uppercase tracking-tight italic">
                                                     {fix.team}
                                                 </h4>
-                                                <p className="text-[10px] font-bold text-muted-foreground">
+                                                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-1">
                                                     VS {fix.opponent}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between bg-background/30 p-3 rounded-sm border border-border/50">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-muted-foreground uppercase">
+                                                <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] mb-1">
                                                     Sport / Venue
                                                 </span>
-                                                <span className="text-[11px] font-bold text-foreground">
+                                                <span className="text-[10px] font-black text-foreground uppercase tracking-tight">
                                                     {fix.sport} • {fix.venue}
                                                 </span>
                                             </div>
-                                            <Badge className="bg-blue-50 text-blue-600 border-none text-[8px] font-black">
-                                                HOME GAME
+                                            <Badge className="bg-primary text-primary-foreground border-none text-[8px] font-black px-2 py-0.5 rounded-sm uppercase tracking-widest">
+                                                HOME
                                             </Badge>
                                         </div>
-                                        <Button className="w-full h-10 rounded-xl bg-white border border-border hover:bg-slate-50 text-foreground font-black text-[10px] uppercase tracking-widest shadow-none">
+                                        <Button className="w-full h-12 rounded-sm bg-primary/5 border border-primary/20 hover:bg-primary hover:text-white text-primary font-black text-[10px] uppercase tracking-[0.3em] shadow-none transition-all">
                                             LIVE TELEMETRY
                                         </Button>
                                     </div>
                                 ))}
                             </div>
                         </CardContent>
-                        <CardFooter className="p-4 bg-slate-50 flex flex-col gap-y-2 border-t border-border">
-                            <p className="text-[10px] text-muted-foreground font-medium text-center italic leading-tight">
-                                Athletic rosters are auto-synced with academic performance
-                                eligibility.
+                        <CardFooter className="p-6 bg-primary/5 flex flex-col gap-y-3 border-t border-primary/10">
+                            <p className="text-[9px] text-primary font-black uppercase tracking-widest text-center italic leading-relaxed opacity-60">
+                                Athletic rosters are auto-synced with academic performance eligibility matrices.
                             </p>
                         </CardFooter>
                     </Card>
 
-                    <Card className="border-none glass futuristic-card p-6">
-                        <CardHeader className="p-0 mb-4 flex items-center justify-between">
-                            <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl relative overflow-hidden group hover:border-primary transition-all">
+                        <CardHeader className="p-0 mb-6 flex items-center justify-between">
+                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
                                 Participation Analytics
                             </CardTitle>
-                            <TrendingUp className="h-4 w-4 text-green-500" />
+                            <TrendingUp className="h-5 w-5 text-primary animate-pulse" />
                         </CardHeader>
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-[10px] font-black uppercase">
-                                    <span className="text-muted-foreground">
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
+                                    <span className="text-foreground/40">
                                         Creative Hub utilization
                                     </span>
-                                    <span className="text-foreground">92%</span>
+                                    <span className="text-primary italic">92%</span>
                                 </div>
                                 <Progress
                                     value={92}
-                                    className="h-1.5"
-                                    indicatorClassName="bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"
+                                    className="h-1 rounded-sm bg-primary/10"
+                                    indicatorClassName="bg-primary emerald-glow transition-all duration-1000"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-[10px] font-black uppercase">
-                                    <span className="text-muted-foreground">Athletic Engagement</span>
-                                    <span className="text-foreground">65%</span>
+                            <div className="space-y-3">
+                                <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
+                                    <span className="text-foreground/40">Athletic Engagement</span>
+                                    <span className="text-primary italic">65%</span>
                                 </div>
                                 <Progress
                                     value={65}
-                                    className="h-1.5"
-                                    indicatorClassName="bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                                    className="h-1 rounded-sm bg-primary/10"
+                                    indicatorClassName="bg-primary emerald-glow transition-all duration-1000"
                                 />
                             </div>
                         </div>

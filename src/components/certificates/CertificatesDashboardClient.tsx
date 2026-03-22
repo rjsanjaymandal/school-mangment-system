@@ -48,11 +48,11 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground">
-                        Transcript Engine
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                        Transcript Registry
                     </h2>
-                    <p className="text-foreground/70 font-bold tracking-tight">
-                        Institutional Credentials and Verification Services
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                        Institutional Credentials & Cryptographic Verification
                     </p>
                 </div>
                 <div className="flex gap-x-3">
@@ -99,19 +99,19 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                     <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
-                                <thead className="bg-accent/40">
-                                    <tr className="border-b border-border">
-                                        <th className="text-left p-5 font-black uppercase tracking-widest text-[10px] text-primary">
-                                            Reference & Type
+                                <thead className="bg-primary/10">
+                                    <tr className="border-b border-primary/20">
+                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
+                                            Reference & Schematic
                                         </th>
-                                        <th className="text-left p-5 font-black uppercase tracking-widest text-[10px] text-primary">
-                                            Recipient
+                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
+                                            Recipient Node
                                         </th>
-                                        <th className="text-left p-5 font-black uppercase tracking-widest text-[10px] text-primary">
-                                            Status
+                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
+                                            Registry Status
                                         </th>
-                                        <th className="text-right p-5 font-black uppercase tracking-widest text-[10px] text-primary">
-                                            Actions
+                                        <th className="text-right p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
+                                            Operations
                                         </th>
                                     </tr>
                                 </thead>
@@ -123,21 +123,21 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                                         >
                                             <td className="p-5">
                                                 <div className="flex items-center gap-x-3">
-                                                    <div className="h-10 w-10 rounded-xs bg-primary/10 flex items-center justify-center border border-primary/20">
-                                                        <Award className="h-5 w-5 text-primary" />
+                                                    <div className="h-12 w-12 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 transition-all group-hover:bg-primary group-hover:text-primary-foreground">
+                                                        <Award className="h-6 w-6" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-black text-foreground group-hover:text-primary transition-colors">
+                                                        <p className="font-black text-foreground group-hover:text-primary transition-colors uppercase tracking-tight italic">
                                                             {cert.reference_number}
                                                         </p>
-                                                        <p className="text-[10px] font-bold text-foreground/50 uppercase tracking-tighter">
-                                                            {cert.type}
+                                                        <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-0.5">
+                                                            PROTOCOL: {cert.type}
                                                         </p>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="p-5">
-                                                <p className="font-bold text-foreground">
+                                            <td className="p-6">
+                                                <p className="font-black text-foreground uppercase tracking-tight">
                                                     {cert.student?.profile?.first_name} {cert.student?.profile?.last_name}
                                                 </p>
                                                 <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest">
@@ -205,16 +205,16 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                 {/* Sidebar Controls & Preview */}
                 <div className="space-y-6">
                     <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
-                        <CardHeader className="bg-primary text-primary-foreground p-6">
-                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-x-2">
+                        <CardHeader className="bg-primary/10 border-b border-primary/20 p-6">
+                            <CardTitle className="text-[11px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-x-3 italic">
                                 <Star className="h-4 w-4" />
-                                Live Preview
+                                Live Registry Preview
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-4 bg-background/20 backdrop-blur-md">
+                        <CardContent className="p-8 bg-background/50">
                             {/* Simplified Mini-Preview for visual feedback */}
                             <div
-                                className="aspect-[1.414/1] w-full bg-white shadow-2xl border-4 border-foreground relative overflow-hidden flex flex-col items-center justify-center p-4 text-center group"
+                                className="aspect-[1.414/1] w-full bg-white shadow-2xl border-[12px] border-primary/10 relative overflow-hidden flex flex-col items-center justify-center p-6 text-center group transition-all hover:border-primary/20"
                             >
                                 <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
                                     <GraduationCap className="h-32 w-32" />
@@ -230,7 +230,7 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                                         <p className="text-[4px] font-black uppercase text-muted-foreground">Date</p>
                                         <div className="h-px bg-card w-full mt-1"></div>
                                     </div>
-                                    <div className="h-6 w-6 rounded-full border border-slate-900 flex items-center justify-center -mt-2 bg-white relative z-10">
+                                    <div className="h-6 w-6 rounded-sm border border-slate-900 flex items-center justify-center -mt-2 bg-white relative z-10 shadow-lg">
                                         <ShieldCheck className="h-3 w-3 text-foreground" />
                                     </div>
                                     <div className="text-right w-1/3">

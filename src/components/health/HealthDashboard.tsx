@@ -48,12 +48,16 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: Hea
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground">Health Center</h2>
-                    <p className="text-muted-foreground font-medium tracking-tight">Student Health Records & Medical Management</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                        Medical Infrastructure
+                    </h2>
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                        Bio-Metric Health Records & Institutional Infirmary Protocols
+                    </p>
                 </div>
                 <div className="flex gap-x-3">
-                    <Badge variant="outline" className="rounded-full px-4 py-1.5 border-red-200 text-red-600 bg-red-50 gap-x-2 font-bold uppercase text-[10px]">
-                        <AlertTriangle className="h-3 w-3" /> {activeVisits.length} Under Observation
+                    <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-destructive/20 text-destructive bg-destructive/5 gap-x-2 font-black uppercase text-[10px] tracking-widest shadow-lg">
+                        <AlertTriangle className="h-3 w-3" /> {activeVisits.length} ACTIVE OBSERVATION NODES
                     </Badge>
                     <Dialog open={isLogOpen} onOpenChange={setIsLogOpen}>
                         <DialogTrigger asChild>
@@ -104,9 +108,19 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: Hea
 
             {/* Stats */}
             <div className="grid gap-6 md:grid-cols-3">
-                <Card className="border-none glass futuristic-card"><CardContent className="p-6"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Total Visits</p><h3 className="text-3xl font-black text-foreground">{infirmaryLogs.length}</h3></CardContent></Card>
-                <Card className="border-none glass futuristic-card"><CardContent className="p-6"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Under Observation</p><h3 className="text-3xl font-black text-red-500">{activeVisits.length}</h3></CardContent></Card>
-                <Card className="border-none glass futuristic-card"><CardContent className="p-6"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Health Profiles</p><h3 className="text-3xl font-black text-foreground">{healthProfiles.length}</h3></CardContent></Card>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Total Clinical Visits</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic underline decoration-primary/20 underline-offset-4">{infirmaryLogs.length}</h3>
+                </Card>
+                <Card className="border-destructive/20 bg-destructive/5 backdrop-blur-xl rounded-sm p-8 shadow-2xl relative overflow-hidden group">
+                    <Heart className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-destructive/10 group-hover:text-destructive transition-all" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2 italic">Current Observation</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{activeVisits.length}</h3>
+                </Card>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Active Bio-Profiles</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{healthProfiles.length}</h3>
+                </Card>
             </div>
 
             {/* Infirmary Logs */}
@@ -128,20 +142,23 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: Hea
                         ) : (
                             infirmaryLogs.map((log) => (
                                 <tr key={log.id} className="hover:bg-white/60 transition-colors">
-                                    <td className="py-6 px-8 flex items-center gap-x-4">
-                                        <div className="h-10 w-10 rounded-xl bg-red-500 text-white flex items-center justify-center font-bold">
-                                            <Heart className="h-5 w-5" />
+                                    <td className="py-6 px-8 flex items-center gap-x-6 group">
+                                        <div className="h-12 w-12 rounded-sm bg-destructive/10 text-destructive flex items-center justify-center font-black border border-destructive/20 transition-all group-hover:bg-destructive group-hover:text-white shadow-md">
+                                            <Heart className="h-6 w-6" />
                                         </div>
-                                        <span className="font-bold text-foreground">{log.student?.profile?.first_name} {log.student?.profile?.last_name}</span>
+                                        <div>
+                                            <p className="font-black text-foreground uppercase tracking-tight italic group-hover:text-primary transition-colors">{log.student?.profile?.first_name} {log.student?.profile?.last_name}</p>
+                                            <p className="text-[9px] font-black text-foreground/40 uppercase tracking-widest mt-0.5">ID: {log.student?.admission_number}</p>
+                                        </div>
                                     </td>
-                                    <td className="py-6 px-8 text-foreground/70 font-medium">{log.visit_reason}</td>
-                                    <td className="py-6 px-8 font-mono text-xs text-muted-foreground">{log.temperature ? `${log.temperature}°F` : "—"}</td>
-                                    <td className="py-6 px-8 text-muted-foreground text-xs">{log.treatment_provided || "—"}</td>
+                                    <td className="py-6 px-8 text-foreground font-black uppercase text-xs tracking-tight">{log.visit_reason}</td>
+                                    <td className="py-6 px-8 font-mono text-[11px] font-black text-primary p-2 bg-primary/5 rounded-sm w-fit border border-primary/10">{log.temperature ? `${log.temperature}°F` : "—"}</td>
+                                    <td className="py-6 px-8 text-foreground/60 text-[10px] font-bold uppercase tracking-widest">{log.treatment_provided || "—"}</td>
                                     <td className="py-6 px-8">
-                                        <Badge variant="outline" className={cn("font-bold text-[10px]",
-                                            log.status === "under_observation" ? "bg-yellow-50 text-yellow-600 border-yellow-100" :
-                                                log.status === "discharged" ? "bg-green-50 text-green-600 border-green-100" :
-                                                    "bg-red-50 text-red-600 border-red-100"
+                                        <Badge variant="outline" className={cn("font-black text-[10px] px-3 py-1 rounded-sm uppercase tracking-[0.2em] shadow-lg",
+                                            log.status === "under_observation" ? "bg-destructive text-destructive border-destructive/20 shadow-destructive/10" :
+                                                log.status === "discharged" ? "bg-primary text-primary-foreground emerald-glow border-primary/20" :
+                                                    "bg-foreground/5 text-foreground border-border"
                                         )}>
                                             {log.status?.replace("_", " ").toUpperCase()}
                                         </Badge>

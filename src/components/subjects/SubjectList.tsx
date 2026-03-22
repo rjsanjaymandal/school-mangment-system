@@ -67,20 +67,20 @@ export function SubjectList({ initialData }: SubjectListProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={onAdd} className="gap-x-2">
+        <Button onClick={onAdd} className="bg-primary text-primary-foreground font-black gap-x-2 emerald-glow uppercase tracking-widest text-[10px] rounded-sm py-2 px-6 h-auto">
           <Plus className="h-4 w-4" />
-          Add Subject
+          Initialize Node
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
+      <div className="bg-card/40 backdrop-blur-xl rounded-sm border border-border overflow-hidden shadow-2xl">
         <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow>
-              <TableHead>Code</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-primary/5 border-b border-border">
+            <TableRow className="hover:bg-transparent border-none">
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-primary px-6">ID Code</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-primary">Node Identity</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-primary">Conceptual Framework</TableHead>
+              <TableHead className="text-[10px] font-black uppercase tracking-widest text-primary text-right px-6">Operations</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -97,37 +97,40 @@ export function SubjectList({ initialData }: SubjectListProps) {
               data.map((subject) => (
                 <TableRow
                   key={subject.id}
-                  className="hover:bg-slate-50/50 transition-colors"
+                  className="hover:bg-primary/5 transition-colors border-border/50"
                 >
-                  <TableCell className="font-mono text-xs font-semibold px-4 py-1.5 bg-slate-100/50 rounded inline-block mt-2 ml-4">
-                    {subject.code || "N/A"}
+                  <TableCell className="px-6">
+                    <span className="font-mono text-[10px] font-black px-2 py-1 bg-primary text-primary-foreground rounded-sm emerald-glow-sm">
+                      {subject.code || "TBD-00"}
+                    </span>
                   </TableCell>
-                  <TableCell className="font-semibold text-foreground">
+                  <TableCell className="font-black text-foreground uppercase tracking-tight text-xs">
                     {subject.name}
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm max-w-xs truncate">
-                    {subject.description || "N/A"}
+                  <TableCell className="text-foreground/40 font-bold text-[10px] uppercase tracking-widest max-w-xs truncate">
+                    {subject.description || "No tactical description"}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right px-6">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 text-foreground/40 hover:text-primary hover:bg-primary/10 rounded-sm">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuContent align="end" className="bg-card border-border rounded-sm shadow-2xl">
+                        <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-50 px-3">Node Operations</DropdownMenuLabel>
                         <DropdownMenuItem
                           onClick={() => onEdit(subject)}
-                          className="gap-x-2 cursor-pointer"
+                          className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2"
                         >
-                          <Pencil className="h-4 w-4" /> Edit
+                          <Pencil className="h-3.5 w-3.5" /> Modify Node
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator className="bg-border/50" />
                         <DropdownMenuItem
                           onClick={() => onDelete(subject.id)}
-                          className="gap-x-2 text-red-600 focus:text-red-700 cursor-pointer"
+                          className="gap-x-2 text-red-500 focus:text-red-600 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-red-500/10 px-3 py-2"
                         >
-                          <Trash2 className="h-4 w-4" /> Delete
+                          <Trash2 className="h-3.5 w-3.5" /> Terminate Node
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -140,15 +143,17 @@ export function SubjectList({ initialData }: SubjectListProps) {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              {editingSubject ? "Edit Subject" : "Add New Subject"}
-            </DialogTitle>
-            <DialogDescription>
-              Manage details for this academic subject.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-md overflow-hidden ring-1 ring-primary/20">
+          <div className="bg-primary p-8 text-primary-foreground">
+            <DialogHeader>
+              <DialogTitle className="font-black text-2xl uppercase tracking-tighter">
+                {editingSubject ? "Modify Curriculum Node" : "Initialize Curriculum Node"}
+              </DialogTitle>
+              <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest mt-1">
+                Academic Framework Configuration
+              </p>
+            </DialogHeader>
+          </div>
           <SubjectForm
             initialData={editingSubject}
             onSuccess={() => setIsOpen(false)}

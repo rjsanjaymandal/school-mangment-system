@@ -84,18 +84,18 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-8">
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="first_name"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Given Identity</FormLabel>
                 <FormControl>
-                  <Input placeholder="John" {...field} />
+                  <Input placeholder="John" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
@@ -103,12 +103,12 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             control={form.control}
             name="last_name"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Surname</FormLabel>
                 <FormControl>
-                  <Input placeholder="Doe" {...field} />
+                  <Input placeholder="Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
@@ -117,12 +117,12 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
+            <FormItem className="space-y-1">
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Digital Liaison (Email)</FormLabel>
               <FormControl>
-                <Input placeholder="john.doe@example.com" {...field} />
+                <Input placeholder="john.doe@institutional.org" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
           )}
         />
@@ -131,12 +131,12 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             control={form.control}
             name="admission_number"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Admission No.</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Registry ID</FormLabel>
                 <FormControl>
-                  <Input placeholder="ADM-2023-001" {...field} />
+                  <Input placeholder="ADM-202X-001" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
@@ -144,22 +144,22 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             control={form.control}
             name="roll_number"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Roll No.</FormLabel>
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Sequential ID</FormLabel>
                 <FormControl>
-                  <Input placeholder="10" {...field} />
+                  <Input placeholder="00" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}
           />
         </div>
-        <div className="flex justify-end gap-x-2 pt-4">
-          <Button variant="outline" type="button" onClick={() => onSuccess()}>
-            Cancel
+        <div className="flex justify-end gap-x-3 pt-6">
+          <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
+            Abort
           </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? "Saving..." : initialData ? "Save Changes" : "Create Student"}
+          <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
+            {isPending ? "Synchronizing..." : initialData ? "Confirm Modification" : "Initialize Registry"}
           </Button>
         </div>
       </form>

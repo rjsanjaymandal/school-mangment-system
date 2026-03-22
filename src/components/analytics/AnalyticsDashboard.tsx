@@ -111,8 +111,8 @@ export function AnalyticsDashboard({
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">{m.title}</p>
                             <h3 className="text-3xl font-black text-foreground tracking-tighter">{m.value}</h3>
                             <p className="text-[10px] font-bold text-foreground/50 uppercase tracking-tighter mt-1">{m.sub}</p>
-                            <div className="mt-4 h-1 w-full bg-primary/10 rounded-full overflow-hidden">
-                                <div className={cn("h-full rounded-full bg-primary emerald-glow transition-all duration-1000")} style={{ width: m.value.includes('%') ? m.value : '100%' }} />
+                            <div className="mt-4 h-1 w-full bg-primary/10 rounded-sm overflow-hidden">
+                                <div className={cn("h-full rounded-sm bg-primary emerald-glow transition-all duration-1000")} style={{ width: m.value.includes('%') ? m.value : '100%' }} />
                             </div>
                         </CardContent>
                     </Card>
@@ -133,9 +133,9 @@ export function AnalyticsDashboard({
                             {monthlyRates.slice(0, currentMonth + 1).map((h, i) => (
                                 <div key={i} className="flex-1 flex flex-col items-center gap-y-2 group/bar">
                                     <div className="relative w-full" style={{ height: "200px" }}>
-                                        <div className="absolute bottom-0 w-full bg-primary/5 border border-primary/10 rounded-t-sm" style={{ height: "200px" }} />
-                                        <div className={cn("absolute bottom-0 w-full rounded-t-sm transition-all duration-1000 group-hover/bar:brightness-125", h > 0 ? "bg-primary emerald-glow" : "bg-foreground/10")} style={{ height: `${h}%` }} />
-                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-black py-1 px-2 rounded-xs opacity-0 group-hover/bar:opacity-100 transition-all shadow-xl emerald-glow">{h}%</div>
+                                        <div className="absolute bottom-0 w-full bg-primary/5 border border-primary/10 rounded-sm" style={{ height: "200px" }} />
+                                        <div className={cn("absolute bottom-0 w-full rounded-sm transition-all duration-1000 group-hover/bar:brightness-125", h > 0 ? "bg-primary emerald-glow" : "bg-foreground/10")} style={{ height: `${h}%` }} />
+                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-black py-1 px-2 rounded-sm opacity-0 group-hover/bar:opacity-100 transition-all shadow-xl emerald-glow">{h}%</div>
                                     </div>
                                     <span className="text-[10px] font-black text-foreground/50 uppercase tracking-tighter">{months[i]}</span>
                                 </div>

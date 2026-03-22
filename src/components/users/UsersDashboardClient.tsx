@@ -35,11 +35,11 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
         <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
-                        Identity Matrix
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                        Identity & Access Control
                     </h2>
-                    <p className="text-foreground/70 font-bold tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">
-                        Role-Based Access Control & Profile Harmonization
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                        Protocol Personnel & Role-Based Authorization Matrix
                     </p>
                 </div>
                 <div className="flex gap-x-3">
@@ -56,10 +56,10 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Total Identities</p>
                     <h3 className="text-3xl font-black text-primary">{users.length}</h3>
                 </Card>
-                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 relative overflow-hidden group shadow-2xl">
-                    < ShieldAlert className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">System Admins</p>
-                    <h3 className="text-3xl font-black text-foreground">{users.filter(u => u.role === 'admin').length}</h3>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl hover:border-primary transition-all">
+                    <ShieldAlert className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Clearance: Level 5 (Admin)</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{users.filter(u => u.role === 'admin').length}</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 relative shadow-2xl">
                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Active Faculty</p>
@@ -109,11 +109,11 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                             {filteredUsers.map((user) => (
                                 <tr
                                     key={user.id}
-                                    className="hover:bg-slate-50/50 transition-colors"
+                                    className="hover:bg-primary/5 transition-colors border-border/50 group"
                                 >
                                     <td className="p-5">
                                         <div className="flex items-center gap-x-3">
-                                            <div className="h-10 w-10 shrink-0 rounded-sm bg-primary/20 border border-primary/30 flex items-center justify-center text-primary font-black text-[10px] shadow-lg">
+                                            <div className="h-10 w-10 shrink-0 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-black text-xs shadow-lg group-hover:emerald-glow-sm transition-all uppercase">
                                                 {user.first_name?.[0] || 'U'}{user.last_name?.[0] || ''}
                                             </div>
                                             <div>
@@ -126,20 +126,20 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="p-5">
-                                        <span className="font-mono text-[10px] font-black text-primary/80 bg-primary/10 border border-primary/20 px-3 py-1 rounded-sm uppercase tracking-widest">
+                                    <td className="p-6">
+                                        <span className="font-mono text-[10px] font-black text-primary bg-primary/5 border border-primary/10 px-4 py-2 rounded-sm uppercase tracking-widest group-hover:emerald-glow transition-all">
                                             {user.email}
                                         </span>
                                     </td>
                                     <td className="p-5">
                                         <Badge
                                             className={cn(
-                                                "text-[8px] font-black px-3 py-1 rounded-xs uppercase tracking-[0.2em] shadow-lg",
+                                                "text-[9px] font-black px-4 py-1 rounded-sm uppercase tracking-[0.2em] shadow-lg",
                                                 user.role === 'admin'
-                                                    ? "bg-primary text-primary-foreground emerald-glow"
+                                                    ? "bg-primary text-primary-foreground emerald-glow border-none"
                                                     : user.role === 'teacher'
-                                                        ? "bg-foreground/20 text-foreground border border-border"
-                                                        : "bg-background text-foreground/40 border border-border"
+                                                        ? "bg-primary/10 text-primary border border-primary/20"
+                                                        : "bg-background/40 text-foreground/40 border border-border"
                                             )}
                                         >
                                             {user.role}

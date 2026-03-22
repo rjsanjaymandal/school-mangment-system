@@ -133,44 +133,48 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
             {!file && (
                 <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed rounded-sm p-12 text-center cursor-pointer transition-all duration-300 ${isDragActive
-                            ? "border-primary bg-primary/10 shadow-[inner_0_0_20px_rgba(16,185,129,0.1)]"
-                            : "border-border hover:border-primary/40 hover:bg-primary/5 shadow-inner"
+                    className={`border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-500 rounded-sm bg-background/40 backdrop-blur-md group shadow-2xl ${isDragActive
+                            ? "border-primary bg-primary/10 emerald-glow-sm"
+                            : "border-border/60 hover:border-primary/40 hover:bg-primary/5"
                         }`}
                 >
                     <input {...getInputProps()} />
-                    <UploadCloud className="w-14 h-14 text-primary/40 mx-auto mb-6 animate-pulse" />
-                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight mb-2">
-                        Upload CSV File
+                    <UploadCloud className="w-16 h-16 text-primary/40 mx-auto mb-6 group-hover:text-primary transition-colors group-hover:scale-110 duration-500" />
+                    <h3 className="text-2xl font-black text-foreground uppercase tracking-widest mb-3 italic">
+                        Initialize Faculty Registry Ingress
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-6">
-                        Drag and drop your spreadsheet here, or click to browse.
+                    <p className="text-[10px] text-foreground/40 font-black uppercase tracking-[0.2em] mb-8">
+                        Deploy Personnel Data Payload (CSV) via Secure Gate
                     </p>
-                    <div className="flex items-center justify-center gap-2 text-[10px] text-foreground/40 font-black uppercase tracking-widest">
-                        <FileType className="w-4 h-4 text-primary/60" />
-                        <span>Accepts .csv files only</span>
+                    <div className="flex items-center justify-center gap-3 text-[9px] font-black uppercase tracking-widest text-primary/60 bg-primary/5 px-4 py-2 rounded-full w-fit mx-auto border border-primary/10">
+                        <FileType className="w-4 h-4" />
+                        <span>MIME-SPEC: text/csv only</span>
                     </div>
                 </div>
             )}
 
             {!file && (
                 <div className="text-center">
-                    <button onClick={downloadTemplate} className="text-sm text-blue-600 hover:underline font-medium">Download CSV Template</button>
+                    <button onClick={downloadTemplate} className="text-[10px] text-primary hover:text-primary/70 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto decoration-primary/30 underline underline-offset-4">
+                        <Loader2 className="w-3 h-3" />
+                        Faculty Protocol Template (CSV)
+                    </button>
                 </div>
             )}
 
             {file && !importResult && (
-                <div className="space-y-6">
-                    <div className="flex items-center gap-4 bg-background/20 p-5 rounded-sm border border-border">
-                        <div className="w-12 h-12 rounded-sm bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20 shadow-inner">
+                <div className="space-y-8 p-1">
+                    <div className="flex items-center gap-6 bg-primary/5 p-6 rounded-sm border border-primary/20 backdrop-blur-md shadow-2xl relative overflow-hidden group">
+                        <div className="absolute right-0 top-0 h-full w-32 bg-gradient-to-l from-primary/10 to-transparent pointer-events-none" />
+                        <div className="w-12 h-12 rounded-sm bg-primary/20 flex items-center justify-center shrink-0 border border-primary/30 emerald-glow-sm">
                             <FileType className="w-6 h-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-foreground truncate">
+                            <p className="text-xs font-black text-foreground uppercase tracking-widest truncate">
                                 {file.name}
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                                {(file.size / 1024).toFixed(1)} KB
+                            <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1 italic">
+                                Faculty Payload Status: Valid ({(file.size / 1024).toFixed(1)} KB)
                             </p>
                         </div>
                         <Button
@@ -181,19 +185,19 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                                 setPreviewData([]);
                                 setErrors([]);
                             }}
-                            className="rounded-xs hover:bg-red-500/10 hover:text-red-500 font-black uppercase tracking-widest text-[10px]"
                             disabled={isProcessing}
+                            className="text-[10px] font-black uppercase text-foreground/40 hover:text-primary transition-colors"
                         >
-                            Remove
+                            Abort
                         </Button>
                     </div>
 
                     {errors.length > 0 && (
-                        <div className="bg-red-500/10 text-red-500 p-5 rounded-sm text-xs space-y-3 border border-red-500/20 shadow-inner">
-                            <div className="font-black uppercase tracking-widest flex items-center gap-2">
-                                <AlertCircle className="w-4 h-4" /> Validation Errors Found
+                        <div className="bg-destructive/10 text-destructive p-6 rounded-sm text-[10px] space-y-3 border border-destructive/20 backdrop-blur-md">
+                            <div className="font-black flex items-center gap-2 uppercase tracking-widest">
+                                <AlertCircle className="w-4 h-4" /> Personnel Validation Error: Blockers Detected
                             </div>
-                            <ul className="list-disc list-inside space-y-1.5 max-h-32 overflow-y-auto pl-2 font-bold opacity-80">
+                            <ul className="list-disc list-inside space-y-1.5 max-h-40 overflow-y-auto pl-2 font-black uppercase tracking-tight italic opacity-80">
                                 {errors.map((err, i) => (
                                     <li key={i}>{err}</li>
                                 ))}
@@ -202,28 +206,28 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     )}
  
                     {previewData.length > 0 && errors.length === 0 && (
-                        <div className="bg-primary/10 text-primary p-5 rounded-sm text-[11px] border border-primary/20 flex items-center gap-3 font-black uppercase tracking-widest shadow-inner">
-                            <CheckCircle2 className="w-5 h-5 animate-pulse" />
-                            Valid file ready to import {previewData.length} records.
+                        <div className="bg-primary/10 text-primary p-6 rounded-sm text-[10px] border border-primary/20 flex items-center gap-3 font-black uppercase tracking-[0.2em] emerald-glow-sm">
+                            <CheckCircle2 className="w-6 h-6 animate-pulse" />
+                            Faculty Integrity Verified. Ready to synchronize {previewData.length} Personnel Nodes.
                         </div>
                     )}
 
-                    <div className="flex justify-end gap-3 pt-6 border-t border-border">
-                        <Button variant="outline" onClick={onCancel} disabled={isProcessing} className="rounded-sm font-black uppercase tracking-widest text-[10px] px-6">
-                            Cancel
+                    <div className="flex justify-end gap-4 pt-8 border-t border-border/50">
+                        <Button variant="ghost" onClick={onCancel} disabled={isProcessing} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
+                            Abort Operations
                         </Button>
                         <Button
                             onClick={handleImport}
                             disabled={isProcessing || errors.length > 0 || previewData.length === 0}
-                            className="bg-primary text-primary-foreground rounded-sm gap-2 font-black uppercase tracking-[0.2em] text-xs px-8 py-6 h-auto emerald-glow whitespace-nowrap"
+                            className="bg-primary text-primary-foreground rounded-sm gap-2 font-black uppercase tracking-[0.2em] text-[10px] px-10 py-6 h-auto emerald-glow shadow-2xl transition-all hover:scale-[1.02]"
                         >
                             {isProcessing ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    Processing...
+                                    Synchronizing...
                                 </>
                             ) : (
-                                "Initiate Import"
+                                "Execute Faculty Ingress"
                             )}
                         </Button>
                     </div>
@@ -231,35 +235,35 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
             )}
 
             {importResult && (
-                <div className="space-y-8 text-center py-10">
-                    <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 border border-primary/20 shadow-inner">
-                        <CheckCircle2 className="w-10 h-10 text-primary animate-bounce" />
+                <div className="space-y-8 text-center py-10 animate-in zoom-in-95 duration-500">
+                    <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 border border-primary/20 emerald-glow shadow-2xl">
+                        <CheckCircle2 className="w-10 h-10 text-primary" />
                     </div>
-                    <h3 className="text-3xl font-black text-foreground uppercase tracking-tight">Import Complete</h3>
-                    <div className="flex justify-center gap-12 mt-6">
+                    <h3 className="text-3xl font-black text-foreground uppercase tracking-widest italic underline decoration-primary/30 underline-offset-8">Faculty Ingress Complete</h3>
+                    <div className="flex justify-center gap-12 mt-8">
                         <div className="text-center group">
-                            <div className="text-4xl font-black text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">{importResult.successCount}</div>
-                            <div className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] mt-1 group-hover:text-primary transition-colors">Success</div>
+                            <div className="text-5xl font-black text-primary tracking-tighter group-hover:emerald-glow-sm transition-all">{importResult.successCount}</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40 mt-2">Personnel Synchronized</div>
                         </div>
                         <div className="text-center group">
-                            <div className="text-4xl font-black text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.3)]">{importResult.failCount}</div>
-                            <div className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] mt-1 group-hover:text-red-500 transition-colors">Failed</div>
+                            <div className="text-5xl font-black text-destructive tracking-tighter opacity-80">{importResult.failCount}</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-destructive/40 mt-2">Integrity Hazards</div>
                         </div>
                     </div>
 
                     {importResult.errors.length > 0 && (
-                        <div className="mt-8 text-left bg-background/30 rounded-sm p-5 border border-border text-[11px] max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20">
-                            <span className="font-black text-foreground/60 uppercase tracking-widest block mb-3 border-b border-border pb-1">Error Telemetry:</span>
-                            <ul className="text-foreground/50 space-y-2 font-bold">
+                        <div className="mt-10 text-left bg-background/50 backdrop-blur-md rounded-sm p-6 border border-border/50 text-[10px] max-h-48 overflow-y-auto shadow-2xl">
+                            <span className="font-black text-primary uppercase tracking-widest block mb-4 italic">Personnel Protocol Violation Log:</span>
+                            <ul className="text-foreground/60 space-y-1.5 font-black uppercase tracking-tight italic pl-2 opacity-80 border-l border-primary/30">
                                 {importResult.errors.map((e, i) => (
-                                    <li key={i} className="flex gap-2"><span className="text-red-500/50">›</span> {e}</li>
+                                    <li key={i}>{e}</li>
                                 ))}
                             </ul>
                         </div>
                     )}
 
-                    <Button onClick={onSuccess} className="w-full mt-8 bg-primary text-primary-foreground rounded-sm font-black uppercase tracking-[0.2em] text-xs py-7 h-auto emerald-glow shadow-xl">
-                        Acknowledge & Sync
+                    <Button onClick={onSuccess} className="w-full mt-10 bg-primary text-primary-foreground rounded-sm font-black uppercase tracking-[0.3em] py-8 h-auto emerald-glow text-xs shadow-2xl hover:scale-[1.01] transition-all">
+                        Terminate Session
                     </Button>
                 </div>
             )}

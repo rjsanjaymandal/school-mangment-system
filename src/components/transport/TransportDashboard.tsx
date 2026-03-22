@@ -131,8 +131,8 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Logistics & Fleet</h2>
-                    <p className="text-foreground/70 font-bold tracking-tight">Manage school transport, routes, and student assignments</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Fleet Logistics</h2>
+                    <p className="text-foreground/70 font-bold tracking-tight">Autonomous routing and student transit monitoring</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                     <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-primary/20 text-primary bg-primary/10 gap-x-2 font-black uppercase text-[10px] emerald-glow-sm">
@@ -147,8 +147,13 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                                 <Plus className="h-4 w-4" /> Add Route
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-lg rounded-sm shadow-2xl">
-                            <DialogHeader><DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight">Create New Route</DialogTitle></DialogHeader>
+                        <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-lg overflow-hidden ring-1 ring-primary/20">
+                            <div className="bg-primary p-8 text-primary-foreground">
+                                <DialogHeader>
+                                    <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Initialize Logistics Channel</DialogTitle>
+                                    <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Fleet Expansion & Routing</p>
+                                </DialogHeader>
+                            </div>
                             <div className="space-y-4 pt-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
@@ -233,8 +238,8 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                                                     <p className="text-sm font-bold truncate max-w-[120px]">{route.name}</p>
                                                     <p className={cn(
                                                         "text-[10px] font-mono",
-                                                        selectedRoute?.id === route.id ? "text-slate-300" : "text-muted-foreground"
-                                                    )}>{route.route_number || "NO CODE"}</p>
+                                                        selectedRoute?.id === route.id ? "text-primary-foreground/70" : "text-muted-foreground"
+                                                    )}>{route.route_number || "CHL-00"}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-x-1">
@@ -242,7 +247,7 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                                                     variant="ghost"
                                                     size="icon"
                                                     onClick={(e) => openEditRoute(route, e)}
-                                                    className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-slate-300 hover:text-white" : "text-muted-foreground hover:text-foreground")}
+                                                    className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-white" : "text-muted-foreground hover:text-foreground")}
                                                 >
                                                     <Edit2 className="h-3 w-3" />
                                                 </Button>
@@ -250,7 +255,7 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                                                     variant="ghost"
                                                     size="icon"
                                                     onClick={(e) => { e.stopPropagation(); handleDeleteRoute(route.id); }}
-                                                    className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-slate-300 hover:text-red-400" : "text-muted-foreground hover:text-red-500")}
+                                                    className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-red-400" : "text-muted-foreground hover:text-red-500")}
                                                 >
                                                     <Trash2 className="h-3 w-3" />
                                                 </Button>
@@ -297,19 +302,19 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
-                                                <div className="p-4 rounded-2xl bg-slate-50 border border-border">
-                                                    <p className="text-[10px] font-bold uppercase text-muted-foreground mb-1">Vehicle</p>
-                                                    <p className="text-sm font-bold text-foreground">{selectedRoute.plate_number || "Unknown"}</p>
+                                                <div className="p-4 rounded-sm bg-primary/5 border border-border">
+                                                    <p className="text-[10px] font-black uppercase text-primary mb-1">Asset ID</p>
+                                                    <p className="text-sm font-black text-foreground">{selectedRoute.plate_number || "TBD-999"}</p>
                                                 </div>
-                                                <div className="p-4 rounded-2xl bg-slate-50 border border-border">
-                                                    <p className="text-[10px] font-bold uppercase text-muted-foreground mb-1">Occupancy</p>
+                                                <div className="p-4 rounded-sm bg-primary/5 border border-border">
+                                                    <p className="text-[10px] font-black uppercase text-primary mb-1">Channel Load</p>
                                                     <div className="flex items-end justify-between">
-                                                        <p className="text-sm font-bold text-foreground">
+                                                        <p className="text-sm font-black text-foreground">
                                                             {assignments.filter(a => a.route_id === selectedRoute.id).length} / {selectedRoute.capacity || 40}
                                                         </p>
-                                                        <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                                        <div className="w-16 h-1 bg-primary/20 rounded-full overflow-hidden">
                                                             <div
-                                                                className="h-full bg-indigo-500"
+                                                                className="h-full bg-primary emerald-glow shadow-primary/50"
                                                                 style={{ width: `${Math.min(100, (assignments.filter(a => a.route_id === selectedRoute.id).length / (selectedRoute.capacity || 40)) * 100)}%` }}
                                                             />
                                                         </div>

@@ -41,8 +41,12 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground">Student Conduct</h2>
-                    <p className="text-muted-foreground font-medium tracking-tight">Merit & Demerit Conduct Tracking</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+                        Behavioral Standard
+                    </h2>
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+                        Institutional Merit Registry & Ethical Conduct Protocols
+                    </p>
                 </div>
                 <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                     <DialogTrigger asChild>
@@ -95,9 +99,27 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
 
             {/* Stats */}
             <div className="grid gap-6 md:grid-cols-3">
-                <Card className="border-none glass futuristic-card"><CardContent className="p-6"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Total Merits</p><div className="flex items-center gap-x-2"><h3 className="text-3xl font-black text-green-600">{totalMerits}</h3><TrendingUp className="h-5 w-5 text-green-500" /></div></CardContent></Card>
-                <Card className="border-none glass futuristic-card"><CardContent className="p-6"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Total Demerits</p><div className="flex items-center gap-x-2"><h3 className="text-3xl font-black text-red-500">{totalDemerits}</h3><TrendingDown className="h-5 w-5 text-red-500" /></div></CardContent></Card>
-                <Card className="border-none glass futuristic-card"><CardContent className="p-6"><p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Net Score</p><div className="flex items-center gap-x-2"><h3 className="text-3xl font-black text-foreground">{totalMerits - totalDemerits}</h3><Star className="h-5 w-5 text-yellow-500" /></div></CardContent></Card>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Institutional Merits</p>
+                    <div className="flex items-center gap-x-4">
+                        <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{totalMerits}</h3>
+                        <TrendingUp className="h-6 w-6 text-primary emerald-glow" />
+                    </div>
+                </Card>
+                <Card className="border-destructive/20 bg-destructive/5 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-destructive transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2 italic">Protocol Demerits</p>
+                    <div className="flex items-center gap-x-4">
+                        <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{totalDemerits}</h3>
+                        <TrendingDown className="h-6 w-6 text-destructive" />
+                    </div>
+                </Card>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Net Integrity Score</p>
+                    <div className="flex items-center gap-x-4">
+                        <h3 className="text-4xl font-black text-foreground tracking-tighter italic underline decoration-primary/20 underline-offset-4">{totalMerits - totalDemerits}</h3>
+                        <Star className="h-6 w-6 text-primary/40" />
+                    </div>
+                </Card>
             </div>
 
             {/* Records Table */}
@@ -118,22 +140,27 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
                             <tr><td colSpan={6} className="py-12 text-center text-muted-foreground font-medium">No conduct records yet.</td></tr>
                         ) : (
                             records.map((r) => (
-                                <tr key={r.id} className="hover:bg-white/60 transition-colors">
-                                    <td className="py-6 px-8 flex items-center gap-x-4">
-                                        <div className={cn("h-10 w-10 rounded-xl text-white flex items-center justify-center font-bold", r.type === "merit" ? "bg-green-500" : "bg-red-500")}>
-                                            {r.type === "merit" ? <Award className="h-5 w-5" /> : <Shield className="h-5 w-5" />}
+                                <tr key={r.id} className="hover:bg-primary/5 transition-all group border-b border-primary/5 last:border-0 font-mono text-xs">
+                                    <td className="py-6 px-8 flex items-center gap-x-6">
+                                        <div className={cn("h-12 w-12 rounded-sm flex items-center justify-center font-black border transition-all shadow-md", 
+                                            r.type === "merit" ? "bg-primary/10 text-primary border-primary/20 group-hover:bg-primary group-hover:text-white" : "bg-destructive/10 text-destructive border-destructive/20 group-hover:bg-destructive group-hover:text-white")}>
+                                            {r.type === "merit" ? <Award className="h-6 w-6" /> : <Shield className="h-6 w-6" />}
                                         </div>
-                                        <span className="font-bold text-foreground">{r.student?.profile?.first_name} {r.student?.profile?.last_name}</span>
+                                        <div>
+                                            <p className="font-black text-foreground uppercase tracking-tight italic group-hover:text-primary transition-colors text-sm">{r.student?.profile?.first_name} {r.student?.profile?.last_name}</p>
+                                            <p className="text-[9px] font-black text-foreground/40 uppercase tracking-widest mt-0.5">ID: {r.student?.admission_number}</p>
+                                        </div>
                                     </td>
                                     <td className="py-6 px-8">
-                                        <Badge variant="outline" className={cn("font-bold text-[10px]", r.type === "merit" ? "bg-green-50 text-green-600 border-green-100" : "bg-red-50 text-red-600 border-red-100")}>
+                                        <Badge variant="outline" className={cn("font-black text-[10px] px-3 py-1 rounded-sm uppercase tracking-[0.2em] shadow-lg italic", 
+                                            r.type === "merit" ? "bg-primary text-primary-foreground emerald-glow" : "bg-destructive text-destructive-foreground shadow-destructive/20")}>
                                             {r.type.toUpperCase()}
                                         </Badge>
                                     </td>
-                                    <td className="py-6 px-8 font-black text-foreground">{r.points}</td>
-                                    <td className="py-6 px-8 text-muted-foreground font-medium">{r.category}</td>
-                                    <td className="py-6 px-8 text-muted-foreground text-xs max-w-[200px] truncate">{r.description || "—"}</td>
-                                    <td className="py-6 px-8 text-muted-foreground font-mono text-xs">{r.incident_date}</td>
+                                    <td className="py-6 px-8 font-black text-foreground text-lg italic tracking-tighter underline decoration-primary/20">{r.points}</td>
+                                    <td className="py-6 px-8 text-foreground/60 font-black uppercase tracking-widest text-[10px] italic">{r.category}</td>
+                                    <td className="py-6 px-8 text-foreground/40 text-[10px] font-bold uppercase tracking-widest max-w-[200px] truncate">{r.description || "NO_RECORDS_LOGGED"}</td>
+                                    <td className="py-6 px-8 text-primary font-black tracking-widest text-[10px]">{r.incident_date}</td>
                                 </tr>
                             ))
                         )}

@@ -59,7 +59,7 @@ const navigation: NavGroup[] = [
     roles: ["admin", "teacher"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles and enrollment records" },
-      { name: "Teachers", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage teacher profiles and assignments" },
+      { name: "Staff HR", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage institutional personnel, performance, and payroll" },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance for students and staff" },
       { name: "Conduct", href: "/conduct", icon: ShieldAlert, description: "Monitor student behavior and disciplinary actions" },
       { name: "Health", href: "/health", icon: Stethoscope, description: "Track student health records and medical info" },
@@ -84,7 +84,7 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Fees & Payments", href: "/fees", icon: CreditCard, description: "Manage fee collection and payment records" },
       { name: "Library", href: "/library", icon: Library, description: "Manage books, issues, and returns" },
-      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Track school stock and equipment" },
+      { name: "Logistics", href: "/inventory", icon: Package, roles: ["admin"], description: "Autonomous inventory monitoring and asset lifecycle management" },
       { name: "Transport", href: "/transport", icon: Bus, description: "Manage school bus routes and transport detail" },
       { name: "Messages", href: "/messages", icon: MessageSquare, description: "Send announcements and internal messages" },
       { name: "Parents", href: "/guardian", icon: Heart, roles: ["admin", "teacher"], description: "Communicate with parents and guardians" },
@@ -126,7 +126,7 @@ export function Launchpad({
   if (filteredNavigation.length === 0 && searchQuery) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="bg-slate-100 dark:bg-card p-6 rounded-full">
+        <div className="bg-slate-100 dark:bg-card p-6 rounded-sm border border-border">
           <LayoutDashboard className="h-10 w-10 text-muted-foreground" />
         </div>
         <div className="space-y-1">
@@ -174,7 +174,7 @@ export function Launchpad({
                         {item.name}
                       </span>
                       {item.futuristic && (
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                        <div className="h-1.5 w-1.5 rounded-sm bg-primary animate-pulse shadow-sm shadow-primary/50" />
                       )}
                     </div>
                     <p className="text-sm text-foreground/70 font-medium leading-relaxed group-hover:text-foreground transition-all line-clamp-2">
