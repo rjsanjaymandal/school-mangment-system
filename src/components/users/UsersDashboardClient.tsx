@@ -21,6 +21,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ManageAccessModal } from "./ManageAccessModal";
+import { ProvisionUserModal } from "./ProvisionUserModal";
 
 export default function UsersDashboardClient({ users }: { users: any[] }) {
     const [searchTerm, setSearchTerm] = useState("");
@@ -43,10 +45,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                     </p>
                 </div>
                 <div className="flex gap-x-3">
-                    <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px] py-6 shadow-2xl transition-all hover:bg-primary/90">
-                        <Plus className="h-4 w-4" />
-                        Provision User
-                    </Button>
+                    <ProvisionUserModal />
                 </div>
             </div>
 
@@ -146,13 +145,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                         </Badge>
                                     </td>
                                     <td className="p-5 text-right flex items-center justify-end gap-x-2">
-                                        <Button 
-                                            variant="ghost" 
-                                            size="sm" 
-                                            className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 transition-all"
-                                        >
-                                            MANAGE ACCESS
-                                        </Button>
+                                        <ManageAccessModal user={user} />
                                     </td>
                                 </tr>
                             ))}
