@@ -79,60 +79,80 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
     }
   }
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Class Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Grade 10-A" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="capacity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Capacity</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="30" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="room_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Room Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="B-201" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex justify-end gap-x-2 pt-4">
-          <Button variant="outline" type="button" onClick={() => onSuccess()}>
-            Cancel
-          </Button>
-          <Button type="submit">
-            {initialData ? "Save Changes" : "Create Class"}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-6">
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Formation Alias</FormLabel>
+                            <FormControl>
+                                <Input 
+                                    placeholder="e.g. GRADE 10-ALPHA" 
+                                    className="rounded-sm border-border bg-card/40 backdrop-blur-md h-12 text-[11px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
+                                    {...field} 
+                                />
+                            </FormControl>
+                            <FormMessage className="text-[10px] uppercase font-black tracking-widest text-red-500/80" />
+                        </FormItem>
+                    )}
+                />
+                <div className="grid grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="capacity"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Occupancy Cap</FormLabel>
+                                <FormControl>
+                                    <Input 
+                                        type="number" 
+                                        placeholder="30" 
+                                        className="rounded-sm border-border bg-card/40 backdrop-blur-md h-12 text-[11px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
+                                        {...field} 
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-[10px] uppercase font-black tracking-widest text-red-500/80" />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="room_number"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Spatial ID (Room)</FormLabel>
+                                <FormControl>
+                                    <Input 
+                                        placeholder="B-201" 
+                                        className="rounded-sm border-border bg-card/40 backdrop-blur-md h-12 text-[11px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
+                                        {...field} 
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-[10px] uppercase font-black tracking-widest text-red-500/80" />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className="flex justify-end gap-x-3 pt-6">
+                    <Button 
+                        variant="outline" 
+                        type="button" 
+                        onClick={() => onSuccess()}
+                        className="rounded-sm border-border bg-transparent font-black uppercase tracking-widest text-[10px] px-6 h-10 hover:bg-primary/5 transition-all"
+                    >
+                        Abort
+                    </Button>
+                    <Button 
+                        type="submit"
+                        className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-10 emerald-glow transition-all hover:bg-primary/90"
+                    >
+                        {initialData ? "Synchronize Node" : "Initialize Link"}
+                    </Button>
+                </div>
+            </form>
+        </Form>
+    );
 }
-

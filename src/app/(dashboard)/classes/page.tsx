@@ -10,14 +10,16 @@ export default async function ClassesPage() {
     .order("name", { ascending: true });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-foreground">
-          Classes
-        </h2>
-        <p className="text-muted-foreground">
-          Manage grade levels and class sections.
-        </p>
+    <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+            Academic Formations
+          </h2>
+          <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+            Grade Levels, Sectional Nodes & Spatial Allocation
+          </p>
+        </div>
       </div>
 
       <ClassList initialData={classes || []} />
