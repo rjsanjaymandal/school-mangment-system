@@ -44,10 +44,26 @@ export function AttendanceDashboard({
     const [studentsLoaded, setStudentsLoaded] = useState(false);
 
     // History state
-    const [historyClass, setHistoryClass] = useState("");
+    const [historyClass, setHistoryClass] = useState(isStudent && classes.length > 0 ? classes[0].id : "");
     const [historyDate, setHistoryDate] = useState(new Date().toISOString().split("T")[0]);
     const [historyRecords, setHistoryRecords] = useState<any[]>([]);
     const [historyLoading, setHistoryLoading] = useState(false);
+
+    // Auto-load for students
+    useState(() => {
+        if (isStudent && classes.length > 0) {
+            const fetchHistory = async () => {
+                setHistoryLoading(true);
+                const result = await getAttendanceByClassAndDate(classes[0].id, historyDate);
+                if (result.success && result.data) {
+                    // For student, filter to only their own record
+                    setHistoryRecords(result.data.filter((r: any) => r.student_id === students[0]?.id));
+                }
+                setHistoryLoading(false);
+            };
+            fetchHistory();
+        }
+    });
 
     // Computed stats
     const weekTotal = weekAttendance.length;
@@ -382,27 +398,29 @@ export function AttendanceDashboard({
                 <TabsContent value="history" className="space-y-6 animate-in slide-in-from-bottom-2 duration-500 mt-0">
                     <div className="bg-card/40 backdrop-blur-xl border border-border p-6 rounded-sm">
                         <div className="flex flex-wrap gap-6 items-end">
-                            <div className="space-y-3 flex-1 min-w-[200px]">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest">History Class</Label>
-                                <Select value={historyClass} onValueChange={setHistoryClass}>
-                                    <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold">
-                                        <SelectValue placeholder="Select Class" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-card/90 border-border">
-                                        {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-bold">{c.name}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-3 flex-1 min-w-[200px]">
+                            {!isStudent && (
+                                <div className="space-y-3 flex-1 min-w-[200px]">
+                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">History Class</Label>
+                                    <Select value={historyClass} onValueChange={setHistoryClass}>
+                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold">
+                                            <SelectValue placeholder="Select Class" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-card/90 border-border">
+                                            {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-bold">{c.name}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+                            <div className={cn("space-y-3 flex-1 min-w-[200px]", isStudent ? "flex-[2]" : "")}>
                                 <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Log Date</Label>
                                 <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="rounded-sm bg-background/50 border-border font-bold" />
                             </div>
-                            <Button onClick={fetchHistory} disabled={!historyClass || historyLoading} className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-10 emerald-glow shadow-lg">
-                                <Filter className="h-4 w-4" /> {historyLoading ? "Fetching..." : "Retrieve Logs"}
+                            <Button onClick={fetchHistory} disabled={(!isStudent && !historyClass) || historyLoading} className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-10 emerald-glow shadow-lg">
+                                <Filter className="h-4 w-4 mr-2" /> {historyLoading ? (isStudent ? "REFRESHING..." : "FETCHING...") : (isStudent ? "UPDATE LOGS" : "RETRIEVE LOGS")}
                             </Button>
-                            {historyRecords.length > 0 && (
+                            {!isStudent && historyRecords.length > 0 && (
                                 <Button variant="outline" onClick={handleExportCSV} className="rounded-sm font-black uppercase tracking-widest text-[10px] px-8 h-10 border-border hover:bg-accent">
-                                    <Download className="h-4 w-4" /> Export CSV
+                                    <Download className="h-4 w-4 mr-2" /> Export CSV
                                 </Button>
                             )}
                         </div>

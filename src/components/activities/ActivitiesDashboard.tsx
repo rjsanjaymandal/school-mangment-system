@@ -71,11 +71,13 @@ const upcomingFixtures = [
 export default function ActivitiesDashboard({ 
     initialActivities,
     teachers,
-    userRole
+    userRole,
+    isStudent = false
 }: { 
     initialActivities: Activity[],
     teachers: Teacher[],
-    userRole?: string | null
+    userRole?: string | null,
+    isStudent?: boolean
 }) {
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
@@ -132,7 +134,7 @@ export default function ActivitiesDashboard({
                         </p>
                     </div>
                 </div>
-                {isAdminOrTeacher && (
+                {!isStudent && isAdminOrTeacher && (
                     <div className="flex gap-x-4">
                         <Button
                             variant="ghost"
@@ -380,40 +382,42 @@ export default function ActivitiesDashboard({
                         </CardFooter>
                     </Card>
 
-                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl relative overflow-hidden group hover:border-primary transition-all">
-                        <CardHeader className="p-0 mb-6 flex items-center justify-between">
-                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
-                                Participation Analytics
-                            </CardTitle>
-                            <TrendingUp className="h-5 w-5 text-primary animate-pulse" />
-                        </CardHeader>
-                        <div className="space-y-6">
-                            <div className="space-y-3">
-                                <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
-                                    <span className="text-foreground/40">
-                                        Creative Hub utilization
-                                    </span>
-                                    <span className="text-primary italic">92%</span>
+                    {!isStudent && (
+                        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl relative overflow-hidden group hover:border-primary transition-all">
+                            <CardHeader className="p-0 mb-6 flex items-center justify-between">
+                                <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
+                                    Participation Analytics
+                                </CardTitle>
+                                <TrendingUp className="h-5 w-5 text-primary animate-pulse" />
+                            </CardHeader>
+                            <div className="space-y-6">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
+                                        <span className="text-foreground/40">
+                                            Creative Hub utilization
+                                        </span>
+                                        <span className="text-primary italic">92%</span>
+                                    </div>
+                                    <Progress
+                                        value={92}
+                                        className="h-1 rounded-sm bg-primary/10"
+                                        indicatorClassName="bg-primary emerald-glow transition-all duration-1000"
+                                    />
                                 </div>
-                                <Progress
-                                    value={92}
-                                    className="h-1 rounded-sm bg-primary/10"
-                                    indicatorClassName="bg-primary emerald-glow transition-all duration-1000"
-                                />
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
-                                    <span className="text-foreground/40">Athletic Engagement</span>
-                                    <span className="text-primary italic">65%</span>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
+                                        <span className="text-foreground/40">Athletic Engagement</span>
+                                        <span className="text-primary italic">65%</span>
+                                    </div>
+                                    <Progress
+                                        value={65}
+                                        className="h-1 rounded-sm bg-primary/10"
+                                        indicatorClassName="bg-primary emerald-glow transition-all duration-1000"
+                                    />
                                 </div>
-                                <Progress
-                                    value={65}
-                                    className="h-1 rounded-sm bg-primary/10"
-                                    indicatorClassName="bg-primary emerald-glow transition-all duration-1000"
-                                />
                             </div>
-                        </div>
-                    </Card>
+                        </Card>
+                    )}
                 </div>
             </div>
         </div>

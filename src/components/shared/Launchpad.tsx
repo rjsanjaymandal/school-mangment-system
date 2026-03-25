@@ -56,7 +56,7 @@ const navigation: NavGroup[] = [
   },
   {
     group: "People",
-    roles: ["admin", "teacher"],
+    roles: ["admin", "teacher", "student"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles and enrollment records" },
       { name: "Staff HR", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage institutional personnel, performance, and payroll" },

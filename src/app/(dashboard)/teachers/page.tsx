@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { InstitutionalService } from "@/lib/services/institutional";
+import { getSessionRole } from "@/lib/auth-utils";
 import { TeacherList } from "@/components/teachers/TeacherList";
 import { StaffHRManagement } from "@/components/teachers/StaffHRManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,6 +8,8 @@ import { Users, Briefcase } from "lucide-react";
 
 export default async function TeachersPage() {
   const supabase = await createClient();
+  const role = await getSessionRole();
+  const isAdminOrTeacher = role === "admin" || role === "teacher";
 
   const [teachers, leaveRequests, payrolls] = await Promise.all([
     InstitutionalService.getTeachers().catch(() => []),
@@ -43,13 +46,15 @@ export default async function TeachersPage() {
             <Users className="h-4 w-4" />
             Teacher Directory
           </TabsTrigger>
-          <TabsTrigger
-            value="hr"
-            className="rounded-xs px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow-sm"
-          >
-            <Briefcase className="h-4 w-4" />
-            Staff HR & Logistics
-          </TabsTrigger>
+          {isAdminOrTeacher && (
+            <TabsTrigger
+              value="hr"
+              className="rounded-xs px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow-sm"
+            >
+              <Briefcase className="h-4 w-4" />
+              Staff HR & Logistics
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent
@@ -67,6 +72,7 @@ export default async function TeachersPage() {
             leaveRequests={leaveRequests.data || []} 
             payrolls={payrolls.data || []} 
             staffCount={teachers?.length || 0}
+            userRole={role}
           />
         </TabsContent>
       </Tabs>

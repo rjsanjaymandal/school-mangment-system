@@ -22,6 +22,7 @@ export default async function ActivitiesPage() {
       initialActivities={(activities as Activity[]) || []} 
       teachers={(teachers as unknown as Teacher[]) || []} 
       userRole={role}
+      isStudent={role === "student"}
     />
   );
 }

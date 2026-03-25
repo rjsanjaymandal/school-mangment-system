@@ -49,15 +49,32 @@ interface StaffPayroll {
 export function StaffHRManagement({ 
   leaveRequests = [], 
   payrolls = [],
-  staffCount = 0
+  staffCount = 0,
+  userRole
 }: { 
   leaveRequests?: LeaveRequest[];
   payrolls?: StaffPayroll[];
   staffCount?: number;
+  userRole?: string | null;
 }) {
+  const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
   const pendingLeaves = leaveRequests.filter(l => l.status === 'pending');
   const totalPayout = payrolls.reduce((acc, curr) => acc + (curr.net_pay || 0), 0);
   const paidCount = payrolls.filter(p => p.status === 'paid').length;
+
+  if (!isAdminOrTeacher) {
+    return (
+      <div className="p-20 text-center space-y-6 animate-in fade-in duration-700">
+        <div className="h-24 w-24 rounded-sm bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto text-red-500 shadow-2xl">
+          <XCircle className="h-12 w-12" />
+        </div>
+        <h2 className="text-3xl font-black italic uppercase italic underline decoration-red-500/30 underline-offset-8">Not Authorized</h2>
+        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 max-w-sm mx-auto">
+          Staff HR records and payroll telemetry are restricted to administrative personnel only.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">

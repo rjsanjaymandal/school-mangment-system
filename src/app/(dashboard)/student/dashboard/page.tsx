@@ -1,4 +1,4 @@
-import { GraduationCap, Star, Book, Clock, TrendingUp } from "lucide-react";
+import { GraduationCap, Star, Book, Clock, TrendingUp, ClipboardCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +59,12 @@ export default async function StudentDashboard() {
             val: "+0.2",
             icon: TrendingUp,
             color: "text-green-500",
+          },
+          {
+            title: "Attendance",
+            val: "94%",
+            icon: ClipboardCheck,
+            color: "text-emerald-500",
           },
         ].map((m, i) => (
           <Card
