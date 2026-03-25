@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import InventoryDashboardClient from "@/components/inventory/InventoryDashboardClient";
+import { getSessionRole } from "@/lib/auth-utils";
 
 export default async function ProcurementHub() {
   const supabase = await createClient();
+  const role = await getSessionRole();
 
   const { data: inventoryItems, error } = await supabase
     .from("inventory_items")
@@ -13,6 +15,5 @@ export default async function ProcurementHub() {
     console.error("Error fetching inventory items inside page:", error);
   }
 
-  return <InventoryDashboardClient initialInventory={inventoryItems || []} />;
+  return <InventoryDashboardClient initialInventory={inventoryItems || []} userRole={role} />;
 }
-

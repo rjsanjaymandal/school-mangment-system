@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { ClassList } from "@/components/classes/ClassList";
+import { getSessionRole } from "@/lib/auth-utils";
 
 export default async function ClassesPage() {
   const supabase = await createClient();
+  const role = await getSessionRole();
 
   const { data: classes, error } = await supabase
     .from("classes")
@@ -22,7 +24,7 @@ export default async function ClassesPage() {
         </div>
       </div>
 
-      <ClassList initialData={classes || []} />
+      <ClassList initialData={classes || []} userRole={role} />
     </div>
   );
 }

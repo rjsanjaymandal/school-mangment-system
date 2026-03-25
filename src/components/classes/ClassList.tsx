@@ -48,9 +48,11 @@ import { useRouter } from "next/navigation";
 
 interface ClassListProps {
     initialData: Class[];
+    userRole?: string | null;
 }
 
-export function ClassList({ initialData }: ClassListProps) {
+export function ClassList({ initialData, userRole }: ClassListProps) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
     const [data, setData] = useState<Class[]>(initialData);
     const [searchTerm, setSearchTerm] = useState("");
@@ -89,15 +91,17 @@ export function ClassList({ initialData }: ClassListProps) {
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-end items-center gap-x-4">
-                <Button
-                    onClick={onAdd}
-                    className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[180px] uppercase tracking-widest text-[10px] py-6 shadow-2xl transition-all hover:bg-primary/90"
-                >
-                    <Plus className="h-4 w-4" />
-                    Initialize Formation
-                </Button>
-            </div>
+            {isAdminOrTeacher && (
+                <div className="flex justify-end items-center gap-x-4">
+                    <Button
+                        onClick={onAdd}
+                        className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[180px] uppercase tracking-widest text-[10px] py-6 shadow-2xl transition-all hover:bg-primary/90"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Initialize Formation
+                    </Button>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 relative overflow-hidden group shadow-2xl">
@@ -145,7 +149,7 @@ export function ClassList({ initialData }: ClassListProps) {
                                 <TableHead className="p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">Formation Alias</TableHead>
                                 <TableHead className="p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">Occupancy Cap</TableHead>
                                 <TableHead className="p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">Spatial ID (Room)</TableHead>
-                                <TableHead className="text-right p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">Operations</TableHead>
+                                {isAdminOrTeacher && <TableHead className="text-right p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">Operations</TableHead>}
                             </TableRow>
                         </TableHeader>
                         <TableBody className="divide-y divide-border/30">
@@ -176,31 +180,33 @@ export function ClassList({ initialData }: ClassListProps) {
                                         <TableCell className="p-5 text-sm font-black text-foreground/60 uppercase tracking-widest">
                                             {cls.room_number || "UNALLOCATED"}
                                         </TableCell>
-                                        <TableCell className="text-right p-5">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" className="h-9 w-9 p-0 text-foreground/40 hover:text-primary hover:bg-primary/10 rounded-sm">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="bg-card border-border rounded-sm shadow-2xl p-2 min-w-[160px]">
-                                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-40 px-2 py-1.5">Formation Operations</DropdownMenuLabel>
-                                                    <DropdownMenuItem
-                                                        onClick={() => onEdit(cls)}
-                                                        className="gap-x-2 cursor-pointer font-black uppercase text-[10px] tracking-widest focus:bg-primary/10 focus:text-primary p-2 mt-1 rounded-sm"
-                                                    >
-                                                        <Pencil className="h-3.5 w-3.5" /> Modify Node
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator className="bg-border/50 my-1" />
-                                                    <DropdownMenuItem
-                                                        onClick={() => onDelete(cls.id)}
-                                                        className="gap-x-2 text-red-500 focus:text-red-600 cursor-pointer font-black uppercase text-[10px] tracking-widest focus:bg-red-500/10 p-2 rounded-sm"
-                                                    >
-                                                        <Trash2 className="h-3.5 w-3.5" /> Terminate Node
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
+                                        {isAdminOrTeacher && (
+                                            <TableCell className="text-right p-5">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" className="h-9 w-9 p-0 text-foreground/40 hover:text-primary hover:bg-primary/10 rounded-sm">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="bg-card border-border rounded-sm shadow-2xl p-2 min-w-[160px]">
+                                                        <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-40 px-2 py-1.5">Formation Operations</DropdownMenuLabel>
+                                                        <DropdownMenuItem
+                                                            onClick={() => onEdit(cls)}
+                                                            className="gap-x-2 cursor-pointer font-black uppercase text-[10px] tracking-widest focus:bg-primary/10 focus:text-primary p-2 mt-1 rounded-sm"
+                                                        >
+                                                            <Pencil className="h-3.5 w-3.5" /> Modify Node
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="bg-border/50 my-1" />
+                                                        <DropdownMenuItem
+                                                            onClick={() => onDelete(cls.id)}
+                                                            className="gap-x-2 text-red-500 focus:text-red-600 cursor-pointer font-black uppercase text-[10px] tracking-widest focus:bg-red-500/10 p-2 rounded-sm"
+                                                        >
+                                                            <Trash2 className="h-3.5 w-3.5" /> Terminate Node
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        )}
                                     </TableRow>
                                 ))
                             )}

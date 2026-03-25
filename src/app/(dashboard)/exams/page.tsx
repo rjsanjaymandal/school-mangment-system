@@ -1,40 +1,77 @@
 import { createClient } from "@/lib/supabase/server";
 import { ExamsDashboard } from "@/components/exams/ExamsDashboard";
+import { getSessionRole } from "@/lib/auth-utils";
 
 export default async function ExamsPage() {
   const supabase = await createClient();
+  const role = await getSessionRole();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: exams } = await supabase
-    .from("exams")
-    .select("*, subject:subjects(*), class:classes(*), academic_year:academic_years(*)")
-    .order("date", { ascending: false });
+  let exams: any[] = [];
+  let classes: any[] = [];
+  let subjects: any[] = [];
+  let students: any[] = [];
+  const isStudent = role === "student";
 
-  const { data: classes } = await supabase
-    .from("classes")
-    .select("*")
-    .order("name");
+  if (isStudent) {
+    const { data: student } = await supabase
+      .from("students")
+      .select("*, class:classes(*)")
+      .eq("profile_id", user?.id)
+      .single();
 
-  const { data: subjects } = await supabase
-    .from("subjects")
-    .select("*")
-    .order("name");
+    if (student) {
+      const { data: classExams } = await supabase
+        .from("exams")
+        .select("*, subject:subjects(*), class:classes(*), academic_year:academic_years(*)")
+        .eq("class_id", student.class_id)
+        .order("date", { ascending: false });
+      
+      exams = classExams || [];
+      classes = student.class ? [student.class] : [];
+      students = [student];
+
+      // Get subjects for this class's exams
+      const subjectIds = [...new Set(exams.map(e => e.subject_id))];
+      if (subjectIds.length > 0) {
+        const { data: classSubjects } = await supabase
+          .from("subjects")
+          .select("*")
+          .in("id", subjectIds);
+        subjects = classSubjects || [];
+      }
+    }
+  } else {
+    // Admin/Teacher: All data
+    const { data: allExams } = await supabase
+      .from("exams")
+      .select("*, subject:subjects(*), class:classes(*), academic_year:academic_years(*)")
+      .order("date", { ascending: false });
+    exams = allExams || [];
+
+    const { data: allClasses } = await supabase
+      .from("classes")
+      .select("*")
+      .order("name");
+    classes = allClasses || [];
+
+    const { data: allSubjects } = await supabase
+      .from("subjects")
+      .select("*")
+      .order("name");
+    subjects = allSubjects || [];
+
+    const { data: allStudents } = await supabase
+      .from("students")
+      .select("*, profile:profiles(*)")
+      .order("admission_number");
+    students = allStudents || [];
+  }
 
   const { data: academicYears } = await supabase
     .from("academic_years")
     .select("*")
     .order("is_current", { ascending: false });
-
-  const { data: students } = await supabase
-    .from("students")
-    .select("*, profile:profiles(*)")
-    .order("admission_number");
-
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user?.id)
-    .single();
 
   return (
     <ExamsDashboard
@@ -43,7 +80,7 @@ export default async function ExamsPage() {
       subjects={subjects || []}
       academicYears={academicYears || []}
       students={students || []}
-      userRole={profile?.role || "student"}
+      userRole={role || "student"}
     />
   );
 }

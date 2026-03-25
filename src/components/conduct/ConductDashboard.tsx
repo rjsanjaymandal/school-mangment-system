@@ -17,9 +17,11 @@ interface ConductDashboardProps {
     records: any[];
     students: any[];
     teachers: any[];
+    userRole?: string | null;
 }
 
-export function ConductDashboard({ records, students, teachers }: ConductDashboardProps) {
+export function ConductDashboard({ records, students, teachers, userRole }: ConductDashboardProps) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -48,53 +50,55 @@ export function ConductDashboard({ records, students, teachers }: ConductDashboa
                         Institutional Merit Registry & Ethical Conduct Protocols
                     </p>
                 </div>
-                <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Record</Button>
-                    </DialogTrigger>
-                    <DialogContent className="glass border-none">
-                        <DialogHeader><DialogTitle className="font-black text-2xl">Add Conduct Record</DialogTitle></DialogHeader>
-                        <div className="space-y-4 pt-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Student</Label>
-                                <Select value={form.student_id} onValueChange={(v) => setForm({ ...form, student_id: v })}>
-                                    <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                                    <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.profile?.first_name} {s.profile?.last_name}</SelectItem>)}</SelectContent>
-                                </Select>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4">
+                {isAdminOrTeacher && (
+                    <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Record</Button>
+                        </DialogTrigger>
+                        <DialogContent className="glass border-none">
+                            <DialogHeader><DialogTitle className="font-black text-2xl">Add Conduct Record</DialogTitle></DialogHeader>
+                            <div className="space-y-4 pt-4">
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Type</Label>
-                                    <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v as "merit" | "demerit" })}>
-                                        <SelectTrigger><SelectValue /></SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="merit">Merit</SelectItem>
-                                            <SelectItem value="demerit">Demerit</SelectItem>
-                                        </SelectContent>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Student</Label>
+                                    <Select value={form.student_id} onValueChange={(v) => setForm({ ...form, student_id: v })}>
+                                        <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
+                                        <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.profile?.first_name} {s.profile?.last_name}</SelectItem>)}</SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Points</Label>
-                                    <Input type="number" value={form.points} onChange={(e) => setForm({ ...form, points: e.target.value })} />
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Type</Label>
+                                        <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v as "merit" | "demerit" })}>
+                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="merit">Merit</SelectItem>
+                                                <SelectItem value="demerit">Demerit</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Points</Label>
+                                        <Input type="number" value={form.points} onChange={(e) => setForm({ ...form, points: e.target.value })} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Category</Label>
+                                        <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
+                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectContent>{["Discipline", "Academics", "Sports", "Leadership", "Community", "Other"].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                                        </Select>
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Category</Label>
-                                    <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                                        <SelectTrigger><SelectValue /></SelectTrigger>
-                                        <SelectContent>{["Discipline", "Academics", "Sports", "Leadership", "Community", "Other"].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                                    </Select>
+                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Description</Label>
+                                    <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description" />
                                 </div>
+                                <Button onClick={handleAdd} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
+                                    {loading ? "Saving..." : "Save Record"}
+                                </Button>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Description</Label>
-                                <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Brief description" />
-                            </div>
-                            <Button onClick={handleAdd} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
-                                {loading ? "Saving..." : "Save Record"}
-                            </Button>
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </div>
 
             {/* Stats */}

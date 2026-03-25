@@ -18,9 +18,11 @@ interface HealthDashboardProps {
     infirmaryLogs: any[];
     healthProfiles: any[];
     students: any[];
+    userRole?: string | null;
 }
 
-export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: HealthDashboardProps) {
+export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userRole }: HealthDashboardProps) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
     const [isLogOpen, setIsLogOpen] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -55,55 +57,57 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: Hea
                         Bio-Metric Health Records & Institutional Infirmary Protocols
                     </p>
                 </div>
-                <div className="flex gap-x-3">
-                    <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-destructive/20 text-destructive bg-destructive/5 gap-x-2 font-black uppercase text-[10px] tracking-widest shadow-lg">
-                        <AlertTriangle className="h-3 w-3" /> {activeVisits.length} ACTIVE OBSERVATION NODES
-                    </Badge>
-                    <Dialog open={isLogOpen} onOpenChange={setIsLogOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Record Visit</Button>
-                        </DialogTrigger>
-                        <DialogContent className="glass border-none max-w-lg">
-                            <DialogHeader><DialogTitle className="font-black text-2xl">Infirmary Visit</DialogTitle></DialogHeader>
-                            <div className="space-y-4 pt-4">
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Student</Label>
-                                    <Select value={logForm.student_id} onValueChange={(v) => setLogForm({ ...logForm, student_id: v })}>
-                                        <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                                        <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.profile?.first_name} {s.profile?.last_name}</SelectItem>)}</SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Reason</Label>
-                                    <Input value={logForm.visit_reason} onChange={(e) => setLogForm({ ...logForm, visit_reason: e.target.value })} placeholder="Headache, fever, injury..." />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
+                {isAdminOrTeacher && (
+                    <div className="flex gap-x-3">
+                        <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-destructive/20 text-destructive bg-destructive/5 gap-x-2 font-black uppercase text-[10px] tracking-widest shadow-lg">
+                            <AlertTriangle className="h-3 w-3" /> {activeVisits.length} ACTIVE OBSERVATION NODES
+                        </Badge>
+                        <Dialog open={isLogOpen} onOpenChange={setIsLogOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Plus className="h-4 w-4" /> Record Visit</Button>
+                            </DialogTrigger>
+                            <DialogContent className="glass border-none max-w-lg">
+                                <DialogHeader><DialogTitle className="font-black text-2xl">Infirmary Visit</DialogTitle></DialogHeader>
+                                <div className="space-y-4 pt-4">
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Symptoms</Label>
-                                        <Input value={logForm.symptoms} onChange={(e) => setLogForm({ ...logForm, symptoms: e.target.value })} placeholder="Describe symptoms" />
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Student</Label>
+                                        <Select value={logForm.student_id} onValueChange={(v) => setLogForm({ ...logForm, student_id: v })}>
+                                            <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
+                                            <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.profile?.first_name} {s.profile?.last_name}</SelectItem>)}</SelectContent>
+                                        </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Temperature (°F)</Label>
-                                        <Input type="number" step="0.1" value={logForm.temperature} onChange={(e) => setLogForm({ ...logForm, temperature: e.target.value })} placeholder="98.6" />
+                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Reason</Label>
+                                        <Input value={logForm.visit_reason} onChange={(e) => setLogForm({ ...logForm, visit_reason: e.target.value })} placeholder="Headache, fever, injury..." />
                                     </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Symptoms</Label>
+                                            <Input value={logForm.symptoms} onChange={(e) => setLogForm({ ...logForm, symptoms: e.target.value })} placeholder="Describe symptoms" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Temperature (°F)</Label>
+                                            <Input type="number" step="0.1" value={logForm.temperature} onChange={(e) => setLogForm({ ...logForm, temperature: e.target.value })} placeholder="98.6" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Treatment</Label>
+                                            <Input value={logForm.treatment_provided} onChange={(e) => setLogForm({ ...logForm, treatment_provided: e.target.value })} placeholder="Rest, ice pack..." />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Medication</Label>
+                                            <Input value={logForm.medication_given} onChange={(e) => setLogForm({ ...logForm, medication_given: e.target.value })} placeholder="Paracetamol 500mg" />
+                                        </div>
+                                    </div>
+                                    <Button onClick={handleCreateLog} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
+                                        {loading ? "Recording..." : "Record Visit"}
+                                    </Button>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Treatment</Label>
-                                        <Input value={logForm.treatment_provided} onChange={(e) => setLogForm({ ...logForm, treatment_provided: e.target.value })} placeholder="Rest, ice pack..." />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Medication</Label>
-                                        <Input value={logForm.medication_given} onChange={(e) => setLogForm({ ...logForm, medication_given: e.target.value })} placeholder="Paracetamol 500mg" />
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreateLog} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
-                                    {loading ? "Recording..." : "Record Visit"}
-                                </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             {/* Stats */}
@@ -164,7 +168,7 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students }: Hea
                                         </Badge>
                                     </td>
                                     <td className="py-6 px-8 text-right">
-                                        {log.status === "under_observation" && (
+                                        {isAdminOrTeacher && log.status === "under_observation" && (
                                             <Button size="sm" variant="ghost" onClick={() => handleDischarge(log.id)} className="rounded-xl font-bold text-xs text-green-500 hover:bg-green-50">
                                                 <CheckCircle className="h-4 w-4 mr-1" /> DISCHARGE
                                             </Button>

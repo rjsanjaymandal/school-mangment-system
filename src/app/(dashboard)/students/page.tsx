@@ -1,7 +1,9 @@
 import { InstitutionalService } from "@/lib/services/institutional";
+import { getSessionRole } from "@/lib/auth-utils";
 import { StudentList } from "@/components/students/StudentList";
 
 export default async function StudentsPage() {
+  const role = await getSessionRole();
   const students = await InstitutionalService.getStudents().catch((err: any) => {
     return [];
   });
@@ -17,8 +19,7 @@ export default async function StudentsPage() {
         </p>
       </div>
 
-      <StudentList initialData={students || []} />
+      <StudentList initialData={students || []} userRole={role} />
     </div>
   );
 }
-

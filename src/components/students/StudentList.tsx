@@ -46,9 +46,11 @@ import { BulkImportModal } from "./BulkImportModal";
 
 interface StudentListProps {
   initialData: Student[];
+  userRole?: string | null;
 }
 
-export function StudentList({ initialData }: StudentListProps) {
+export function StudentList({ initialData, userRole }: StudentListProps) {
+  const isAdmin = userRole === "admin";
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
@@ -73,23 +75,25 @@ export function StudentList({ initialData }: StudentListProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end gap-3">
-        <Button
-          onClick={() => setIsBulkImportOpen(true)}
-          variant="ghost"
-          className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
-        >
-          <FileUp className="h-4 w-4" />
-          Bulk Import CSV
-        </Button>
-        <Button
-          onClick={onAdd}
-          className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[180px] uppercase tracking-widest text-[10px]"
-        >
-          <Plus className="h-4 w-4" />
-          Initialize Student
-        </Button>
-      </div>
+      {isAdmin && (
+        <div className="flex justify-end gap-3">
+          <Button
+            onClick={() => setIsBulkImportOpen(true)}
+            variant="ghost"
+            className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
+          >
+            <FileUp className="h-4 w-4" />
+            Bulk Import CSV
+          </Button>
+          <Button
+            onClick={onAdd}
+            className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[180px] uppercase tracking-widest text-[10px]"
+          >
+            <Plus className="h-4 w-4" />
+            Initialize Student
+          </Button>
+        </div>
+      )}
 
       <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
         <Table>
@@ -160,33 +164,39 @@ export function StudentList({ initialData }: StudentListProps) {
                             <Eye className="h-3.5 w-3.5" /> View Identity
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onEdit(student)}
-                          className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2"
-                        >
-                          <Pencil className="h-3.5 w-3.5" /> Modify Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => onLinkParent(student.id)}
-                          className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2"
-                        >
-                          <UserPlus className="h-3.5 w-3.5" /> Link Guardian
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-border/50" />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            if (confirm("Terminate this student registry?")) {
-                              startTransition(async () => {
-                                const res = await deleteStudent(student.id);
-                                if (res.error) toast.error(res.error);
-                                else toast.success("Registry terminated successfully");
-                              });
-                            }
-                          }}
-                          className="gap-x-2 text-red-500 focus:text-red-600 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-red-500/10 px-3 py-2"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" /> Terminate Node
-                        </DropdownMenuItem>
+                        {isAdmin && (
+                          <DropdownMenuItem
+                            onClick={() => onEdit(student)}
+                            className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2"
+                          >
+                            <Pencil className="h-3.5 w-3.5" /> Modify Profile
+                          </DropdownMenuItem>
+                        )}
+                        {isAdmin && (
+                          <>
+                            <DropdownMenuItem
+                              onClick={() => onLinkParent(student.id)}
+                              className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2"
+                            >
+                              <UserPlus className="h-3.5 w-3.5" /> Link Guardian
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-border/50" />
+                            <DropdownMenuItem
+                              onClick={() => {
+                                if (confirm("Terminate this student registry?")) {
+                                  startTransition(async () => {
+                                    const res = await deleteStudent(student.id);
+                                    if (res.error) toast.error(res.error);
+                                    else toast.success("Registry terminated successfully");
+                                  });
+                                }
+                              }}
+                              className="gap-x-2 text-red-500 focus:text-red-600 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-red-500/10 px-3 py-2"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" /> Terminate Node
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

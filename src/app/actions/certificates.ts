@@ -2,69 +2,55 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { isAdminOrTeacher } from "@/lib/auth-utils";
 
-export async function getCertificates() {
-    try {
-        const supabase = createAdminClient();
-        const { data, error } = await supabase
-            .from("certificates")
-            .select("*, student:students(*, profile:profiles(*)), issuer:profiles!certificates_issued_by_fkey(*)")
-            .order("issued_date", { ascending: false });
-
-        if (error) throw error;
-        return { data };
-    } catch (error) {
-        console.error("Error fetching certificates:", error);
-        return { error: "Failed to fetch certificates" };
-    }
-}
-
-export async function generateCertificate(data: {
+export async function issueCertificate(data: {
     student_id: string;
     type: string;
-    issued_by?: string;
     remarks?: string;
 }) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) return { success: false, message: "Unauthorized" };
+
     try {
-        const supabase = createAdminClient();
+        const supabaseAdmin = createAdminClient();
+        
+        // Generate a unique reference number
+        const refNumber = `CERT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-        // Generate a unique reference number (e.g., CERT-2024-XXXX)
-        const year = new Date().getFullYear();
-        const randomString = Math.random().toString(36).substring(2, 6).toUpperCase();
-        const reference_number = `CERT-${year}-${randomString}`;
-
-        const insertData = {
-            ...data,
-            reference_number,
-            status: "issued"
-        };
-
-        const { error } = await supabase.from("certificates").insert(insertData);
+        const { error } = await supabaseAdmin
+            .from("certificates")
+            .insert({
+                student_id: data.student_id,
+                type: data.type,
+                remarks: data.remarks,
+                reference_number: refNumber,
+                status: "issued"
+            });
 
         if (error) throw error;
-
         revalidatePath("/certificates");
-        return { success: true, reference_number };
-    } catch (error) {
-        console.error("Error generating certificate:", error);
-        return { error: "Failed to generate certificate log" };
+        return { success: true, message: `Digital Certificate ${refNumber} issued successfully` };
+    } catch (error: any) {
+        return { success: false, message: error.message };
     }
 }
 
 export async function revokeCertificate(id: string) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) return { success: false, message: "Unauthorized" };
+
     try {
-        const supabase = createAdminClient();
-        const { error } = await supabase
+        const supabaseAdmin = createAdminClient();
+        const { error } = await supabaseAdmin
             .from("certificates")
             .update({ status: "revoked" })
             .eq("id", id);
 
         if (error) throw error;
-
         revalidatePath("/certificates");
-        return { success: true };
-    } catch (error) {
-        console.error(`Error revoking certificate ${id}:`, error);
-        return { error: "Failed to revoke certificate" };
+        return { success: true, message: "Certificate revoked from digital registry" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
     }
 }

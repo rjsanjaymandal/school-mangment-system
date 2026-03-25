@@ -25,7 +25,8 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-export default function InventoryDashboardClient({ initialInventory }: { initialInventory: any[] }) {
+export default function InventoryDashboardClient({ initialInventory, userRole }: { initialInventory: any[], userRole?: string | null }) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
 
     const inventory = initialInventory.map((item) => ({
@@ -49,19 +50,21 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                         Autonomous Inventory Monitoring & Asset Lifecycle Management
                     </p>
                 </div>
-                <div className="flex gap-x-3">
-                    <Button
-                        variant="ghost"
-                        className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
-                    >
-                        <Truck className="h-4 w-4" />
-                        Suppliers
-                    </Button>
-                    <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]">
-                        <Plus className="h-4 w-4" />
-                        New Asset
-                    </Button>
-                </div>
+                {isAdminOrTeacher && (
+                    <div className="flex gap-x-3">
+                        <Button
+                            variant="ghost"
+                            className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
+                        >
+                            <Truck className="h-4 w-4" />
+                            Suppliers
+                        </Button>
+                        <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]">
+                            <Plus className="h-4 w-4" />
+                            New Asset
+                        </Button>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
@@ -172,9 +175,11 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                                         <th className="text-left p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
                                             Status
                                         </th>
-                                        <th className="text-right p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
-                                            Actions
-                                        </th>
+                                        {isAdminOrTeacher && (
+                                            <th className="text-right p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
+                                                Actions
+                                            </th>
+                                        )}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/30">
@@ -239,15 +244,17 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                                                     {item.status.toUpperCase()}
                                                 </Badge>
                                             </td>
-                                            <td className="p-5 text-right">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 transition-all"
-                                                >
-                                                    MANAGE
-                                                </Button>
-                                            </td>
+                                            {isAdminOrTeacher && (
+                                                <td className="p-5 text-right">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 transition-all"
+                                                    >
+                                                        MANAGE
+                                                    </Button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                     {filteredInventory.length === 0 && (
@@ -293,9 +300,11 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                                             CRITICAL
                                         </Badge>
                                     </div>
-                                    <Button className="w-full h-10 rounded-xs bg-background/50 hover:bg-primary hover:text-primary-foreground text-foreground font-black text-[10px] uppercase tracking-widest border border-border/50 transition-all">
-                                        APPROVE DRAFT
-                                    </Button>
+                                    {isAdminOrTeacher && (
+                                        <Button className="w-full h-10 rounded-xs bg-background/50 hover:bg-primary hover:text-primary-foreground text-foreground font-black text-[10px] uppercase tracking-widest border border-border/50 transition-all">
+                                            APPROVE DRAFT
+                                        </Button>
+                                    )}
                                 </div>
                                 <div className="p-5 space-y-3">
                                     <div className="flex justify-between items-start">
@@ -311,9 +320,11 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                                             LOW STOCK
                                         </Badge>
                                     </div>
-                                    <Button className="w-full h-10 rounded-xs bg-background/50 hover:bg-primary hover:text-primary-foreground text-foreground font-black text-[10px] uppercase tracking-widest border border-border/50 transition-all">
-                                        APPROVE DRAFT
-                                    </Button>
+                                    {isAdminOrTeacher && (
+                                        <Button className="w-full h-10 rounded-xs bg-background/50 hover:bg-primary hover:text-primary-foreground text-foreground font-black text-[10px] uppercase tracking-widest border border-border/50 transition-all">
+                                            APPROVE DRAFT
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         </CardContent>
@@ -335,9 +346,11 @@ export default function InventoryDashboardClient({ initialInventory }: { initial
                             Bulk ordering the 5 suggested drafts will result in a **12%
                             institutional discount** (₹420 saved).
                         </p>
-                        <Button className="mt-6 w-full bg-primary text-primary-foreground font-black rounded-xs hover:bg-primary/90 emerald-glow uppercase tracking-widest text-[10px] py-6">
-                            EXECUTE BATCH ORDER
-                        </Button>
+                        {isAdminOrTeacher && (
+                            <Button className="mt-6 w-full bg-primary text-primary-foreground font-black rounded-xs hover:bg-primary/90 emerald-glow uppercase tracking-widest text-[10px] py-6">
+                                EXECUTE BATCH ORDER
+                            </Button>
+                        )}
                     </Card>
                 </div>
             </div>

@@ -136,7 +136,7 @@ export function ProvisionUserModal() {
                 <FormItem>
                   <FormLabel className="text-[10px] uppercase font-black tracking-widest">Email Address</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="user@eduflux.com" {...field} className="rounded-sm bg-card/40 border-border text-xs focus-visible:ring-primary shadow-inner" />
+                    <Input type="email" placeholder="user@edumaysan.com" {...field} className="rounded-sm bg-card/40 border-border text-xs focus-visible:ring-primary shadow-inner" />
                   </FormControl>
                   <FormMessage className="text-[10px]" />
                 </FormItem>

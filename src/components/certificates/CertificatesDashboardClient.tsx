@@ -11,7 +11,11 @@ import {
     Star,
     BookOpen,
     Search,
-    Plus
+    Plus,
+    Trash2,
+    Eye,
+    Shield,
+    Loader2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,28 +24,95 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import dynamic from 'next/dynamic';
 import { CertificatePDF } from "./CertificatePDF";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import { issueCertificate, revokeCertificate } from "@/app/actions/certificates";
+import { Student } from "@/types/database";
 
 const PDFDownloadLink = dynamic(
     () => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink),
     { ssr: false, loading: () => <Button variant="ghost" size="icon" disabled className="h-8 w-8 text-slate-300"><Download className="h-4 w-4" /></Button> }
 );
 
-export default function CertificatesDashboardClient({ initialCertificates }: { initialCertificates: any[] }) {
-    const [isGenerating, setIsGenerating] = useState(false);
+export default function CertificatesDashboardClient({ 
+    initialCertificates,
+    students,
+    currentUserId,
+    userRole
+}: { 
+    initialCertificates: any[],
+    students: Student[],
+    currentUserId?: string,
+    userRole?: string | null
+}) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
-    const certRef = useRef<HTMLDivElement>(null);
+    const [open, setOpen] = useState(false);
+    const [isIssuing, setIsIssuing] = useState(false);
+    const [certificates, setCertificates] = useState(initialCertificates);
 
-    const certificates = initialCertificates.filter((cert) =>
-        cert.reference_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const filteredCertificates = certificates.filter((cert) =>
+        cert.reference_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cert.certificate_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (cert.student?.profile?.first_name && cert.student.profile.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (cert.student?.profile?.last_name && cert.student.profile.last_name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
-    const handleGenerate = () => {
-        setIsGenerating(true);
-        // Real generation logic would call the server action `generateCertificate`
-        // followed by creating/downloading a PDF blob from the `certRef` content.
-        setTimeout(() => setIsGenerating(false), 2000);
+    const handleIssue = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsIssuing(true);
+        const formData = new FormData(e.currentTarget);
+        
+        try {
+            const result = await issueCertificate({
+                student_id: formData.get("student_id") as string,
+                type: formData.get("type") as string,
+                remarks: formData.get("notes") as string
+            });
+
+            if (result.success) {
+                toast.success(result.message);
+                setOpen(false);
+                window.location.reload();
+            } else {
+                toast.error(result.message);
+            }
+        } catch (error) {
+            toast.error("Failed to execute issuance protocol");
+        } finally {
+            setIsIssuing(false);
+        }
+    };
+
+    const handleRevoke = async (id: string) => {
+        if (!confirm("Confirm revocation of this institutional asset?")) return;
+        
+        try {
+            const result = await revokeCertificate(id);
+            if (result.success) {
+                toast.success(result.message);
+                setCertificates(prev => prev.filter(c => c.id !== id));
+            } else {
+                toast.error(result.message);
+            }
+        } catch (error) {
+            toast.error("Revocation failure");
+        }
     };
 
     return (
@@ -55,41 +126,87 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                         Institutional Credentials & Cryptographic Verification
                     </p>
                 </div>
-                <div className="flex gap-x-3">
-                    <Button
-                        variant="ghost"
-                        className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
-                    >
-                        <Share2 className="h-4 w-4" />
-                        Verify Portal
-                    </Button>
-                    <Button
-                        onClick={handleGenerate}
-                        disabled={isGenerating}
-                        className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]"
-                    >
-                        {isGenerating ? (
-                            <div className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                        ) : (
-                            <Download className="h-4 w-4" />
-                        )}
-                        {isGenerating ? "Engraving..." : "Issue Certificate"}
-                    </Button>
-                </div>
+                {isAdminOrTeacher && (
+                    <div className="flex gap-x-3">
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 py-6 h-auto emerald-glow shadow-2xl hover:scale-105 transition-all">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Issue Certificate
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px] bg-card border-primary/20 rounded-sm">
+                                <form onSubmit={handleIssue}>
+                                    <DialogHeader>
+                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">Issuance Protocol</DialogTitle>
+                                        <DialogDescription className="text-[10px] uppercase font-bold tracking-widest opacity-60">
+                                            Formal institutional recognition of academic or athletic achievement.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-6 py-8">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Target Individual (Student)</p>
+                                            <Select name="student_id" required>
+                                                <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
+                                                    <SelectValue placeholder="Authenticate Candidate..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-card border-border">
+                                                    {students.map((s) => (
+                                                        <SelectItem key={s.id} value={s.id} className="text-xs font-bold uppercase tracking-tight">
+                                                            [{s.admission_number}] {s.profile?.first_name} {s.profile?.last_name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Credential Type</p>
+                                            <span className="sr-only">Credential Type</span>
+                                            <Select name="type" required>
+                                                <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
+                                                    <SelectValue placeholder="Classification..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-card border-border">
+                                                    <SelectItem value="Academic Excellence" className="text-xs font-bold uppercase tracking-tight">Academic Excellence</SelectItem>
+                                                    <SelectItem value="Athletic Achievement" className="text-xs font-bold uppercase tracking-tight">Athletic Achievement</SelectItem>
+                                                    <SelectItem value="Conduct & Leadership" className="text-xs font-bold uppercase tracking-tight">Conduct & Leadership</SelectItem>
+                                                    <SelectItem value="Special Commendation" className="text-xs font-bold uppercase tracking-tight">Special Commendation</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Authorization Notes</p>
+                                            <Input name="notes" placeholder="Contextual data for audit trail..." className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button 
+                                            type="submit" 
+                                            disabled={isIssuing}
+                                            className="w-full bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] h-14 rounded-sm emerald-glow"
+                                        >
+                                            {isIssuing ? "PROVISIONING..." : "CONFIRM ISSUANCE"}
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-8 lg:grid-cols-3">
-                {/* Left Side: Ledger and Analytics */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-primary">
+                        <h3 className="text-sm font-black uppercase tracking-widest text-primary italic flex items-center gap-x-3">
+                            <Shield className="h-4 w-4" />
                             Issuance Ledger
                         </h3>
                         <div className="relative w-64">
                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-foreground/40" />
                             <Input
                                 placeholder="Search reference or name..."
-                                className="pl-9 rounded-xs border-border bg-card/30 backdrop-blur-sm h-10 text-xs text-foreground placeholder:text-foreground/40"
+                                className="pl-9 rounded-sm border-border bg-card/30 backdrop-blur-sm h-10 text-xs text-foreground placeholder:text-foreground/40"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -101,43 +218,32 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                             <table className="w-full text-sm">
                                 <thead className="bg-primary/10">
                                     <tr className="border-b border-primary/20">
-                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                            Reference & Schematic
-                                        </th>
-                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                            Recipient Node
-                                        </th>
-                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                            Registry Status
-                                        </th>
-                                        <th className="text-right p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                            Operations
-                                        </th>
+                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">Reference & Schematic</th>
+                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">Recipient Node</th>
+                                        <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">Registry Status</th>
+                                        <th className="text-right p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">Operations</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y">
-                                    {certificates.map((cert) => (
-                                        <tr
-                                            key={cert.id}
-                                            className="hover:bg-accent/20 border-b border-border transition-colors group"
-                                        >
+                                <tbody className="divide-y divide-border">
+                                    {filteredCertificates.map((cert) => (
+                                        <tr key={cert.id} className="hover:bg-primary/5 border-b border-border transition-colors group">
                                             <td className="p-5">
                                                 <div className="flex items-center gap-x-3">
-                                                    <div className="h-12 w-12 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 transition-all group-hover:bg-primary group-hover:text-primary-foreground">
-                                                        <Award className="h-6 w-6" />
+                                                    <div className="h-12 w-12 rounded-sm bg-primary/10 flex items-center justify-center border border-primary/20 transition-all group-hover:scale-110 emerald-glow">
+                                                        <Award className="h-6 w-6 text-primary" />
                                                     </div>
                                                     <div>
                                                         <p className="font-black text-foreground group-hover:text-primary transition-colors uppercase tracking-tight italic">
-                                                            {cert.reference_number}
+                                                            {cert.reference_number || "PENDING_ID"}
                                                         </p>
                                                         <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-0.5">
-                                                            PROTOCOL: {cert.type}
+                                                            PROTOCOL: {cert.certificate_type}
                                                         </p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-6">
-                                                <p className="font-black text-foreground uppercase tracking-tight">
+                                                <p className="font-black text-foreground uppercase tracking-tight italic text-[11px]">
                                                     {cert.student?.profile?.first_name} {cert.student?.profile?.last_name}
                                                 </p>
                                                 <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest">
@@ -145,53 +251,47 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                                                 </p>
                                             </td>
                                             <td className="p-5">
-                                                <Badge
-                                                    className={cn(
-                                                        "text-[10px] font-black px-3 py-1 rounded-xs uppercase tracking-[0.2em] shadow-lg",
-                                                        cert.status === "issued"
-                                                            ? "bg-primary text-primary-foreground emerald-glow"
-                                                            : "bg-destructive text-destructive-foreground"
-                                                    )}
-                                                >
-                                                    {cert.status.toUpperCase()}
+                                                <Badge className={cn(
+                                                    "text-[9px] font-black px-3 py-1 rounded-sm uppercase tracking-[0.2em] shadow-lg",
+                                                    cert.status === "issued" ? "bg-primary text-primary-foreground emerald-glow" : "bg-destructive text-destructive-foreground"
+                                                )}>
+                                                    {cert.status?.toUpperCase() || "ISSUED"}
                                                 </Badge>
                                             </td>
                                             <td className="p-5 text-right">
                                                 <div className="flex justify-end gap-x-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-foreground/40 hover:text-primary hover:bg-primary/10 rounded-xs"
-                                                    >
-                                                        <Printer className="h-4 w-4" />
-                                                    </Button>
                                                     <PDFDownloadLink
                                                         document={<CertificatePDF certificate={cert} />}
-                                                        fileName={`${cert.reference_number}.pdf`}
+                                                        fileName={`${cert.reference_number || 'cert'}.pdf`}
                                                     >
                                                         {({ loading }) => (
                                                             <Button
                                                                 variant="ghost"
                                                                 size="icon"
                                                                 disabled={loading}
-                                                                className={cn(
-                                                                    "h-8 w-8 rounded-xs transition-colors",
-                                                                    loading
-                                                                        ? "text-foreground/20 pointer-events-none"
-                                                                        : "text-foreground/40 hover:text-foreground hover:bg-accent"
-                                                                )}
+                                                                className="h-9 w-9 border border-border rounded-sm text-foreground/40 hover:text-primary hover:border-primary transition-all"
                                                             >
-                                                                <Download className="h-4 w-4" />
+                                                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                                                             </Button>
                                                         )}
                                                     </PDFDownloadLink>
+                                                    {isAdminOrTeacher && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleRevoke(cert.id)}
+                                                            className="h-9 w-9 border border-border rounded-sm text-foreground/40 hover:text-destructive hover:border-destructive transition-all"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
                                     ))}
-                                    {certificates.length === 0 && (
+                                    {filteredCertificates.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="text-center p-8 text-foreground/50 text-xs font-bold uppercase tracking-widest">
+                                            <td colSpan={4} className="text-center p-12 text-foreground/30 text-[10px] font-black uppercase tracking-widest">
                                                 No institutional records detected.
                                             </td>
                                         </tr>
@@ -202,7 +302,6 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                     </Card>
                 </div>
 
-                {/* Sidebar Controls & Preview */}
                 <div className="space-y-6">
                     <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
                         <CardHeader className="bg-primary/10 border-b border-primary/20 p-6">
@@ -212,48 +311,43 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-8 bg-background/50">
-                            {/* Simplified Mini-Preview for visual feedback */}
-                            <div
-                                className="aspect-[1.414/1] w-full bg-white shadow-2xl border-[12px] border-primary/10 relative overflow-hidden flex flex-col items-center justify-center p-6 text-center group transition-all hover:border-primary/20"
-                            >
+                            <div className="aspect-[1.414/1] w-full bg-slate-50 shadow-2xl border-[12px] border-primary/10 relative overflow-hidden flex flex-col items-center justify-center p-6 text-center group transition-all hover:border-primary/20">
                                 <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
                                     <GraduationCap className="h-32 w-32" />
                                 </div>
-
-                                <Award className="h-8 w-8 text-foreground mb-2" />
-                                <h2 className="text-lg font-serif italic text-foreground leading-tight">Certificate of Achievement</h2>
-                                <p className="text-[6px] tracking-widest text-muted-foreground uppercase mt-2 mb-4">Awarded To</p>
-                                <h3 className="text-xl font-black text-foreground mb-4 bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Alexander Pierce</h3>
-
-                                <div className="absolute bottom-4 left-4 right-4 flex justify-between border-t border-border pt-2">
+                                <Award className="h-8 w-8 text-slate-800 mb-2" />
+                                <h2 className="text-lg font-serif italic text-slate-900 leading-tight">Certificate of Achievement</h2>
+                                <p className="text-[6px] tracking-widest text-slate-500 uppercase mt-2 mb-4">Awarded To</p>
+                                <h3 className="text-xl font-black text-slate-900 mb-4 uppercase italic">PROTOCOL_CANDIDATE</h3>
+                                <div className="absolute bottom-4 left-4 right-4 flex justify-between border-t border-slate-200 pt-2">
                                     <div className="text-left w-1/3">
-                                        <p className="text-[4px] font-black uppercase text-muted-foreground">Date</p>
-                                        <div className="h-px bg-card w-full mt-1"></div>
+                                        <p className="text-[4px] font-black uppercase text-slate-400">Date Issued</p>
+                                        <div className="h-px bg-slate-200 w-full mt-1"></div>
                                     </div>
                                     <div className="h-6 w-6 rounded-sm border border-slate-900 flex items-center justify-center -mt-2 bg-white relative z-10 shadow-lg">
-                                        <ShieldCheck className="h-3 w-3 text-foreground" />
+                                        <ShieldCheck className="h-3 w-3 text-slate-900" />
                                     </div>
                                     <div className="text-right w-1/3">
-                                        <p className="text-[4px] font-black uppercase text-muted-foreground">Head</p>
-                                        <div className="h-px bg-card w-full mt-1"></div>
+                                        <p className="text-[4px] font-black uppercase text-slate-400">Registrar</p>
+                                        <div className="h-px bg-slate-200 w-full mt-1"></div>
                                     </div>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-border bg-primary/10 text-foreground p-6 relative overflow-hidden group shadow-2xl rounded-sm">
+                    <Card className="border-border bg-primary/10 text-foreground p-8 relative overflow-hidden group shadow-2xl rounded-sm">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                             <BookOpen className="h-16 w-16 text-primary" />
                         </div>
-                        <h4 className="text-lg font-black tracking-tight mb-2 uppercase text-primary">
+                        <h4 className="text-lg font-black tracking-tight mb-2 uppercase text-primary italic">
                             Academic Shield
                         </h4>
-                        <p className="text-xs text-foreground/70 font-bold leading-relaxed">
+                        <p className="text-xs text-foreground/70 font-bold leading-relaxed uppercase tracking-tighter">
                             All transcripts are cryptographically signed and stored in the
                             institutional distributed ledger for tamper-proof verification.
                         </p>
-                        <Button className="mt-6 w-full bg-primary text-primary-foreground font-black rounded-xs hover:bg-primary/90 emerald-glow uppercase tracking-widest text-[10px]">
+                        <Button className="mt-8 w-full bg-primary text-primary-foreground font-black rounded-sm h-12 hover:scale-[1.02] transition-all emerald-glow uppercase tracking-[0.2em] text-[9px]">
                             VIEW SECURITY LOGS
                         </Button>
                     </Card>
@@ -262,4 +356,3 @@ export default function CertificatesDashboardClient({ initialCertificates }: { i
         </div>
     );
 }
-

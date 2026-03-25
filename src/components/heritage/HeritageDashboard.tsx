@@ -24,15 +24,73 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Alumni } from "@/types/database";
+import { Alumni, Student } from "@/types/database";
+import { graduateStudent } from "@/app/actions/heritage";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
-export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Alumni[] }) {
+export default function HeritageDashboard({ 
+    initialAlumni,
+    students,
+    userRole
+}: { 
+    initialAlumni: Alumni[],
+    students: Student[],
+    userRole?: string | null
+}) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
+    const [isGraduating, setIsGraduating] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const filteredAlumni = initialAlumni.filter((alumnus) =>
         `${alumnus.first_name} ${alumnus.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (alumnus.current_profession && alumnus.current_profession.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    const handleGraduate = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsGraduating(true);
+        const formData = new FormData(e.currentTarget);
+        const studentId = formData.get("studentId") as string;
+        const year = parseInt(formData.get("year") as string);
+        const profession = formData.get("profession") as string;
+        const company = formData.get("company") as string;
+
+        try {
+            const result = await graduateStudent(studentId, {
+                graduation_year: year,
+                current_profession: profession,
+                company: company
+            });
+
+            if (result.success) {
+                toast.success(result.message);
+                setOpen(false);
+            } else {
+                toast.error(result.message);
+            }
+        } catch (error) {
+            toast.error("Failed to execute graduation protocol");
+        } finally {
+            setIsGraduating(false);
+        }
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
@@ -50,19 +108,76 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-x-3">
-                    <Button
-                        variant="outline"
-                        className="rounded-sm border-border bg-card/40 backdrop-blur-md font-black gap-x-2 uppercase tracking-widest text-[10px] text-foreground/80 hover:text-primary transition-all shadow-xl h-12 px-6"
-                    >
-                        <Send className="h-4 w-4" />
-                        Campaigns
-                    </Button>
-                    <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow shadow-emerald-500/20 uppercase tracking-widest text-[10px] h-12 px-6">
-                        <Plus className="h-4 w-4" />
-                        Record Graduation
-                    </Button>
-                </div>
+                {isAdminOrTeacher && (
+                    <div className="flex gap-x-3">
+                        <Button
+                            variant="outline"
+                            className="rounded-sm border-border bg-card/40 backdrop-blur-md font-black gap-x-2 uppercase tracking-widest text-[10px] text-foreground/80 hover:text-primary transition-all shadow-xl h-12 px-6"
+                        >
+                            <Send className="h-4 w-4" />
+                            Campaigns
+                        </Button>
+
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow shadow-emerald-500/20 uppercase tracking-widest text-[10px] h-12 px-6">
+                                    <Plus className="h-4 w-4" />
+                                    Record Graduation
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px] bg-card border-primary/20 rounded-sm">
+                                <form onSubmit={handleGraduate}>
+                                    <DialogHeader>
+                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">Initialize Graduation Node</DialogTitle>
+                                        <DialogDescription className="text-[10px] uppercase font-bold tracking-widest opacity-60">
+                                            Transmitting Scholastic Records to Legacy Registry
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-6 py-8">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Select Student Node</p>
+                                            <Select name="studentId" required>
+                                                <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
+                                                    <SelectValue placeholder="Identify student record..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-card border-border">
+                                                    {students.map((student) => (
+                                                        <SelectItem key={student.id} value={student.id} className="text-xs font-bold uppercase tracking-tight">
+                                                            {student.profile?.first_name} {student.profile?.last_name} ({student.admission_number})
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Class Year</p>
+                                                <Input name="year" type="number" defaultValue={new Date().getFullYear()} required className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Profession</p>
+                                                <Input name="profession" placeholder="Student" className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Affiliation / Company</p>
+                                            <Input name="company" placeholder="Institutional Path..." className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button 
+                                            type="submit" 
+                                            disabled={isGraduating}
+                                            className="w-full bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] h-14 rounded-sm emerald-glow"
+                                        >
+                                            {isGraduating ? "EXECUTING PROTOCOL..." : "EXECUTE TRANSITION"}
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-4 pt-4">
@@ -152,7 +267,7 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                                         <Badge
                                             variant="outline"
                                             className={cn(
-                                                "text-[10px] font-black border-none bg-purple-50 text-purple-600"
+                                                "text-[10px] font-black border-none bg-emerald-50 text-emerald-600"
                                             )}
                                         >
                                             ALUMNUS
@@ -191,9 +306,9 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
 
                     <Card className="border-none glass futuristic-card bg-card text-white p-8 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
-                            <Heart className="h-20 w-20 fill-purple-500 text-purple-500" />
+                            <Heart className="h-20 w-20 fill-emerald-500 text-emerald-500" />
                         </div>
-                        <h4 className="text-xl font-black tracking-tight mb-2 text-purple-400">
+                        <h4 className="text-xl font-black tracking-tight mb-2 text-emerald-400">
                             Alumni Fund
                         </h4>
                         <p className="text-xs opacity-60 font-medium leading-relaxed">
@@ -207,25 +322,25 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                                     <span>72%</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden border border-white/5">
-                                    <div className="h-full bg-purple-500 w-[72%] shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
+                                    <div className="h-full bg-emerald-500 w-[72%] shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
                                 </div>
                             </div>
-                            <Button className="w-full h-12 bg-white text-foreground font-black rounded-xl hover:bg-white/90 border-none mt-2 shadow-xl shadow-purple-900/40">
+                            <Button className="w-full h-12 bg-white text-foreground font-black rounded-sm hover:bg-white/90 border-none mt-2 shadow-xl shadow-emerald-900/40 uppercase tracking-widest text-[10px]">
                                 LAUNCH CAMPAIGN
                             </Button>
                         </div>
                     </Card>
 
-                    <Card className="border-none glass futuristic-card p-6 overflow-hidden">
+                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 overflow-hidden">
                         <CardHeader className="p-0 mb-4 flex flex-row items-center justify-between">
                             <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
                                 Transition Intelligence
                             </CardTitle>
-                            <TrendingUp className="h-4 w-4 text-green-500" />
+                            <TrendingUp className="h-4 w-4 text-emerald-500" />
                         </CardHeader>
                         <div className="space-y-4">
-                            <div className="p-4 rounded-2xl bg-slate-50 border border-border flex items-center gap-x-3">
-                                <div className="h-10 w-10 rounded-xl bg-white border border-border flex items-center justify-center text-muted-foreground">
+                            <div className="p-4 rounded-sm bg-slate-50 border border-border flex items-center gap-x-3">
+                                <div className="h-10 w-10 rounded-sm bg-white border border-border flex items-center justify-center text-muted-foreground">
                                     <Users2 className="h-5 w-5" />
                                 </div>
                                 <div>
@@ -237,17 +352,17 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                                     </p>
                                 </div>
                             </div>
-                            <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-center gap-x-3">
-                                <div className="h-10 w-10 rounded-xl bg-white border border-blue-200 flex items-center justify-center text-blue-500">
+                            <div className="p-4 rounded-sm bg-primary/5 border border-primary/10 flex items-center gap-x-3">
+                                <div className="h-10 w-10 rounded-sm bg-white border border-primary/20 flex items-center justify-center text-primary">
                                     <Plus className="h-5 w-5" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-xs font-bold text-blue-900 leading-none mb-1 text-center">
+                                    <p className="text-xs font-bold text-primary leading-none mb-1 text-center font-black uppercase tracking-tighter italic">
                                         Auto-Generate Certificates
                                     </p>
                                     <Button
                                         variant="ghost"
-                                        className="w-full text-blue-700 h-6 text-[10px] font-black uppercase tracking-[0.2em] p-0 hover:bg-transparent"
+                                        className="w-full text-primary h-6 text-[10px] font-black uppercase tracking-[0.2em] p-0 hover:bg-transparent"
                                     >
                                         EXECUTE BATCH →
                                     </Button>
@@ -256,14 +371,14 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                         </div>
                     </Card>
 
-                    <Card className="border-none glass futuristic-card bg-linear-to-br from-purple-600 to-purple-500 text-white p-6 relative group overflow-hidden">
+                    <Card className="border-none glass futuristic-card bg-linear-to-br from-emerald-600 to-emerald-500 text-white p-6 relative group overflow-hidden rounded-sm shadow-2xl">
                         <div className="absolute inset-0 bg-linear-to-tr from-black/20 to-transparent" />
                         <div className="relative z-10 space-y-4">
-                            <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                            <div className="h-10 w-10 rounded-sm bg-white/20 backdrop-blur-md flex items-center justify-center">
                                 <Award className="h-6 w-6" />
                             </div>
                             <div>
-                                <h4 className="font-black text-lg">Legacy Mentorship</h4>
+                                <h4 className="font-black text-lg uppercase italic tracking-tighter">Legacy Mentorship</h4>
                                 <p className="text-xs opacity-80 font-medium">
                                     32 Alumni have volunteered for the Tier-1 University Prep
                                     program.
@@ -271,7 +386,7 @@ export default function HeritageDashboard({ initialAlumni }: { initialAlumni: Al
                             </div>
                             <Button
                                 variant="ghost"
-                                className="w-full h-10 border border-white/20 bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/20"
+                                className="w-full h-10 border border-white/20 bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-sm hover:bg-white/20"
                             >
                                 MATCH MENTORS
                             </Button>

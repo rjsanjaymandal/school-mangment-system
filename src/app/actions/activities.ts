@@ -2,124 +2,66 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
-
-export async function getActivities() {
-    try {
-        const supabase = createAdminClient();
-        const { data, error } = await supabase
-            .from("activities")
-            .select("*, teacher:profiles!activities_teacher_in_charge_fkey(*)")
-            .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        return { data };
-    } catch (error) {
-        console.error("Error fetching activities:", error);
-        return { error: "Failed to fetch activities" };
-    }
-}
-
-export async function getActivity(id: string) {
-    try {
-        const supabase = createAdminClient();
-        const { data, error } = await supabase
-            .from("activities")
-            .select("*, teacher:profiles!activities_teacher_in_charge_fkey(*)")
-            .eq("id", id)
-            .single();
-
-        if (error) throw error;
-        return { data };
-    } catch (error) {
-        console.error(`Error fetching activity ${id}:`, error);
-        return { error: "Failed to fetch activity" };
-    }
-}
+import { isAdminOrTeacher } from "@/lib/auth-utils";
 
 export async function createActivity(data: {
     name: string;
-    description?: string;
-    category?: string;
+    description: string;
+    category: string;
+    location: string;
+    schedule: string;
+    max_participants: number;
     teacher_in_charge?: string;
-    location?: string;
-    schedule?: string;
-    max_participants?: number;
 }) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) return { success: false, message: "Unauthorized" };
+
     try {
-        const supabase = createAdminClient();
-        const { error } = await supabase.from("activities").insert(data);
-
-        if (error) throw error;
-
-        revalidatePath("/activities");
-        return { success: true };
-    } catch (error) {
-        console.error("Error creating activity:", error);
-        return { error: "Failed to create activity" };
-    }
-}
-
-export async function updateActivity(id: string, data: {
-    name?: string;
-    description?: string;
-    category?: string;
-    teacher_in_charge?: string;
-    location?: string;
-    schedule?: string;
-    max_participants?: number;
-}) {
-    try {
-        const supabase = createAdminClient();
-        const { error } = await supabase
+        const supabaseAdmin = createAdminClient();
+        const { error } = await supabaseAdmin
             .from("activities")
-            .update(data)
-            .eq("id", id);
+            .insert(data);
 
         if (error) throw error;
-
         revalidatePath("/activities");
-        return { success: true };
-    } catch (error) {
-        console.error(`Error updating activity ${id}:`, error);
-        return { error: "Failed to update activity" };
+        return { success: true, message: "Activity protocol initialized" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
     }
 }
 
-export async function deleteActivity(id: string) {
+export async function enrollInActivity(activityId: string, studentId: string) {
     try {
-        const supabase = createAdminClient();
-        const { error } = await supabase
+        const supabaseAdmin = createAdminClient();
+        
+        // Check capacity
+        const { data: activity } = await supabaseAdmin
             .from("activities")
-            .delete()
-            .eq("id", id);
+            .select("max_participants")
+            .eq("id", activityId)
+            .single();
 
-        if (error) throw error;
-
-        revalidatePath("/activities");
-        return { success: true };
-    } catch (error) {
-        console.error(`Error deleting activity ${id}:`, error);
-        return { error: "Failed to delete activity" };
-    }
-}
-
-export async function enrollStudentInActivity(activityId: string, studentId: string) {
-    try {
-        const supabase = createAdminClient();
-        const { error } = await supabase
+        const { count } = await supabaseAdmin
             .from("activity_enrollments")
-            .upsert({
+            .select("*", { count: 'exact', head: true })
+            .eq("activity_id", activityId);
+
+        if (activity && count !== null && count >= activity.max_participants) {
+            return { success: false, message: "Activity node at maximum capacity" };
+        }
+
+        const { error } = await supabaseAdmin
+            .from("activity_enrollments")
+            .insert({
                 activity_id: activityId,
                 student_id: studentId,
                 status: "enrolled"
             });
 
         if (error) throw error;
-
         revalidatePath("/activities");
-        return { success: true };
-    } catch (error) {
-        console.error("Error enrolling student:", error);
-        return { error: "Failed to enroll student" };
+        return { success: true, message: "Student successfully enrolled in activity node" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
     }
 }

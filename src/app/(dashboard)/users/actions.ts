@@ -2,12 +2,17 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { isAdmin } from "@/lib/auth-utils";
 
 export async function provisionUser(formData: any) {
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    return { success: false, message: "Unauthorized: Admin clearance required" };
+  }
+
   try {
     const supabaseAdmin = createAdminClient();
     
-    // 1. Create the Auth User
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: formData.email,
       password: formData.password,
@@ -20,16 +25,10 @@ export async function provisionUser(formData: any) {
     });
 
     if (authError) throw authError;
-
-    if (!authData.user) {
-      throw new Error("Failed to create user identity");
-    }
+    if (!authData.user) throw new Error("Failed to create user identity");
 
     const userId = authData.user.id;
 
-    // 2. Update the profile (or insert if triggers didn't run)
-    // Note: Depends on whether there is an auth trigger automatically creating the profile.
-    // We use upsert to handle both cases safely.
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .upsert({
@@ -41,43 +40,42 @@ export async function provisionUser(formData: any) {
         updated_at: new Date().toISOString()
       });
 
-    if (profileError) {
-      console.error("Profile update error:", profileError);
-      // Ensure we don't leave orphaned auth records if this is critical,
-      // but for simplicity we throw here.
-      throw new Error("User identity created, but profile update failed: " + profileError.message);
-    }
+    if (profileError) throw profileError;
 
     revalidatePath("/users");
-    
-    return { 
-      success: true, 
-      message: "Identity provisioned successfully", 
-      userId 
-    };
+    return { success: true, message: "Identity provisioned successfully", userId };
   } catch (error: any) {
     console.error("Error provisioning identity:", error);
-    return { 
-      success: false, 
-      message: error.message || "An unexpected error occurred during provisioning" 
-    };
+    return { success: false, message: error.message || "An unexpected error occurred" };
   }
 }
 
 export async function updateIdentity(userId: string, formData: any) {
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    return { success: false, message: "Unauthorized: Admin clearance required" };
+  }
+
   try {
     const supabaseAdmin = createAdminClient();
     
-    // Update auth user if password is provided
+    // 1. Update auth user (metadata and password)
+    const updateData: any = {
+      user_metadata: {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        role: formData.role
+      }
+    };
+    
     if (formData.password) {
-      const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
-        userId,
-        { password: formData.password }
-      );
-      if (authError) throw authError;
+      updateData.password = formData.password;
     }
 
-    // Update profile
+    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, updateData);
+    if (authError) throw authError;
+
+    // 2. Update profile
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
@@ -99,21 +97,18 @@ export async function updateIdentity(userId: string, formData: any) {
 }
 
 export async function deleteIdentity(userId: string) {
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    return { success: false, message: "Unauthorized: Admin clearance required" };
+  }
+
   try {
     const supabaseAdmin = createAdminClient();
     
-    // Auth user must be deleted first, or cascade handles it.
-    // In Supabase, deleting auth.users cascades to public.profiles if configured.
-    // If not, we should delete the profile explicitly. Let's delete profile then auth user.
-    console.log(`Deleting identity: ${userId}`);
-
-    // Try deleting profile first (safeguard)
+    // Cascading delete should handle profiles if configured, but we do explicit for safety
     await supabaseAdmin.from('profiles').delete().eq('id', userId);
-      
     const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
-    if (authError) {
-        throw new Error(`Failed to delete Auth User: ${authError.message}`);
-    }
+    if (authError) throw authError;
 
     revalidatePath("/users");
     return { success: true, message: "Identity deleted successfully" };

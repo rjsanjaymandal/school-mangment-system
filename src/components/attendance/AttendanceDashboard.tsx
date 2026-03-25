@@ -25,13 +25,16 @@ interface AttendanceDashboardProps {
     todayAttendance: any[];
     weekAttendance: any[];
     currentUserId: string;
+    userRole?: string | null;
+    isStudent?: boolean;
 }
 
 type AttendanceStatus = "present" | "absent" | "late" | "excused";
 
 export function AttendanceDashboard({
-    classes, students, todayAttendance, weekAttendance, currentUserId,
+    classes, students, todayAttendance, weekAttendance, currentUserId, userRole, isStudent = false
 }: AttendanceDashboardProps) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
     const [selectedClass, setSelectedClass] = useState("");
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
@@ -254,13 +257,15 @@ export function AttendanceDashboard({
             </div>
 
             {/* Tabs */}
-            <Tabs defaultValue="mark" className="space-y-6">
+            <Tabs defaultValue={isStudent ? "history" : "mark"} className="space-y-6">
                 <TabsList className="bg-card/40 backdrop-blur-xl border border-border p-1 rounded-sm h-14 w-fit">
-                    <TabsTrigger value="mark" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow">
-                        <ClipboardCheck className="h-4 w-4" /> Mark
-                    </TabsTrigger>
+                    {!isStudent && (
+                        <TabsTrigger value="mark" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow">
+                            <ClipboardCheck className="h-4 w-4" /> Mark
+                        </TabsTrigger>
+                    )}
                     <TabsTrigger value="history" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                        <Calendar className="h-4 w-4" /> Logs
+                        <Calendar className="h-4 w-4" /> {isStudent ? "My Attendance" : "Logs"}
                     </TabsTrigger>
                 </TabsList>
 
@@ -353,12 +358,14 @@ export function AttendanceDashboard({
                             </div>
 
                             {/* Save Button */}
-                            <div className="flex justify-end pt-4">
-                                <Button onClick={handleSave} disabled={loading} className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-12 py-7 h-auto emerald-glow shadow-2xl text-[11px]">
-                                    <ClipboardCheck className="h-5 w-5" />
-                                    {loading ? "Synchronizing..." : `Commit Attendance (${Object.keys(studentRecords).length} Nodes)`}
-                                </Button>
-                            </div>
+                            {isAdminOrTeacher && (
+                                <div className="flex justify-end pt-4">
+                                    <Button onClick={handleSave} disabled={loading} className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-12 py-7 h-auto emerald-glow shadow-2xl text-[11px]">
+                                        <ClipboardCheck className="h-5 w-5" />
+                                        {loading ? "Synchronizing..." : `Commit Attendance (${Object.keys(studentRecords).length} Nodes)`}
+                                    </Button>
+                                </div>
+                            )}
                         </>
                     )}
 

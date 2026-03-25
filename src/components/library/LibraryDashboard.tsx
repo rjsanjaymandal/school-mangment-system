@@ -39,9 +39,11 @@ interface LibraryDashboardProps {
     transactions: any[];
     students: any[];
     inventoryItems: any[];
+    userRole?: string | null;
 }
 
-export function LibraryDashboard({ books, transactions, students, inventoryItems }: LibraryDashboardProps) {
+export function LibraryDashboard({ books, transactions, students, inventoryItems, userRole }: LibraryDashboardProps) {
+    const isStaff = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
     const [search, setSearch] = useState("");
     const [isAddBookOpen, setIsAddBookOpen] = useState(false);
@@ -95,103 +97,105 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                     <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Logistics & Repository</h2>
                     <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">Institutional Archive and Asset Management System</p>
                 </div>
-                <div className="flex gap-x-4">
-                    <Dialog open={isIssueOpen} onOpenChange={setIsIssueOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="rounded-sm border-primary/20 bg-background font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 hover:bg-primary/5 hover:border-primary/40 transition-all">
-                                <ArrowRightLeft className="h-4 w-4" /> Issue Command
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                            <div className="bg-card/40 p-6 border-b border-border">
-                                <DialogTitle className="font-black text-2xl uppercase tracking-tight">Initiate Lending Protocol</DialogTitle>
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Assign repository item to personnel</p>
-                            </div>
-                            <div className="p-6 space-y-6">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Repository Item (Book)</Label>
-                                    <Select value={issueForm.book_id} onValueChange={(v) => setIssueForm({ ...issueForm, book_id: v })}>
-                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
-                                            <SelectValue placeholder="Select book" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-card/90 border-border">
-                                            {books.filter(b => b.available_copies > 0).map(b => (
-                                                <SelectItem key={b.id} value={b.id} className="font-bold uppercase text-[10px]">
-                                                    {b.title} ({b.available_copies} AVAILABLE)
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Recipient Personnel</Label>
-                                    <Select value={issueForm.student_id} onValueChange={(v) => setIssueForm({ ...issueForm, student_id: v })}>
-                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
-                                            <SelectValue placeholder="Select student" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-card/90 border-border">
-                                            {students.map(s => (
-                                                <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">
-                                                    {s.profile?.first_name} {s.profile?.last_name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Return Maturity Date</Label>
-                                    <Input type="date" value={issueForm.due_date} onChange={(e) => setIssueForm({ ...issueForm, due_date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold h-11" />
-                                </div>
-                                <Button onClick={handleIssueBook} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                    {loading ? "Processing..." : "Commit Lending Command"}
+                {isStaff && (
+                    <div className="flex gap-x-4">
+                        <Dialog open={isIssueOpen} onOpenChange={setIsIssueOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="rounded-sm border-primary/20 bg-background font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 hover:bg-primary/5 hover:border-primary/40 transition-all">
+                                    <ArrowRightLeft className="h-4 w-4" /> Issue Command
                                 </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                            </DialogTrigger>
+                            <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
+                                <div className="bg-card/40 p-6 border-b border-border">
+                                    <DialogTitle className="font-black text-2xl uppercase tracking-tight">Initiate Lending Protocol</DialogTitle>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Assign repository item to personnel</p>
+                                </div>
+                                <div className="p-6 space-y-6">
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Repository Item (Book)</Label>
+                                        <Select value={issueForm.book_id} onValueChange={(v) => setIssueForm({ ...issueForm, book_id: v })}>
+                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
+                                                <SelectValue placeholder="Select book" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-card/90 border-border">
+                                                {books.filter(b => b.available_copies > 0).map(b => (
+                                                    <SelectItem key={b.id} value={b.id} className="font-bold uppercase text-[10px]">
+                                                        {b.title} ({b.available_copies} AVAILABLE)
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Recipient Personnel</Label>
+                                        <Select value={issueForm.student_id} onValueChange={(v) => setIssueForm({ ...issueForm, student_id: v })}>
+                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
+                                                <SelectValue placeholder="Select student" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-card/90 border-border">
+                                                {students.map(s => (
+                                                    <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">
+                                                        {s.profile?.first_name} {s.profile?.last_name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Return Maturity Date</Label>
+                                        <Input type="date" value={issueForm.due_date} onChange={(e) => setIssueForm({ ...issueForm, due_date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold h-11" />
+                                    </div>
+                                    <Button onClick={handleIssueBook} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
+                                        {loading ? "Processing..." : "Commit Lending Command"}
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
 
-                    <Dialog open={isAddBookOpen} onOpenChange={setIsAddBookOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 emerald-glow shadow-2xl">
-                                <Plus className="h-4 w-4" /> Add Repository Node
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                            <div className="bg-card/40 p-6 border-b border-border">
-                                <DialogTitle className="font-black text-2xl uppercase tracking-tight">Index New Item</DialogTitle>
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Add book entry to institutional repository</p>
-                            </div>
-                            <div className="p-6 space-y-6">
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Item Title</Label>
-                                        <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="Book title" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Author / Creator</Label>
-                                        <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="Author name" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-3 gap-6">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">ISBN / ID</Label>
-                                        <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="ISBN" className="rounded-sm bg-background/50 border-border font-black text-xs h-11" />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Classification</Label>
-                                        <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="Science" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Stock Units</Label>
-                                        <Input type="number" value={bookForm.total_copies} onChange={(e) => setBookForm({ ...bookForm, total_copies: e.target.value })} className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreateBook} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                    {loading ? "Indexing..." : "Index Repository Node"}
+                        <Dialog open={isAddBookOpen} onOpenChange={setIsAddBookOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 emerald-glow shadow-2xl">
+                                    <Plus className="h-4 w-4" /> Add Repository Node
                                 </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                            </DialogTrigger>
+                            <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
+                                <div className="bg-card/40 p-6 border-b border-border">
+                                    <DialogTitle className="font-black text-2xl uppercase tracking-tight">Index New Item</DialogTitle>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Add book entry to institutional repository</p>
+                                </div>
+                                <div className="p-6 space-y-6">
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Item Title</Label>
+                                            <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="Book title" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Author / Creator</Label>
+                                            <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="Author name" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-6">
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">ISBN / ID</Label>
+                                            <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="ISBN" className="rounded-sm bg-background/50 border-border font-black text-xs h-11" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Classification</Label>
+                                            <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="Science" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Stock Units</Label>
+                                            <Input type="number" value={bookForm.total_copies} onChange={(e) => setBookForm({ ...bookForm, total_copies: e.target.value })} className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
+                                        </div>
+                                    </div>
+                                    <Button onClick={handleCreateBook} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
+                                        {loading ? "Indexing..." : "Index Repository Node"}
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             <Tabs defaultValue="library" className="space-y-6">
@@ -200,11 +204,13 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                         <Library className="h-4 w-4" /> Repository
                     </TabsTrigger>
                     <TabsTrigger value="transactions" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                        <ArrowRightLeft className="h-4 w-4" /> Protocol Logs
+                        <ArrowRightLeft className="h-4 w-4" /> {isStaff ? "Protocol Logs" : "My Borrowing History"}
                     </TabsTrigger>
-                    <TabsTrigger value="inventory" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                        <Package className="h-4 w-4" /> Inventory
-                    </TabsTrigger>
+                    {isStaff && (
+                        <TabsTrigger value="inventory" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
+                            <Package className="h-4 w-4" /> Inventory
+                        </TabsTrigger>
+                    )}
                 </TabsList>
 
                 <TabsContent value="library" className="mt-0 space-y-6">
@@ -262,7 +268,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                         <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Initialize Date</th>
                                         <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Due Cycle</th>
                                         <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Protocol Status</th>
-                                        <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Actions</th>
+                                        {isStaff && <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Actions</th>}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
@@ -290,16 +296,18 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                                         {tx.status}
                                                     </div>
                                                 </td>
-                                                <td className="py-6 px-8 text-right">
-                                                    {tx.status === "issued" && (
-                                                        <Button size="sm" variant="ghost" onClick={() => handleReturn(tx.id)} className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 px-4">
-                                                            Terminate
-                                                        </Button>
-                                                    )}
-                                                    {tx.fine_amount > 0 && (
-                                                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest ml-4 italic underline decoration-dim">Penalty: ₹{tx.fine_amount}</span>
-                                                    )}
-                                                </td>
+                                                {isStaff && (
+                                                    <td className="py-6 px-8 text-right">
+                                                        {tx.status === "issued" && (
+                                                            <Button size="sm" variant="ghost" onClick={() => handleReturn(tx.id)} className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 px-4">
+                                                                Terminate
+                                                            </Button>
+                                                        )}
+                                                        {tx.fine_amount > 0 && (
+                                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest ml-4 italic underline decoration-dim">Penalty: ₹{tx.fine_amount}</span>
+                                                        )}
+                                                    </td>
+                                                )}
                                             </tr>
                                         ))
                                     )}

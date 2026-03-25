@@ -47,6 +47,7 @@ interface FeesDashboardProps {
     classes: any[];
     staffPayrolls: any[];
     leaveRequests: any[];
+    isStudent?: boolean;
     stats: {
         totalRevenue: number;
         outstanding: number;
@@ -61,6 +62,7 @@ export function FeesDashboard({
     classes,
     staffPayrolls,
     leaveRequests,
+    isStudent = false,
     stats,
 }: FeesDashboardProps) {
     const router = useRouter();
@@ -116,7 +118,22 @@ export function FeesDashboard({
         }
     };
 
-    const statCards = [
+    const statCards = isStudent ? [
+        {
+            title: "Total Paid",
+            value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`,
+            change: "Receipts Issued",
+            trend: "up",
+            color: "blue",
+        },
+        {
+            title: "Balance Due",
+            value: `₹${stats.outstanding.toLocaleString("en-IN")}`,
+            change: stats.outstanding > 0 ? "Pending Payment" : "All Clear",
+            trend: stats.outstanding > 0 ? "down" : "up",
+            color: "purple",
+        },
+    ] : [
         {
             title: "Total Revenue",
             value: `₹${stats.totalRevenue.toLocaleString("en-IN")}`,
@@ -151,130 +168,132 @@ export function FeesDashboard({
                     <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Finance & Payroll</h2>
                     <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">Enterprise Treasury and HR Finance Management</p>
                 </div>
-                <div className="flex gap-x-4">
-                    <Dialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="outline" className="rounded-sm border-primary/20 bg-background font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 hover:bg-primary/5 hover:border-primary/40 transition-all">
-                                <CreditCard className="h-4 w-4" /> Record Payment
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                            <div className="bg-card/40 p-6 border-b border-border">
-                                <DialogTitle className="font-black text-2xl uppercase tracking-tight">Record Transaction</DialogTitle>
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Append new payment node to ledger</p>
-                            </div>
-                            <div className="p-6 space-y-6">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Personnel / Student</Label>
-                                    <Select value={payForm.student_id} onValueChange={(v) => setPayForm({ ...payForm, student_id: v })}>
-                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
-                                            <SelectValue placeholder="Select student" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-card/90 border-border">
-                                            {students.map((s) => (
-                                                <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">
-                                                    {s.profile?.first_name} {s.profile?.last_name} ({s.admission_number})
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                {!isStudent && (
+                    <div className="flex gap-x-4">
+                        <Dialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" className="rounded-sm border-primary/20 bg-background font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 hover:bg-primary/5 hover:border-primary/40 transition-all">
+                                    <CreditCard className="h-4 w-4" /> Record Payment
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
+                                <div className="bg-card/40 p-6 border-b border-border">
+                                    <DialogTitle className="font-black text-2xl uppercase tracking-tight">Record Transaction</DialogTitle>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Append new payment node to ledger</p>
                                 </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Fee Structure Node</Label>
-                                    <Select value={payForm.fee_id} onValueChange={(v) => setPayForm({ ...payForm, fee_id: v })}>
-                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
-                                            <SelectValue placeholder="Select fee" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-card/90 border-border">
-                                            {fees.map((f) => (
-                                                <SelectItem key={f.id} value={f.id} className="font-bold uppercase text-[10px]">
-                                                    {f.name} — ₹{f.amount}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="grid grid-cols-2 gap-6">
+                                <div className="p-6 space-y-6">
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Amount (INR)</Label>
-                                        <Input type="number" value={payForm.amount_paid} onChange={(e) => setPayForm({ ...payForm, amount_paid: e.target.value })} placeholder="0.00" className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Protocol (Method)</Label>
-                                        <Select value={payForm.payment_method} onValueChange={(v) => setPayForm({ ...payForm, payment_method: v })}>
-                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11"><SelectValue /></SelectTrigger>
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Personnel / Student</Label>
+                                        <Select value={payForm.student_id} onValueChange={(v) => setPayForm({ ...payForm, student_id: v })}>
+                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
+                                                <SelectValue placeholder="Select student" />
+                                            </SelectTrigger>
                                             <SelectContent className="bg-card/90 border-border">
-                                                {["cash", "card", "upi", "bank_transfer", "cheque", "online"].map((m) => (
-                                                    <SelectItem key={m} value={m} className="font-bold uppercase text-[10px]">{m.replace("_", " ").toUpperCase()}</SelectItem>
+                                                {students.map((s) => (
+                                                    <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">
+                                                        {s.profile?.first_name} {s.profile?.last_name} ({s.admission_number})
+                                                    </SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Fee Structure Node</Label>
+                                        <Select value={payForm.fee_id} onValueChange={(v) => setPayForm({ ...payForm, fee_id: v })}>
+                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
+                                                <SelectValue placeholder="Select fee" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-card/90 border-border">
+                                                {fees.map((f) => (
+                                                    <SelectItem key={f.id} value={f.id} className="font-bold uppercase text-[10px]">
+                                                        {f.name} — ₹{f.amount}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Amount (INR)</Label>
+                                            <Input type="number" value={payForm.amount_paid} onChange={(e) => setPayForm({ ...payForm, amount_paid: e.target.value })} placeholder="0.00" className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Protocol (Method)</Label>
+                                            <Select value={payForm.payment_method} onValueChange={(v) => setPayForm({ ...payForm, payment_method: v })}>
+                                                <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11"><SelectValue /></SelectTrigger>
+                                                <SelectContent className="bg-card/90 border-border">
+                                                    {["cash", "card", "upi", "bank_transfer", "cheque", "online"].map((m) => (
+                                                        <SelectItem key={m} value={m} className="font-bold uppercase text-[10px]">{m.replace("_", " ").toUpperCase()}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <Button onClick={handleRecordPayment} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
+                                        {loading ? "Processing..." : "Commit Transaction"}
+                                    </Button>
                                 </div>
-                                <Button onClick={handleRecordPayment} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                    {loading ? "Processing..." : "Commit Transaction"}
-                                </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                            </DialogContent>
+                        </Dialog>
 
-                    <Dialog open={isAddFeeOpen} onOpenChange={setIsAddFeeOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 emerald-glow shadow-2xl">
-                                <Plus className="h-4 w-4" /> New Fee Structure
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                            <div className="bg-card/40 p-6 border-b border-border">
-                                <DialogTitle className="font-black text-2xl uppercase tracking-tight">Initialize Fee Node</DialogTitle>
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Configure institutional revenue structure</p>
-                            </div>
-                            <div className="p-6 space-y-6">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Fee Name</Label>
-                                    <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} placeholder="e.g. Annual Tuition" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
-                                </div>
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Amount (₹)</Label>
-                                        <Input type="number" value={feeForm.amount} onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })} placeholder="0.00" className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Maturity Date (Due)</Label>
-                                        <Input type="date" value={feeForm.due_date} onChange={(e) => setFeeForm({ ...feeForm, due_date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold h-11" />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Target Sector</Label>
-                                        <Select value={feeForm.class_id} onValueChange={(v) => setFeeForm({ ...feeForm, class_id: v })}>
-                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11"><SelectValue placeholder="All Classes" /></SelectTrigger>
-                                            <SelectContent className="bg-card/90 border-border">
-                                                {classes.map((c) => (
-                                                    <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px]">{c.name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Classification</Label>
-                                        <Select value={feeForm.fee_type} onValueChange={(v) => setFeeForm({ ...feeForm, fee_type: v })}>
-                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11"><SelectValue /></SelectTrigger>
-                                            <SelectContent className="bg-card/90 border-border">
-                                                {["tuition", "transport", "library", "lab", "sports", "other"].map((t) => (
-                                                    <SelectItem key={t} value={t} className="font-bold uppercase text-[10px]">{t.replace("_", " ").toUpperCase()}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreateFee} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                    {loading ? "Initializing..." : "Commit Fee Structure"}
+                        <Dialog open={isAddFeeOpen} onOpenChange={setIsAddFeeOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 emerald-glow shadow-2xl">
+                                    <Plus className="h-4 w-4" /> New Fee Structure
                                 </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                            </DialogTrigger>
+                            <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
+                                <div className="bg-card/40 p-6 border-b border-border">
+                                    <DialogTitle className="font-black text-2xl uppercase tracking-tight">Initialize Fee Node</DialogTitle>
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Configure institutional revenue structure</p>
+                                </div>
+                                <div className="p-6 space-y-6">
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Fee Name</Label>
+                                        <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} placeholder="e.g. Annual Tuition" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Amount (₹)</Label>
+                                            <Input type="number" value={feeForm.amount} onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })} placeholder="0.00" className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Maturity Date (Due)</Label>
+                                            <Input type="date" value={feeForm.due_date} onChange={(e) => setFeeForm({ ...feeForm, due_date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold h-11" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Target Sector</Label>
+                                            <Select value={feeForm.class_id} onValueChange={(v) => setFeeForm({ ...feeForm, class_id: v })}>
+                                                <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11"><SelectValue placeholder="All Classes" /></SelectTrigger>
+                                                <SelectContent className="bg-card/90 border-border">
+                                                    {classes.map((c) => (
+                                                        <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px]">{c.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Classification</Label>
+                                            <Select value={feeForm.fee_type} onValueChange={(v) => setFeeForm({ ...feeForm, fee_type: v })}>
+                                                <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11"><SelectValue /></SelectTrigger>
+                                                <SelectContent className="bg-card/90 border-border">
+                                                    {["tuition", "transport", "library", "lab", "sports", "other"].map((t) => (
+                                                        <SelectItem key={t} value={t} className="font-bold uppercase text-[10px]">{t.replace("_", " ").toUpperCase()}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <Button onClick={handleCreateFee} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
+                                        {loading ? "Initializing..." : "Commit Fee Structure"}
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             {/* Statistics */}
@@ -304,14 +323,16 @@ export function FeesDashboard({
             <Tabs defaultValue="fees" className="space-y-6">
                 <TabsList className="bg-card/40 backdrop-blur-xl border border-border p-1 rounded-sm h-14 w-fit">
                     <TabsTrigger value="fees" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow">
-                        <DollarSign className="h-4 w-4" /> Treasury Node
+                        <DollarSign className="h-4 w-4" /> {isStudent ? "My Fees" : "Treasury Node"}
                     </TabsTrigger>
                     <TabsTrigger value="payments" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                        <CreditCard className="h-4 w-4" /> Transaction Log
+                        <CreditCard className="h-4 w-4" /> {isStudent ? "My Payments" : "Transaction Log"}
                     </TabsTrigger>
-                    <TabsTrigger value="payroll" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                        <Briefcase className="h-4 w-4" /> Staff Payroll
-                    </TabsTrigger>
+                    {!isStudent && (
+                        <TabsTrigger value="payroll" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
+                            <Briefcase className="h-4 w-4" /> Staff Payroll
+                        </TabsTrigger>
+                    )}
                 </TabsList>
 
                 {/* Fee Structures Tab */}

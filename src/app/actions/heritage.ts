@@ -2,107 +2,83 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { isAdminOrTeacher } from "@/lib/auth-utils";
 
-export async function getAlumniList() {
-    try {
-        const supabase = createAdminClient();
-        const { data, error } = await supabase
-            .from("alumni")
-            .select("*")
-            .order("graduation_year", { ascending: false });
-
-        if (error) throw error;
-        return { data };
-    } catch (error) {
-        console.error("Error fetching alumni:", error);
-        return { error: "Failed to fetch alumni" };
+export async function graduateStudent(studentId: string, graduationData: {
+    graduation_year: number;
+    current_profession?: string;
+    company?: string;
+    achievements?: string;
+}) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) {
+        return { success: false, message: "Unauthorized: Insufficient clearance" };
     }
-}
 
-export async function getAlumni(id: string) {
     try {
-        const supabase = createAdminClient();
-        const { data, error } = await supabase
-            .from("alumni")
-            .select("*")
-            .eq("id", id)
+        const supabaseAdmin = createAdminClient();
+
+        // 1. Fetch student details
+        const { data: student, error: fetchError } = await supabaseAdmin
+            .from("students")
+            .select("*, profile:profiles(*)")
+            .eq("id", studentId)
             .single();
 
-        if (error) throw error;
-        return { data };
-    } catch (error) {
-        console.error(`Error fetching alumni ${id}:`, error);
-        return { error: "Failed to fetch alumni profile" };
-    }
-}
+        if (fetchError || !student) {
+            throw new Error("Student record not found in active registry");
+        }
 
-export async function createAlumni(data: {
-    first_name: string;
-    last_name: string;
-    graduation_year: number;
-    email?: string;
-    phone?: string;
-    current_profession?: string;
-    company?: string;
-    achievements?: string;
-    profile_picture_url?: string;
-}) {
-    try {
-        const supabase = createAdminClient();
-        const { error } = await supabase.from("alumni").insert(data);
-
-        if (error) throw error;
-
-        revalidatePath("/heritage");
-        return { success: true };
-    } catch (error) {
-        console.error("Error creating alumni:", error);
-        return { error: "Failed to create alumni record" };
-    }
-}
-
-export async function updateAlumni(id: string, data: {
-    first_name?: string;
-    last_name?: string;
-    graduation_year?: number;
-    email?: string;
-    phone?: string;
-    current_profession?: string;
-    company?: string;
-    achievements?: string;
-    profile_picture_url?: string;
-}) {
-    try {
-        const supabase = createAdminClient();
-        const { error } = await supabase
+        // 2. Insert into alumni table
+        const { error: alumniError } = await supabaseAdmin
             .from("alumni")
-            .update(data)
-            .eq("id", id);
+            .insert({
+                id: student.id, // Keep the same ID for continuity if possible, or let it gen
+                first_name: student.profile.first_name,
+                last_name: student.profile.last_name,
+                graduation_year: graduationData.graduation_year,
+                email: student.profile.email,
+                current_profession: graduationData.current_profession,
+                company: graduationData.company,
+                achievements: graduationData.achievements,
+                profile_picture_url: student.profile.avatar_url
+            });
 
-        if (error) throw error;
+        if (alumniError) throw alumniError;
 
-        revalidatePath("/heritage");
-        return { success: true };
-    } catch (error) {
-        console.error(`Error updating alumni ${id}:`, error);
-        return { error: "Failed to update alumni record" };
-    }
-}
-
-export async function deleteAlumni(id: string) {
-    try {
-        const supabase = createAdminClient();
-        const { error } = await supabase
-            .from("alumni")
+        // 3. Mark student profile as 'student' (or we could change role to something else)
+        // For now, we keep the profile but delete the student entry to remove from active classes
+        const { error: deleteError } = await supabaseAdmin
+            .from("students")
             .delete()
-            .eq("id", id);
+            .eq("id", studentId);
 
-        if (error) throw error;
+        if (deleteError) throw deleteError;
 
         revalidatePath("/heritage");
-        return { success: true };
-    } catch (error) {
-        console.error(`Error deleting alumni ${id}:`, error);
-        return { error: "Failed to delete alumni record" };
+        revalidatePath("/students");
+        
+        return { success: true, message: `Node ${student.admission_number} successfully transitioned to Heritage Registry` };
+    } catch (error: any) {
+        console.error("Graduation Protocol Error:", error);
+        return { success: false, message: error.message || "Protocol execution failed" };
+    }
+}
+
+export async function addAlumnusManual(data: any) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) return { success: false, message: "Unauthorized" };
+
+    try {
+        const supabaseAdmin = createAdminClient();
+        const { error } = await supabaseAdmin
+            .from("alumni")
+            .insert(data);
+
+        if (error) throw error;
+        revalidatePath("/heritage");
+        return { success: true, message: "Manual record inserted into Heritage Registry" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
     }
 }

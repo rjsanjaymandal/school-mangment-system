@@ -28,7 +28,26 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Activity } from "@/types/database";
+import { Activity, Teacher } from "@/types/database";
+import { createActivity } from "@/app/actions/activities";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const upcomingFixtures = [
     {
@@ -49,13 +68,53 @@ const upcomingFixtures = [
     },
 ];
 
-export default function ActivitiesDashboard({ initialActivities }: { initialActivities: Activity[] }) {
+export default function ActivitiesDashboard({ 
+    initialActivities,
+    teachers,
+    userRole
+}: { 
+    initialActivities: Activity[],
+    teachers: Teacher[],
+    userRole?: string | null
+}) {
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
+    const [isInitializing, setIsInitializing] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const filteredActivities = initialActivities.filter((activity) =>
         activity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (activity.category && activity.category.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    const handleInitialize = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsInitializing(true);
+        const formData = new FormData(e.currentTarget);
+        
+        try {
+            const result = await createActivity({
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                category: formData.get("category") as string,
+                location: formData.get("location") as string,
+                schedule: formData.get("schedule") as string,
+                max_participants: parseInt(formData.get("max_participants") as string),
+                teacher_in_charge: formData.get("teacher_id") as string || undefined
+            });
+
+            if (result.success) {
+                toast.success(result.message);
+                setOpen(false);
+            } else {
+                toast.error(result.message);
+            }
+        } catch (error) {
+            toast.error("Failed to initialize society node");
+        } finally {
+            setIsInitializing(false);
+        }
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
@@ -73,19 +132,90 @@ export default function ActivitiesDashboard({ initialActivities }: { initialActi
                         </p>
                     </div>
                 </div>
-                <div className="flex gap-x-4">
-                    <Button
-                        variant="ghost"
-                        className="rounded-sm border border-border bg-card/40 backdrop-blur-xl font-black uppercase tracking-widest text-[10px] px-8 py-6 h-auto hover:border-primary transition-all"
-                    >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Hall Bookings
-                    </Button>
-                    <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 py-6 h-auto emerald-glow shadow-2xl hover:scale-105 transition-all">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Initialize Society
-                    </Button>
-                </div>
+                {isAdminOrTeacher && (
+                    <div className="flex gap-x-4">
+                        <Button
+                            variant="ghost"
+                            className="rounded-sm border border-border bg-card/40 backdrop-blur-xl font-black uppercase tracking-widest text-[10px] px-8 py-6 h-auto hover:border-primary transition-all"
+                        >
+                            <Calendar className="h-4 w-4 mr-2" />
+                            Hall Bookings
+                        </Button>
+
+                        <Dialog open={open} onOpenChange={setOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 py-6 h-auto emerald-glow shadow-2xl hover:scale-105 transition-all">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Initialize Society
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px] bg-card border-primary/20 rounded-sm">
+                                <form onSubmit={handleInitialize}>
+                                    <DialogHeader>
+                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">Initialize Society Protocol</DialogTitle>
+                                        <DialogDescription className="text-[10px] uppercase font-bold tracking-widest opacity-60">
+                                            Establish a new creative or athletic institutional node.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-6 py-8">
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Society Name</p>
+                                            <Input name="name" placeholder="E.g., Neural Arts Collective" required className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Category</p>
+                                                <Select name="category" required>
+                                                    <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
+                                                        <SelectValue placeholder="Sector..." />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-card border-border">
+                                                        <SelectItem value="Arts" className="text-xs font-bold uppercase tracking-tight">Arts & Culture</SelectItem>
+                                                        <SelectItem value="Sports" className="text-xs font-bold uppercase tracking-tight">Athletics</SelectItem>
+                                                        <SelectItem value="Tech" className="text-xs font-bold uppercase tracking-tight">Technology</SelectItem>
+                                                        <SelectItem value="Social" className="text-xs font-bold uppercase tracking-tight">Social Welfare</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Capacity</p>
+                                                <Input name="max_participants" type="number" defaultValue={50} required className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Teacher-in-Charge</p>
+                                            <Select name="teacher_id">
+                                                <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
+                                                    <SelectValue placeholder="Assign Curator..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="bg-card border-border">
+                                                    {teachers.map((t) => (
+                                                        <SelectItem key={t.id} value={t.id} className="text-xs font-bold uppercase tracking-tight">
+                                                            {t.profile?.first_name} {t.profile?.last_name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Operational Nexus (Description)</p>
+                                            <Textarea name="description" placeholder="Orchestration details..." className="rounded-sm border-border bg-background min-h-[100px] text-xs font-bold" />
+                                        </div>
+                                    </div>
+                                    <DialogFooter>
+                                        <Button 
+                                            type="submit" 
+                                            disabled={isInitializing}
+                                            className="w-full bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] h-14 rounded-sm emerald-glow"
+                                        >
+                                            {isInitializing ? "DEPLOYING NODE..." : "INITIALIZE SOCIETY"}
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-4 pt-4">

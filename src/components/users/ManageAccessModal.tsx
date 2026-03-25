@@ -161,7 +161,7 @@ export function ManageAccessModal({ user }: { user: any }) {
                 <FormItem>
                   <FormLabel className="text-[10px] uppercase font-black tracking-widest">Email Address</FormLabel>
                   <FormControl>
-                    <Input type="email" disabled placeholder="user@eduflux.com" {...field} className="rounded-sm bg-background/50 border-border text-xs focus-visible:ring-0 opacity-70 cursor-not-allowed shadow-inner" />
+                    <Input type="email" disabled placeholder="user@edumaysan.com" {...field} className="rounded-sm bg-background/50 border-border text-xs focus-visible:ring-0 opacity-70 cursor-not-allowed shadow-inner" />
                   </FormControl>
                   <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">Network alias cannot be changed directly.</p>
                   <FormMessage className="text-[10px]" />

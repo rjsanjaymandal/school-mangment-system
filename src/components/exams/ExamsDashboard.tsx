@@ -384,7 +384,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                             onView={(v) => setCalendarView(v)}
                             popup
                             selectable
-                            onSelectEvent={(event) => handleOpenMarks(event.resource)}
+                            onSelectEvent={(event) => {
+                                if (userRole === "admin" || userRole === "teacher") {
+                                    handleOpenMarks(event.resource);
+                                }
+                            }}
                             eventPropGetter={(event: any) => {
                                 const isUpcoming = new Date(event.resource.date) >= new Date();
                                 return {
