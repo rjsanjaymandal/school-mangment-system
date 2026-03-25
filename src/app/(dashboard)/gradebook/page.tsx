@@ -38,183 +38,192 @@ export default function GradebookPage() {
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-foreground">
-            Academic Grades
+          <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
+            Academic Performance Ledger
           </h2>
-          <p className="text-muted-foreground font-medium tracking-tight">
-            Weighted Computation & Academic Analytics
+          <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
+            Weighted Computation & Neural Academic Analytics
           </p>
         </div>
-        <div className="flex gap-x-2">
+        <div className="flex gap-x-3">
           <Button
             variant="outline"
-            className="rounded-2xl border-border bg-white font-bold gap-x-2"
+            className="rounded-sm border-border bg-transparent font-black uppercase tracking-widest text-[10px] px-6 h-12 hover:bg-primary/5 transition-all flex items-center gap-x-2"
           >
             <Download className="h-4 w-4" />
-            Transcript PDF
+            Export Transcript
           </Button>
-          <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
+          <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-12 emerald-glow transition-all hover:bg-primary/90 flex items-center gap-x-2">
             <Save className="h-4 w-4" />
-            Commit Grades
+            Synchronize Grades
           </Button>
         </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
         {/* GPA Summary Card */}
-        <Card className="lg:col-span-1 border-none glass futuristic-card bg-card text-white overflow-hidden relative">
-          <div className="absolute top-0 right-0 p-8 opacity-10">
-            <GraduationCap className="h-32 w-32" />
+        <Card className="lg:col-span-1 border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl">
+          <div className="absolute right-[-10px] bottom-[-10px] h-32 w-32 text-primary opacity-10 group-hover:scale-110 transition-transform">
+            <GraduationCap className="h-full w-full" />
           </div>
-          <CardHeader>
-            <CardTitle className="text-sm font-black uppercase tracking-widest opacity-60">
+          <CardHeader className="p-0 mb-6">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
               Cumulative Index (GPA)
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="p-0 space-y-8">
             <div className="flex items-baseline gap-x-4">
-              <h3 className="text-7xl font-black tracking-tighter neon-blue">
+              <h3 className="text-7xl font-black tracking-tighter text-primary group-hover:emerald-glow transition-all italic">
                 {gpa}
               </h3>
-              <Badge className="bg-blue-500 text-white border-none text-xl px-4 py-1 rounded-xl">
+              <Badge className="bg-primary text-primary-foreground emerald-glow border-none text-xl font-black px-4 py-1 rounded-sm uppercase tracking-widest italic">
                 {gradeLetter}
               </Badge>
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold opacity-60">
-                <span>MASTERY PROGRESS</span>
+            <div className="space-y-3">
+              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                <span>MASTERY PROGRESSION</span>
                 <span>{gpa}%</span>
               </div>
               <Progress
                 value={gpa}
-                className="h-2 bg-white/10"
-                indicatorClassName="bg-blue-500 neon-blue"
+                className="h-2 bg-primary/10 rounded-none"
+                indicatorClassName="bg-primary emerald-glow"
               />
             </div>
-            <div className="pt-4 border-t border-white/10 flex items-center gap-x-3">
-              <div className="h-2 w-2 rounded-full bg-green-500" />
-              <p className="text-[10px] font-bold opacity-60">
-                VALIDATED BY NEURAL ENGINE V2
+            <div className="pt-6 border-t border-border/50 flex items-center gap-x-3">
+              <div className="h-2 w-2 rounded-full bg-primary emerald-glow animate-pulse" />
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/40">
+                VALIDATED BY NEURAL ENGINE V2.4
               </p>
             </div>
           </CardContent>
         </Card>
 
         {/* Grade Weighting Calculator */}
-        <Card className="lg:col-span-2 border-none glass futuristic-card">
-          <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="lg:col-span-2 border-border bg-card/40 backdrop-blur-xl rounded-sm shadow-2xl overflow-hidden">
+          <CardHeader className="p-6 border-b border-border/50 flex flex-row items-center justify-between bg-primary/5">
             <div>
-              <CardTitle className="text-lg font-black tracking-tight">
-                Assessment Weights
+              <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-x-2">
+                <Calculator className="h-4 w-4" />
+                Assessment Parameters
               </CardTitle>
-              <p className="text-xs text-muted-foreground font-medium">
-                Define parameters for academic computation
+              <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mt-1">
+                Weighted Allocation Matrix
               </p>
             </div>
             <Button
               size="sm"
               variant="ghost"
-              className="text-blue-500 font-bold hover:bg-blue-50"
+              className="font-black text-[10px] tracking-widest uppercase hover:bg-primary/10 text-primary hover:text-primary transition-all rounded-sm px-4"
             >
               <Plus className="h-4 w-4 mr-2" />
-              ADD SCHEMA
+              Initialize Schema
             </Button>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {components.map((c, idx) => (
-              <div
-                key={c.id}
-                className="group flex items-center gap-x-4 p-4 rounded-2xl bg-slate-50/50 border border-border hover:bg-white hover:shadow-md transition-all"
-              >
-                <div className="h-10 w-10 rounded-xl bg-white border border-border flex items-center justify-center font-black text-muted-foreground">
-                  0{idx + 1}
-                </div>
-                <div className="flex-1">
-                  <Input
-                    value={c.label}
-                    onChange={(e) => {
-                      const newComp = [...components];
-                      newComp[idx].label = e.target.value;
-                      setComponents(newComp);
-                    }}
-                    className="bg-transparent border-none font-bold text-foreground focus-visible:ring-0 p-0 h-auto"
-                  />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                    Weight: {c.weight}%
-                  </p>
-                </div>
-                <div className="flex items-center gap-x-4">
-                  <div className="w-24">
-                    <p className="text-[10px] font-black uppercase text-muted-foreground mb-1 text-right">
-                      SCORE
-                    </p>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border/30">
+              {components.map((c, idx) => (
+                <div
+                  key={c.id}
+                  className="group flex items-center gap-x-6 p-6 hover:bg-primary/5 transition-colors border-border/50"
+                >
+                  <div className="h-12 w-12 shrink-0 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-black text-xs shadow-lg group-hover:emerald-glow-sm transition-all italic">
+                    0{idx + 1}
+                  </div>
+                  <div className="flex-1">
                     <Input
-                      type="number"
-                      value={c.score}
+                      value={c.label}
                       onChange={(e) => {
                         const newComp = [...components];
-                        newComp[idx].score = Number(e.target.value);
+                        newComp[idx].label = e.target.value;
                         setComponents(newComp);
                       }}
-                      className="text-right font-black text-foreground bg-white rounded-xl border-border"
+                      className="bg-transparent border-none font-black text-foreground uppercase tracking-tight focus-visible:ring-0 p-0 h-auto text-sm italic"
                     />
+                    <div className="flex items-center gap-x-2 mt-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">ALGORITHM WEIGHT:</span>
+                        <span className="text-[10px] font-black text-primary font-mono bg-primary/5 px-2 py-0.5 rounded-sm">{c.weight}%</span>
+                    </div>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground opacity-20" />
+                  <div className="flex items-center gap-x-6">
+                    <div className="w-32">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 text-right">
+                        COMPUTED SCORE
+                      </p>
+                      <Input
+                        type="number"
+                        value={c.score}
+                        onChange={(e) => {
+                          const newComp = [...components];
+                          newComp[idx].score = Number(e.target.value);
+                          setComponents(newComp);
+                        }}
+                        className="text-right font-black text-foreground uppercase tracking-widest bg-card/40 backdrop-blur-md rounded-sm border-border h-10 text-xs focus:border-primary transition-all shadow-xl"
+                      />
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-primary opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Analytics Insight */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-none glass futuristic-card bg-blue-50/50 border-blue-100">
-          <CardHeader>
-            <CardTitle className="text-sm font-black flex items-center gap-x-2 text-blue-900">
+        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl">
+          <div className="absolute right-[-10px] top-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform">
+            <TrendingUp className="h-full w-full" />
+          </div>
+          <CardHeader className="p-0 mb-6">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-x-2">
               <Calculator className="h-4 w-4" />
               Projection Analysis
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-x-4">
-              <div className="h-12 w-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-lg">
+          <CardContent className="p-0">
+            <div className="flex items-start gap-x-6">
+              <div className="h-12 w-12 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg emerald-glow">
                 <TrendingUp className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-bold text-blue-900">
-                  Projected Final Grade: A
+                <p className="text-sm font-black text-foreground uppercase tracking-tight italic">
+                  Projected Final Grade: <span className="text-primary italic animate-pulse">A</span>
                 </p>
-                <p className="text-xs text-blue-800/60 mt-1">
-                  Based on current trajectory, the student will exceed class
-                  average by **8.4%**.
+                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-2 leading-loose">
+                  Current trajectory indicates a <span className="text-primary font-black underline underline-offset-4 decoration-primary/30">8.4%</span> deviation above the standard institutional average.
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-none glass futuristic-card bg-orange-50/50 border-orange-100">
-          <CardHeader>
-            <CardTitle className="text-sm font-black flex items-center gap-x-2 text-orange-900">
+        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl border-l-4 border-l-red-500/50">
+          <div className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-red-500 opacity-5 group-hover:scale-110 transition-transform text-red-500">
+            <AlertTriangle className="h-full w-full" />
+          </div>
+          <CardHeader className="p-0 mb-6">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/80 flex items-center gap-x-2">
               <AlertTriangle className="h-4 w-4" />
-              Neural Alert
+              Neural Anomaly Alert
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-x-4">
-              <div className="h-12 w-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-lg">
+          <CardContent className="p-0">
+            <div className="flex items-start gap-x-6">
+              <div className="h-12 w-12 rounded-sm bg-red-500/10 text-red-500 flex items-center justify-center shrink-0 shadow-lg border border-red-500/20">
                 <AlertTriangle className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-bold text-orange-900">
-                  Quizzes Below Threshold
+                <p className="text-sm font-black text-foreground uppercase tracking-tight italic">
+                  Critical Threshold Anomaly
                 </p>
-                <p className="text-xs text-orange-800/60 mt-1">
-                  Foundational concepts in **Unit 3** require reinforcement.
+                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-2 leading-loose">
+                  Syntactic pattern recognition in <span className="text-red-500/80 font-black px-2 py-0.5 bg-red-500/5 rounded-sm border border-red-500/10">UNIT 3</span> requires immediate reinforcement protocol.
                 </p>
               </div>
             </div>
