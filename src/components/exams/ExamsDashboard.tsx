@@ -27,6 +27,7 @@ interface ExamsDashboardProps {
     subjects: any[];
     academicYears: any[];
     students: any[];
+    userRole: string;
 }
 
 const locales = {
@@ -41,7 +42,7 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-export function ExamsDashboard({ exams, classes, subjects, academicYears, students }: ExamsDashboardProps) {
+export function ExamsDashboard({ exams, classes, subjects, academicYears, students, userRole }: ExamsDashboardProps) {
     const router = useRouter();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isMarksOpen, setIsMarksOpen] = useState(false);
@@ -146,66 +147,68 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                     <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Examination Hub</h2>
                     <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">Exam Scheduling, Marks Entry & Results Management</p>
                 </div>
-                <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto emerald-glow shadow-2xl text-[11px] gap-x-2">
-                            <Plus className="h-4 w-4" /> Create Exam
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                        <div className="bg-card/40 p-6 border-b border-border">
-                            <DialogTitle className="font-black text-2xl uppercase tracking-tight">Create Examination</DialogTitle>
-                            <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Register new assessment node</p>
-                        </div>
-                        <div className="p-6 space-y-6">
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Exam Name</Label>
-                                <Input value={examForm.name} onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} placeholder="e.g. Mid-Term Physics" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Subject</Label>
-                                    <Select value={examForm.subject_id} onValueChange={(v) => setExamForm({ ...examForm, subject_id: v })}>
-                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px]">
-                                            <SelectValue placeholder="Select" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-card/90 border-border">
-                                            {subjects.map(s => <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">{s.name}</SelectItem>)}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Target Sector (Class)</Label>
-                                    <Select value={examForm.class_id} onValueChange={(v) => setExamForm({ ...examForm, class_id: v })}>
-                                        <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px]">
-                                            <SelectValue placeholder="Select" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-card/90 border-border">
-                                            {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px]">{c.name}</SelectItem>)}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-6">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Date Node</Label>
-                                    <Input type="date" value={examForm.date} onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold" />
-                                </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Max Load</Label>
-                                    <Input type="number" value={examForm.max_marks} onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} className="rounded-sm bg-background/50 border-border font-black" />
-                                </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Pass Logic</Label>
-                                    <Input type="number" value={examForm.passing_marks} onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} className="rounded-sm bg-background/50 border-border font-black text-primary" />
-                                </div>
-                            </div>
-                            <Button onClick={handleCreateExam} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                {loading ? "Initializing..." : "Commit Examination"}
+                {(userRole === "admin" || userRole === "teacher") && (
+                    <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto emerald-glow shadow-2xl text-[11px] gap-x-2">
+                                <Plus className="h-4 w-4" /> Create Exam
                             </Button>
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                        </DialogTrigger>
+                        <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
+                            <div className="bg-card/40 p-6 border-b border-border">
+                                <DialogTitle className="font-black text-2xl uppercase tracking-tight">Create Examination</DialogTitle>
+                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Register new assessment node</p>
+                            </div>
+                            <div className="p-6 space-y-6">
+                                <div className="space-y-3">
+                                    <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Exam Name</Label>
+                                    <Input value={examForm.name} onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} placeholder="e.g. Mid-Term Physics" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Subject</Label>
+                                        <Select value={examForm.subject_id} onValueChange={(v) => setExamForm({ ...examForm, subject_id: v })}>
+                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px]">
+                                                <SelectValue placeholder="Select" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-card/90 border-border">
+                                                {subjects.map(s => <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">{s.name}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Target Sector (Class)</Label>
+                                        <Select value={examForm.class_id} onValueChange={(v) => setExamForm({ ...examForm, class_id: v })}>
+                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px]">
+                                                <SelectValue placeholder="Select" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-card/90 border-border">
+                                                {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px]">{c.name}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-6">
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Date Node</Label>
+                                        <Input type="date" value={examForm.date} onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold" />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Max Load</Label>
+                                        <Input type="number" value={examForm.max_marks} onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} className="rounded-sm bg-background/50 border-border font-black" />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Pass Logic</Label>
+                                        <Input type="number" value={examForm.passing_marks} onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} className="rounded-sm bg-background/50 border-border font-black text-primary" />
+                                    </div>
+                                </div>
+                                <Button onClick={handleCreateExam} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
+                                    {loading ? "Initializing..." : "Commit Examination"}
+                                </Button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </div>
 
             {/* Stats */}
@@ -341,12 +344,21 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                                     </td>
                                                     <td className="py-5 px-6 text-right">
                                                         <div className="flex items-center justify-end gap-x-2">
-                                                            <Button variant="outline" size="sm" onClick={() => handleOpenMarks(exam)} className="rounded-sm font-black text-[9px] uppercase tracking-widest h-9 border-primary/20 text-primary hover:bg-primary/10 px-4">
-                                                                <Pencil className="h-3 w-3 mr-1" /> MARKS
-                                                            </Button>
-                                                            <Button variant="outline" size="sm" onClick={() => handleDeleteExam(exam.id)} className="rounded-sm font-black text-[9px] uppercase tracking-widest h-9 border-red-500/20 text-red-500 hover:bg-red-500/10 px-3">
-                                                                <Trash2 className="h-3 w-3" />
-                                                            </Button>
+                                                            {(userRole === "admin" || userRole === "teacher") && (
+                                                                <>
+                                                                    <Button variant="outline" size="sm" onClick={() => handleOpenMarks(exam)} className="rounded-sm font-black text-[9px] uppercase tracking-widest h-9 border-primary/20 text-primary hover:bg-primary/10 px-4">
+                                                                        <Pencil className="h-3 w-3 mr-1" /> MARKS
+                                                                    </Button>
+                                                                    <Button variant="outline" size="sm" onClick={() => handleDeleteExam(exam.id)} className="rounded-sm font-black text-[9px] uppercase tracking-widest h-9 border-red-500/20 text-red-500 hover:bg-red-500/10 px-3">
+                                                                        <Trash2 className="h-3 w-3" />
+                                                                    </Button>
+                                                                </>
+                                                            )}
+                                                            {userRole === "student" && (
+                                                                <Button variant="ghost" size="sm" className="rounded-sm font-black text-[9px] uppercase tracking-widest h-9 text-primary/40 cursor-default hover:bg-transparent">
+                                                                    READ ONLY
+                                                                </Button>
+                                                            )}
                                                         </div>
                                                     </td>
                                                 </tr>

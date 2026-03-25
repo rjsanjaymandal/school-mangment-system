@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
+import { isAdmin } from "@/lib/auth-utils";
 
 export async function createTeacher(data: {
     first_name: string;
@@ -13,6 +14,9 @@ export async function createTeacher(data: {
     qualification: string;
 }) {
     try {
+        if (!(await isAdmin())) {
+            throw new Error("Unauthorized: Only administrators can create teacher records.");
+        }
         const supabase = createAdminClient();
 
         // 1. Create Auth User
@@ -89,6 +93,9 @@ export async function updateTeacher(
     }
 ) {
     try {
+        if (!(await isAdmin())) {
+            throw new Error("Unauthorized: Only administrators can update teacher records.");
+        }
         const supabase = createAdminClient();
 
         // 1. Update Auth User
@@ -143,6 +150,9 @@ export async function updateTeacher(
 
 export async function deleteTeacher(id: string) {
     try {
+        if (!(await isAdmin())) {
+            throw new Error("Unauthorized: Only administrators can delete teacher records.");
+        }
         const supabase = createAdminClient();
 
         // 1. Delete Teacher

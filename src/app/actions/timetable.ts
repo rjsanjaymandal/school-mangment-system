@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { isAdminOrTeacher } from "@/lib/auth-utils";
 
 // ===== TIMETABLE =====
 
@@ -16,6 +17,9 @@ export async function createTimetableSlot(data: {
     room_number?: string;
 }) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can modify the timetable.");
+        }
         const supabase = createAdminClient();
 
         // Ensure timetable exists for this class/day
@@ -78,6 +82,9 @@ export async function createTimetableSlot(data: {
 
 export async function deleteTimetableSlot(slotId: string) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can delete timetable slots.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("timetable_slots").delete().eq("id", slotId);
         if (error) throw error;

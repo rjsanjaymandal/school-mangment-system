@@ -29,6 +29,13 @@ export default async function ExamsPage() {
     .select("*, profile:profiles(*)")
     .order("admission_number");
 
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user?.id)
+    .single();
+
   return (
     <ExamsDashboard
       exams={exams || []}
@@ -36,7 +43,7 @@ export default async function ExamsPage() {
       subjects={subjects || []}
       academicYears={academicYears || []}
       students={students || []}
+      userRole={profile?.role || "student"}
     />
   );
 }
-

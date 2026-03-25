@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { isAdminOrTeacher } from "@/lib/auth-utils";
 
 // ===== EXAMS =====
 
@@ -15,6 +16,9 @@ export async function createExam(data: {
     passing_marks?: number;
 }) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can create exams.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("exams").insert(data);
         if (error) throw error;
@@ -35,6 +39,9 @@ export async function updateExam(id: string, data: {
     passing_marks?: number;
 }) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can update exams.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("exams").update(data).eq("id", id);
         if (error) throw error;
@@ -47,6 +54,9 @@ export async function updateExam(id: string, data: {
 
 export async function deleteExam(id: string) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can delete exams.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("exams").delete().eq("id", id);
         if (error) throw error;
@@ -66,6 +76,9 @@ export async function saveMarks(rows: {
     marks_obtained: number;
 }[]) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can save marks.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase
             .from("marks")

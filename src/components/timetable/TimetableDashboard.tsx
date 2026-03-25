@@ -42,9 +42,10 @@ interface TimetableDashboardProps {
     subjects: any[];
     teachers: any[];
     academicYears: any[];
+    userRole: string;
 }
 
-export function TimetableDashboard({ timetables, classes, subjects, teachers, academicYears }: TimetableDashboardProps) {
+export function TimetableDashboard({ timetables, classes, subjects, teachers, academicYears, userRole }: TimetableDashboardProps) {
     const router = useRouter();
     const [selectedDay, setSelectedDay] = useState("Monday");
     const [selectedClass, setSelectedClass] = useState(classes[0]?.id || "");
@@ -112,67 +113,69 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                             </SelectContent>
                         </Select>
                     )}
-                    <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="h-11 px-6 rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] gap-x-2 emerald-glow hover:translate-y-[-2px] transition-all duration-300">
-                                <Plus className="h-4 w-4" /> Commit Node
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-lg overflow-hidden ring-1 ring-primary/20">
-                            <div className="bg-primary p-8 text-primary-foreground">
-                                <DialogHeader>
-                                    <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Initialize Schedule Node</DialogTitle>
-                                    <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Temporal Resource Allocation</p>
-                                </DialogHeader>
-                            </div>
-                            <div className="p-8 space-y-6">
-                                <div className="p-4 rounded-sm bg-primary/5 border border-primary/10 flex items-start gap-x-4">
-                                    <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-primary">Target Allocation</p>
-                                        <p className="font-bold text-foreground">{selectedDay} — {classes.find((c: any) => c.id === selectedClass)?.name || "—"}</p>
-                                    </div>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Subject</Label>
-                                        <Select value={slotForm.subject_id} onValueChange={(v) => setSlotForm({ ...slotForm, subject_id: v })}>
-                                            <SelectTrigger className="bg-card/40 border-border rounded-sm h-11"><SelectValue placeholder="Select subject" /></SelectTrigger>
-                                            <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Personnel</Label>
-                                        <Select value={slotForm.teacher_id} onValueChange={(v) => setSlotForm({ ...slotForm, teacher_id: v })}>
-                                            <SelectTrigger className="bg-card/40 border-border rounded-sm h-11"><SelectValue placeholder="Select teacher" /></SelectTrigger>
-                                            <SelectContent>{teachers.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.profile?.first_name} {t.profile?.last_name}</SelectItem>)}</SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Activation Time</Label>
-                                        <Input type="time" className="bg-card/40 border-border rounded-sm h-11" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Termination Time</Label>
-                                        <Input type="time" className="bg-card/40 border-border rounded-sm h-11" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Location / Room Number</Label>
-                                    <Input className="bg-card/40 border-border rounded-sm h-11" value={slotForm.room_number} onChange={(e) => setSlotForm({ ...slotForm, room_number: e.target.value })} placeholder="Logistics Hub / Lab 302" />
-                                </div>
-
-                                <Button onClick={handleCreateSlot} disabled={loading} className="w-full h-14 rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs emerald-glow hover:translate-y-[-2px] transition-all">
-                                    {loading ? "INITIALIZING..." : "INITIALIZE NODE"}
+                    {(userRole === "admin" || userRole === "teacher") && (
+                        <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="h-11 px-6 rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] gap-x-2 emerald-glow hover:translate-y-[-2px] transition-all duration-300">
+                                    <Plus className="h-4 w-4" /> Commit Node
                                 </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                            </DialogTrigger>
+                            <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-lg overflow-hidden ring-1 ring-primary/20">
+                                <div className="bg-primary p-8 text-primary-foreground">
+                                    <DialogHeader>
+                                        <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Initialize Schedule Node</DialogTitle>
+                                        <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Temporal Resource Allocation</p>
+                                    </DialogHeader>
+                                </div>
+                                <div className="p-8 space-y-6">
+                                    <div className="p-4 rounded-sm bg-primary/5 border border-primary/10 flex items-start gap-x-4">
+                                        <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">Target Allocation</p>
+                                            <p className="font-bold text-foreground">{selectedDay} — {classes.find((c: any) => c.id === selectedClass)?.name || "—"}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Subject</Label>
+                                            <Select value={slotForm.subject_id} onValueChange={(v) => setSlotForm({ ...slotForm, subject_id: v })}>
+                                                <SelectTrigger className="bg-card/40 border-border rounded-sm h-11"><SelectValue placeholder="Select subject" /></SelectTrigger>
+                                                <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Personnel</Label>
+                                            <Select value={slotForm.teacher_id} onValueChange={(v) => setSlotForm({ ...slotForm, teacher_id: v })}>
+                                                <SelectTrigger className="bg-card/40 border-border rounded-sm h-11"><SelectValue placeholder="Select teacher" /></SelectTrigger>
+                                                <SelectContent>{teachers.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.profile?.first_name} {t.profile?.last_name}</SelectItem>)}</SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Activation Time</Label>
+                                            <Input type="time" className="bg-card/40 border-border rounded-sm h-11" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Termination Time</Label>
+                                            <Input type="time" className="bg-card/40 border-border rounded-sm h-11" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80 ml-1">Location / Room Number</Label>
+                                        <Input className="bg-card/40 border-border rounded-sm h-11" value={slotForm.room_number} onChange={(e) => setSlotForm({ ...slotForm, room_number: e.target.value })} placeholder="Logistics Hub / Lab 302" />
+                                    </div>
+
+                                    <Button onClick={handleCreateSlot} disabled={loading} className="w-full h-14 rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-xs emerald-glow hover:translate-y-[-2px] transition-all">
+                                        {loading ? "INITIALIZING..." : "INITIALIZE NODE"}
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    )}
                 </div>
             </div>
 
@@ -248,7 +251,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                 </div>
                                             </div>
                                         ))}
-                                        {matchingSlots.length === 0 && (
+                                        {matchingSlots.length === 0 && (userRole === "admin" || userRole === "teacher") && (
                                             <button 
                                                 onClick={() => { setSlotForm({ ...slotForm, start_time: time, end_time: `${String(parseInt(time) + 1).padStart(2, "0")}:00` }); setIsAddSlotOpen(true); }}
                                                 className="h-32 w-full rounded-sm border border-dashed border-primary/20 bg-primary/[0.02] flex items-center justify-center group hover:border-primary/60 hover:bg-primary/[0.05] transition-all duration-500"

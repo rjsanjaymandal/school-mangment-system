@@ -33,6 +33,13 @@ export default async function TimetablePage() {
     .select("*")
     .order("is_current", { ascending: false });
 
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user?.id)
+    .single();
+
   return (
     <TimetableDashboard
       timetables={timetables || []}
@@ -40,6 +47,7 @@ export default async function TimetablePage() {
       subjects={subjects || []}
       teachers={teachers || []}
       academicYears={academicYears || []}
+      userRole={profile?.role || "student"}
     />
   );
 }
