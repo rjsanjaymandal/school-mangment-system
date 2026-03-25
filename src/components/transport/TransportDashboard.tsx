@@ -32,9 +32,11 @@ interface TransportDashboardProps {
     routes: any[];
     stops: any[];
     assignments: any[];
+    userRole?: string | null;
 }
 
-export function TransportDashboard({ routes, stops, assignments }: TransportDashboardProps) {
+export function TransportDashboard({ routes, stops, assignments, userRole }: TransportDashboardProps) {
+    const isAdmin = userRole === "admin";
     const router = useRouter();
     const [isAddRouteOpen, setIsAddRouteOpen] = useState(false);
     const [isEditRouteOpen, setIsEditRouteOpen] = useState(false);
@@ -134,64 +136,66 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                     <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Fleet Logistics</h2>
                     <p className="text-foreground/70 font-bold tracking-tight">Autonomous routing and student transit monitoring</p>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                    <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-primary/20 text-primary bg-primary/10 gap-x-2 font-black uppercase text-[10px] emerald-glow-sm">
-                        <Wifi className="h-3 w-3 animate-pulse" /> {routes.length} Active Routes
-                    </Badge>
+                {isAdmin && (
+                    <div className="flex flex-wrap gap-3">
+                        <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-primary/20 text-primary bg-primary/10 gap-x-2 font-black uppercase text-[10px] emerald-glow-sm">
+                            <Wifi className="h-3 w-3 animate-pulse" /> {routes.length} Active Routes
+                        </Badge>
 
-                    <StudentAssignmentDialog routes={routes} stops={stops} />
+                        <StudentAssignmentDialog routes={routes} stops={stops} />
 
-                    <Dialog open={isAddRouteOpen} onOpenChange={setIsAddRouteOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow uppercase tracking-widest text-[10px] min-w-[140px]">
-                                <Plus className="h-4 w-4" /> Add Route
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-lg overflow-hidden ring-1 ring-primary/20">
-                            <div className="bg-primary p-8 text-primary-foreground">
-                                <DialogHeader>
-                                    <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Initialize Logistics Channel</DialogTitle>
-                                    <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Fleet Expansion & Routing</p>
-                                </DialogHeader>
-                            </div>
-                            <div className="space-y-4 pt-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Route Name</Label>
-                                        <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="East Wing Express" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Route Number</Label>
-                                        <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="E-01" />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Name</Label>
-                                        <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="John Doe" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Phone</Label>
-                                        <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+91..." />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Vehicle Plate</Label>
-                                        <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="MH-12-AB-1234" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Total Capacity</Label>
-                                        <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} />
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreateRoute} disabled={loading} className="w-full rounded-sm py-6 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs">
-                                    {loading ? "Creating..." : "Generate Route"}
+                        <Dialog open={isAddRouteOpen} onOpenChange={setIsAddRouteOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow uppercase tracking-widest text-[10px] min-w-[140px]">
+                                    <Plus className="h-4 w-4" /> Add Route
                                 </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                            </DialogTrigger>
+                            <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-lg overflow-hidden ring-1 ring-primary/20">
+                                <div className="bg-primary p-8 text-primary-foreground">
+                                    <DialogHeader>
+                                        <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Initialize Logistics Channel</DialogTitle>
+                                        <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Fleet Expansion & Routing</p>
+                                    </DialogHeader>
+                                </div>
+                                <div className="space-y-4 pt-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Route Name</Label>
+                                            <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="East Wing Express" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Route Number</Label>
+                                            <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="E-01" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Name</Label>
+                                            <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="John Doe" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Phone</Label>
+                                            <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+91..." />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Vehicle Plate</Label>
+                                            <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="MH-12-AB-1234" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Total Capacity</Label>
+                                            <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} />
+                                        </div>
+                                    </div>
+                                    <Button onClick={handleCreateRoute} disabled={loading} className="w-full rounded-sm py-6 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs">
+                                        {loading ? "Creating..." : "Generate Route"}
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 lg:grid-cols-12">
@@ -242,24 +246,26 @@ export function TransportDashboard({ routes, stops, assignments }: TransportDash
                                                     )}>{route.route_number || "CHL-00"}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-x-1">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={(e) => openEditRoute(route, e)}
-                                                    className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-white" : "text-muted-foreground hover:text-foreground")}
-                                                >
-                                                    <Edit2 className="h-3 w-3" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={(e) => { e.stopPropagation(); handleDeleteRoute(route.id); }}
-                                                    className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-red-400" : "text-muted-foreground hover:text-red-500")}
-                                                >
-                                                    <Trash2 className="h-3 w-3" />
-                                                </Button>
-                                            </div>
+                                            {isAdmin && (
+                                                <div className="flex items-center gap-x-1">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={(e) => openEditRoute(route, e)}
+                                                        className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-white" : "text-muted-foreground hover:text-foreground")}
+                                                    >
+                                                        <Edit2 className="h-3 w-3" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteRoute(route.id); }}
+                                                        className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-red-400" : "text-muted-foreground hover:text-red-500")}
+                                                    >
+                                                        <Trash2 className="h-3 w-3" />
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className={cn(

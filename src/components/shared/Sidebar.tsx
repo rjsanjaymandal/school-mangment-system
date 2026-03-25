@@ -73,7 +73,7 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Students", href: "/students", icon: GraduationCap },
       { name: "Staff HR", href: "/teachers", icon: UserSquare2, roles: ["admin"] },
-      { name: "Attendance", href: "/attendance", icon: ClipboardCheck },
+      { name: "Attendance", href: "/attendance", icon: ClipboardCheck, roles: ["admin", "teacher", "student"] },
       { name: "Conduct", href: "/conduct", icon: ShieldAlert },
       { name: "Health", href: "/health", icon: Stethoscope },
       {

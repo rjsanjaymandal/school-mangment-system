@@ -131,8 +131,17 @@ export default function CertificatesDashboardClient({
                         <Dialog open={open} onOpenChange={setOpen}>
                             <DialogTrigger asChild>
                                 <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 py-6 h-auto emerald-glow shadow-2xl hover:scale-105 transition-all">
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Issue Certificate
+                                    {isAdminOrTeacher ? (
+                                        <>
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            Issue Certificate
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Award className="h-4 w-4 mr-2" />
+                                            Request Certificate
+                                        </>
+                                    )}
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px] bg-card border-primary/20 rounded-sm">

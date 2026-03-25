@@ -163,10 +163,10 @@ export function FeesDashboard({
                 <div>
                     <div className="inline-flex items-center gap-x-2 px-3 py-1 rounded-sm bg-primary/10 text-primary border border-primary/20 mb-4">
                         <span className="h-1.5 w-1.5 rounded-sm bg-primary animate-pulse shadow-sm shadow-primary/50" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">Treasury Live</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">{isStudent ? "Financial Record" : "Treasury Live"}</span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Finance & Payroll</h2>
-                    <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">Enterprise Treasury and HR Finance Management</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">{isStudent ? "My Ledger" : "Finance & Payroll"}</h2>
+                    <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">{isStudent ? "Individual Fee Structure and Transaction History" : "Enterprise Treasury and HR Finance Management"}</p>
                 </div>
                 {!isStudent && (
                     <div className="flex gap-x-4">

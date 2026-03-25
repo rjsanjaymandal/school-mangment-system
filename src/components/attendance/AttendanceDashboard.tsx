@@ -57,7 +57,8 @@ export function AttendanceDashboard({
                 const result = await getAttendanceByClassAndDate(classes[0].id, historyDate);
                 if (result.success && result.data) {
                     // For student, filter to only their own record
-                    setHistoryRecords(result.data.filter((r: any) => r.student_id === students[0]?.id));
+                    const studentId = students[0]?.id;
+                    setHistoryRecords(result.data.filter((r: any) => r.student_id === studentId));
                 }
                 setHistoryLoading(false);
             };
@@ -218,10 +219,10 @@ export function AttendanceDashboard({
                 <div>
                     <div className="inline-flex items-center gap-x-2 px-3 py-1 rounded-sm bg-primary/10 text-primary border border-primary/20 mb-4">
                         <span className="h-1.5 w-1.5 rounded-sm bg-primary animate-pulse shadow-sm shadow-primary/50" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Live Registry</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{isStudent ? "Individual Record" : "Live Registry"}</span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Attendance Portal</h2>
-                    <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">Real-Time Precision Tracking & Analytics</p>
+                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">{isStudent ? "My Attendance" : "Attendance Portal"}</h2>
+                    <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">{isStudent ? "Comprehensive scholarly presence logs" : "Real-Time Precision Tracking & Analytics"}</p>
                 </div>
             </div>
 
