@@ -7,6 +7,8 @@ export async function createSubject(data: {
     name: string;
     code: string;
     description?: string;
+    syllabus?: any;
+    credits?: number;
 }) {
     try {
         const supabase = createAdminClient();
@@ -23,6 +25,8 @@ export async function updateSubject(id: string, data: Partial<{
     name: string;
     code: string;
     description: string;
+    syllabus: any;
+    credits: number;
 }>) {
     try {
         const supabase = createAdminClient();

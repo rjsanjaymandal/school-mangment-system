@@ -38,7 +38,7 @@ export default function GradebookDashboard({
       ? initialGrades.map((g: any) => ({
           id: g.id,
           label: g.exam?.name || "Assessment",
-          weight: 100 / initialGrades.length, // Rough distribution for now
+          weight: 100 / initialGrades.length,
           score: g.marks_obtained,
         }))
       : [
@@ -59,209 +59,155 @@ export default function GradebookDashboard({
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-            Academic Performance Ledger
-          </h2>
-          <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-            Weighted Computation & Neural Academic Analytics
-          </p>
-        </div>
-        <div className="flex gap-x-3">
-          <Button
-            variant="outline"
-            className="rounded-sm border-border bg-transparent font-black uppercase tracking-widest text-[10px] px-6 h-12 hover:bg-primary/5 transition-all flex items-center gap-x-2"
-          >
-            <Download className="h-4 w-4" />
-            Export Transcript
-          </Button>
-          {isAdminOrTeacher && (
-            <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-12 emerald-glow transition-all hover:bg-primary/90 flex items-center gap-x-2">
-              <Save className="h-4 w-4" />
-              Synchronize Grades
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* GPA Summary Card */}
-        <Card className="lg:col-span-1 border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl">
-          <div className="absolute right-[-10px] bottom-[-10px] h-32 w-32 text-primary opacity-10 group-hover:scale-110 transition-transform">
-            <GraduationCap className="h-full w-full" />
-          </div>
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              Cumulative Index (GPA)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 space-y-8">
-            <div className="flex items-baseline gap-x-4">
-              <h3 className="text-7xl font-black tracking-tighter text-primary group-hover:emerald-glow transition-all italic">
-                {gpa}
-              </h3>
-              <Badge className="bg-primary text-primary-foreground emerald-glow border-none text-xl font-black px-4 py-1 rounded-sm uppercase tracking-widest italic">
-                {gradeLetter}
-              </Badge>
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-foreground/40">
-                <span>MASTERY PROGRESSION</span>
-                <span>{gpa}%</span>
-              </div>
-              <Progress
-                value={gpa}
-                className="h-2 bg-primary/10 rounded-none"
-                indicatorClassName="bg-primary emerald-glow"
-              />
-            </div>
-            <div className="pt-6 border-t border-border/50 flex items-center gap-x-3">
-              <div className="h-2 w-2 rounded-full bg-primary emerald-glow animate-pulse" />
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/40">
-                VALIDATED BY NEURAL ENGINE V2.4
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Grade Weighting Calculator */}
-        <Card className="lg:col-span-2 border-border bg-card/40 backdrop-blur-xl rounded-sm shadow-2xl overflow-hidden">
-          <CardHeader className="p-6 border-b border-border/50 flex flex-row items-center justify-between bg-primary/5">
-            <div>
-              <CardTitle className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-x-2">
-                <Calculator className="h-4 w-4" />
-                Assessment Parameters
-              </CardTitle>
-              <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 mt-1">
-                Weighted Allocation Matrix
-              </p>
-            </div>
-            {isAdminOrTeacher && (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="font-black text-[10px] tracking-widest uppercase hover:bg-primary/10 text-primary hover:text-primary transition-all rounded-sm px-4"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Initialize Schema
-              </Button>
-            )}
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-border/30">
-              {components.map((c, idx) => (
-                <div
-                  key={c.id}
-                  className="group flex items-center gap-x-6 p-6 hover:bg-primary/5 transition-colors border-border/50"
-                >
-                  <div className="h-12 w-12 shrink-0 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-black text-xs shadow-lg group-hover:emerald-glow-sm transition-all italic">
-                    0{idx + 1}
-                  </div>
-                  <div className="flex-1">
-                    <Input
-                      readOnly={!isAdminOrTeacher}
-                      value={c.label}
-                      onChange={(e) => {
-                        const newComp = [...components];
-                        newComp[idx].label = e.target.value;
-                        setComponents(newComp);
-                      }}
-                      className={cn(
-                        "bg-transparent border-none font-black text-foreground uppercase tracking-tight focus-visible:ring-0 p-0 h-auto text-sm italic",
-                        !isAdminOrTeacher && "cursor-default"
-                      )}
-                    />
-                    <div className="flex items-center gap-x-2 mt-1">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">ALGORITHM WEIGHT:</span>
-                        <span className="text-[10px] font-black text-primary font-mono bg-primary/5 px-2 py-0.5 rounded-sm">{c.weight}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-x-6">
-                    <div className="w-32">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 text-right">
-                        COMPUTED SCORE
-                      </p>
-                      <Input
-                        readOnly={!isAdminOrTeacher}
-                        type="number"
-                        value={c.score}
-                        onChange={(e) => {
-                          const newComp = [...components];
-                          newComp[idx].score = Number(e.target.value);
-                          setComponents(newComp);
-                        }}
-                        className={cn(
-                          "text-right font-black text-foreground uppercase tracking-widest bg-card/40 backdrop-blur-md rounded-sm border-border h-10 text-xs focus:border-primary transition-all shadow-xl",
-                          !isAdminOrTeacher && "cursor-default border-transparent bg-transparent shadow-none"
-                        )}
-                      />
-                    </div>
-                    {isAdminOrTeacher && <ChevronRight className="h-4 w-4 text-primary opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />}
-                  </div>
+    <div className="space-y-12 reveal-1 w-full max-w-7xl mx-auto">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Statistics Pillar */}
+        <div className="lg:w-[400px] space-y-8">
+            <div className="relative group glass-card p-10 transition-all duration-700 hover:emerald-border-glow overflow-hidden shadow-2xl shadow-emerald-500/5">
+                <div className="absolute -right-6 -bottom-6 h-48 w-48 text-emerald-500 opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
+                    <GraduationCap className="h-full w-full" />
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                
+                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-10 group-hover:tracking-[0.6em] transition-all italic">
+                    Master_GPA_Protocol
+                </p>
 
-      {/* Analytics Insight */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl">
-          <div className="absolute right-[-10px] top-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform">
-            <TrendingUp className="h-full w-full" />
-          </div>
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-primary flex items-center gap-x-2">
-              <Calculator className="h-4 w-4" />
-              Projection Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="flex items-start gap-x-6">
-              <div className="h-12 w-12 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg emerald-glow">
-                <TrendingUp className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-black text-foreground uppercase tracking-tight italic">
-                  Projected Final Grade: <span className="text-primary italic animate-pulse">A</span>
-                </p>
-                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-2 leading-loose">
-                  Current trajectory indicates a <span className="text-primary font-black underline underline-offset-4 decoration-primary/30">8.4%</span> deviation above the standard institutional average.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex items-baseline gap-x-6 mb-12">
+                    <h3 className="text-9xl font-black tracking-tighter text-foreground italic leading-none group-hover:text-emerald-500 transition-colors">
+                        {gpa}
+                    </h3>
+                    <div className="px-6 py-3 bg-emerald-500 text-white text-2xl font-black italic rounded-sm shadow-[0_0_40px_oklch(var(--emerald-500)/0.3)] skew-x-[-12deg]">
+                        <span className="not-skew-x inline-block">{gradeLetter}</span>
+                    </div>
+                </div>
 
-        <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl border-l-4 border-l-red-500/50">
-          <div className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-red-500 opacity-5 group-hover:scale-110 transition-transform text-red-500">
-            <AlertTriangle className="h-full w-full" />
-          </div>
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/80 flex items-center gap-x-2">
-              <AlertTriangle className="h-4 w-4" />
-              Neural Anomaly Alert
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="flex items-start gap-x-6">
-              <div className="h-12 w-12 rounded-sm bg-red-500/10 text-red-500 flex items-center justify-center shrink-0 shadow-lg border border-red-500/20">
-                <AlertTriangle className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-black text-foreground uppercase tracking-tight italic">
-                  Critical Threshold Anomaly
-                </p>
-                <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-2 leading-loose">
-                  Syntactic pattern recognition in <span className="text-red-500/80 font-black px-2 py-0.5 bg-red-500/5 rounded-sm border border-red-500/10">UNIT 3</span> requires immediate reinforcement protocol.
-                </p>
-              </div>
+                <div className="space-y-6">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40 italic">
+                        <span>Computational Integrity</span>
+                        <span className="text-emerald-500">{gpa}% Optimal</span>
+                    </div>
+                    <div className="h-2 w-full bg-white/5 rounded-none overflow-hidden skew-x-[-12deg]">
+                        <div 
+                            className="h-full bg-emerald-500 shadow-[0_0_20px_oklch(var(--emerald-500))] transition-all duration-1000"
+                            style={{ width: `${gpa}%` }}
+                        />
+                    </div>
+                </div>
+
+                <div className="mt-12 pt-10 border-t border-white/5 grid grid-cols-2 gap-8">
+                    <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 italic">Global Percentile</p>
+                        <p className="text-2xl font-black italic text-foreground tracking-tighter leading-none decoration-emerald-500/30 underline underline-offset-8">Top 2%</p>
+                    </div>
+                    <div>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 italic">Current Batch</p>
+                        <p className="text-2xl font-black italic text-emerald-500 tracking-tighter leading-none">PRIME</p>
+                    </div>
+                </div>
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="glass-panel p-2 rounded-sm border border-emerald-500/10 group hover:border-emerald-500/30 transition-all duration-700">
+                <div className="p-6 bg-white/5 space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 italic">Registry Ops</h4>
+                        <TrendingUp className="h-4 w-4 text-emerald-500 animate-pulse" />
+                    </div>
+                    <Button variant="ghost" className="w-full justify-start h-16 bg-white/5 border border-white/5 hover:border-emerald-500/40 rounded-none font-black text-[10px] uppercase tracking-[0.3em] gap-x-4 transition-all hover:translate-x-2 skew-x-[-12deg]">
+                        <span className="not-skew-x flex items-center gap-x-4">
+                            <Download className="h-4 w-4 text-emerald-500" />
+                            Decrypt PDF Transcript
+                        </span>
+                    </Button>
+                    <Button variant="ghost" className="w-full justify-start h-16 bg-white/5 border border-white/5 hover:border-emerald-500/40 rounded-none font-black text-[10px] uppercase tracking-[0.3em] gap-x-4 transition-all hover:translate-x-2 skew-x-[-12deg]">
+                        <span className="not-skew-x flex items-center gap-x-4">
+                            <Save className="h-4 w-4 text-emerald-500" />
+                            Force Institutional Sync
+                        </span>
+                    </Button>
+                </div>
+            </div>
+        </div>
+
+        {/* Evaluation Pillar */}
+        <div className="lg:flex-1 space-y-12">
+            <div className="glass-panel p-2 rounded-sm border border-white/10 overflow-hidden shadow-2xl shadow-emerald-500/5">
+                <div className="bg-background/40 backdrop-blur-3xl p-10">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                        <div>
+                            <h3 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Strategic <span className="text-emerald-500">Matrix</span></h3>
+                            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic">Protocol: Weighted Assessment Allocation</p>
+                        </div>
+                        {isAdminOrTeacher && (
+                            <Button className="h-14 px-10 bg-emerald-500 text-white font-black rounded-sm shadow-[0_0_40px_oklch(var(--emerald-500)/0.2)] emerald-border-glow uppercase tracking-[0.3em] text-[9px] skew-x-[-12deg] transition-all hover:scale-105">
+                                <span className="not-skew-x flex items-center gap-x-3">
+                                    Initialize Segment
+                                    <Plus className="h-4 w-4" />
+                                </span>
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="space-y-4">
+                        {components.map((c, idx) => (
+                            <div key={c.id} className="group relative flex items-center justify-between p-8 rounded-none bg-white/5 border border-white/5 hover:border-emerald-500/40 hover:bg-white/10 transition-all duration-500 overflow-hidden skew-x-[-8deg] ml-4">
+                                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                
+                                <div className="not-skew-x flex items-center gap-x-8 relative z-10 w-full justify-between">
+                                    <div className="flex items-center gap-x-8">
+                                        <div className="h-14 w-14 rounded-none bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 font-black text-xs italic group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-[0_0_20px_oklch(var(--emerald-500)/0)] group-hover:shadow-[0_0_20px_oklch(var(--emerald-500)/0.4)]">
+                                            {String(idx + 1).padStart(2, '0')}
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-foreground uppercase tracking-tight text-lg group-hover:text-emerald-500 transition-colors italic">
+                                                {c.label}
+                                            </p>
+                                            <div className="flex items-center gap-x-4 mt-2 opacity-30 group-hover:opacity-100 transition-opacity font-bold italic">
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500">Weight: {c.weight}%</span>
+                                                <div className="h-1 w-1 rounded-full bg-emerald-500" />
+                                                <span className="text-[9px] font-black uppercase tracking-[0.2em]">Node-UID: {c.id.slice(0, 8)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-x-12">
+                                        <div className="text-right">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 italic">Matrix Score</p>
+                                            <div className="flex items-baseline gap-x-3">
+                                                <span className="text-4xl font-black italic text-foreground leading-none group-hover:text-emerald-500 transition-colors tracking-tighter">{c.score}</span>
+                                                <span className="text-emerald-500/40 font-black text-[12px] leading-none uppercase italic">/ 100</span>
+                                            </div>
+                                        </div>
+                                        <div className="h-12 w-px bg-white/10 group-hover:bg-emerald-500/30 transition-colors" />
+                                        <ChevronRight className="h-5 w-5 text-emerald-500/20 group-hover:text-emerald-500 group-hover:translate-x-2 transition-all" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="glass-card p-12 group relative border-l-4 border-l-emerald-500/50 overflow-hidden shadow-2xl shadow-emerald-500/5">
+                    <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:rotate-12 transition-transform duration-1000">
+                        <TrendingUp className="h-24 w-24 text-emerald-500" />
+                    </div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-8 italic">Master Projection</h4>
+                    <p className="text-lg font-black text-foreground uppercase tracking-tight italic leading-tight max-w-[280px]">
+                        Projected Path: <span className="text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-sm shadow-[0_0_20px_oklch(var(--emerald-500)/0.2)] italic underline decoration-emerald-500/30 font-black tracking-tighter">Prime Distinction (92%)</span>
+                    </p>
+                </div>
+                <div className="glass-card p-12 group relative border-l-4 border-l-orange-500/50 overflow-hidden shadow-2xl shadow-orange-500/5">
+                    <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:rotate-12 transition-transform duration-1000">
+                        <AlertTriangle className="h-24 w-24 text-orange-500" />
+                    </div>
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.5em] text-orange-500 mb-8 italic">Neural Optimization</h4>
+                    <p className="text-lg font-black text-foreground uppercase tracking-tight italic leading-tight max-w-[280px]">
+                        Heuristic Alert: <span className="text-white bg-orange-500 px-3 py-1 rounded-sm italic shadow-[0_0_20px_oklch(var(--orange-500)/0.2)] font-black tracking-tighter">Anomaly Module 4</span>
+                    </p>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
   );

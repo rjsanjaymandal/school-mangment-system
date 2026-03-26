@@ -34,7 +34,7 @@ export interface Subject {
   id: string;
   name: string;
   code?: string;
-  description?: string;
+  description?: string; syllabus?: any; credits?: number;
   created_at: string;
 }
 
@@ -90,7 +90,7 @@ export interface Fee {
   amount: number;
   due_date?: string;
   class_id?: string;
-  description?: string;
+  description?: string; syllabus?: any; credits?: number;
   created_at: string;
 }
 
@@ -247,7 +247,7 @@ export interface StudentConduct {
   type: "merit" | "demerit";
   points: number;
   category: "Discipline" | "Academics" | "Sports" | "Leadership";
-  description?: string;
+  description?: string; syllabus?: any; credits?: number;
   incident_date: string;
   created_at: string;
   student?: Student;
@@ -313,7 +313,7 @@ export interface InfirmaryLog {
 export interface Activity {
   id: string;
   name: string;
-  description?: string;
+  description?: string; syllabus?: any; credits?: number;
   category?: string;
   teacher_in_charge?: string;
   location?: string;
@@ -351,7 +351,7 @@ export interface ActivityEnrollment {
 export interface InventoryCategory {
   id: string;
   name: string;
-  description?: string;
+  description?: string; syllabus?: any; credits?: number;
   created_at: string;
 }
 

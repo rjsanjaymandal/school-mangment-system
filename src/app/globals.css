@@ -48,102 +48,99 @@
 }
 
 :root {
-  --radius: 0.25rem; /* Sharp edges for "Command Center" vibe */
-  --background: oklch(0.98 0 0);
-  --foreground: oklch(0.15 0.02 165); /* Very dark emerald grey */
+  --radius: 0rem; /* Ultra-sharp for pure brutalist/command-center feel */
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.12 0.03 165);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 165);
+  --card-foreground: oklch(0.12 0.03 165);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 165);
-  --primary: oklch(0.45 0.15 165); /* Emerald Green */
+  --popover-foreground: oklch(0.12 0.03 165);
+  --primary: oklch(0.48 0.18 165); /* Vibrant Pure Emerald */
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.94 0.03 165); /* Soft Emerald Tint */
-  --secondary-foreground: oklch(0.25 0.08 165);
-  --muted: oklch(0.94 0.03 165);
-  --muted-foreground: oklch(0.45 0.05 165);
-  --accent: oklch(0.94 0.03 165);
-  --accent-foreground: oklch(0.25 0.08 165);
-  --destructive: oklch(0.55 0.2 25);
-  --border: oklch(0.88 0.03 165);
-  --input: oklch(0.88 0.03 165);
-  --ring: oklch(0.45 0.15 165);
-  --primary-rgb: 16, 185, 129;
-  --accent-rgb: 31, 41, 55;
+  --secondary: oklch(0.96 0.02 165);
+  --secondary-foreground: oklch(0.2 0.05 165);
+  --muted: oklch(0.96 0.02 165);
+  --muted-foreground: oklch(0.4 0.05 165);
+  --accent: oklch(0.96 0.02 165);
+  --accent-foreground: oklch(0.2 0.05 165);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0.92 0.02 165);
+  --input: oklch(0.92 0.02 165);
+  --ring: oklch(0.48 0.18 165);
   --chart-1: oklch(0.6 0.15 165);
   --chart-2: oklch(0.5 0.15 165);
   --chart-3: oklch(0.4 0.15 165);
   --chart-4: oklch(0.3 0.15 165);
   --chart-5: oklch(0.2 0.15 165);
   --sidebar: oklch(0.99 0 0);
-  --sidebar-foreground: oklch(0.15 0.02 165);
-  --sidebar-primary: oklch(0.45 0.15 165);
+  --sidebar-foreground: oklch(0.12 0.03 165);
+  --sidebar-primary: oklch(0.48 0.18 165);
   --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.94 0.03 165);
-  --sidebar-accent-foreground: oklch(0.45 0.15 165);
-  --sidebar-border: oklch(0.92 0.02 165);
-  --sidebar-ring: oklch(0.45 0.15 165);
+  --sidebar-accent: oklch(0.96 0.02 165);
+  --sidebar-accent-foreground: oklch(0.48 0.18 165);
+  --sidebar-border: oklch(0.94 0.02 165);
+  --sidebar-ring: oklch(0.48 0.18 165);
 }
 
 .dark {
-  --background: oklch(0.1 0.02 165); /* Darker Onyx for more contrast */
-  --foreground: oklch(0.98 0.01 165); /* Almost pure white for crisp text */
-  --card: oklch(0.14 0.02 165);
-  --card-foreground: oklch(0.98 0.01 165);
-  --popover: oklch(0.14 0.02 165);
-  --popover-foreground: oklch(0.98 0.01 165);
-  --primary: oklch(0.75 0.18 165); /* Brighter Emerald for high contrast */
-  --primary-foreground: oklch(0.05 0.02 165); /* Darker text on bright background */
-  --secondary: oklch(0.2 0.04 165);
-  --secondary-foreground: oklch(0.9 0.05 165);
-  --muted: oklch(0.18 0.03 165);
-  --muted-foreground: oklch(0.8 0.05 165); /* Much lighter muted text */
-  --accent: oklch(0.2 0.04 165);
-  --accent-foreground: oklch(0.95 0.05 165);
+  --background: oklch(0.06 0.02 165); /* Deep Deep Obsidian */
+  --foreground: oklch(0.99 0.01 165);
+  --card: oklch(0.09 0.02 165); /* Raised obsidian but still dark */
+  --card-foreground: oklch(0.99 0.01 165);
+  --popover: oklch(0.09 0.02 165);
+  --popover-foreground: oklch(0.99 0.01 165);
+  --primary: oklch(0.82 0.18 165); /* Neon Emerald */
+  --primary-foreground: oklch(0.05 0.02 165);
+  --secondary: oklch(0.12 0.04 165);
+  --secondary-foreground: oklch(0.95 0.05 165);
+  --muted: oklch(0.12 0.04 165);
+  --muted-foreground: oklch(0.7 0.05 165);
+  --accent: oklch(0.15 0.04 165);
+  --accent-foreground: oklch(0.99 0.01 165);
   --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.25 0.03 165);
-  --input: oklch(0.25 0.03 165);
-  --ring: oklch(0.75 0.18 165);
-  --sidebar: oklch(0.08 0.02 165);
-  --sidebar-foreground: oklch(0.98 0.01 165);
-  --sidebar-primary: oklch(0.75 0.18 165);
+  --border: oklch(0.15 0.03 165);
+  --input: oklch(0.15 0.03 165);
+  --ring: oklch(0.82 0.18 165);
+  --sidebar: oklch(0.07 0.02 165);
+  --sidebar-foreground: oklch(0.99 0.01 165);
+  --sidebar-primary: oklch(0.82 0.18 165);
   --sidebar-primary-foreground: oklch(0.05 0.02 165);
-  --sidebar-accent: oklch(0.18 0.03 165);
-  --sidebar-accent-foreground: oklch(0.75 0.18 165);
-  --sidebar-border: oklch(0.2 0.03 165);
-  --sidebar-ring: oklch(0.75 0.18 165);
+  --sidebar-accent: oklch(0.15 0.04 165);
+  --sidebar-accent-foreground: oklch(0.82 0.18 165);
+  --sidebar-border: oklch(0.12 0.03 165);
+  --sidebar-ring: oklch(0.82 0.18 165);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border/50 outline-ring/50;
   }
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/20;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-card/80 backdrop-blur-2xl border border-border shadow-2xl;
+  .glass-panel {
+    @apply bg-background/40 backdrop-blur-3xl border border-white/5 shadow-2xl;
   }
   
-  .glass-dark {
-    @apply bg-background/90 backdrop-blur-2xl border border-border/50 shadow-2xl;
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)];
   }
 
-  .premium-shadow {
-    box-shadow: 0 0 0 1px oklch(var(--border)),
-                0 4px 6px -1px oklch(0 0 0 / 0.1),
-                0 2px 4px -2px oklch(0 0 0 / 0.1);
+  .emerald-border-glow {
+    @apply border-primary/30 shadow-[0_0_15px_-3px_oklch(var(--primary)/0.2)];
   }
 
-  .emerald-glow {
-    @apply shadow-[0_0_20px_-5px_oklch(var(--primary)/0.3)];
+  .text-neon {
+    text-shadow: 0 0 10px oklch(var(--primary)/0.5);
   }
 
-  .text-balance {
-    text-wrap: balance;
+  .premium-transition {
+    @apply transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 

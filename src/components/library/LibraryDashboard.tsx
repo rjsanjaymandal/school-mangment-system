@@ -9,6 +9,7 @@ import {
     Plus,
     Package,
     ArrowRightLeft,
+    AlertTriangle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -87,110 +88,174 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
     );
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between">
-                <div>
-                    <div className="inline-flex items-center gap-x-2 px-3 py-1 rounded-sm bg-primary/10 text-primary border border-primary/20 mb-4">
-                        <span className="h-1.5 w-1.5 rounded-sm bg-primary animate-pulse shadow-sm shadow-primary/50" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">Repository Live</span>
+        <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
+            {/* Background Matrix Mesh */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
+
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
+                <div className="flex items-center gap-x-8">
+                    <div className="h-20 w-20 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_40px_rgba(16,185,129,0.15)] skew-x-[-12deg] group hover:bg-primary hover:text-primary-foreground transition-all duration-700">
+                        <Library className="h-10 w-10 skew-x-[12deg] transition-all duration-700" />
                     </div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Logistics & Repository</h2>
-                    <p className="text-foreground/60 font-medium tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">Institutional Archive and Asset Management System</p>
+                    <div>
+                        <div className="relative">
+                            <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
+                                Logistics <span className="text-primary italic">& Repository</span>
+                            </h2>
+                            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
+                        </div>
+                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
+                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
+                            Institutional Archive Management & Precision Asset Indexing
+                        </p>
+                    </div>
                 </div>
+
                 {isStaff && (
-                    <div className="flex gap-x-4">
+                    <div className="flex gap-x-4 skew-x-[-12deg]">
                         <Dialog open={isIssueOpen} onOpenChange={setIsIssueOpen}>
                             <DialogTrigger asChild>
-                                <Button variant="outline" className="rounded-sm border-primary/20 bg-background font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 hover:bg-primary/5 hover:border-primary/40 transition-all">
-                                    <ArrowRightLeft className="h-4 w-4" /> Issue Command
+                                <Button variant="outline" className="h-16 px-10 rounded-none border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary uppercase font-black tracking-[0.2em] text-[11px] transition-all group">
+                                    <span className="not-skew-x flex items-center gap-3">
+                                        <ArrowRightLeft className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" /> ISSUE_COMMAND
+                                    </span>
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                                <div className="bg-card/40 p-6 border-b border-border">
-                                    <DialogTitle className="font-black text-2xl uppercase tracking-tight">Initiate Lending Protocol</DialogTitle>
-                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Assign repository item to personnel</p>
-                                </div>
-                                <div className="p-6 space-y-6">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Repository Item (Book)</Label>
-                                        <Select value={issueForm.book_id} onValueChange={(v) => setIssueForm({ ...issueForm, book_id: v })}>
-                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
-                                                <SelectValue placeholder="Select book" />
-                                            </SelectTrigger>
-                                            <SelectContent className="bg-card/90 border-border">
-                                                {books.filter(b => b.available_copies > 0).map(b => (
-                                                    <SelectItem key={b.id} value={b.id} className="font-bold uppercase text-[10px]">
-                                                        {b.title} ({b.available_copies} AVAILABLE)
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                            <DialogContent className="p-0 border-none bg-transparent skew-x-[-12deg] max-w-2xl overflow-visible">
+                                <div className="relative glass-panel border-primary/20 p-12 shadow-[0_0_100px_rgba(16,185,129,0.1)] overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl -mr-16 -mt-16" />
+                                    
+                                    <div className="not-skew-x relative z-10">
+                                        <div className="not-skew-x flex justify-between items-start mb-10">
+                                            <div>
+                                                <DialogTitle className="font-black italic text-4xl uppercase tracking-tighter text-foreground leading-none">
+                                                    Lending <span className="text-primary italic">Protocol_Initiation</span>
+                                                </DialogTitle>
+                                                <div className="h-1 w-20 bg-primary/40 mt-4 skew-x-[-24deg]" />
+                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Assign repository node to personnel profile</p>
+                                            </div>
+                                            <Button variant="ghost" size="icon" onClick={() => setIsIssueOpen(false)} className="text-primary/40 hover:text-primary hover:bg-primary/10 -mt-4 -mr-4 rounded-none">
+                                                <Plus className="h-6 w-6 rotate-45" />
+                                            </Button>
+                                        </div>
+
+                                        <div className="space-y-8">
+                                            <div className="space-y-3">
+                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] flex items-center gap-2 italic">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" /> REPOSITORY_NODE_SELECTION
+                                                </Label>
+                                                <Select value={issueForm.book_id} onValueChange={(v) => setIssueForm({ ...issueForm, book_id: v })}>
+                                                    <SelectTrigger className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 focus:ring-primary/20 font-mono font-black uppercase text-[11px] tracking-widest transition-all">
+                                                        <SelectValue placeholder="SELECT_VOID" />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
+                                                        {books.filter(b => b.available_copies > 0).map(b => (
+                                                            <SelectItem key={b.id} value={b.id} className="font-mono font-black uppercase text-[10px] tracking-widest focus:bg-primary focus:text-primary-foreground italic py-3 cursor-pointer">
+                                                                {b.title} [AVAIL: {b.available_copies}]
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] flex items-center gap-2 italic">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" /> RECIPIENT_PERSONNEL_AUTH
+                                                </Label>
+                                                <Select value={issueForm.student_id} onValueChange={(v) => setIssueForm({ ...issueForm, student_id: v })}>
+                                                    <SelectTrigger className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 focus:ring-primary/20 font-mono font-black uppercase text-[11px] tracking-widest transition-all">
+                                                        <SelectValue placeholder="SELECT_VOID" />
+                                                    </SelectTrigger>
+                                                    <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
+                                                        {students.map(s => (
+                                                            <SelectItem key={s.id} value={s.id} className="font-mono font-black uppercase text-[10px] tracking-widest focus:bg-primary focus:text-primary-foreground italic py-3 cursor-pointer">
+                                                                {s.profile?.first_name} {s.profile?.last_name} [ID: {s.admission_number}]
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            <div className="space-y-3 pb-4">
+                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] flex items-center gap-2 italic">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" /> MATURITY_DATE_LOCK
+                                                </Label>
+                                                <Input type="date" value={issueForm.due_date} onChange={(e) => setIssueForm({ ...issueForm, due_date: e.target.value })} className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all" />
+                                            </div>
+
+                                            <Button onClick={handleIssueBook} disabled={loading} className="w-full h-18 rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-xs border border-primary/20 gap-3">
+                                                {loading ? "PROCESSING_LINK..." : "AUTHORIZE_PROTOCOL_COMMIT"}
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Recipient Personnel</Label>
-                                        <Select value={issueForm.student_id} onValueChange={(v) => setIssueForm({ ...issueForm, student_id: v })}>
-                                            <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold uppercase text-[10px] h-11">
-                                                <SelectValue placeholder="Select student" />
-                                            </SelectTrigger>
-                                            <SelectContent className="bg-card/90 border-border">
-                                                {students.map(s => (
-                                                    <SelectItem key={s.id} value={s.id} className="font-bold uppercase text-[10px]">
-                                                        {s.profile?.first_name} {s.profile?.last_name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Return Maturity Date</Label>
-                                        <Input type="date" value={issueForm.due_date} onChange={(e) => setIssueForm({ ...issueForm, due_date: e.target.value })} className="rounded-sm bg-background/50 border-border font-bold h-11" />
-                                    </div>
-                                    <Button onClick={handleIssueBook} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                        {loading ? "Processing..." : "Commit Lending Command"}
-                                    </Button>
+
+                                    {/* Matrix Label */}
+                                    <div className="absolute -left-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">DEPLOY</div>
                                 </div>
                             </DialogContent>
                         </Dialog>
 
                         <Dialog open={isAddBookOpen} onOpenChange={setIsAddBookOpen}>
                             <DialogTrigger asChild>
-                                <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] px-8 py-6 h-auto text-[11px] gap-x-2 emerald-glow shadow-2xl">
-                                    <Plus className="h-4 w-4" /> Add Repository Node
+                                <Button className="h-16 px-10 rounded-none bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] emerald-glow shadow-2xl hover:scale-105 transition-all group">
+                                    <span className="not-skew-x flex items-center gap-3">
+                                        <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> ADD_REPOSITORY_NODE
+                                    </span>
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="bg-background border border-border max-w-lg rounded-sm p-0 overflow-hidden">
-                                <div className="bg-card/40 p-6 border-b border-border">
-                                    <DialogTitle className="font-black text-2xl uppercase tracking-tight">Index New Item</DialogTitle>
-                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Add book entry to institutional repository</p>
-                                </div>
-                                <div className="p-6 space-y-6">
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Item Title</Label>
-                                            <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="Book title" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
+                            <DialogContent className="p-0 border-none bg-transparent skew-x-[-12deg] max-w-2xl overflow-visible">
+                                <div className="relative glass-panel border-primary/20 p-12 shadow-[0_0_100px_rgba(16,185,129,0.1)] overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 blur-3xl -ml-16 -mt-16" />
+                                    
+                                    <div className="not-skew-x relative z-10">
+                                        <div className="not-skew-x flex justify-between items-start mb-10">
+                                            <div>
+                                                <DialogTitle className="font-black italic text-4xl uppercase tracking-tighter text-foreground leading-none">
+                                                    Index <span className="text-primary italic">Repository_Node</span>
+                                                </DialogTitle>
+                                                <div className="h-1 w-20 bg-primary/40 mt-4 skew-x-[-24deg]" />
+                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Append new asset node to institutional archive</p>
+                                            </div>
+                                            <Button variant="ghost" size="icon" onClick={() => setIsAddBookOpen(false)} className="text-primary/40 hover:text-primary hover:bg-primary/10 -mt-4 -mr-4 rounded-none">
+                                                <Plus className="h-6 w-6 rotate-45" />
+                                            </Button>
                                         </div>
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Author / Creator</Label>
-                                            <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="Author name" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
+
+                                        <div className="space-y-8">
+                                            <div className="grid grid-cols-2 gap-8">
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">NODE_TITLE</Label>
+                                                    <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="TITLE_ID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">AUTH_CREATOR</Label>
+                                                    <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="AUTHOR_NAME" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-3 gap-8">
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">ISBN_ID</Label>
+                                                    <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="KEY_VALUE" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">CLASS_SECTOR</Label>
+                                                    <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="SECTOR_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">STOCK_UNITS</Label>
+                                                    <Input type="number" value={bookForm.total_copies} onChange={(e) => setBookForm({ ...bookForm, total_copies: e.target.value })} className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black tabular-nums transition-all" />
+                                                </div>
+                                            </div>
+
+                                            <Button onClick={handleCreateBook} disabled={loading} className="w-full h-18 rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-xs border border-primary/20 gap-3 mt-4">
+                                                {loading ? "INDEXING_LINK..." : "COMMIT_ARCHIVE_NODE"}
+                                            </Button>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-3 gap-6">
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">ISBN / ID</Label>
-                                            <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="ISBN" className="rounded-sm bg-background/50 border-border font-black text-xs h-11" />
-                                        </div>
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Classification</Label>
-                                            <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="Science" className="rounded-sm bg-background/50 border-border font-bold uppercase text-xs h-11" />
-                                        </div>
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Stock Units</Label>
-                                            <Input type="number" value={bookForm.total_copies} onChange={(e) => setBookForm({ ...bookForm, total_copies: e.target.value })} className="rounded-sm bg-background/50 border-border font-black text-sm h-11" />
-                                        </div>
-                                    </div>
-                                    <Button onClick={handleCreateBook} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow shadow-xl text-[11px] mt-2">
-                                        {loading ? "Indexing..." : "Index Repository Node"}
-                                    </Button>
+
+                                    {/* Matrix Label */}
+                                    <div className="absolute -right-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">ARCHIVE</div>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -198,17 +263,82 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                 )}
             </div>
 
-            <Tabs defaultValue="library" className="space-y-6">
-                <TabsList className="bg-card/40 backdrop-blur-xl border border-border p-1 rounded-sm h-14 w-fit">
-                    <TabsTrigger value="library" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2 emerald-glow">
-                        <Library className="h-4 w-4" /> Repository
+            {/* Matrix Stats Grid */}
+            <div className="grid gap-8 md:grid-cols-4 reveal-2 relative z-10">
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-primary/10 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Registry_Index</p>
+                                <h3 className="text-4xl font-black text-foreground italic leading-none">{books.length}</h3>
+                            </div>
+                            <Book className="h-8 w-8 text-primary shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-primary group-hover:opacity-10 transition-all duration-700">INDEX</div>
+                    </div>
+                </div>
+
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-blue-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-blue-500/10 group-hover:border-blue-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Active_Deployments</p>
+                                <h3 className="text-4xl font-black text-blue-500 italic leading-none">{transactions.filter(t => t.status === "issued").length}</h3>
+                            </div>
+                            <ArrowRightLeft className="h-8 w-8 text-blue-500/40 group-hover:text-blue-500 transition-colors" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-blue-500/40 group-hover:opacity-10 transition-all duration-700">HELD</div>
+                    </div>
+                </div>
+
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-amber-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-amber-500/10 group-hover:border-amber-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Critical_Stock</p>
+                                <h3 className="text-4xl font-black text-amber-500 italic leading-none">{inventoryItems.filter(i => i.quantity_in_stock <= (i.min_stock_level || 5)).length}</h3>
+                            </div>
+                            <Package className="h-8 w-8 text-amber-500/40 group-hover:text-amber-500 transition-colors" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-amber-500/40 group-hover:opacity-10 transition-all duration-700">LOW</div>
+                    </div>
+                </div>
+
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-red-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-red-500/10 group-hover:border-red-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Overdue_Latency</p>
+                                <h3 className="text-4xl font-black text-red-500 italic leading-none">{transactions.filter(t => t.status === "issued" && new Date(t.due_date) < new Date()).length}</h3>
+                            </div>
+                            <AlertTriangle className="h-8 w-8 text-red-500/40 group-hover:text-red-500 transition-colors" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-red-500/40 group-hover:opacity-10 transition-all duration-700">OVER</div>
+                    </div>
+                </div>
+            </div>
+
+            <Tabs defaultValue="library" className="space-y-12 relative z-10">
+                <TabsList className="bg-transparent border-none p-0 h-auto w-full justify-start gap-4 skew-x-[-12deg]">
+                    <TabsTrigger value="library" className="h-16 px-10 rounded-none border border-primary/10 bg-card/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] transition-all emerald-glow">
+                        <span className="not-skew-x flex items-center gap-3">
+                            <Library className="h-4 w-4" /> REPOSITORY
+                        </span>
                     </TabsTrigger>
-                    <TabsTrigger value="transactions" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                        <ArrowRightLeft className="h-4 w-4" /> {isStaff ? "Protocol Logs" : "My Borrowing History"}
+                    <TabsTrigger value="transactions" className="h-16 px-10 rounded-none border border-primary/10 bg-card/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] transition-all">
+                        <span className="not-skew-x flex items-center gap-3">
+                            <ArrowRightLeft className="h-4 w-4" /> {isStaff ? "PROTOCOL_LOGS" : "MY_BORROWING"}
+                        </span>
                     </TabsTrigger>
                     {isStaff && (
-                        <TabsTrigger value="inventory" className="rounded-sm px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-2">
-                            <Package className="h-4 w-4" /> Inventory
+                        <TabsTrigger value="inventory" className="h-16 px-10 rounded-none border border-primary/10 bg-card/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] transition-all">
+                            <span className="not-skew-x flex items-center gap-3">
+                                <Package className="h-4 w-4" /> INVENTORY
+                            </span>
                         </TabsTrigger>
                     )}
                 </TabsList>
@@ -221,35 +351,57 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                         </div>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
                         {filteredBooks.length === 0 ? (
-                            <div className="bg-card/40 backdrop-blur-xl border border-border col-span-full p-20 flex flex-col items-center justify-center text-center rounded-sm">
-                                <Book className="h-12 w-12 text-primary/20 mb-4" />
-                                <p className="text-foreground/40 font-black uppercase tracking-widest text-xs">Repository is currently void.</p>
-                                <p className="text-[9px] font-black text-primary/40 uppercase tracking-[0.2em] mt-2">Initialize new nodes to populate the archive.</p>
+                            <div className="bg-card/20 backdrop-blur-3xl border border-primary/10 col-span-full p-32 flex flex-col items-center justify-center text-center skew-x-[-12deg]">
+                                <div className="not-skew-x flex flex-col items-center">
+                                    <Book className="h-20 w-20 text-primary/10 mb-8 animate-pulse" />
+                                    <p className="text-foreground/40 font-mono font-black uppercase tracking-[0.5em] text-xs underline decoration-primary/20 underline-offset-8">Repository_Void</p>
+                                    <p className="text-[10px] font-mono font-black text-primary/30 uppercase tracking-[0.3em] mt-6 italic">Initialize new nodes to populate the institutional archive.</p>
+                                </div>
                             </div>
                         ) : (
                             filteredBooks.map((book) => (
-                                <div key={book.id} className="group relative overflow-hidden bg-card/40 backdrop-blur-xl border border-border p-6 rounded-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-3xl -mr-12 -mt-12" />
-                                    <div className="flex items-start justify-between mb-6 relative z-10">
-                                        <div className="h-12 w-12 rounded-sm bg-card text-white flex items-center justify-center shadow-lg border border-primary/20">
-                                            <Book className="h-6 w-6" />
+                                <div key={book.id} className="group relative skew-x-[-12deg] transition-all duration-700 hover:-translate-y-2 hover:translate-x-2">
+                                    <div className="absolute inset-0 bg-primary/5 -z-10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 rounded-none shadow-2xl overflow-hidden">
+                                        <div className="not-skew-x">
+                                            <div className="flex items-start justify-between mb-10">
+                                                <div className="h-16 w-16 bg-background/50 border border-primary/10 flex items-center justify-center text-primary shadow-inner group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">
+                                                    <Book className="h-8 w-8" />
+                                                </div>
+                                                <div className={cn(
+                                                    "px-3 py-1 font-mono font-black text-[10px] uppercase tracking-[0.2em] italic border skew-x-[12deg]",
+                                                    book.available_copies > 0 ? "bg-primary/5 text-primary border-primary/20" : "bg-red-500/5 text-red-500 border-red-500/20"
+                                                )}>
+                                                    <span className="inline-block skew-x-[-12deg]">
+                                                        {book.available_copies > 0 ? `${book.available_copies}_AVAIL` : "DEPLETED"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="space-y-3 mb-8">
+                                                <h4 className="font-black italic text-foreground text-2xl uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors line-clamp-2">{book.title}</h4>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="h-1 w-4 bg-primary/20" />
+                                                    <p className="text-[10px] font-mono font-black text-foreground/40 uppercase tracking-[0.3em]">Authority: {book.author}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-primary/5">
+                                                <div>
+                                                    <p className="text-[8px] font-mono font-black text-foreground/20 uppercase tracking-widest mb-1">CLASSIFICATION</p>
+                                                    <p className="text-[10px] font-mono font-black text-primary uppercase tracking-widest italic">{book.category || "GENERAL"}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[8px] font-mono font-black text-foreground/20 uppercase tracking-widest mb-1">TOTAL_NODES</p>
+                                                    <p className="font-mono font-black text-foreground/60 text-lg tabular-nums tracking-tighter italic">{book.total_copies}</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className={cn(
-                                            "inline-flex items-center px-2 py-1 rounded-sm font-black text-[9px] uppercase tracking-widest border",
-                                            book.available_copies > 0 ? "bg-primary/10 text-primary border-primary/20" : "bg-red-500/10 text-red-500 border-red-500/20"
-                                        )}>
-                                            {book.available_copies > 0 ? `${book.available_copies} UNITS` : "DEPLETED"}
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1 mb-6 relative z-10">
-                                        <h4 className="font-black text-foreground text-lg uppercase tracking-tight leading-tight group-hover:text-primary transition-colors">{book.title}</h4>
-                                        <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Authority: {book.author}</p>
-                                    </div>
-                                    <div className="flex items-center justify-between pt-4 border-t border-border relative z-10">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/60">{book.category || "GENERAL"}</span>
-                                        <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40">Total Nodes: {book.total_copies}</span>
+                                        
+                                        {/* Matrix Background Label */}
+                                        <div className="absolute -right-6 -bottom-6 opacity-5 font-mono text-[60px] font-black italic text-primary/20 pointer-events-none uppercase">NODE</div>
                                     </div>
                                 </div>
                             ))
@@ -258,105 +410,124 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                 </TabsContent>
 
                 <TabsContent value="transactions" className="mt-0">
-                    <div className="bg-card/40 backdrop-blur-xl border border-border rounded-sm overflow-hidden shadow-2xl shadow-primary/5">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead className="bg-foreground/5 border-b border-border">
-                                    <tr>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Repository Item</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Recipient</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Initialize Date</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Due Cycle</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Protocol Status</th>
-                                        {isStaff && <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Actions</th>}
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {transactions.length === 0 ? (
-                                        <tr><td colSpan={6} className="py-20 text-center text-foreground/30 font-black uppercase tracking-widest text-xs">No lending protocols in effect.</td></tr>
-                                    ) : (
-                                        transactions.map((tx) => (
-                                            <tr key={tx.id} className="hover:bg-white/5 transition-colors group">
-                                                <td className="py-6 px-8">
-                                                    <span className="font-black text-foreground uppercase text-[11px] tracking-tight">{tx.book?.title || "—"}</span>
-                                                </td>
-                                                <td className="py-6 px-8 flex flex-col">
-                                                    <span className="font-black text-foreground/70 uppercase text-[10px] tracking-widest">{tx.student?.profile?.first_name} {tx.student?.profile?.last_name}</span>
-                                                    <span className="text-[9px] font-black text-primary/40 uppercase tracking-widest">{tx.student?.admission_number}</span>
-                                                </td>
-                                                <td className="py-6 px-8 text-foreground/40 font-black text-[10px] tracking-widest">{tx.issue_date}</td>
-                                                <td className="py-6 px-8 text-foreground/40 font-black text-[10px] tracking-widest italic">{tx.due_date}</td>
-                                                <td className="py-6 px-8">
-                                                    <div className={cn(
-                                                        "inline-flex items-center px-3 py-1 rounded-sm font-black text-[9px] uppercase tracking-widest border",
-                                                        tx.status === "issued" ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
-                                                            tx.status === "returned" ? "bg-primary/10 text-primary border-primary/20" :
-                                                                "bg-red-500/10 text-red-500 border-red-500/20"
-                                                    )}>
-                                                        {tx.status}
-                                                    </div>
-                                                </td>
-                                                {isStaff && (
-                                                    <td className="py-6 px-8 text-right">
-                                                        {tx.status === "issued" && (
-                                                            <Button size="sm" variant="ghost" onClick={() => handleReturn(tx.id)} className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 px-4">
-                                                                Terminate
-                                                            </Button>
-                                                        )}
-                                                        {tx.fine_amount > 0 && (
-                                                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest ml-4 italic underline decoration-dim">Penalty: ₹{tx.fine_amount}</span>
-                                                        )}
+                    <div className="relative skew-x-[-12deg] transition-all duration-700">
+                        <div className="absolute inset-0 bg-primary/5 -z-10 blur-3xl opacity-50" />
+                        <div className="relative glass-panel border-primary/10 rounded-none shadow-2xl overflow-hidden">
+                            <div className="not-skew-x overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-primary/5 border-b border-primary/10">
+                                        <tr>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Reposit_Node</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Personnel_ID</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Deployment_Date</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Duration_Cycle</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Status_Flag</th>
+                                            {isStaff && <th className="text-right py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Operations</th>}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-primary/5">
+                                        {transactions.length === 0 ? (
+                                            <tr><td colSpan={6} className="py-32 text-center text-foreground/20 font-black uppercase tracking-[0.5em] text-xs skew-x-[12deg]">Protocol_History_Null</td></tr>
+                                        ) : (
+                                            transactions.map((tx) => (
+                                                <tr key={tx.id} className="hover:bg-primary/[0.02] transition-colors group">
+                                                    <td className="py-8 px-10">
+                                                        <div className="flex flex-col">
+                                                            <span className="font-black text-foreground italic uppercase text-sm tracking-tighter group-hover:text-primary transition-colors">{tx.book?.title || "—"}</span>
+                                                            <span className="text-[9px] font-mono font-black text-foreground/30 uppercase tracking-widest mt-1">ISBN: {tx.book?.isbn || "—"}</span>
+                                                        </div>
                                                     </td>
-                                                )}
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                                                    <td className="py-8 px-10 flex flex-col">
+                                                        <span className="font-black text-foreground/70 uppercase text-[11px] tracking-widest italic">{tx.student?.profile?.first_name} {tx.student?.profile?.last_name}</span>
+                                                        <span className="text-[9px] font-mono font-black text-primary/40 uppercase tracking-widest mt-1">ID: {tx.student?.admission_number}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <span className="font-mono font-black text-foreground/40 text-[10px] tracking-widest uppercase italic">{tx.issue_date}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <span className="font-mono font-black text-foreground/40 text-[10px] tracking-widest uppercase italic">{tx.due_date}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <div className={cn(
+                                                            "inline-flex items-center px-4 py-1.5 rounded-none font-mono font-black text-[9px] uppercase tracking-[0.2em] border skew-x-[12deg]",
+                                                            tx.status === "issued" ? "bg-blue-500/5 text-blue-500 border-blue-500/20" :
+                                                                tx.status === "returned" ? "bg-primary/5 text-primary border-primary/20" :
+                                                                    "bg-red-500/5 text-red-500 border-red-500/20"
+                                                        )}>
+                                                            <span className="inline-block skew-x-[-12deg]">{tx.status}</span>
+                                                        </div>
+                                                    </td>
+                                                    {isStaff && (
+                                                        <td className="py-8 px-10 text-right">
+                                                            <div className="flex flex-col items-end gap-2">
+                                                                {tx.status === "issued" && (
+                                                                    <Button size="sm" variant="outline" onClick={() => handleReturn(tx.id)} className="h-10 px-6 rounded-none border-primary/20 hover:bg-primary hover:text-primary-foreground font-black text-[10px] uppercase tracking-widest transition-all skew-x-[12deg]">
+                                                                        <span className="inline-block skew-x-[-12deg]">TERMINATE</span>
+                                                                    </Button>
+                                                                )}
+                                                                {tx.fine_amount > 0 && (
+                                                                    <span className="animate-pulse text-[10px] font-black text-red-500 uppercase tracking-widest italic bg-red-500/5 px-2 py-1">LATENCY_FEE: ₹{tx.fine_amount}</span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    )}
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </TabsContent>
 
                 <TabsContent value="inventory" className="mt-0">
-                    <div className="bg-card/40 backdrop-blur-xl border border-border rounded-sm overflow-hidden shadow-2xl shadow-primary/5">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead className="bg-foreground/5 border-b border-border">
-                                    <tr>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Asset Item</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Sector</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Volume</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Unit Val</th>
-                                        <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-primary/60">Asset Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {inventoryItems.length === 0 ? (
-                                        <tr><td colSpan={5} className="py-20 text-center text-foreground/30 font-black uppercase tracking-widest text-xs">Inventory sector is empty.</td></tr>
-                                    ) : (
-                                        inventoryItems.map((item) => (
-                                            <tr key={item.id} className="hover:bg-white/5 transition-colors group">
-                                                <td className="py-6 px-8">
-                                                    <span className="font-black text-foreground uppercase text-[11px] tracking-tight">{item.name}</span>
-                                                </td>
-                                                <td className="py-6 px-8">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{item.category || "—"}</span>
-                                                </td>
-                                                <td className="py-6 px-8 font-black text-foreground text-sm tracking-tighter">{item.quantity_in_stock}</td>
-                                                <td className="py-6 px-8 font-black text-foreground/70 text-sm tracking-tight italic">₹{Number(item.unit_price).toLocaleString("en-IN")}</td>
-                                                <td className="py-6 px-8">
-                                                    <div className={cn(
-                                                        "inline-flex items-center px-3 py-1 rounded-sm font-black text-[9px] uppercase tracking-widest border",
-                                                        item.quantity_in_stock <= (item.min_stock_level || 5) ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-primary/10 text-primary border-primary/20"
-                                                    )}>
-                                                        {item.quantity_in_stock <= (item.min_stock_level || 5) ? "LOW STOCK" : "STABLE"}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                    <div className="relative skew-x-[-12deg] transition-all duration-700">
+                        <div className="absolute inset-0 bg-primary/5 -z-10 blur-3xl opacity-50" />
+                        <div className="relative glass-panel border-primary/10 rounded-none shadow-2xl overflow-hidden">
+                            <div className="not-skew-x overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-primary/5 border-b border-primary/10">
+                                        <tr>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Asset_Item_Node</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Containment_Sector</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Volume_Depth</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Unit_Valuation</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Operational_Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-primary/5">
+                                        {inventoryItems.length === 0 ? (
+                                            <tr><td colSpan={5} className="py-32 text-center text-foreground/20 font-black uppercase tracking-[0.5em] text-xs skew-x-[12deg]">Inventory_Grid_Empty</td></tr>
+                                        ) : (
+                                            inventoryItems.map((item) => (
+                                                <tr key={item.id} className="hover:bg-primary/[0.02] transition-colors group">
+                                                    <td className="py-8 px-10">
+                                                        <span className="font-black text-foreground italic uppercase text-sm tracking-tighter group-hover:text-primary transition-colors">{item.name}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <span className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-foreground/40 italic">{item.category || "GENERAL_ASSET"}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <span className="font-mono font-black text-foreground text-lg tracking-tighter tabular-nums italic group-hover:text-primary transition-colors">{item.quantity_in_stock}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <span className="font-mono font-black text-foreground/50 text-[11px] tracking-widest uppercase italic tabular-nums">₹{Number(item.unit_price).toLocaleString("en-IN")}</span>
+                                                    </td>
+                                                    <td className="py-8 px-10">
+                                                        <div className={cn(
+                                                            "inline-flex items-center px-4 py-1.5 rounded-none font-mono font-black text-[9px] uppercase tracking-[0.2em] border skew-x-[12deg]",
+                                                            item.quantity_in_stock <= (item.min_stock_level || 5) ? "bg-red-500/5 text-red-500 border-red-500/20" : "bg-primary/5 text-primary border-primary/20"
+                                                        )}>
+                                                            <span className="inline-block skew-x-[-12deg]">{item.quantity_in_stock <= (item.min_stock_level || 5) ? "CRITICAL_LOW" : "STABLE_DEPLOYMENT"}</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </TabsContent>

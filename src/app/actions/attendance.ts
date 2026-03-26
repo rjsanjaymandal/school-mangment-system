@@ -72,3 +72,19 @@ export async function getAttendanceSummary(classId: string, month: number, year:
         return { success: false, error: error.message, data: [] };
     }
 }
+
+export async function getStudentAttendance(studentId: string) {
+    try {
+        const supabase = createAdminClient();
+        const { data, error } = await supabase
+            .from("attendance")
+            .select("*")
+            .eq("student_id", studentId)
+            .order("date", { ascending: false });
+
+        if (error) throw error;
+        return { success: true, data: data || [] };
+    } catch (error: any) {
+        return { success: false, error: error.message, data: [] };
+    }
+}

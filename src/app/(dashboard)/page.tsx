@@ -96,36 +96,36 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-10">
-      <div className="flex items-center justify-between reveal-0">
+    <div className="space-y-12 animate-in fade-in transition-all duration-1000">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
         <div>
-          <div className="flex items-center gap-x-2 mb-2">
-            <Badge
-              variant="outline"
-              className="text-[10px] font-black uppercase tracking-[0.2em] border-primary/20 text-primary bg-primary/5 rounded-xs px-2 py-0.5"
-            >
-              System Online
-            </Badge>
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse emerald-glow" />
+          <div className="flex items-center gap-x-3 mb-4">
+             <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-x-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
+                System Heartbeat: Optimal
+             </div>
+             <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Node ID: MYS-01</span>
           </div>
-          <h2 className="text-5xl font-black tracking-tight text-foreground">
-            Dashboard
+          <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+            Registry <span className="text-primary tracking-normal not-italic">/</span> Overview
           </h2>
-          <p className="text-foreground/80 font-bold tracking-tight mt-1">
-            Intelligence orchestration for{" "}
-            <span className="text-primary font-black uppercase tracking-wider">
-              Edu Maysan Enterprise
-            </span>
+          <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
+             <BrainCircuit className="h-3 w-3 text-primary" />
+             Neural Intelligence Orchestration Layer
           </p>
         </div>
         <div className="flex items-center gap-x-4">
-          <button className="p-3 rounded-xs bg-card border border-border shadow-lg hover:border-primary/50 transition-all group reveal-1">
-            <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+          <button className="p-4 rounded-sm bg-white/5 border border-white/10 shadow-2xl hover:border-primary/50 transition-all group reveal-1 relative overflow-hidden">
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Bell className="h-5 w-5 text-foreground/60 group-hover:text-primary transition-colors relative z-10" />
           </button>
-          <Link href="/analytics" className="reveal-2">
-            <button className="flex items-center gap-x-2 bg-primary text-primary-foreground px-6 py-3 rounded-xs shadow-2xl hover:bg-primary/90 transition-all font-black text-xs uppercase tracking-[0.2em] emerald-glow">
-              <BrainCircuit className="h-4 w-4" />
-              Neural Engine
+          <Link href="/oracle" className="reveal-2">
+            <button className="relative group px-10 py-5 bg-primary text-primary-foreground rounded-sm overflow-hidden emerald-border-glow transition-all duration-500 hover:scale-105 active:scale-95">
+              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
+              <div className="flex items-center gap-x-3 relative z-10 font-black text-xs uppercase tracking-[0.3em]">
+                <Zap className="h-4 w-4 animate-pulse" />
+                Initiate Oracle
+              </div>
             </button>
           </Link>
         </div>
@@ -133,147 +133,166 @@ export default async function DashboardPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 reveal-1">
         {stats.map((stat, i) => (
-          <Card
+          <div
             key={stat.title}
-            className={`border-border bg-card/40 backdrop-blur-md rounded-sm group hover:border-primary/50 transition-all duration-500 overflow-hidden relative shadow-2xl`}
+            className="group relative glass-card p-8 transition-all duration-700 hover:emerald-border-glow hover:-translate-y-2 overflow-hidden"
           >
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-              <stat.icon className="h-12 w-12" />
+            <div className="absolute -right-4 -top-4 p-8 opacity-5 group-hover:opacity-20 group-hover:rotate-12 transition-all duration-700">
+              <stat.icon className="h-20 w-20 text-primary" />
             </div>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-              <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/70 group-hover:text-primary transition-colors">
-                {stat.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="relative z-10">
-              <div className="flex items-baseline gap-x-3">
-                <div className="text-4xl font-black text-foreground tracking-tighter">
-                  {stat.value}
-                </div>
-                <div className="flex items-center text-xs font-black text-primary">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  {stat.trend}
-                </div>
+            
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mb-6 group-hover:text-primary group-hover:tracking-[0.5em] transition-all">
+              {stat.title}
+            </p>
+
+            <div className="flex items-end gap-x-4">
+              <h3 className="text-5xl font-black text-foreground tracking-tighter leading-none">
+                {stat.value}
+              </h3>
+              <div className="flex items-center text-[10px] font-black text-primary bg-primary/10 px-2 py-1 rounded-xs border border-primary/20 mb-1">
+                 {stat.trend}
               </div>
-              <p className="text-[10px] text-foreground/50 font-black uppercase tracking-widest mt-2 group-hover:text-foreground/80 transition-colors">
-                {stat.description}
-              </p>
-              <div className="mt-4 h-1 w-full bg-accent/20 rounded-full overflow-hidden">
-                <div className="h-full bg-primary emerald-glow w-2/3 group-hover:w-full transition-all duration-1000" />
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="mt-8 space-y-2">
+               <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-foreground/40">
+                  <span>Operational Load</span>
+                  <span>{stat.trend}</span>
+               </div>
+               <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary shadow-[0_0_15px_oklch(var(--primary))] transition-all duration-1000 group-hover:w-full" 
+                    style={{ width: '65%' }} 
+                  />
+               </div>
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3 reveal-2">
-        <div className="lg:col-span-1 border-border bg-card/40 backdrop-blur-md rounded-sm p-6 shadow-2xl">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="font-black text-foreground flex items-center gap-x-3 text-xs uppercase tracking-[0.4em]">
-              <div className="p-1.5 bg-primary/10 rounded-xs">
-                <Zap className="h-4 w-4 text-primary" />
+      <div className="grid gap-8 lg:grid-cols-3 reveal-2">
+        <div className="lg:col-span-1 glass-card p-8 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50" />
+          <div className="flex justify-between items-center mb-10 relative z-10">
+            <h3 className="font-black text-foreground flex items-center gap-x-4 text-[11px] uppercase tracking-[0.5em]">
+              <div className="p-2 bg-primary/10 rounded-sm border border-primary/20 shadow-inner">
+                <Activity className="h-4 w-4 text-primary animate-pulse" />
               </div>
-              Live Stream
+              Live Telemetry
             </h3>
-            <Badge
-              variant="outline"
-              className="text-[10px] font-black tracking-widest border-primary/20 text-primary bg-primary/5 rounded-none px-2"
-            >
-              SYNCED
-            </Badge>
+            <div className="flex items-center gap-x-2">
+               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
+               <span className="text-[9px] font-black text-primary uppercase tracking-widest">Channel Active</span>
+            </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 relative z-10">
             {activityFeed.map((event, i) => (
               <div
                 key={i}
-                className="flex gap-x-4 items-start p-4 rounded-xs bg-accent/30 border border-transparent hover:border-border hover:bg-accent/50 transition-all cursor-pointer group"
+                className="group/item flex gap-x-5 items-center p-4 rounded-sm bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all duration-500 cursor-pointer"
               >
-                <div className="h-10 w-10 rounded-xs bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-lg group-hover:scale-105 transition-transform">
-                  <event.icon className="h-4 w-4" />
+                <div className="h-12 w-12 rounded-sm bg-background border border-border group-hover/item:border-primary/40 flex items-center justify-center shrink-0 shadow-2xl transition-all group-hover/item:scale-110 group-hover/item:rotate-3">
+                  <event.icon className="h-5 w-5 text-primary/60 group-hover/item:text-primary" />
                 </div>
-                <div className="text-xs">
-                  <p className="font-black text-foreground uppercase tracking-tight">
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-foreground uppercase tracking-tight text-[11px] truncate group-hover/item:text-primary transition-colors">
                     {event.title}
                   </p>
-                  <p className="text-foreground/60 font-medium mt-1 uppercase text-[10px] tracking-wider">{event.desc}</p>
+                  <p className="text-foreground/40 font-black mt-1 uppercase text-[9px] tracking-widest truncate">{event.desc}</p>
+                </div>
+                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity">
+                   <Zap className="h-3 w-3 text-primary" />
                 </div>
               </div>
             ))}
           </div>
-          <Link href="/reports" className="w-full block">
-            <button className="w-full mt-10 py-4 text-[10px] font-black uppercase tracking-[0.4em] text-foreground/50 border border-dashed border-border rounded-xs hover:bg-accent hover:text-primary hover:border-primary transition-all duration-300">
-              Launch Observer
+          <Link href="/reports" className="w-full block relative z-10">
+            <button className="w-full mt-10 py-5 text-[10px] font-black uppercase tracking-[0.5em] text-primary bg-primary/5 border border-primary/20 rounded-sm hover:bg-primary/10 hover:tracking-[0.6em] transition-all duration-500 group">
+              Decrypt Full Logs
+              <span className="inline-block ml-2 transition-transform group-hover:translate-x-2">→</span>
             </button>
           </Link>
         </div>
 
-        <div className="lg:col-span-2 reveal-3">
-          <PerformancePredictor />
+        <div className="lg:col-span-2 glass-panel p-1 rounded-sm reveal-3 overflow-hidden emerald-border-glow">
+          <div className="p-8">
+             <div className="flex items-center justify-between mb-8">
+                <div>
+                   <h3 className="text-2xl font-black uppercase tracking-tighter italic">Predictive Analytics</h3>
+                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mt-1">AI-Driven Result Projection</p>
+                </div>
+                <div className="flex gap-x-2">
+                   <div className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
+                   <div className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
+                   <div className="h-2 w-2 rounded-full bg-primary animate-bounce" />
+                </div>
+             </div>
+             <PerformancePredictor />
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 reveal-3">
-        <Card className="col-span-4 border-border bg-card/40 backdrop-blur-md rounded-sm shadow-2xl">
-          <CardHeader className="flex flex-row items-center justify-between pb-8">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7 reveal-3">
+        <div className="col-span-4 glass-card p-10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-12 opacity-[0.03] rotate-12">
+             <TrendingUp className="h-64 w-64 text-primary" />
+          </div>
+          <div className="flex row items-center justify-between mb-12 relative z-10">
             <div>
-              <CardTitle className="text-xl font-black tracking-tight uppercase">
-                Operational Status
-              </CardTitle>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 mt-1">
-                Real-time metrics & neural activity
+              <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none">
+                System Pulse
+              </h3>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mt-2">
+                Real-time Node Saturation
               </p>
             </div>
-            <div className="h-8 w-32 bg-accent/20 rounded-xs overflow-hidden relative">
-              <div className="absolute inset-0 bg-primary/20 animate-pulse" />
-              <div className="absolute inset-y-0 left-0 w-1/2 bg-primary/40" />
+            <div className="px-4 py-2 bg-primary text-primary-foreground font-black text-[10px] uppercase tracking-widest rounded-sm shadow-2xl emerald-border-glow animate-pulse">
+               High Load
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[280px] flex flex-col items-center justify-center text-muted-foreground bg-accent/10 rounded-xs border-2 border-dashed border-border group hover:bg-accent/20 transition-all duration-500">
-              <Activity className="h-12 w-12 mb-4 opacity-10 group-hover:opacity-30 group-hover:scale-110 transition-all duration-500 text-primary" />
-              <p className="font-black text-[10px] uppercase tracking-[0.5em] opacity-40 group-hover:opacity-100 transition-opacity">
-                Initializing Analytics Engine...
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-3 border-border bg-card/40 backdrop-blur-md rounded-sm shadow-2xl">
-          <CardHeader className="pb-8">
-            <CardTitle className="text-xl font-black tracking-tight uppercase">Neural Schedule</CardTitle>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 mt-1">
-              Upcoming system critical events
+          </div>
+          <div className="h-[280px] flex flex-col items-center justify-center relative z-10 glass-panel border-dashed border-2 border-primary/20 group hover:border-primary/40 transition-all duration-700 rounded-sm">
+            <Zap className="h-16 w-16 mb-6 text-primary animate-pulse opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+            <p className="font-black text-[10px] uppercase tracking-[0.8em] text-primary/40 group-hover:text-primary transition-all">
+              Tuning Analytics Engine...
             </p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-x-4 p-4 rounded-xs bg-accent/30 border border-transparent hover:border-border hover:bg-accent/50 transition-all group cursor-pointer"
-                >
-                  <div className="h-12 w-12 rounded-xs bg-primary flex flex-col items-center justify-center text-primary-foreground shadow-lg group-hover:shadow-primary/20 transition-all">
-                    <span className="text-[8px] font-black uppercase tracking-tighter opacity-70">
-                      Oct
-                    </span>
-                    <span className="text-xl font-black leading-none">
-                      {15 + i}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-black text-foreground uppercase tracking-tight group-hover:text-primary transition-colors">
-                      Advanced Physics
-                    </p>
-                    <p className="text-[10px] text-foreground/60 font-black uppercase tracking-wider mt-1">
-                      Block A-102 • 14:00 GST
-                    </p>
-                  </div>
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_12px_oklch(var(--primary)/0.6)] animate-pulse" />
+          </div>
+        </div>
+
+        <div className="col-span-3 glass-card p-10 relative overflow-hidden group">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(var(--primary-rgb),0.05),transparent)]" />
+          <div className="mb-10 relative z-10">
+            <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none">Agenda</h3>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mt-2">
+              Neural Sync Schedule
+            </p>
+          </div>
+          <div className="space-y-6 relative z-10">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="flex items-center gap-x-6 p-5 rounded-sm bg-white/5 border border-white/5 hover:border-primary/30 hover:bg-white/10 transition-all duration-500 group/agenda cursor-pointer"
+              >
+                <div className="h-14 w-14 rounded-sm bg-primary border-4 border-background flex flex-col items-center justify-center text-primary-foreground shadow-2xl group-hover/agenda:scale-110 transition-all duration-500">
+                  <span className="text-[8px] font-black uppercase tracking-tighter opacity-70">
+                    Oct
+                  </span>
+                  <span className="text-2xl font-black leading-none italic">
+                    {15 + i}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex-1">
+                  <p className="text-[13px] font-black text-foreground uppercase tracking-tight group-hover/agenda:text-primary transition-colors">
+                    Quantum Physics {i}
+                  </p>
+                  <p className="text-[9px] text-foreground/40 font-black uppercase tracking-[0.2em] mt-2">
+                    NODE A-102 • 14:00 GST
+                  </p>
+                </div>
+                <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_15px_oklch(var(--primary))] animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

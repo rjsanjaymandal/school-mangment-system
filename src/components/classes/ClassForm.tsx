@@ -81,40 +81,47 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-8 reveal-2">
                 <FormField
                     control={form.control}
                     name="name"
                     render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Formation Alias</FormLabel>
+                        <FormItem className="space-y-4">
+                            <div className="flex items-center gap-x-2">
+                                <FormLabel className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Formation Alias</FormLabel>
+                                <div className="h-px flex-1 bg-white/5" />
+                            </div>
                             <FormControl>
                                 <Input 
-                                    placeholder="e.g. GRADE 10-ALPHA" 
-                                    className="rounded-sm border-border bg-card/40 backdrop-blur-md h-12 text-[11px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
+                                    placeholder="E.G. NODE: GRADE 10-ALPHA" 
+                                    className="h-14 bg-white/5 border-white/10 rounded-sm font-black text-[11px] uppercase tracking-[0.2em] italic placeholder:text-foreground/10 focus-visible:ring-emerald-500/50 skew-x-[-8deg] transition-all group-hover:bg-white/10"
                                     {...field} 
                                 />
                             </FormControl>
-                            <FormMessage className="text-[10px] uppercase font-black tracking-widest text-red-500/80" />
+                            <FormMessage className="text-[9px] font-black uppercase tracking-widest text-red-500/80 italic" />
                         </FormItem>
                     )}
                 />
-                <div className="grid grid-cols-2 gap-6">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <FormField
                         control={form.control}
                         name="capacity"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Occupancy Cap</FormLabel>
+                            <FormItem className="space-y-4">
+                                <div className="flex items-center gap-x-2">
+                                    <FormLabel className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Occupancy Cap</FormLabel>
+                                    <div className="h-px flex-1 bg-white/5" />
+                                </div>
                                 <FormControl>
                                     <Input 
                                         type="number" 
-                                        placeholder="30" 
-                                        className="rounded-sm border-border bg-card/40 backdrop-blur-md h-12 text-[11px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
+                                        placeholder="MAX_UNITS: 30" 
+                                        className="h-14 bg-white/5 border-white/10 rounded-sm font-black text-[11px] uppercase tracking-[0.2em] italic placeholder:text-foreground/10 focus-visible:ring-emerald-500/50 skew-x-[-8deg] transition-all"
                                         {...field} 
                                     />
                                 </FormControl>
-                                <FormMessage className="text-[10px] uppercase font-black tracking-widest text-red-500/80" />
+                                <FormMessage className="text-[9px] font-black uppercase tracking-widest text-red-500/80 italic" />
                             </FormItem>
                         )}
                     />
@@ -122,34 +129,39 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
                         control={form.control}
                         name="room_number"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Spatial ID (Room)</FormLabel>
+                            <FormItem className="space-y-4">
+                                <div className="flex items-center gap-x-2">
+                                    <FormLabel className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Spatial ID</FormLabel>
+                                    <div className="h-px flex-1 bg-white/5" />
+                                </div>
                                 <FormControl>
                                     <Input 
-                                        placeholder="B-201" 
-                                        className="rounded-sm border-border bg-card/40 backdrop-blur-md h-12 text-[11px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
+                                        placeholder="LOC: B-201" 
+                                        className="h-14 bg-white/5 border-white/10 rounded-sm font-black text-[11px] uppercase tracking-[0.2em] italic placeholder:text-foreground/10 focus-visible:ring-emerald-500/50 skew-x-[-8deg] transition-all"
                                         {...field} 
                                     />
                                 </FormControl>
-                                <FormMessage className="text-[10px] uppercase font-black tracking-widest text-red-500/80" />
+                                <FormMessage className="text-[9px] font-black uppercase tracking-widest text-red-500/80 italic" />
                             </FormItem>
                         )}
                     />
                 </div>
-                <div className="flex justify-end gap-x-3 pt-6">
-                    <Button 
-                        variant="outline" 
+
+                <div className="flex items-center justify-end gap-x-6 pt-10 border-t border-white/5">
+                    <button 
                         type="button" 
                         onClick={() => onSuccess()}
-                        className="rounded-sm border-border bg-transparent font-black uppercase tracking-widest text-[10px] px-6 h-10 hover:bg-primary/5 transition-all"
+                        className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 hover:text-foreground transition-colors italic"
                     >
-                        Abort
-                    </Button>
+                        Abort_Process
+                    </button>
                     <Button 
                         type="submit"
-                        className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-10 emerald-glow transition-all hover:bg-primary/90"
+                        className="h-14 px-10 bg-emerald-500 text-white font-black rounded-sm shadow-[0_0_40px_oklch(var(--emerald-500)/0.2)] emerald-border-glow uppercase tracking-[0.3em] text-[9px] skew-x-[-12deg] transition-all hover:scale-105"
                     >
-                        {initialData ? "Synchronize Node" : "Initialize Link"}
+                        <span className="not-skew-x">
+                            {initialData ? "Synchronize_Node" : "Initialize_Link"}
+                        </span>
                     </Button>
                 </div>
             </form>

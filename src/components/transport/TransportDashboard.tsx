@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bus, MapPin, Plus, Navigation, ShieldCheck, Wifi, Edit2, Trash2, ArrowRight, UserMinus, Phone } from "lucide-react";
+import { Bus, MapPin, Plus, Navigation, ShieldCheck, Wifi, Edit2, Trash2, ArrowRight, UserMinus, Phone, User, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -130,67 +130,99 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">Fleet Logistics</h2>
-                    <p className="text-foreground/70 font-bold tracking-tight">Autonomous routing and student transit monitoring</p>
+        <div className="space-y-10 animate-in fade-in duration-1000">
+            {/* Header: Skewed Command Center */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
+                <div className="flex items-center gap-x-8">
+                    <div className="h-20 w-20 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_40px_rgba(16,185,129,0.15)] skew-x-[-12deg] group hover:bg-primary hover:text-primary-foreground transition-all duration-700">
+                        <Bus className="h-10 w-10 skew-x-[12deg] transition-all duration-700" />
+                    </div>
+                    <div>
+                        <div className="relative">
+                            <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
+                                Transit <span className="text-primary italic">& Logistics</span>
+                            </h2>
+                            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
+                        </div>
+                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
+                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
+                            Institutional Fleet Management & Real-time Routing Telemetry
+                        </p>
+                    </div>
                 </div>
+
                 {isAdmin && (
-                    <div className="flex flex-wrap gap-3">
-                        <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-primary/20 text-primary bg-primary/10 gap-x-2 font-black uppercase text-[10px] emerald-glow-sm">
-                            <Wifi className="h-3 w-3 animate-pulse" /> {routes.length} Active Routes
-                        </Badge>
-
+                    <div className="flex gap-x-4 skew-x-[-12deg]">
                         <StudentAssignmentDialog routes={routes} stops={stops} />
-
+                        
                         <Dialog open={isAddRouteOpen} onOpenChange={setIsAddRouteOpen}>
                             <DialogTrigger asChild>
-                                <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow uppercase tracking-widest text-[10px] min-w-[140px]">
-                                    <Plus className="h-4 w-4" /> Add Route
+                                <Button className="h-16 px-10 rounded-none bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] emerald-glow shadow-2xl hover:scale-105 transition-all group">
+                                    <span className="not-skew-x flex items-center gap-3">
+                                        <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> INITIALIZE_CHANNEL
+                                    </span>
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="p-0 border-none bg-background/95 backdrop-blur-2xl max-w-lg overflow-hidden ring-1 ring-primary/20">
-                                <div className="bg-primary p-8 text-primary-foreground">
-                                    <DialogHeader>
-                                        <DialogTitle className="font-black text-2xl uppercase tracking-tighter">Initialize Logistics Channel</DialogTitle>
-                                        <p className="text-primary-foreground/70 text-xs font-bold uppercase tracking-widest">Fleet Expansion & Routing</p>
-                                    </DialogHeader>
-                                </div>
-                                <div className="space-y-4 pt-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Route Name</Label>
-                                            <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="East Wing Express" />
+                             <DialogContent className="p-0 border-none bg-transparent skew-x-[-12deg] max-w-2xl overflow-visible">
+                                <div className="relative glass-panel border-primary/20 p-12 shadow-[0_0_100px_rgba(16,185,129,0.1)] overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl -mr-16 -mt-16" />
+                                    
+                                    <div className="not-skew-x relative z-10">
+                                        <div className="not-skew-x flex justify-between items-start mb-10">
+                                            <div>
+                                                <DialogTitle className="font-black italic text-4xl uppercase tracking-tighter text-foreground leading-none">
+                                                    Channel <span className="text-primary italic">Initialization</span>
+                                                </DialogTitle>
+                                                <div className="h-1 w-20 bg-primary/40 mt-4 skew-x-[-24deg]" />
+                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Expand institutional transit network protocol</p>
+                                            </div>
+                                            <Button variant="ghost" size="icon" onClick={() => setIsAddRouteOpen(false)} className="text-primary/40 hover:text-primary hover:bg-primary/10 -mt-4 -mr-4 rounded-none">
+                                                <Plus className="h-6 w-6 rotate-45" />
+                                            </Button>
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Route Number</Label>
-                                            <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="E-01" />
+
+                                        <div className="space-y-8">
+                                            <div className="grid grid-cols-2 gap-8">
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">ROUTE_ID</Label>
+                                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="NAME_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">SERIAL_CODE</Label>
+                                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="RT_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-8">
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">PILOT_AUTH</Label>
+                                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="PILOT_ID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">COMM_LINK</Label>
+                                                    <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+X-XXX-XX" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-8">
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">PLATE_REGISTRY</Label>
+                                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="REG_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">LOAD_CAPACITY</Label>
+                                                    <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black tabular-nums transition-all" />
+                                                </div>
+                                            </div>
+
+                                            <Button onClick={handleCreateRoute} disabled={loading} className="w-full h-18 rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-xs border border-primary/20 gap-3 mt-4 text-center">
+                                                {loading ? "COMMITTING_LINK..." : "AUTHORIZE_GENESIS_PROTOCOL"}
+                                            </Button>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Name</Label>
-                                            <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="John Doe" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Phone</Label>
-                                            <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+91..." />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Vehicle Plate</Label>
-                                            <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="MH-12-AB-1234" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-xs font-bold uppercase text-muted-foreground">Total Capacity</Label>
-                                            <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} />
-                                        </div>
-                                    </div>
-                                    <Button onClick={handleCreateRoute} disabled={loading} className="w-full rounded-sm py-6 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs">
-                                        {loading ? "Creating..." : "Generate Route"}
-                                    </Button>
+
+                                    {/* Matrix Label */}
+                                    <div className="absolute -left-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">TRANSIT</div>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -198,181 +230,278 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 )}
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-12">
-                {/* Fleet List */}
-                <div className="lg:col-span-4 space-y-6">
-                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-border mb-4 bg-primary/5">
-                            <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-x-2">
-                                <Bus className="h-4 w-4" />
-                                Fleet Monitor
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 px-4 overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-primary/20">
+            {/* Matrix Stats Grid */}
+            <div className="grid gap-8 md:grid-cols-4 reveal-2 relative z-10">
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-primary/10 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Active_Nodes</p>
+                                <h3 className="text-4xl font-black text-foreground italic leading-none">{routes.length}</h3>
+                            </div>
+                            <Navigation className="h-8 w-8 text-primary shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-primary group-hover:opacity-10 transition-all duration-700">ROUTE</div>
+                    </div>
+                </div>
+
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-blue-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-blue-500/10 group-hover:border-blue-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Total_Capacity</p>
+                                <h3 className="text-4xl font-black text-blue-500 italic leading-none">{routes.reduce((acc, r) => acc + (r.capacity || 0), 0)}</h3>
+                            </div>
+                            <UserMinus className="h-8 w-8 text-blue-500/40 group-hover:text-blue-500 transition-colors" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-blue-500/40 group-hover:opacity-10 transition-all duration-700">LOAD</div>
+                    </div>
+                </div>
+
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-amber-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-amber-500/10 group-hover:border-amber-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Transit_Stops</p>
+                                <h3 className="text-4xl font-black text-amber-500 italic leading-none">{stops.length}</h3>
+                            </div>
+                            <MapPin className="h-8 w-8 text-amber-500/40 group-hover:text-amber-500 transition-colors" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-amber-500/40 group-hover:opacity-10 transition-all duration-700">NODES</div>
+                    </div>
+                </div>
+
+                <div className="group relative transition-all duration-700 hover:-translate-y-2">
+                    <div className="absolute inset-0 bg-red-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="relative glass-panel p-8 border-red-500/10 group-hover:border-red-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                        <div className="not-skew-x flex justify-between items-start">
+                            <div>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Secured_Users</p>
+                                <h3 className="text-4xl font-black text-red-500 italic leading-none">{assignments.length}</h3>
+                            </div>
+                            <ShieldCheck className="h-8 w-8 text-red-500/40 group-hover:text-red-500 transition-colors" />
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-red-500/40 group-hover:opacity-10 transition-all duration-700">PERMIT</div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid gap-10 lg:grid-cols-12 items-start">
+                {/* Fleet Registry: The Telemetric List */}
+                <div className="lg:col-span-4 h-full space-y-8 animate-in slide-in-from-left-10 duration-700">
+                    <div className="relative group">
+                        <div className="absolute -left-4 top-0 bottom-0 w-1 bg-primary emerald-glow skew-x-[-12deg]" />
+                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground px-4">
+                            Fleet <span className="text-primary tracking-widest">REGISTRY</span>
+                        </h3>
+                        <p className="text-[9px] font-mono text-foreground/40 uppercase tracking-[0.4em] px-4 mt-1 flex items-center gap-2">
+                            <Wifi className="h-3 w-3 animate-pulse text-primary" /> Active Telemetry Scan
+                        </p>
+                    </div>
+
+                    <div className="glass-panel border-primary/10 overflow-hidden shadow-2xl relative min-h-[600px]">
+                        <div className="absolute inset-0 bg-scanline opacity-[0.03] pointer-events-none" />
+                        <div className="p-2 space-y-2 overflow-y-auto max-h-[700px] scrollbar-thin scrollbar-thumb-primary/20">
                             {routes.length === 0 ? (
-                                <div className="text-center py-12 text-muted-foreground font-medium text-sm">No routes configured.</div>
+                                <div className="text-center py-20 text-muted-foreground font-mono text-[10px] uppercase tracking-widest italic border border-dashed border-primary/10 mx-4">
+                                    [NO_LOGISTICS_CHANNELS_DETECTED]
+                                </div>
                             ) : (
-                                routes.map((route) => (
+                                routes.map((route, idx) => (
                                     <div
                                         key={route.id}
                                         onClick={() => setSelectedRoute(route)}
                                         className={cn(
-                                            "p-5 rounded-sm border transition-all cursor-pointer group relative overflow-hidden",
+                                            "group relative p-6 transition-all duration-500 cursor-pointer overflow-hidden skew-x-[-12deg] mb-2 border",
                                             selectedRoute?.id === route.id
-                                                ? "bg-primary text-primary-foreground border-primary shadow-2xl scale-[1.02] emerald-glow"
-                                                : "bg-background/20 backdrop-blur-md border-border hover:border-primary/50 hover:bg-primary/5"
+                                                ? "bg-primary/20 border-primary shadow-[inset_0_0_30px_rgba(16,185,129,0.1)]"
+                                                : "bg-white/[0.02] border-white/5 hover:bg-white/[0.05] hover:border-primary/30"
                                         )}
                                     >
-                                        {selectedRoute?.id === route.id && (
-                                            <div className="absolute top-0 right-0 p-1 bg-white/20 rounded-bl-sm">
-                                                <div className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                                        <div className="not-skew-x relative z-10">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={cn(
+                                                        "h-12 w-12 flex items-center justify-center transition-all duration-500",
+                                                        selectedRoute?.id === route.id
+                                                            ? "bg-primary text-primary-foreground emerald-glow shadow-primary/50"
+                                                            : "bg-white/5 text-primary/40 group-hover:bg-primary/20 group-hover:text-primary"
+                                                    )}>
+                                                        <Bus className="h-6 w-6" />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-sm font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                                                            {route.name}
+                                                        </h4>
+                                                        <span className="text-[9px] font-mono text-muted-foreground uppercase tracking-[0.2em]">{route.route_number || "CH_SCANNING"}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="text-right">
+                                                    <div className="text-[12px] font-black italic text-foreground opacity-20 group-hover:opacity-100 transition-opacity">0{idx + 1}</div>
+                                                </div>
                                             </div>
-                                        )}
-                                        <div className="flex justify-between items-start mb-2">
-                                            <div className="flex items-center gap-x-3">
-                                                <div className={cn(
-                                                    "p-2.5 rounded-sm shadow-inner transition-colors",
-                                                    selectedRoute?.id === route.id
-                                                        ? "bg-white/20"
-                                                        : "bg-primary text-primary-foreground emerald-glow-sm"
-                                                )}>
-                                                    <Bus className="h-4 w-4" />
+
+                                            <div className="mt-6 flex items-center justify-between text-[8px] font-mono font-black uppercase tracking-[0.2em] border-t border-white/5 pt-4 opacity-60">
+                                                <div className="flex items-center gap-2">
+                                                    <ShieldCheck className="h-3 w-3 text-primary/50" />
+                                                    <span>{route.plate_number || "REG_PENDING"}</span>
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-bold truncate max-w-[120px]">{route.name}</p>
-                                                    <p className={cn(
-                                                        "text-[10px] font-mono",
-                                                        selectedRoute?.id === route.id ? "text-primary-foreground/70" : "text-muted-foreground"
-                                                    )}>{route.route_number || "CHL-00"}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <Users className="h-3 w-3 text-primary/50" />
+                                                    <span>{route.capacity || 40} MAX_LOAD</span>
                                                 </div>
                                             </div>
-                                            {isAdmin && (
-                                                <div className="flex items-center gap-x-1">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={(e) => openEditRoute(route, e)}
-                                                        className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-white" : "text-muted-foreground hover:text-foreground")}
-                                                    >
-                                                        <Edit2 className="h-3 w-3" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteRoute(route.id); }}
-                                                        className={cn("h-7 w-7", selectedRoute?.id === route.id ? "text-primary-foreground/70 hover:text-red-400" : "text-muted-foreground hover:text-red-500")}
-                                                    >
-                                                        <Trash2 className="h-3 w-3" />
-                                                    </Button>
-                                                </div>
-                                            )}
                                         </div>
 
+                                        {/* Status Glow */}
                                         <div className={cn(
-                                            "flex items-center justify-between pt-3 border-t text-[9px] font-black uppercase tracking-widest",
-                                            selectedRoute?.id === route.id ? "border-white/20 opacity-90" : "border-border opacity-50"
-                                        )}>
-                                            <div className="flex items-center gap-x-1">
-                                                <Navigation className="h-3 w-3" />
-                                                {route.driver_name?.split(" ")[0] || "No Pilot"}
-                                            </div>
-                                            <div className="flex items-center gap-x-1">
-                                                <ShieldCheck className="h-3 w-3" />
-                                                {route.plate_number?.slice(-4) || "LIVE"}
-                                            </div>
-                                        </div>
+                                            "absolute top-0 right-0 w-1 h-full transition-all duration-500",
+                                            selectedRoute?.id === route.id ? "bg-primary animate-pulse shadow-[0_0_15px_rgba(16,185,129,1)]" : "bg-transparent"
+                                        )} />
                                     </div>
                                 ))
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Route Details / Stops */}
-                <div className="lg:col-span-8 space-y-6">
+                {/* Logistics Command View */}
+                <div className="lg:col-span-8 flex flex-col h-full gap-8">
                     {selectedRoute ? (
-                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-                            <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm shadow-2xl overflow-hidden">
-                                <CardContent className="p-6">
-                                    <div className="grid md:grid-cols-2 gap-8">
-                                        <StopManagement
-                                            routeId={selectedRoute.id}
-                                            routeName={selectedRoute.name}
-                                            stops={stops.filter(s => s.route_id === selectedRoute.id)}
-                                        />
+                        <div className="space-y-8 animate-in slide-in-from-right-10 duration-700">
+                            {/* Route Control Panel */}
+                            <div className="glass-panel border-primary/20 p-10 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full -mr-32 -mt-32 transition-colors duration-700 group-hover:bg-primary/10" />
+                                
+                                <div className="grid md:grid-cols-2 gap-16">
+                                    <StopManagement
+                                        routeId={selectedRoute.id}
+                                        routeName={selectedRoute.name}
+                                        stops={stops.filter(s => s.route_id === selectedRoute.id)}
+                                    />
 
-                                        <div className="space-y-6 bg-background/20 p-6 rounded-sm border border-border">
-                                            <div>
-                                                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-1">Route Overview</h3>
-                                                <p className="text-[9px] text-foreground/40 font-bold uppercase tracking-widest">Technical specifications and capacity</p>
-                                            </div>
+                                    <div className="space-y-10">
+                                        <div className="relative">
+                                            <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.5em] italic mb-2 flex items-center gap-2">
+                                                <Navigation className="h-3 w-3 animate-pulse" /> ROUTE_TELEMETRY
+                                            </h3>
+                                            <p className="text-[9px] text-foreground/30 font-mono font-black uppercase tracking-[0.2em] italic">Real-time logistic diagnostics</p>
+                                        </div>
 
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="p-4 rounded-sm bg-primary/5 border border-border">
-                                                    <p className="text-[10px] font-black uppercase text-primary mb-1">Asset ID</p>
-                                                    <p className="text-sm font-black text-foreground">{selectedRoute.plate_number || "TBD-999"}</p>
+                                        <div className="grid grid-cols-2 gap-8">
+                                            <div className="p-8 bg-white/[0.03] border-l-2 border-primary/20 hover:border-primary transition-all duration-500 skew-x-[-8deg] group/m relative overflow-hidden">
+                                                <div className="not-skew-x">
+                                                    <p className="text-[9px] font-mono font-black uppercase text-primary mb-3 opacity-60 italic tracking-widest">REGISTRY</p>
+                                                    <p className="text-2xl font-black text-foreground italic tracking-tighter uppercase leading-none">{selectedRoute.plate_number || "PENDING"}</p>
                                                 </div>
-                                                <div className="p-4 rounded-sm bg-primary/5 border border-border">
-                                                    <p className="text-[10px] font-black uppercase text-primary mb-1">Channel Load</p>
-                                                    <div className="flex items-end justify-between">
-                                                        <p className="text-sm font-black text-foreground">
-                                                            {assignments.filter(a => a.route_id === selectedRoute.id).length} / {selectedRoute.capacity || 40}
+                                                <div className="absolute -right-2 -bottom-2 opacity-[0.03] font-mono text-3xl font-black italic">ASSET</div>
+                                            </div>
+                                            <div className="p-8 bg-white/[0.03] border-l-2 border-primary/20 hover:border-primary transition-all duration-500 skew-x-[-8deg] group/m relative overflow-hidden">
+                                                <div className="not-skew-x">
+                                                    <p className="text-[9px] font-mono font-black uppercase text-primary mb-3 opacity-60 italic tracking-widest">LOAD_INDEX</p>
+                                                    <div className="space-y-4">
+                                                        <p className="text-2xl font-black text-foreground italic tracking-tighter uppercase leading-none">
+                                                            {assignments.filter(a => a.route_id === selectedRoute.id).length}<span className="text-primary/30 mx-1">/</span>{selectedRoute.capacity || 40}
                                                         </p>
-                                                        <div className="w-16 h-1 bg-primary/20 rounded-full overflow-hidden">
+                                                        <div className="h-1 w-full bg-white/5 overflow-hidden">
                                                             <div
-                                                                className="h-full bg-primary emerald-glow shadow-primary/50"
-                                                                style={{ width: `${Math.min(100, (assignments.filter(a => a.route_id === selectedRoute.id).length / (selectedRoute.capacity || 40)) * 100)}%` }}
+                                                                className="h-full bg-primary emerald-glow shadow-[0_0_10px_rgba(16,185,129,0.8)] transition-all duration-1000"
+                                                                style={{ width: `${(assignments.filter(a => a.route_id === selectedRoute.id).length / (selectedRoute.capacity || 40)) * 100}%` }}
                                                             />
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="absolute -right-2 -bottom-2 opacity-[0.03] font-mono text-3xl font-black italic">CPCTY</div>
+                                            </div>
+                                        </div>
+
+                                         <div className="space-y-10 flex flex-col justify-between h-full">
+                                            <div className="relative group/contact p-10 bg-primary/5 border border-primary/10 hover:bg-primary/10 hover:border-primary/30 transition-all duration-700 overflow-hidden skew-x-[-4deg]">
+                                                <div className="absolute top-0 right-0 w-48 h-full bg-primary/5 -skew-x-[20deg] translate-x-20 group-hover/contact:translate-x-0 transition-transform duration-700" />
+                                                <div className="relative z-10 flex items-center justify-between skew-x-[4deg]">
+                                                    <div className="flex items-center gap-8">
+                                                        <div className="h-16 w-16 bg-primary text-primary-foreground flex items-center justify-center emerald-glow shadow-primary/50 skew-x-[-12deg]">
+                                                            <User className="h-8 w-8 skew-x-[12deg]" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[9px] font-mono font-black text-primary uppercase tracking-[0.4em] mb-1 italic">PILOT_IN_COMMAND</p>
+                                                            <h4 className="text-xl font-black text-foreground uppercase italic tracking-tighter">{selectedRoute.driver_name || "UNASSIGNED"}</h4>
+                                                            <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mt-1">{selectedRoute.driver_phone || "COMM_SILENCE"}</p>
+                                                        </div>
+                                                    </div>
+                                                    <Button size="icon" className="rounded-none bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all">
+                                                        <Phone className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </div>
 
-                                            <div className="p-5 rounded-sm bg-primary text-primary-foreground border border-primary/20 flex items-center justify-between shadow-xl emerald-glow">
-                                                <div className="flex items-center gap-x-4">
-                                                    <div className="h-10 w-10 rounded-sm bg-white/20 flex items-center justify-center">
-                                                        <Phone className="h-5 w-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-[10px] font-black uppercase tracking-widest text-white/90">{selectedRoute.driver_name || "Emergency Contact"}</p>
-                                                        <p className="text-sm font-black tracking-tight">{selectedRoute.driver_phone || "Not available"}</p>
-                                                    </div>
-                                                </div>
-                                                <Button size="sm" variant="ghost" className="text-white hover:bg-white/10 font-black text-[9px] uppercase border border-white/20 rounded-xs">Call Now</Button>
+                                            <div className="flex gap-4">
+                                                <Button
+                                                    onClick={(e) => openEditRoute(selectedRoute, e)}
+                                                    className="flex-1 h-16 rounded-none bg-white/5 border border-white/10 text-foreground font-black uppercase tracking-[0.2em] italic text-[10px] hover:bg-white/10 hover:border-primary/40 transition-all"
+                                                >
+                                                    EDIT_PARAMETERS
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleDeleteRoute(selectedRoute.id)}
+                                                    variant="destructive"
+                                                    className="h-16 px-8 rounded-none bg-red-500/10 border border-red-500/20 text-red-500 font-black uppercase tracking-[0.2em] italic text-[10px] hover:bg-red-500 hover:text-white transition-all"
+                                                >
+                                                    PURGE_LOG
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </div>
 
-                            <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm shadow-2xl overflow-hidden">
-                                <CardHeader className="bg-primary/5 border-b border-border p-4">
-                                    <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Assigned Students</CardTitle>
+                            {/* Manifest: Student List */}
+                            <Card className="border-primary/10 bg-black/20 backdrop-blur-2xl rounded-none shadow-2xl relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-scanline opacity-[0.02] pointer-events-none" />
+                                <CardHeader className="bg-primary/5 border-b border-white/5 p-6 space-y-1">
+                                    <CardTitle className="text-[11px] font-black uppercase tracking-[0.4em] text-primary italic flex items-center gap-2">
+                                        <Wifi className="h-3 w-3 animate-pulse" /> Manifest Registry
+                                    </CardTitle>
+                                    <p className="text-[9px] font-mono text-foreground/40 uppercase tracking-[0.2em] italic">Authenticated Passenger Telemetry</p>
                                 </CardHeader>
-                                <CardContent className="p-6">
-                                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                <CardContent className="p-10">
+                                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {assignments.filter(a => a.route_id === selectedRoute.id).length === 0 ? (
-                                            <div className="col-span-full text-center py-12 text-muted-foreground font-medium text-sm">No students assigned to this route.</div>
+                                            <div className="col-span-full text-center py-24 text-muted-foreground/30 font-mono text-[10px] uppercase tracking-widest italic border border-dashed border-primary/10">
+                                                [EMPTY MANIFEST]
+                                            </div>
                                         ) : (
                                             assignments.filter(a => a.route_id === selectedRoute.id).map((a) => (
-                                                <div key={a.id} className="flex items-center justify-between p-4 rounded-sm bg-background/20 border border-border group hover:border-primary/50 transition-all">
-                                                    <div className="flex items-center gap-x-4 overflow-hidden">
-                                                        <div className="h-9 w-9 rounded-sm bg-primary text-primary-foreground flex items-center justify-center font-black text-xs shrink-0 emerald-glow-sm">
+                                                <div key={a.id} className="group/student relative p-5 bg-white/[0.03] border border-white/[0.05] hover:border-primary/30 hover:bg-primary/[0.05] transition-all duration-500 overflow-hidden">
+                                                    <div className="absolute top-0 right-0 w-2 h-0 group-hover/student:h-full bg-primary/20 transition-all duration-500" />
+                                                    <div className="flex items-center gap-5">
+                                                        <div className="h-11 w-11 bg-primary/20 text-primary border border-primary/30 flex items-center justify-center font-black text-sm italic emerald-glow-sm transition-transform duration-500 group-hover/student:scale-110">
                                                             {a.student?.profile?.first_name?.[0] || "?"}
                                                         </div>
-                                                        <div className="truncate">
-                                                            <p className="font-black text-foreground text-[10px] uppercase tracking-tight truncate">{a.student?.profile?.first_name} {a.student?.profile?.last_name}</p>
-                                                            <p className="text-[9px] text-foreground/40 font-bold uppercase tracking-widest truncate">{a.stop?.name || "No Stop Selected"}</p>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="font-black text-foreground text-[11px] uppercase tracking-tighter truncate italic group-hover/student:text-primary transition-colors">
+                                                                {a.student?.profile?.first_name} {a.student?.profile?.last_name}
+                                                            </p>
+                                                            <div className="flex items-center gap-2 mt-1">
+                                                                <div className="h-0.5 w-0.5 rounded-full bg-primary/50" />
+                                                                <p className="text-[9px] text-foreground/40 font-mono font-bold uppercase tracking-widest truncate italic">
+                                                                    {a.stop?.name || "LOGISTICS PENDING"}
+                                                                </p>
+                                                            </div>
                                                         </div>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleUnassign(a.student_id)}
+                                                            className="h-8 w-8 text-foreground/20 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-0 group-hover/student:opacity-100 -mr-2"
+                                                        >
+                                                            <UserMinus className="h-4 w-4" />
+                                                        </Button>
                                                     </div>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => handleUnassign(a.student_id)}
-                                                        className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-red-500"
-                                                    >
-                                                        <UserMinus className="h-3.5 w-3.5" />
-                                                    </Button>
                                                 </div>
                                             ))
                                         )}
@@ -381,71 +510,118 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                             </Card>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-foreground/30 bg-card/40 backdrop-blur-xl rounded-sm border-2 border-dashed border-border p-16 shadow-inner">
-                            <div className="h-24 w-24 rounded-sm bg-primary/5 flex items-center justify-center mb-6 border border-primary/10">
-                                <Bus className="h-12 w-12 text-primary/20" />
+                        <div className="flex-1 flex flex-col items-center justify-center text-foreground/30 bg-[#050505]/40 backdrop-blur-3xl rounded-none border border-dashed border-primary/20 p-20 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)] min-h-[500px] relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-scanline opacity-[0.03]" />
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 blur-[120px] rounded-full group-hover:bg-primary/10 transition-colors duration-1000" />
+                            
+                            <div className="relative z-10 flex flex-col items-center text-center">
+                                <div className="h-32 w-32 bg-primary/5 border border-primary/10 flex items-center justify-center mb-10 skew-x-[-12deg] group-hover:border-primary/30 transition-all duration-700 shadow-2xl">
+                                    <Bus className="h-14 w-14 text-primary/20 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-700 skew-x-[12deg]" />
+                                </div>
+                                <h3 className="text-4xl font-black text-foreground mb-4 italic uppercase tracking-tighter opacity-80">Network <span className="text-primary/40 group-hover:text-primary transition-colors duration-700">Selection Required</span></h3>
+                                <div className="h-px w-24 bg-primary/20 mb-6" />
+                                <p className="text-[11px] font-mono font-bold max-w-[400px] uppercase tracking-[0.3em] leading-loose text-foreground/40 italic">
+                                    [SYSTEM_WAITING] SELECT A LOGISTICS NODE FROM THE FLEET REGISTRY TO ENGAGE COMMAND SUBSYSTEMS AND ROUTE CONFIGURATION.
+                                </p>
                             </div>
-                            <h3 className="text-2xl font-black text-foreground mb-3 uppercase tracking-tighter">Fleet Selection Required</h3>
-                            <p className="text-[10px] font-bold text-center max-w-[300px] uppercase tracking-[0.2em] leading-relaxed">Select a route from the fleet monitor to manage its stops and view assigned students</p>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Edit Route Dialog */}
+            {/* Edit Protocol Dialog */}
             <Dialog open={isEditRouteOpen} onOpenChange={setIsEditRouteOpen}>
-                <DialogContent className="bg-card/90 backdrop-blur-2xl border-border sm:max-w-lg rounded-sm shadow-2xl">
-                    <DialogHeader><DialogTitle className="font-black text-2xl text-foreground uppercase tracking-tight text-center">Edit Route Configuration</DialogTitle></DialogHeader>
-                    <div className="space-y-6 pt-6">
-                        <div className="grid grid-cols-2 gap-4">
+                <DialogContent className="p-0 border-none bg-[#050505]/95 backdrop-blur-3xl max-w-lg overflow-hidden ring-1 ring-primary/30 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+                    <div className="bg-primary/10 border-b border-primary/20 p-10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
+                        <DialogHeader className="relative z-10">
+                            <DialogTitle className="font-black text-3xl italic uppercase tracking-tighter text-primary italic text-center">Protocol Modification</DialogTitle>
+                            <p className="text-primary/70 text-[10px] font-mono font-bold uppercase tracking-[0.3em] mt-2 italic text-center italic flex items-center justify-center gap-2">
+                                <Wifi className="h-3 w-3 animate-pulse" /> Re-Configuring Terminal Logs
+                            </p>
+                        </DialogHeader>
+                    </div>
+                    <div className="p-10 space-y-6 bg-black/40">
+                        <div className="grid grid-cols-2 gap-6 pb-2">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Route Name</Label>
-                                <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Channel Name</Label>
+                                <Input 
+                                    value={routeForm.name} 
+                                    onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} 
+                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Route Number</Label>
-                                <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Serial Registry</Label>
+                                <Input 
+                                    value={routeForm.route_number} 
+                                    onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} 
+                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                />
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Name</Label>
-                                <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Pilot Designation</Label>
+                                <Input 
+                                    value={routeForm.driver_name} 
+                                    onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} 
+                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Driver Phone</Label>
-                                <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Comm-Link ID</Label>
+                                <Input 
+                                    value={routeForm.driver_phone} 
+                                    onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} 
+                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                />
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Vehicle Plate</Label>
-                                <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Plate Registry</Label>
+                                <Input 
+                                    value={routeForm.plate_number} 
+                                    onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} 
+                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase text-muted-foreground">Total Capacity</Label>
-                                <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} />
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Unit Capacity</Label>
+                                <Input 
+                                    type="number" 
+                                    value={routeForm.capacity} 
+                                    onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} 
+                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Route Status</Label>
+                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Channel Status Index</Label>
                             <Select value={routeForm.status} onValueChange={(v) => setRouteForm({ ...routeForm, status: v })}>
-                                <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold">
+                                <SelectTrigger className="rounded-none h-12 border-primary/20 bg-primary/5 font-black italic uppercase tracking-tighter text-xs">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent className="bg-card text-foreground border-border rounded-sm">
-                                    <SelectItem value="active" className="font-bold">Active</SelectItem>
-                                    <SelectItem value="inactive" className="font-bold text-red-500">Inactive</SelectItem>
-                                    <SelectItem value="maintenance" className="font-bold text-amber-500">Maintenance</SelectItem>
+                                <SelectContent className="bg-black/90 text-foreground border-primary/20 rounded-none backdrop-blur-xl">
+                                    <SelectItem value="active" className="font-black italic uppercase text-primary tracking-tighter cursor-pointer">Live [ENCRYPTED]</SelectItem>
+                                    <SelectItem value="inactive" className="font-black italic uppercase text-red-500 tracking-tighter cursor-pointer">Offline [DANGER]</SelectItem>
+                                    <SelectItem value="maintenance" className="font-black italic uppercase text-amber-500 tracking-tighter cursor-pointer">Refurbishing [MAINT]</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
-                        <Button onClick={handleUpdateRoute} disabled={loading} className="w-full rounded-sm py-7 bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl emerald-glow text-xs">
-                            {loading ? "Saving..." : "Update Fleet Configuration"}
+                        <Button 
+                            onClick={handleUpdateRoute} 
+                            disabled={loading} 
+                            className="w-full rounded-none h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] italic shadow-xl emerald-glow text-xs mt-4 relative overflow-hidden group"
+                        >
+                            <span className="relative z-10">{loading ? "COMMITTING..." : "SAVE CONFIGURATION"}</span>
+                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         </Button>
                     </div>
                 </DialogContent>
             </Dialog>
+
         </div>
     );
 }
