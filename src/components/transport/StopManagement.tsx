@@ -107,15 +107,15 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                 <div className="relative group">
                     <div className="absolute -left-3 top-0 bottom-0 w-0.5 bg-primary/50 skew-x-[-12deg]" />
                     <h3 className="text-xl font-black text-foreground uppercase tracking-tight italic pl-2">
-                        Transit <span className="text-primary italic">Nodes</span>
+                        Bus <span className="text-primary italic">Stops</span>
                     </h3>
-                    <p className="text-[9px] text-foreground/40 font-mono font-bold uppercase tracking-[0.2em] italic pl-2 mt-0.5">Chronological waypoint registry</p>
+                    <p className="text-[9px] text-foreground/40 font-mono font-bold uppercase tracking-[0.2em] italic pl-2 mt-0.5">List of stops for this route</p>
                 </div>
                 <Dialog open={isAddStopOpen} onOpenChange={setIsAddStopOpen}>
                     <DialogTrigger asChild>
                         <Button size="sm" className="group relative rounded-none h-9 bg-primary/10 hover:bg-primary/20 text-primary font-black px-6 skew-x-[-12deg] transition-all duration-300 border border-primary/20 overflow-hidden">
                             <span className="relative z-10 skew-x-[12deg] flex items-center gap-2 uppercase tracking-tight text-[10px]">
-                                <Plus className="h-3.5 w-3.5" /> Initialize Node
+                                <Plus className="h-3.5 w-3.5" /> Add Stop
                             </span>
                         </Button>
                     </DialogTrigger>
@@ -123,25 +123,25 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                         <div className="bg-primary/10 border-b border-primary/20 p-8 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
                             <DialogHeader className="relative z-10">
-                                <DialogTitle className="font-black text-2xl italic uppercase tracking-tighter text-primary italic text-center text-primary">Node Initialization</DialogTitle>
+                                <DialogTitle className="font-black text-2xl italic uppercase tracking-tighter text-primary italic text-center text-primary">Add New Stop</DialogTitle>
                                 <p className="text-primary/70 text-[9px] font-mono font-bold uppercase tracking-[0.3em] mt-2 italic text-center italic flex items-center justify-center gap-2 italic">
-                                    <MapPin className="h-3 w-3 animate-pulse" /> Waypoint Provisioning
+                                    <MapPin className="h-3 w-3 animate-pulse" /> Add a new stop to this route
                                 </p>
                             </DialogHeader>
                         </div>
                         <div className="p-8 space-y-6 bg-black/40">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Location Identity</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Name</Label>
                                 <Input 
                                     value={stopForm.name} 
                                     onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} 
-                                    placeholder="CENTRAL SECTOR HUB" 
+                                    placeholder="E.G. MAIN GATE" 
                                     className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Ingress Time</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Pickup Time</Label>
                                     <Input 
                                         type="time" 
                                         value={stopForm.pickup_time} 
@@ -150,7 +150,7 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Egress Time</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Drop Time</Label>
                                     <Input 
                                         type="time" 
                                         value={stopForm.drop_time} 
@@ -160,7 +160,7 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Sequence Index</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Order</Label>
                                 <Input 
                                     type="number" 
                                     value={stopForm.stop_order} 
@@ -173,7 +173,7 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                                 disabled={loading} 
                                 className="w-full rounded-none h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] italic shadow-xl emerald-glow text-xs mt-4 relative overflow-hidden group"
                             >
-                                <span className="relative z-10">{loading ? "COMMITTING..." : "GENERATE NODE"}</span>
+                                <span className="relative z-10">{loading ? "SAVING..." : "ADD STOP"}</span>
                                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                             </Button>
                         </div>
@@ -184,7 +184,7 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
             <div className="space-y-4">
                 {stops.length === 0 ? (
                     <div className="text-center py-20 text-muted-foreground/30 font-mono text-[10px] uppercase tracking-widest italic border border-dashed border-primary/10">
-                        [EMPTY NODE REGISTRY]
+                        [NO STOPS FOUND]
                     </div>
                 ) : (
                     stops.map((stop, idx) => (
@@ -238,15 +238,15 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                     <div className="bg-primary/10 border-b border-primary/20 p-8 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
                         <DialogHeader className="relative z-10">
-                            <DialogTitle className="font-black text-2xl italic uppercase tracking-tighter text-primary italic text-center text-primary">Node Refinement</DialogTitle>
+                            <DialogTitle className="font-black text-2xl italic uppercase tracking-tighter text-primary italic text-center text-primary">Edit Stop</DialogTitle>
                             <p className="text-primary/70 text-[9px] font-mono font-bold uppercase tracking-[0.3em] mt-2 italic text-center italic flex items-center justify-center gap-2 italic">
-                                <Edit2 className="h-3 w-3 animate-pulse" /> Modifying Telemetry Point
+                                <Edit2 className="h-3 w-3 animate-pulse" /> Update stop information
                             </p>
                         </DialogHeader>
                     </div>
                     <div className="p-8 space-y-6 bg-black/40">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Location Identity</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Name</Label>
                             <Input 
                                 value={stopForm.name} 
                                 onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} 
@@ -274,7 +274,7 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Sequence Index</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Order</Label>
                             <Input 
                                 type="number" 
                                 value={stopForm.stop_order} 
@@ -287,7 +287,7 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                             disabled={loading} 
                             className="w-full rounded-none h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] italic shadow-xl emerald-glow text-xs mt-4 relative overflow-hidden group"
                         >
-                            <span className="relative z-10">{loading ? "COMMITTING..." : "UPDATE NODE"}</span>
+                            <span className="relative z-10">{loading ? "SAVING..." : "UPDATE STOP"}</span>
                             <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         </Button>
                     </div>

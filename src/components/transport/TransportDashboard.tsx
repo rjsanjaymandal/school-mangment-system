@@ -140,13 +140,13 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     <div>
                         <div className="relative">
                             <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Transit <span className="text-primary italic">& Logistics</span>
+                                School <span className="text-primary italic">Transport</span>
                             </h2>
                             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
                         </div>
                         <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
                             <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
-                            Institutional Fleet Management & Real-time Routing Telemetry
+                            School Bus Management & Route Control
                         </p>
                     </div>
                 </div>
@@ -159,7 +159,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                             <DialogTrigger asChild>
                                 <Button className="h-16 px-10 rounded-none bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] emerald-glow shadow-2xl hover:scale-105 transition-all group">
                                     <span className="not-skew-x flex items-center gap-3">
-                                        <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> INITIALIZE_CHANNEL
+                                        <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> ADD_ROUTE
                                     </span>
                                 </Button>
                             </DialogTrigger>
@@ -171,10 +171,10 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                         <div className="not-skew-x flex justify-between items-start mb-10">
                                             <div>
                                                 <DialogTitle className="font-black italic text-4xl uppercase tracking-tighter text-foreground leading-none">
-                                                    Channel <span className="text-primary italic">Initialization</span>
+                                                    Add New <span className="text-primary italic">Route</span>
                                                 </DialogTitle>
                                                 <div className="h-1 w-20 bg-primary/40 mt-4 skew-x-[-24deg]" />
-                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Expand institutional transit network protocol</p>
+                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Add a new transport route to the system</p>
                                             </div>
                                             <Button variant="ghost" size="icon" onClick={() => setIsAddRouteOpen(false)} className="text-primary/40 hover:text-primary hover:bg-primary/10 -mt-4 -mr-4 rounded-none">
                                                 <Plus className="h-6 w-6 rotate-45" />
@@ -184,39 +184,39 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                         <div className="space-y-8">
                                             <div className="grid grid-cols-2 gap-8">
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">ROUTE_ID</Label>
-                                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="NAME_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">Route Name</Label>
+                                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="E.G. ROUTE-A" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">SERIAL_CODE</Label>
-                                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="RT_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">Route Number</Label>
+                                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="E.G. 001" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-8">
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">PILOT_AUTH</Label>
-                                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="PILOT_ID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">Driver Name</Label>
+                                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="DRIVER NAME" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">COMM_LINK</Label>
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">Driver Phone</Label>
                                                     <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+X-XXX-XX" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-8">
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">PLATE_REGISTRY</Label>
-                                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="REG_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">Bus Plate Number</Label>
+                                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="BUS NUMBER" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">LOAD_CAPACITY</Label>
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">Seating Capacity</Label>
                                                     <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black tabular-nums transition-all" />
                                                 </div>
                                             </div>
 
                                             <Button onClick={handleCreateRoute} disabled={loading} className="w-full h-18 rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-xs border border-primary/20 gap-3 mt-4 text-center">
-                                                {loading ? "COMMITTING_LINK..." : "AUTHORIZE_GENESIS_PROTOCOL"}
+                                                {loading ? "SAVING..." : "CREATE ROUTE"}
                                             </Button>
                                         </div>
                                     </div>
@@ -237,7 +237,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Active_Nodes</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Active Routes</p>
                                 <h3 className="text-4xl font-black text-foreground italic leading-none">{routes.length}</h3>
                             </div>
                             <Navigation className="h-8 w-8 text-primary shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse" />
@@ -251,7 +251,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     <div className="relative glass-panel p-8 border-blue-500/10 group-hover:border-blue-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Total_Capacity</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Total Seats</p>
                                 <h3 className="text-4xl font-black text-blue-500 italic leading-none">{routes.reduce((acc, r) => acc + (r.capacity || 0), 0)}</h3>
                             </div>
                             <UserMinus className="h-8 w-8 text-blue-500/40 group-hover:text-blue-500 transition-colors" />
@@ -265,7 +265,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     <div className="relative glass-panel p-8 border-amber-500/10 group-hover:border-amber-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Transit_Stops</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Stops</p>
                                 <h3 className="text-4xl font-black text-amber-500 italic leading-none">{stops.length}</h3>
                             </div>
                             <MapPin className="h-8 w-8 text-amber-500/40 group-hover:text-amber-500 transition-colors" />
@@ -279,7 +279,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     <div className="relative glass-panel p-8 border-red-500/10 group-hover:border-red-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Secured_Users</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Assigned Students</p>
                                 <h3 className="text-4xl font-black text-red-500 italic leading-none">{assignments.length}</h3>
                             </div>
                             <ShieldCheck className="h-8 w-8 text-red-500/40 group-hover:text-red-500 transition-colors" />
@@ -307,7 +307,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                         <div className="p-2 space-y-2 overflow-y-auto max-h-[700px] scrollbar-thin scrollbar-thumb-primary/20">
                             {routes.length === 0 ? (
                                 <div className="text-center py-20 text-muted-foreground font-mono text-[10px] uppercase tracking-widest italic border border-dashed border-primary/10 mx-4">
-                                    [NO_LOGISTICS_CHANNELS_DETECTED]
+                                    [NO ROUTES FOUND]
                                 </div>
                             ) : (
                                 routes.map((route, idx) => (
@@ -348,11 +348,11 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                             <div className="mt-6 flex items-center justify-between text-[8px] font-mono font-black uppercase tracking-[0.2em] border-t border-white/5 pt-4 opacity-60">
                                                 <div className="flex items-center gap-2">
                                                     <ShieldCheck className="h-3 w-3 text-primary/50" />
-                                                    <span>{route.plate_number || "REG_PENDING"}</span>
+                                                    <span>{route.plate_number || "PENDING"}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <Users className="h-3 w-3 text-primary/50" />
-                                                    <span>{route.capacity || 40} MAX_LOAD</span>
+                                                    <span>{route.capacity || 40} SEATS</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -387,22 +387,22 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                     <div className="space-y-10">
                                         <div className="relative">
                                             <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.5em] italic mb-2 flex items-center gap-2">
-                                                <Navigation className="h-3 w-3 animate-pulse" /> ROUTE_TELEMETRY
+                                                <Navigation className="h-3 w-3 animate-pulse" /> ROUTE DETAILS
                                             </h3>
-                                            <p className="text-[9px] text-foreground/30 font-mono font-black uppercase tracking-[0.2em] italic">Real-time logistic diagnostics</p>
+                                            <p className="text-[9px] text-foreground/30 font-mono font-black uppercase tracking-[0.2em] italic">Route and stop information</p>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-8">
                                             <div className="p-8 bg-white/[0.03] border-l-2 border-primary/20 hover:border-primary transition-all duration-500 skew-x-[-8deg] group/m relative overflow-hidden">
                                                 <div className="not-skew-x">
-                                                    <p className="text-[9px] font-mono font-black uppercase text-primary mb-3 opacity-60 italic tracking-widest">REGISTRY</p>
+                                                    <p className="text-[9px] font-mono font-black uppercase text-primary mb-3 opacity-60 italic tracking-widest">VEHICLE PLATE</p>
                                                     <p className="text-2xl font-black text-foreground italic tracking-tighter uppercase leading-none">{selectedRoute.plate_number || "PENDING"}</p>
                                                 </div>
-                                                <div className="absolute -right-2 -bottom-2 opacity-[0.03] font-mono text-3xl font-black italic">ASSET</div>
+                                                <div className="absolute -right-2 -bottom-2 opacity-[0.03] font-mono text-3xl font-black italic">VEHICLE</div>
                                             </div>
                                             <div className="p-8 bg-white/[0.03] border-l-2 border-primary/20 hover:border-primary transition-all duration-500 skew-x-[-8deg] group/m relative overflow-hidden">
                                                 <div className="not-skew-x">
-                                                    <p className="text-[9px] font-mono font-black uppercase text-primary mb-3 opacity-60 italic tracking-widest">LOAD_INDEX</p>
+                                                    <p className="text-[9px] font-mono font-black uppercase text-primary mb-3 opacity-60 italic tracking-widest">USAGE</p>
                                                     <div className="space-y-4">
                                                         <p className="text-2xl font-black text-foreground italic tracking-tighter uppercase leading-none">
                                                             {assignments.filter(a => a.route_id === selectedRoute.id).length}<span className="text-primary/30 mx-1">/</span>{selectedRoute.capacity || 40}
@@ -428,9 +428,9 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                                             <User className="h-8 w-8 skew-x-[12deg]" />
                                                         </div>
                                                         <div>
-                                                            <p className="text-[9px] font-mono font-black text-primary uppercase tracking-[0.4em] mb-1 italic">PILOT_IN_COMMAND</p>
+                                                            <p className="text-[9px] font-mono font-black text-primary uppercase tracking-[0.4em] mb-1 italic">ASSIGNED DRIVER</p>
                                                             <h4 className="text-xl font-black text-foreground uppercase italic tracking-tighter">{selectedRoute.driver_name || "UNASSIGNED"}</h4>
-                                                            <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mt-1">{selectedRoute.driver_phone || "COMM_SILENCE"}</p>
+                                                            <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-widest mt-1">{selectedRoute.driver_phone || "NO PHONE PROVIDED"}</p>
                                                         </div>
                                                     </div>
                                                     <Button size="icon" className="rounded-none bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all">
@@ -444,14 +444,14 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                                     onClick={(e) => openEditRoute(selectedRoute, e)}
                                                     className="flex-1 h-16 rounded-none bg-white/5 border border-white/10 text-foreground font-black uppercase tracking-[0.2em] italic text-[10px] hover:bg-white/10 hover:border-primary/40 transition-all"
                                                 >
-                                                    EDIT_PARAMETERS
+                                                    EDIT ROUTE
                                                 </Button>
                                                 <Button
                                                     onClick={() => handleDeleteRoute(selectedRoute.id)}
                                                     variant="destructive"
                                                     className="h-16 px-8 rounded-none bg-red-500/10 border border-red-500/20 text-red-500 font-black uppercase tracking-[0.2em] italic text-[10px] hover:bg-red-500 hover:text-white transition-all"
                                                 >
-                                                    PURGE_LOG
+                                                    DELETE ROUTE
                                                 </Button>
                                             </div>
                                         </div>
@@ -464,15 +464,15 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 <div className="absolute inset-0 bg-scanline opacity-[0.02] pointer-events-none" />
                                 <CardHeader className="bg-primary/5 border-b border-white/5 p-6 space-y-1">
                                     <CardTitle className="text-[11px] font-black uppercase tracking-[0.4em] text-primary italic flex items-center gap-2">
-                                        <Wifi className="h-3 w-3 animate-pulse" /> Manifest Registry
+                                        <Wifi className="h-3 w-3 animate-pulse" /> Student List
                                     </CardTitle>
-                                    <p className="text-[9px] font-mono text-foreground/40 uppercase tracking-[0.2em] italic">Authenticated Passenger Telemetry</p>
+                                    <p className="text-[9px] font-mono text-foreground/40 uppercase tracking-[0.2em] italic">Assigned student list for this route</p>
                                 </CardHeader>
                                 <CardContent className="p-10">
                                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         {assignments.filter(a => a.route_id === selectedRoute.id).length === 0 ? (
                                             <div className="col-span-full text-center py-24 text-muted-foreground/30 font-mono text-[10px] uppercase tracking-widest italic border border-dashed border-primary/10">
-                                                [EMPTY MANIFEST]
+                                                [NO STUDENTS ASSIGNED]
                                             </div>
                                         ) : (
                                             assignments.filter(a => a.route_id === selectedRoute.id).map((a) => (
@@ -489,7 +489,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                                             <div className="flex items-center gap-2 mt-1">
                                                                 <div className="h-0.5 w-0.5 rounded-full bg-primary/50" />
                                                                 <p className="text-[9px] text-foreground/40 font-mono font-bold uppercase tracking-widest truncate italic">
-                                                                    {a.stop?.name || "LOGISTICS PENDING"}
+                                                                    {a.stop?.name || "STOP NOT ASSIGNED"}
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -518,10 +518,10 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 <div className="h-32 w-32 bg-primary/5 border border-primary/10 flex items-center justify-center mb-10 skew-x-[-12deg] group-hover:border-primary/30 transition-all duration-700 shadow-2xl">
                                     <Bus className="h-14 w-14 text-primary/20 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-700 skew-x-[12deg]" />
                                 </div>
-                                <h3 className="text-4xl font-black text-foreground mb-4 italic uppercase tracking-tighter opacity-80">Network <span className="text-primary/40 group-hover:text-primary transition-colors duration-700">Selection Required</span></h3>
+                                <h3 className="text-4xl font-black text-foreground mb-4 italic uppercase tracking-tighter opacity-80">Route <span className="text-primary/40 group-hover:text-primary transition-colors duration-700">Selection Required</span></h3>
                                 <div className="h-px w-24 bg-primary/20 mb-6" />
                                 <p className="text-[11px] font-mono font-bold max-w-[400px] uppercase tracking-[0.3em] leading-loose text-foreground/40 italic">
-                                    [SYSTEM_WAITING] SELECT A LOGISTICS NODE FROM THE FLEET REGISTRY TO ENGAGE COMMAND SUBSYSTEMS AND ROUTE CONFIGURATION.
+                                    [SYSTEM_WAITING] Please select a transport route from the registry to view its details and management console.
                                 </p>
                             </div>
                         </div>
@@ -535,16 +535,16 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     <div className="bg-primary/10 border-b border-primary/20 p-10 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
                         <DialogHeader className="relative z-10">
-                            <DialogTitle className="font-black text-3xl italic uppercase tracking-tighter text-primary italic text-center">Protocol Modification</DialogTitle>
+                            <DialogTitle className="font-black text-3xl italic uppercase tracking-tighter text-primary italic text-center">Edit Route</DialogTitle>
                             <p className="text-primary/70 text-[10px] font-mono font-bold uppercase tracking-[0.3em] mt-2 italic text-center italic flex items-center justify-center gap-2">
-                                <Wifi className="h-3 w-3 animate-pulse" /> Re-Configuring Terminal Logs
+                                <Wifi className="h-3 w-3 animate-pulse" /> Updating route information
                             </p>
                         </DialogHeader>
                     </div>
                     <div className="p-10 space-y-6 bg-black/40">
                         <div className="grid grid-cols-2 gap-6 pb-2">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Channel Name</Label>
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Route Name</Label>
                                 <Input 
                                     value={routeForm.name} 
                                     onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} 
@@ -552,7 +552,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Serial Registry</Label>
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Route Number</Label>
                                 <Input 
                                     value={routeForm.route_number} 
                                     onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} 
@@ -562,7 +562,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                         </div>
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Pilot Designation</Label>
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Driver Name</Label>
                                 <Input 
                                     value={routeForm.driver_name} 
                                     onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} 
@@ -570,7 +570,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Comm-Link ID</Label>
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Driver Phone</Label>
                                 <Input 
                                     value={routeForm.driver_phone} 
                                     onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} 
@@ -580,7 +580,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                         </div>
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Plate Registry</Label>
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Plate Number</Label>
                                 <Input 
                                     value={routeForm.plate_number} 
                                     onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} 
@@ -588,7 +588,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Unit Capacity</Label>
+                                <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Capacity</Label>
                                 <Input 
                                     type="number" 
                                     value={routeForm.capacity} 
@@ -598,15 +598,15 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Channel Status Index</Label>
+                            <Label className="text-[10px] font-black uppercase text-primary tracking-widest italic ml-1">Route Status</Label>
                             <Select value={routeForm.status} onValueChange={(v) => setRouteForm({ ...routeForm, status: v })}>
                                 <SelectTrigger className="rounded-none h-12 border-primary/20 bg-primary/5 font-black italic uppercase tracking-tighter text-xs">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="bg-black/90 text-foreground border-primary/20 rounded-none backdrop-blur-xl">
-                                    <SelectItem value="active" className="font-black italic uppercase text-primary tracking-tighter cursor-pointer">Live [ENCRYPTED]</SelectItem>
-                                    <SelectItem value="inactive" className="font-black italic uppercase text-red-500 tracking-tighter cursor-pointer">Offline [DANGER]</SelectItem>
-                                    <SelectItem value="maintenance" className="font-black italic uppercase text-amber-500 tracking-tighter cursor-pointer">Refurbishing [MAINT]</SelectItem>
+                                    <SelectItem value="active" className="font-black italic uppercase text-primary tracking-tighter cursor-pointer">Active</SelectItem>
+                                    <SelectItem value="inactive" className="font-black italic uppercase text-red-500 tracking-tighter cursor-pointer">Inactive</SelectItem>
+                                    <SelectItem value="maintenance" className="font-black italic uppercase text-amber-500 tracking-tighter cursor-pointer">Maintenance</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -615,7 +615,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                             disabled={loading} 
                             className="w-full rounded-none h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] italic shadow-xl emerald-glow text-xs mt-4 relative overflow-hidden group"
                         >
-                            <span className="relative z-10">{loading ? "COMMITTING..." : "SAVE CONFIGURATION"}</span>
+                            <span className="relative z-10">{loading ? "SAVING..." : "UPDATE ROUTE"}</span>
                             <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                         </Button>
                     </div>

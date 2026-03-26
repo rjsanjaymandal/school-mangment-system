@@ -76,11 +76,11 @@ export function SubjectList({ initialData }: SubjectListProps) {
           </div>
           <div>
             <div className="relative">
-              <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Knowledge <span className="text-primary italic">Registry</span></h1>
+              <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Subject <span className="text-primary italic">Registry</span></h1>
               <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
             </div>
             <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-              <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> Institutional Intellectual Asset Vault
+              <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> School Subject Directory
             </p>
           </div>
         </div>
@@ -90,7 +90,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
           className="group relative h-16 px-12 bg-primary/10 text-primary font-black rounded-none border border-primary/20 hover:bg-primary/20 transition-all duration-500 skew-x-[-12deg] overflow-hidden"
         >
           <span className="relative z-10 skew-x-[12deg] flex items-center gap-x-4 uppercase tracking-[0.2em] text-[10px]">
-            Initialize Node
+            Add Subject
             <Plus className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
           </span>
           <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500 opacity-20" />
@@ -102,7 +102,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
           <div className="col-span-full h-80 flex flex-col items-center justify-center glass-panel border-dashed border-primary/20 skew-x-[-8deg] rounded-none">
              <div className="not-skew-x flex flex-col items-center">
                <BookOpen className="h-16 w-16 text-primary/10 mb-6 animate-pulse" />
-               <p className="text-[12px] font-mono font-black uppercase tracking-[0.6em] text-foreground/20 italic">No subject nodes detected [NULL_DATA]</p>
+                <p className="text-[12px] font-mono font-black uppercase tracking-[0.6em] text-foreground/20 italic">No subject records found</p>
              </div>
           </div>
         ) : (
@@ -121,7 +121,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
                   <div className="flex items-center gap-4">
                     <div className="h-2 w-2 rounded-none bg-primary animate-[pulse_2s_infinite]" />
                     <span className="font-mono text-[11px] font-black text-primary/60 tracking-[0.3em] italic uppercase">
-                      {subject.code || `NODE_${subject.id.slice(0, 4).toUpperCase()}`}
+                      {subject.code || `SUB_${subject.id.slice(0, 4).toUpperCase()}`}
                     </span>
                   </div>
                   
@@ -133,19 +133,19 @@ export function SubjectList({ initialData }: SubjectListProps) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="glass-panel border-primary/20 p-2 shadow-2xl min-w-[200px] rounded-none skew-x-[-8deg]">
                       <div className="not-skew-x">
-                        <DropdownMenuLabel className="text-[9px] font-mono font-black uppercase tracking-[0.5em] opacity-40 px-4 py-3 border-b border-primary/10">System_Protocols</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-[9px] font-mono font-black uppercase tracking-[0.5em] opacity-40 px-4 py-3 border-b border-primary/10">Actions</DropdownMenuLabel>
                         <DropdownMenuItem
                           onClick={() => onEdit(subject)}
                           className="gap-x-4 cursor-pointer font-black uppercase text-[10px] tracking-widest focus:bg-primary/10 focus:text-primary p-4 rounded-none transition-colors italic"
                         >
-                          <Pencil className="h-4 w-4" /> Modify_Parameters
+                          <Pencil className="h-4 w-4" /> Edit Subject
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-primary/10" />
                         <DropdownMenuItem
                           onClick={() => onDelete(subject.id)}
                           className="gap-x-4 text-red-500 focus:text-red-400 cursor-pointer font-black uppercase text-[10px] tracking-widest focus:bg-red-500/10 p-4 rounded-none transition-colors italic"
                         >
-                          <Trash2 className="h-4 w-4" /> Terminate_Node
+                          <Trash2 className="h-4 w-4" /> Delete Subject
                         </DropdownMenuItem>
                       </div>
                     </DropdownMenuContent>
@@ -171,12 +171,12 @@ export function SubjectList({ initialData }: SubjectListProps) {
                       <div className="h-full w-px bg-primary" />
                     </div>
                     <div className="p-5 bg-white/[0.02] border border-primary/5 group-hover:border-primary/20 transition-all relative overflow-hidden">
-                      <p className="text-[9px] font-mono font-black text-foreground/30 uppercase tracking-widest mb-2 italic">Integrity_Value</p>
-                      <p className="text-3xl font-black text-primary italic leading-none">{subject.credits || 0} <span className="text-[11px] not-italic opacity-40 font-mono tracking-widest ml-1">CRD</span></p>
+                      <p className="text-[9px] font-mono font-black text-foreground/30 uppercase tracking-widest mb-2 italic">Credits</p>
+                      <p className="text-3xl font-black text-primary italic leading-none">{subject.credits || 0} <span className="text-[11px] not-italic opacity-40 font-mono tracking-widest ml-1">UNITS</span></p>
                       <div className="absolute top-0 right-0 h-4 w-4 border-t border-r border-primary/20" />
                     </div>
                     <div className="p-5 bg-white/[0.02] border border-primary/5 group-hover:border-primary/20 transition-all relative overflow-hidden">
-                      <p className="text-[9px] font-mono font-black text-foreground/30 uppercase tracking-widest mb-2 italic">Operation_Status</p>
+                      <p className="text-[9px] font-mono font-black text-foreground/30 uppercase tracking-widest mb-2 italic">Status</p>
                       <p className="text-sm font-black text-foreground/80 italic leading-none uppercase tracking-widest mt-2 flex items-center gap-2">
                         <span className="h-2 w-2 rounded-none bg-primary" /> ACTIVE
                       </p>
@@ -201,10 +201,10 @@ export function SubjectList({ initialData }: SubjectListProps) {
             <BookOpen className="absolute right-[-30px] top-[-30px] h-48 w-48 text-primary opacity-5 rotate-12" />
             <div className="relative z-10">
               <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                {editingSubject ? "Protocol" : "Node"} <span className="text-primary italic">{editingSubject ? "Modification" : "Initialization"}</span>
+                {editingSubject ? "Edit" : "Create"} <span className="text-primary italic">Subject</span>
               </h3>
               <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-primary" /> Academic Framework Data-stream
+                <span className="h-1 w-1 rounded-full bg-primary" /> Subject Details
               </p>
             </div>
           </div>
@@ -218,7 +218,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
           
           {/* Modal Decoration */}
           <div className="absolute top-0 right-0 p-4 opacity-10 font-mono text-[8px] font-black uppercase tracking-widest text-primary vertical-rl">
-            [SYS_REGISTER_PRTCL_V4.2]
+            [ACAD_SUB_V4.2]
           </div>
         </DialogContent>
       </Dialog>

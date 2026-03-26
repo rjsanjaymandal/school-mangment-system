@@ -232,7 +232,7 @@ export function AttendanceDashboard({
                         </div>
                         <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
                             <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
-                            {isStudent ? "Comprehensive Scholar Scholastic presence logs" : "Real-Time Precision Presence Tracking & Analytics"}
+                            {isStudent ? "Student Attendance Records" : "Live Attendance Tracking"}
                         </p>
                     </div>
                 </div>
@@ -245,7 +245,7 @@ export function AttendanceDashboard({
                     <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Weekly_Rate</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Weekly Attendance</p>
                                 <h3 className="text-4xl font-black text-foreground italic leading-none">{weekRate}%</h3>
                             </div>
                             <TrendingUp className="h-8 w-8 text-primary opacity-20 group-hover:opacity-100 transition-opacity duration-700" />

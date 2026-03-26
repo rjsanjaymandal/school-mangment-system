@@ -145,11 +145,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                     </div>
                     <div>
                         <div className="relative">
-                            <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Assessment <span className="text-primary italic">Registry</span></h1>
+                            <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Exam <span className="text-primary italic">Registry</span></h1>
                             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
                         </div>
                         <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> Institutional Examination Control Node
+                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> School Exam Management
                         </p>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         className="group relative h-16 px-12 bg-primary/10 text-primary font-black rounded-none border border-primary/20 hover:bg-primary/20 transition-all duration-500 skew-x-[-12deg] overflow-hidden"
                     >
                         <span className="relative z-10 skew-x-[12deg] flex items-center gap-x-4 uppercase tracking-[0.2em] text-[10px]">
-                            Initialize Protocol
+                            Create Exam
                             <Plus className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
                         </span>
                         <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500 opacity-20" />
@@ -172,12 +172,12 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 <TabsList className="bg-white/[0.02] p-2 rounded-none h-20 border border-primary/10 skew-x-[-8deg] mb-12 flex items-center gap-2">
                     <TabsTrigger value="list" className="h-16 px-12 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 not-skew-x rounded-none border border-transparent data-[state=active]:emerald-glow italic">
                         <span className="flex items-center gap-x-3">
-                            <ClipboardCheck className="h-4 w-4" /> Assessment Matrix
+                            <ClipboardCheck className="h-4 w-4" /> Exam Matrix
                         </span>
                     </TabsTrigger>
                     <TabsTrigger value="calendar" className="h-16 px-12 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 not-skew-x rounded-none border border-transparent data-[state=active]:emerald-glow italic text-foreground/40">
                         <span className="flex items-center gap-x-3">
-                            <Calendar className="h-4 w-4" /> Temporal Mapping
+                            <Calendar className="h-4 w-4" /> Exam Calendar
                         </span>
                     </TabsTrigger>
                 </TabsList>
@@ -216,13 +216,13 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 <tr>
                                     <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">
                                         <div className="flex items-center gap-2">
-                                            <span className="h-2 w-2 rounded-none bg-primary" /> Assessment_Alias
+                                            <span className="h-2 w-2 rounded-none bg-primary" /> Exam Name
                                         </div>
                                     </th>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Formation_Node</th>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Temporal_Node</th>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Integrity_Cap</th>
-                                    <th className="px-12 py-8 text-right text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Protocol_Ops</th>
+                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Class</th>
+                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Date</th>
+                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Total Marks</th>
+                                    <th className="px-12 py-8 text-right text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-primary/5 font-medium tracking-tight">
@@ -250,21 +250,21 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                         <td className="px-12 py-10">
                                             <div className="flex flex-col gap-1">
                                                 <p className="font-mono font-black text-[12px] uppercase tracking-[0.2em] text-foreground italic">
-                                                    {format(new Date(exam.date), "dd_MM_yyyy")}
+                                                    {format(new Date(exam.date), "dd-MM-yyyy")}
                                                 </p>
-                                                <p className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">Temporal_Node_ID</p>
+                                                <p className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">Schedule Date</p>
                                             </div>
                                         </td>
                                         <td className="px-12 py-10">
                                             <div className="flex items-center gap-x-4">
                                                 <div className="flex flex-col items-end">
                                                     <span className="text-2xl font-black italic text-foreground tracking-tighter leading-none">{exam.max_marks}</span>
-                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-foreground/20">MAX_CAP</span>
+                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-foreground/20">MAX</span>
                                                 </div>
                                                 <div className="h-8 w-px bg-primary/20" />
                                                 <div className="flex flex-col">
                                                     <span className="text-[11px] font-mono font-black uppercase tracking-widest text-primary italic leading-none">{exam.passing_marks}</span>
-                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">MIN_PROF</span>
+                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">PASSING</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -277,7 +277,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                                     >
                                                         <span className="not-skew-x flex items-center gap-x-3">
                                                             <Plus className="h-4 w-4 group-hover/btn:rotate-90 transition-transform" /> 
-                                                            Insert_Marks
+                                                            Enter Results
                                                         </span>
                                                     </Button>
                                                 )}
@@ -330,10 +330,10 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <Award className="absolute right-[-30px] top-[-30px] h-48 w-48 text-primary opacity-5 rotate-12" />
                         <div className="relative z-10">
                             <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Initialize <span className="text-primary italic">Assessment Node</span>
+                                Exam <span className="text-primary italic">Configuration</span>
                             </h3>
                             <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                                <span className="h-1 w-1 rounded-full bg-primary" /> Institutional Protocol Definition
+                                <span className="h-1 w-1 rounded-full bg-primary" /> Academic Exam Setup
                             </p>
                         </div>
                     </div>
@@ -341,16 +341,16 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                     <div className="p-12 space-y-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Assessment Alias</Label>
+                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Exam Name</Label>
                                 <Input 
-                                    placeholder="E.G. TERM-01 FINALS" 
+                                    placeholder="E.G. FIRST TERM FINALS" 
                                     className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] italic placeholder:text-foreground/10 focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all"
                                     value={examForm.name} 
                                     onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} 
                                 />
                             </div>
                             <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Temporal Node</Label>
+                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Exam Date</Label>
                                 <Input 
                                     type="date" 
                                     className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all [&::-webkit-calendar-picker-indicator]:invert"
@@ -362,10 +362,10 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Formation ID (Class)</Label>
+                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Class</Label>
                                 <Select onValueChange={(v) => setExamForm({ ...examForm, class_id: v })}>
                                     <SelectTrigger className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] italic focus:ring-primary/50 skew-x-[-8deg] transition-all">
-                                        <SelectValue placeholder="Target Node" />
+                                        <SelectValue placeholder="Select Class" />
                                     </SelectTrigger>
                                     <SelectContent className="glass-panel border-primary/10 rounded-none">
                                         {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-black uppercase text-[10px] tracking-widest">{c.name}</SelectItem>)}
@@ -373,10 +373,10 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 </Select>
                             </div>
                             <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Subject ID</Label>
+                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Subject</Label>
                                 <Select onValueChange={(v) => setExamForm({ ...examForm, subject_id: v })}>
                                     <SelectTrigger className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] italic focus:ring-primary/50 skew-x-[-8deg] transition-all">
-                                        <SelectValue placeholder="Discipline Node" />
+                                        <SelectValue placeholder="Select Subject" />
                                     </SelectTrigger>
                                     <SelectContent className="glass-panel border-primary/10 rounded-none">
                                         {subjects.map(s => <SelectItem key={s.id} value={s.id} className="font-black uppercase text-[10px] tracking-widest">{s.name}</SelectItem>)}
@@ -387,7 +387,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-primary/5 pt-10">
                             <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Integrity Cap (Max Marks)</Label>
+                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Maximum Marks</Label>
                                 <Input 
                                     type="number" 
                                     className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[14px] uppercase tracking-[0.2em] italic focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all"
@@ -396,7 +396,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 />
                             </div>
                             <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Min Proficiency (Pass Marks)</Label>
+                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Passing Marks</Label>
                                 <Input 
                                     type="number" 
                                     className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[14px] uppercase tracking-[0.2em] italic focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all"
@@ -412,7 +412,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 onClick={() => setIsCreateOpen(false)}
                                 className="text-[11px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 hover:text-foreground transition-colors italic group"
                             >
-                                <span className="group-hover:mr-2 transition-all">Abort_Process</span> [ESC]
+                                <span className="group-hover:mr-2 transition-all">Cancel</span> [ESC]
                             </button>
                             <Button 
                                 onClick={handleCreateExam}
@@ -420,7 +420,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 className="group relative h-16 px-12 bg-primary text-primary-foreground font-black rounded-none shadow-[0_0_50px_rgba(16,185,129,0.2)] uppercase tracking-[0.3em] text-[10px] skew-x-[-12deg] transition-all hover:scale-105 overflow-hidden border-none"
                             >
                                 <span className="not-skew-x relative z-10 flex items-center gap-x-3 italic">
-                                    {loading ? "Initializing..." : "Establish_Protocol"}
+                                    {loading ? "Saving..." : "Save Exam"}
                                     {!loading && <Plus className="h-5 w-5" />}
                                 </span>
                                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
@@ -437,11 +437,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <ClipboardCheck className="absolute right-[-30px] top-[-30px] h-56 w-56 text-primary opacity-5 rotate-12" />
                         <div className="relative z-10">
                             <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Assessment <span className="text-primary italic">Validation Matrix</span>
+                                Grading <span className="text-primary italic">Matrix</span>
                             </h3>
                             <div className="flex flex-wrap items-center gap-6 mt-6">
                                 <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 italic flex items-center gap-2">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Node: {selectedExam?.name}
+                                    <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Exam: {selectedExam?.name}
                                 </p>
                                 <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 italic flex items-center gap-2 border-l border-primary/20 pl-6">
                                     <span className="h-1.5 w-1.5 rounded-full bg-primary/50" /> Resolution: {selectedExam?.max_marks}-PT Scale
@@ -455,13 +455,13 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                             <table className="w-full text-left border-collapse">
                                 <thead className="bg-primary/10">
                                     <tr>
-                                        <th className="px-10 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Candidate_Node</th>
-                                        <th className="px-10 py-8 text-right text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Proficiency_Data</th>
+                                        <th className="px-10 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Student Name</th>
+                                        <th className="px-10 py-8 text-right text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Marks Obtained</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-primary/5">
                                     {examStudents.length === 0 ? (
-                                        <tr><td colSpan={2} className="py-24 text-center text-foreground/10 font-mono font-black uppercase tracking-[0.6em] text-sm italic">No personnel records detected [NULL_DATA]</td></tr>
+                                        <tr><td colSpan={2} className="py-24 text-center text-foreground/10 font-mono font-black uppercase tracking-[0.6em] text-sm italic">No student records found</td></tr>
                                     ) : (
                                         examStudents.map((student: any) => (
                                             <tr key={student.id} className="group hover:bg-primary/[0.03] transition-all duration-500">
@@ -502,7 +502,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <div className="absolute top-[-1px] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
                         <div className="flex items-center gap-4">
                             <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                            <p className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 italic">Personnel Ledger Status: {examStudents.length} Nodes Active</p>
+                            <p className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 italic">Total Students: {examStudents.length}</p>
                         </div>
                         <div className="flex items-center gap-x-10">
                             <button 
@@ -510,7 +510,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 onClick={() => setIsMarksOpen(false)}
                                 className="text-[11px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 hover:text-foreground transition-colors italic"
                             >
-                                Discard_Buffer
+                                Discard Changes
                             </button>
                             <Button 
                                 onClick={handleSaveMarks}
@@ -518,7 +518,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 className="group relative h-16 px-14 bg-primary text-primary-foreground font-black rounded-none shadow-[0_0_50px_rgba(16,185,129,0.3)] uppercase tracking-[0.3em] text-[11px] skew-x-[-12deg] transition-all hover:scale-105 overflow-hidden border-none"
                             >
                                 <span className="not-skew-x relative z-10 italic">
-                                    {loading ? "Storing_Data..." : "Commit_To_Ledger"}
+                                    {loading ? "Saving..." : "Save Marks"}
                                 </span>
                                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
                             </Button>
