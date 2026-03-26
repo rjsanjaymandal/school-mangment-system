@@ -28,9 +28,9 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
     const [searchTerm, setSearchTerm] = useState("");
 
     const filteredUsers = users.filter((user) =>
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (user.first_name && user.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.last_name && user.last_name.toLowerCase().includes(searchTerm.toLowerCase()))
+        (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+        (user.first_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+        (user.last_name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -38,10 +38,10 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                        Identity & Access Control
+                        User Management
                     </h2>
                     <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                        Protocol Personnel & Role-Based Authorization Matrix
+                        Manage user accounts, roles, and system permissions.
                     </p>
                 </div>
                 <div className="flex gap-x-3">
@@ -52,20 +52,20 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 relative overflow-hidden group shadow-2xl">
                     <Users className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-10 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Total Identities</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Total Users</p>
                     <h3 className="text-3xl font-black text-primary">{users.length}</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl hover:border-primary transition-all">
                     <ShieldAlert className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Clearance: Level 5 (Admin)</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Administrators</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{users.filter(u => u.role === 'admin').length}</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 relative shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Active Faculty</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Teachers</p>
                     <h3 className="text-3xl font-black text-foreground">{users.filter(u => u.role === 'teacher').length}</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-6 relative shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Parent Nodes</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40 mb-1">Parents</p>
                     <h3 className="text-3xl font-black text-foreground">{users.filter(u => u.role === 'parent').length}</h3>
                 </Card>
             </div>
@@ -74,12 +74,12 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                 <div className="p-6 border-b border-border/50 flex items-center justify-between bg-primary/5">
                     <h3 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-x-2">
                         <Key className="h-4 w-4" />
-                        Access Control Ledger
+                        User List
                     </h3>
                     <div className="relative w-72">
                         <Search className="absolute left-3 top-2.5 h-4 w-4 text-primary" />
                         <Input
-                            placeholder="SEARCH IDENTITIES..."
+                            placeholder="SEARCH USERS..."
                             className="pl-9 rounded-sm border-border bg-card/40 backdrop-blur-md h-10 text-[10px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -91,13 +91,13 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                         <thead className="bg-primary/5">
                             <tr className="border-b border-border/50">
                                 <th className="text-left p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
-                                    Profile Signature
+                                    User
                                 </th>
                                 <th className="text-left p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
-                                    Network Alias
+                                    Email
                                 </th>
                                 <th className="text-left p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
-                                    Clearance Level
+                                    Role
                                 </th>
                                 <th className="text-right p-5 font-black uppercase tracking-[0.2em] text-[10px] text-primary">
                                     Actions
@@ -152,7 +152,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                             {filteredUsers.length === 0 && (
                                 <tr>
                                     <td colSpan={5} className="text-center p-12 text-muted-foreground text-sm font-medium">
-                                        No identities matched the search signature.
+                                        No users found matching the search criteria.
                                     </td>
                                 </tr>
                             )}

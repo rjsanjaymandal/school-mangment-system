@@ -84,7 +84,7 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Fees & Payments", href: "/fees", icon: CreditCard, description: "Manage fee collection and payment records" },
       { name: "Library", href: "/library", icon: Library, description: "Manage books, issues, and returns" },
-      { name: "Logistics", href: "/inventory", icon: Package, roles: ["admin"], description: "Autonomous inventory monitoring and asset lifecycle management" },
+      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Manage school inventory and assets" },
       { name: "Transport", href: "/transport", icon: Bus, description: "Manage school bus routes and transport detail" },
       { name: "Messages", href: "/messages", icon: MessageSquare, description: "Send announcements and internal messages" },
       { name: "Parents", href: "/guardian", icon: Heart, roles: ["admin", "teacher"], description: "Communicate with parents and guardians" },
@@ -117,8 +117,8 @@ export function Launchpad({
       items: group.items.filter(
         (item) => 
           (!item.roles || item.roles.includes(userRole)) &&
-          (item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           item.description?.toLowerCase().includes(searchQuery.toLowerCase()))
+          ((item.name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+           (item.description?.toLowerCase() || "").includes(searchQuery.toLowerCase()))
       ),
     }))
     .filter((group) => group.items.length > 0);
@@ -185,7 +185,7 @@ export function Launchpad({
 
                 <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
                   <div className="flex items-center gap-x-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 group-hover:text-primary transition-colors">
-                    Initialize Module
+                    Open Module
                   </div>
                   <div className="h-10 w-10 rounded-xs bg-accent flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">
                     <Plus className="h-5 w-5 rotate-45 group-hover:rotate-0 transition-transform duration-500" />

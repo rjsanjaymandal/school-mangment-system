@@ -110,16 +110,16 @@ export function ManageAccessModal({ user }: { user: any }) {
           size="sm" 
           className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 transition-all"
         >
-          MANAGE ACCESS
+          EDIT USER
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] border-primary/20 bg-background/95 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-black uppercase tracking-widest text-primary italic">
-            Manage Access Matrix
+            Edit User Details
           </DialogTitle>
           <DialogDescription className="text-xs uppercase tracking-widest text-foreground/40 font-black pt-2">
-            Modify credentials and authorization levels for this identity.
+            Update user information and system role.
           </DialogDescription>
         </DialogHeader>
         
@@ -163,7 +163,7 @@ export function ManageAccessModal({ user }: { user: any }) {
                   <FormControl>
                     <Input type="email" disabled placeholder="user@edumaysan.com" {...field} className="rounded-sm bg-background/50 border-border text-xs focus-visible:ring-0 opacity-70 cursor-not-allowed shadow-inner" />
                   </FormControl>
-                  <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">Network alias cannot be changed directly.</p>
+                  <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">Email address cannot be changed.</p>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
               )}
@@ -188,7 +188,7 @@ export function ManageAccessModal({ user }: { user: any }) {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">Clearance Level (Role)</FormLabel>
+                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">User Role</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="rounded-sm bg-card/40 border-border text-xs focus:ring-primary shadow-inner uppercase font-black tracking-widest">
@@ -196,7 +196,7 @@ export function ManageAccessModal({ user }: { user: any }) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-sm border-border bg-card">
-                      <SelectItem value="admin" className="text-xs uppercase font-black tracking-widest text-primary focus:bg-primary/10">Administrator (Level 5)</SelectItem>
+                      <SelectItem value="admin" className="text-xs uppercase font-black tracking-widest text-primary focus:bg-primary/10">Administrator</SelectItem>
                       <SelectItem value="teacher" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Teacher</SelectItem>
                       <SelectItem value="student" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Student</SelectItem>
                       <SelectItem value="parent" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Parent</SelectItem>
@@ -210,7 +210,7 @@ export function ManageAccessModal({ user }: { user: any }) {
             <div className="pt-4 flex justify-between gap-x-2 border-t border-border mt-6">
               <Button type="button" variant="destructive" onClick={handleDelete} className="rounded-sm text-[10px] font-black uppercase tracking-widest bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all gap-x-2" disabled={isSubmitting || isDeleting}>
                 {isDeleting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
-                Purge
+                Delete User
               </Button>
               <div className="flex gap-x-2">
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="rounded-sm text-[10px] font-black uppercase tracking-widest" disabled={isSubmitting || isDeleting}>
@@ -220,10 +220,10 @@ export function ManageAccessModal({ user }: { user: any }) {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      UPDATING...
+                      SAVING...
                     </>
                   ) : (
-                    "CONFIRM UPDATE"
+                    "SAVE CHANGES"
                   )}
                 </Button>
               </div>

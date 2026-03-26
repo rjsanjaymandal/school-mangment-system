@@ -85,16 +85,16 @@ export function ProvisionUserModal() {
       <DialogTrigger asChild>
         <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px] py-6 shadow-2xl transition-all hover:bg-primary/90">
           <Plus className="h-4 w-4" />
-          Provision User
+          Add New User
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] border-primary/20 bg-background/95 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-black uppercase tracking-widest text-primary italic">
-            Provision New Identity
+            Create New User Account
           </DialogTitle>
           <DialogDescription className="text-xs uppercase tracking-widest text-foreground/40 font-black pt-2">
-            Enter the details for the new network personnel.
+            Enter the information for the new user.
           </DialogDescription>
         </DialogHeader>
         
@@ -148,7 +148,7 @@ export function ProvisionUserModal() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">Initial Password</FormLabel>
+                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">Password</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="******" {...field} className="rounded-sm bg-card/40 border-border text-xs focus-visible:ring-primary shadow-inner" />
                   </FormControl>
@@ -162,7 +162,7 @@ export function ProvisionUserModal() {
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">Clearance Level (Role)</FormLabel>
+                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">User Role</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="rounded-sm bg-card/40 border-border text-xs focus:ring-primary shadow-inner uppercase font-black tracking-widest">
@@ -170,7 +170,7 @@ export function ProvisionUserModal() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-sm border-border bg-card">
-                      <SelectItem value="admin" className="text-xs uppercase font-black tracking-widest text-primary focus:bg-primary/10">Administrator (Level 5)</SelectItem>
+                      <SelectItem value="admin" className="text-xs uppercase font-black tracking-widest text-primary focus:bg-primary/10">Administrator</SelectItem>
                       <SelectItem value="teacher" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Teacher</SelectItem>
                       <SelectItem value="student" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Student</SelectItem>
                       <SelectItem value="parent" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Parent</SelectItem>
@@ -189,10 +189,10 @@ export function ProvisionUserModal() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    PROVISIONING...
+                    CREATING...
                   </>
                 ) : (
-                  "CONFIRM PROVISION"
+                  "CREATE USER"
                 )}
               </Button>
             </div>
