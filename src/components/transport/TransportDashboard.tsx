@@ -221,7 +221,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                         </div>
                                     </div>
 
-                                    {/* Matrix Label */}
+                                    {/* Route Label */}
                                     <div className="absolute -left-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">TRANSIT</div>
                                 </div>
                             </DialogContent>
@@ -230,7 +230,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 )}
             </div>
 
-            {/* Matrix Stats Grid */}
+            {/* Transport Stats Grid */}
             <div className="grid gap-8 md:grid-cols-4 reveal-2 relative z-10">
                 <div className="group relative transition-all duration-700 hover:-translate-y-2">
                     <div className="absolute inset-0 bg-primary/10 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />

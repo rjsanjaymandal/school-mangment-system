@@ -36,7 +36,7 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
         router.refresh();
     };
 
-    const filteredDocs = documents.filter(d => d.title.toLowerCase().includes(search.toLowerCase()));
+    const filteredDocs = documents.filter(d => (d.title?.toLowerCase() || "").includes(search.toLowerCase()));
     const categories = ["Legal", "Academic", "HR", "Financial", "Administrative"];
     const categoryCount = categories.map(c => ({ name: c, count: documents.filter(d => d.category === c).length }));
     const expiringDocs = documents.filter(d => {
@@ -50,23 +50,23 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                        Regulatory Archives
+                        School Documents
                     </h2>
                     <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                        Institutional Governance & Immutable Document Infrastructure
+                        Official Document Management
                     </p>
                 </div>
                 <div className="flex gap-x-3">
                     <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
                         <DialogTrigger asChild>
-                            <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Upload className="h-4 w-4" /> Upload Archive</Button>
+                            <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Upload className="h-4 w-4" /> Upload Document</Button>
                         </DialogTrigger>
                         <DialogContent className="glass border-none">
                             <DialogHeader><DialogTitle className="font-black text-2xl">Upload Document</DialogTitle></DialogHeader>
                             <div className="space-y-4 pt-4">
                                 <div className="space-y-2">
                                     <Label className="text-xs font-bold uppercase text-muted-foreground">Document Title</Label>
-                                    <Input value={docForm.title} onChange={(e) => setDocForm({ ...docForm, title: e.target.value })} placeholder="Institutional Land Lease 2024" />
+                                    <Input value={docForm.title} onChange={(e) => setDocForm({ ...docForm, title: e.target.value })} placeholder="Document Title..." />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
@@ -93,20 +93,20 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
             <div className="grid gap-6 md:grid-cols-4">
                 <Card className="border-primary/20 bg-primary/5 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all emerald-glow">
                     <CheckCircle2 className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary/10 group-hover:text-primary transition-all" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">Archival Integrity</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">System Security</p>
                     <h3 className="text-4xl font-black text-foreground italic tracking-tighter">100% SECURE</h3>
                 </Card>
                 <Card className="border-destructive/20 bg-destructive/5 rounded-sm p-8 shadow-2xl relative overflow-hidden group">
                     <AlertTriangle className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-destructive/10 group-hover:text-destructive transition-all" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2">Protocol Expiry</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{expiringDocs.length} NODES</h3>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2">Expiring Soon</p>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{expiringDocs.length} DOCUMENTS</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Registry Volume</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Total Documents</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter">{documents.length}</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Audit Delta</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Audit Logs</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter">{auditLogs.length}</h3>
                 </Card>
             </div>
@@ -114,17 +114,17 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
             <div className="grid gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Institutional Archives</h3>
+                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Document List</h3>
                         <div className="relative w-64">
                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="Search archives..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 text-xs rounded-xl" />
+                            <Input placeholder="Search documents..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 text-xs rounded-xl" />
                         </div>
                     </div>
 
                     <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
                         <div className="divide-y divide-primary/10">
                             {filteredDocs.length === 0 ? (
-                                <div className="p-16 text-center text-foreground/20 font-black uppercase tracking-[0.3em] italic">No Archival Nodes Detected.</div>
+                                <div className="p-16 text-center text-foreground/20 font-black uppercase tracking-[0.3em] italic">No Documents Found.</div>
                             ) : (
                                 filteredDocs.map((doc) => (
                                     <div key={doc.id} className="p-8 flex items-center gap-x-8 hover:bg-primary/5 transition-all group border-b border-primary/5 last:border-0">
@@ -137,8 +137,8 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
                                                 <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-primary/20 text-primary bg-primary/5 px-2 py-0.5 rounded-sm italic">{(doc.category || "General").toUpperCase()}</Badge>
                                             </div>
                                             <div className="flex items-center gap-x-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">
-                                                <span className="flex items-center gap-x-2 italic"><Calendar className="h-3 w-3 text-primary/40" /> Expiry Protocol: {doc.expiry_date || "UNDEFINED"}</span>
-                                                <span className="flex items-center gap-x-2 italic"><Shield className="h-3 w-3 text-primary/40" /> Revision Delta: V{doc.version || 1}</span>
+                                                <span className="flex items-center gap-x-2 italic"><Calendar className="h-3 w-3 text-primary/40" /> Expiry Date: {doc.expiry_date || "UNDEFINED"}</span>
+                                                <span className="flex items-center gap-x-2 italic"><Shield className="h-3 w-3 text-primary/40" /> Version: V{doc.version || 1}</span>
                                             </div>
                                         </div>
                                     </div>

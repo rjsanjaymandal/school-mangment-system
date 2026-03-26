@@ -210,7 +210,7 @@ export default function SettingsDashboardClient({
                             <CardContent className="p-8 space-y-6">
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Active Temporal Matrix (Academic Year)</Label>
+                                        <Label className="text-[10px] font-black uppercase text-primary tracking-widest">Current Academic Year</Label>
                                         <Select
                                             value={settings.current_academic_year_id || ""}
                                             onValueChange={(val) => setSettings({ ...settings, current_academic_year_id: val })}
@@ -431,7 +431,7 @@ export default function SettingsDashboardClient({
                                             onChange={(e) => setSettings({ ...settings, session_timeout: e.target.value })}
                                             className="bg-background/50 border-border h-12 rounded-sm font-bold uppercase tracking-tight"
                                         />
-                                        <p className="text-[9px] text-foreground/40 font-black uppercase tracking-widest mt-2 italic">Automatic termination of Identity Matrix sessions after inactivity.</p>
+                                        <p className="text-[9px] text-foreground/40 font-black uppercase tracking-widest mt-2 italic">Automatic termination of login sessions after inactivity.</p>
                                     </div>
                                     <div className="flex items-center justify-between p-8 bg-primary/5 rounded-sm border border-primary/20 backdrop-blur-md shadow-inner">
                                         <div className="space-y-2">

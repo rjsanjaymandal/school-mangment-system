@@ -89,7 +89,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
 
     return (
         <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
-            {/* Background Matrix Mesh */}
+            {/* Background Mesh */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
@@ -189,7 +189,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                         </div>
                                     </div>
 
-                                    {/* Matrix Label */}
+                                    {/* Collection Label */}
                                     <div className="absolute -left-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">DEPLOY</div>
                                 </div>
                             </DialogContent>
@@ -263,7 +263,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                 )}
             </div>
 
-            {/* Matrix Stats Grid */}
+            {/* Library Stats Grid */}
             <div className="grid gap-8 md:grid-cols-4 reveal-2 relative z-10">
                 <div className="group relative transition-all duration-700 hover:-translate-y-2">
                     <div className="absolute inset-0 bg-primary/10 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -400,7 +400,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                             </div>
                                         </div>
                                         
-                                        {/* Matrix Background Label */}
+                                        {/* Background Collection Label */}
                                         <div className="absolute -right-6 -bottom-6 opacity-5 font-mono text-[60px] font-black italic text-primary/20 pointer-events-none uppercase">NODE</div>
                                     </div>
                                 </div>

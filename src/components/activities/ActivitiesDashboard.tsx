@@ -85,8 +85,8 @@ export default function ActivitiesDashboard({
     const [open, setOpen] = useState(false);
 
     const filteredActivities = initialActivities.filter((activity) =>
-        activity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (activity.category && activity.category.toLowerCase().includes(searchTerm.toLowerCase()))
+        (activity.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+        (activity.category?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
 
     const handleInitialize = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -112,7 +112,7 @@ export default function ActivitiesDashboard({
                 toast.error(result.message);
             }
         } catch (error) {
-            toast.error("Failed to initialize society node");
+            toast.error("Failed to create club/activity");
         } finally {
             setIsInitializing(false);
         }
@@ -127,10 +127,10 @@ export default function ActivitiesDashboard({
                     </div>
                     <div>
                         <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                            Society Explorer
+                            Clubs & Activities
                         </h2>
                         <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                            Orchestrating Creative & Athletic Institutional Dynamics
+                            School Clubs, Sports and Extra-curricular Activities
                         </p>
                     </div>
                 </div>
@@ -141,35 +141,35 @@ export default function ActivitiesDashboard({
                             className="rounded-sm border border-border bg-card/40 backdrop-blur-xl font-black uppercase tracking-widest text-[10px] px-8 py-6 h-auto hover:border-primary transition-all"
                         >
                             <Calendar className="h-4 w-4 mr-2" />
-                            Hall Bookings
+                            Venue Bookings
                         </Button>
 
                         <Dialog open={open} onOpenChange={setOpen}>
                             <DialogTrigger asChild>
                                 <Button className="rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 py-6 h-auto emerald-glow shadow-2xl hover:scale-105 transition-all">
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Initialize Society
+                                    Add Club/Activity
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px] bg-card border-primary/20 rounded-sm">
                                 <form onSubmit={handleInitialize}>
                                     <DialogHeader>
-                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">Initialize Society Protocol</DialogTitle>
+                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">New Club/Activity Details</DialogTitle>
                                         <DialogDescription className="text-[10px] uppercase font-bold tracking-widest opacity-60">
-                                            Establish a new creative or athletic institutional node.
+                                            Create a new creative or athletic group.
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="grid gap-6 py-8">
                                         <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Society Name</p>
-                                            <Input name="name" placeholder="E.g., Neural Arts Collective" required className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Club/Activity Name</p>
+                                            <Input name="name" placeholder="E.g., Chess Club" required className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Category</p>
                                                 <Select name="category" required>
                                                     <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
-                                                        <SelectValue placeholder="Sector..." />
+                                                        <SelectValue placeholder="Category..." />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-card border-border">
                                                         <SelectItem value="Arts" className="text-xs font-bold uppercase tracking-tight">Arts & Culture</SelectItem>
@@ -188,7 +188,7 @@ export default function ActivitiesDashboard({
                                             <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Teacher-in-Charge</p>
                                             <Select name="teacher_id">
                                                 <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
-                                                    <SelectValue placeholder="Assign Curator..." />
+                                                    <SelectValue placeholder="Assign Teacher..." />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
                                                     {teachers.map((t) => (
@@ -200,7 +200,7 @@ export default function ActivitiesDashboard({
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Operational Nexus (Description)</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Activity Description</p>
                                             <Textarea name="description" placeholder="Orchestration details..." className="rounded-sm border-border bg-background min-h-[100px] text-xs font-bold" />
                                         </div>
                                     </div>
@@ -210,7 +210,7 @@ export default function ActivitiesDashboard({
                                             disabled={isInitializing}
                                             className="w-full bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] h-14 rounded-sm emerald-glow"
                                         >
-                                            {isInitializing ? "DEPLOYING NODE..." : "INITIALIZE SOCIETY"}
+                                            {isInitializing ? "CREATING..." : "SAVE CLUB/ACTIVITY"}
                                         </Button>
                                     </DialogFooter>
                                 </form>
@@ -232,7 +232,7 @@ export default function ActivitiesDashboard({
 
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
                     <Trophy className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Institutional Trophies</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">School Trophies</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter italic">42</h3>
                     <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/60">
                         Current Term Wins: 05
@@ -243,7 +243,7 @@ export default function ActivitiesDashboard({
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Total Societies</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{initialActivities.length}</h3>
                     <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-foreground/30">
-                        4 Tier-1 Chapters
+                        4 Major Clubs
                     </div>
                 </Card>
 
@@ -262,12 +262,12 @@ export default function ActivitiesDashboard({
                     <div className="flex items-center justify-between">
                         <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-x-3">
                             <Flag className="h-4 w-4" />
-                            Society Directory
+                            Clubs & Activities Directory
                         </h3>
                         <div className="relative w-72 group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
                             <Input
-                                placeholder="Query societies registry..."
+                                placeholder="Search activities..."
                                 className="pl-10 rounded-sm h-12 bg-card/40 border-border font-black text-[10px] uppercase tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -294,12 +294,12 @@ export default function ActivitiesDashboard({
                                     {activity.name}
                                 </h4>
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-6">
-                                    {activity.category || "GENERAL SECTOR"}
+                                    {activity.category || "GENERAL"}
                                 </p>
                                 <div className="space-y-4">
                                     <div className="p-4 rounded-sm bg-primary/5 border border-primary/10 group-hover:bg-primary/10 transition-colors">
                                         <p className="text-[8px] font-black text-primary uppercase tracking-[0.3em] mb-2 italic">
-                                            Operational Nexus
+                                            Description
                                         </p>
                                         <p className="text-[11px] font-black text-foreground line-clamp-2 uppercase tracking-tight opacity-70">
                                             {activity.description || "Active operations underway"}
@@ -309,7 +309,7 @@ export default function ActivitiesDashboard({
                                         variant="ghost"
                                         className="w-full text-primary font-black text-[10px] uppercase tracking-[0.3em] justify-center p-0 h-auto gap-x-3 hover:text-foreground transition-all"
                                     >
-                                        VERIFY MEMBERSHIP <ArrowRight className="h-3 w-3" />
+                                        VIEW DETAILS <ArrowRight className="h-3 w-3" />
                                     </Button>
                                 </div>
                             </Card>
@@ -326,13 +326,13 @@ export default function ActivitiesDashboard({
                 <div className="space-y-6">
                     <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
                         <Dumbbell className="h-4 w-4 text-foreground" />
-                        Athletic Fixtures
+                        Sports Fixtures
                     </h3>
 
                     <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
                         <CardHeader className="bg-primary/10 border-b border-primary/20 p-6">
                             <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
-                                Upcoming Challenges
+                                Upcoming Matches
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0">
@@ -358,7 +358,7 @@ export default function ActivitiesDashboard({
                                         <div className="flex items-center justify-between bg-background/30 p-3 rounded-sm border border-border/50">
                                             <div className="flex flex-col">
                                                 <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] mb-1">
-                                                    Sport / Venue
+                                                    Sport / Location
                                                 </span>
                                                 <span className="text-[10px] font-black text-foreground uppercase tracking-tight">
                                                     {fix.sport} • {fix.venue}
@@ -369,7 +369,7 @@ export default function ActivitiesDashboard({
                                             </Badge>
                                         </div>
                                         <Button className="w-full h-12 rounded-sm bg-primary/5 border border-primary/20 hover:bg-primary hover:text-white text-primary font-black text-[10px] uppercase tracking-[0.3em] shadow-none transition-all">
-                                            LIVE TELEMETRY
+                                            VIEW DETAILS
                                         </Button>
                                     </div>
                                 ))}
@@ -377,7 +377,7 @@ export default function ActivitiesDashboard({
                         </CardContent>
                         <CardFooter className="p-6 bg-primary/5 flex flex-col gap-y-3 border-t border-primary/10">
                             <p className="text-[9px] text-primary font-black uppercase tracking-widest text-center italic leading-relaxed opacity-60">
-                                Athletic rosters are auto-synced with academic performance eligibility matrices.
+                                Team rosters are synchronized with student eligibility records.
                             </p>
                         </CardFooter>
                     </Card>
@@ -386,7 +386,7 @@ export default function ActivitiesDashboard({
                         <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl relative overflow-hidden group hover:border-primary transition-all">
                             <CardHeader className="p-0 mb-6 flex items-center justify-between">
                                 <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
-                                    Participation Analytics
+                                        Sports Engagement
                                 </CardTitle>
                                 <TrendingUp className="h-5 w-5 text-primary animate-pulse" />
                             </CardHeader>
@@ -394,7 +394,7 @@ export default function ActivitiesDashboard({
                                 <div className="space-y-3">
                                     <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em]">
                                         <span className="text-foreground/40">
-                                            Creative Hub utilization
+                                            Club Participation
                                         </span>
                                         <span className="text-primary italic">92%</span>
                                     </div>

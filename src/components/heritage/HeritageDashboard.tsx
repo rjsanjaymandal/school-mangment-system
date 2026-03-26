@@ -59,8 +59,8 @@ export default function HeritageDashboard({
     const [open, setOpen] = useState(false);
 
     const filteredAlumni = initialAlumni.filter((alumnus) =>
-        `${alumnus.first_name} ${alumnus.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (alumnus.current_profession && alumnus.current_profession.toLowerCase().includes(searchTerm.toLowerCase()))
+        `${alumnus.first_name || ""} ${alumnus.last_name || ""}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (alumnus.current_profession?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
 
     const handleGraduate = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -86,7 +86,7 @@ export default function HeritageDashboard({
                 toast.error(result.message);
             }
         } catch (error) {
-            toast.error("Failed to execute graduation protocol");
+            toast.error("Failed to complete graduation");
         } finally {
             setIsGraduating(false);
         }
@@ -101,10 +101,10 @@ export default function HeritageDashboard({
                     </div>
                     <div>
                         <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                            Institutional Heritage
+                            Alumni & Heritage
                         </h2>
                         <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                            Preserving Scholastic Genealogy & Institutional Legacy Protocols
+                            Manage Alumni Records and School Legacy
                         </p>
                     </div>
                 </div>
@@ -128,17 +128,17 @@ export default function HeritageDashboard({
                             <DialogContent className="sm:max-w-[425px] bg-card border-primary/20 rounded-sm">
                                 <form onSubmit={handleGraduate}>
                                     <DialogHeader>
-                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">Initialize Graduation Node</DialogTitle>
+                                        <DialogTitle className="text-xl font-black uppercase tracking-tighter italic text-primary">Record Graduation</DialogTitle>
                                         <DialogDescription className="text-[10px] uppercase font-bold tracking-widest opacity-60">
-                                            Transmitting Scholastic Records to Legacy Registry
+                                            Moving student records to alumni directory
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="grid gap-6 py-8">
                                         <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Select Student Node</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Select Student</p>
                                             <Select name="studentId" required>
                                                 <SelectTrigger className="rounded-sm border-border bg-background h-12 text-xs font-bold uppercase tracking-tight">
-                                                    <SelectValue placeholder="Identify student record..." />
+                                                    <SelectValue placeholder="Identify student..." />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
                                                     {students.map((student) => (
@@ -161,7 +161,7 @@ export default function HeritageDashboard({
                                         </div>
                                         <div className="space-y-2">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-foreground/60 mb-1">Affiliation / Company</p>
-                                            <Input name="company" placeholder="Institutional Path..." className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
+                                            <Input name="company" placeholder="Current Path..." className="rounded-sm border-border bg-background h-12 text-xs font-bold" />
                                         </div>
                                     </div>
                                     <DialogFooter>
@@ -170,7 +170,7 @@ export default function HeritageDashboard({
                                             disabled={isGraduating}
                                             className="w-full bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] h-14 rounded-sm emerald-glow"
                                         >
-                                            {isGraduating ? "EXECUTING PROTOCOL..." : "EXECUTE TRANSITION"}
+                                            {isGraduating ? "PROCESSING..." : "COMPLETE GRADUATION"}
                                         </Button>
                                     </DialogFooter>
                                 </form>
@@ -186,12 +186,12 @@ export default function HeritageDashboard({
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <Users2 className="h-24 w-24 text-primary" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Total Registry Nodes</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">Total Alumni</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{initialAlumni.length}</h3>
                 </Card>
 
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Endowment Delta</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Alumni Fund</p>
                     <div className="flex items-center gap-x-4">
                         <h3 className="text-4xl font-black text-foreground tracking-tighter italic">₹2.4M</h3>
                         <TrendingUp className="h-6 w-6 text-primary" />
@@ -199,12 +199,12 @@ export default function HeritageDashboard({
                 </Card>
 
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Scholastic Continuity</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Graduation Rate</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter italic underline decoration-primary/20 underline-offset-4">84%</h3>
                 </Card>
 
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Mentorship Active</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Active Mentors</p>
                     <h3 className="text-4xl font-black text-foreground tracking-tighter italic">124</h3>
                 </Card>
             </div>
@@ -215,7 +215,7 @@ export default function HeritageDashboard({
                     <div className="flex items-center justify-between">
                         <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-x-3">
                             <Users className="h-4 w-4" />
-                            Genealogy Registry
+                            Alumni Directory
                         </h3>
                         <div className="flex gap-x-4">
                             <div className="relative">
@@ -249,7 +249,7 @@ export default function HeritageDashboard({
                                                 {alumnus.first_name} {alumnus.last_name}
                                             </h4>
                                             <Badge className="bg-primary text-primary-foreground border-none font-black text-[9px] px-3 py-1 rounded-sm uppercase tracking-[0.2em] emerald-glow">
-                                                GEN_NODE_{alumnus.graduation_year}
+                                                CLASS OF {alumnus.graduation_year}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-x-4 text-xs font-bold text-muted-foreground tracking-tight">
@@ -326,7 +326,7 @@ export default function HeritageDashboard({
                                 </div>
                             </div>
                             <Button className="w-full h-12 bg-white text-foreground font-black rounded-sm hover:bg-white/90 border-none mt-2 shadow-xl shadow-emerald-900/40 uppercase tracking-widest text-[10px]">
-                                LAUNCH CAMPAIGN
+                                START CAMPAIGN
                             </Button>
                         </div>
                     </Card>
@@ -364,7 +364,7 @@ export default function HeritageDashboard({
                                         variant="ghost"
                                         className="w-full text-primary h-6 text-[10px] font-black uppercase tracking-[0.2em] p-0 hover:bg-transparent"
                                     >
-                                        EXECUTE BATCH →
+                                        GENERATE BATCH →
                                     </Button>
                                 </div>
                             </div>

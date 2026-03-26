@@ -101,7 +101,7 @@ export function UserManagement() {
       `${user.first_name || ""} ${user.last_name || ""}`
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchQuery.toLowerCase()),
+      (user.id?.toLowerCase() || "").includes(searchQuery.toLowerCase()),
   );
 
   const getRoleBadge = (role: string) => {
@@ -168,7 +168,7 @@ export function UserManagement() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search identity vault..."
+            placeholder="Search user accounts..."
             className="pl-10 rounded-2xl border-white/10 bg-white/50 backdrop-blur-md shadow-xl focus:ring-slate-900 transition-all font-medium"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -183,7 +183,7 @@ export function UserManagement() {
           <RefreshCw
             className={cn("h-4 w-4", isRefreshing && "animate-spin")}
           />
-          Refresh Registry
+          Refresh User List
         </Button>
       </div>
 
@@ -195,10 +195,10 @@ export function UserManagement() {
           <TableHeader className="bg-card/5">
             <TableRow className="border-white/10 hover:bg-transparent">
               <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                Identity Details
+                User Details
               </TableHead>
               <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                Access Tier
+                Role
               </TableHead>
               <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Registered
@@ -215,7 +215,7 @@ export function UserManagement() {
                   colSpan={4}
                   className="h-32 text-center text-muted-foreground font-bold uppercase tracking-widest"
                 >
-                  No records found in current segment.
+                  No users found matching your search.
                 </TableCell>
               </TableRow>
             ) : (
@@ -268,7 +268,7 @@ export function UserManagement() {
                         className="w-56 rounded-2xl border-white/10 bg-white/80 backdrop-blur-xl shadow-2xl animate-in zoom-in-95 duration-200"
                       >
                         <DropdownMenuLabel className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                          Access Management
+                          Manage Access
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator className="bg-slate-100" />
                         <DropdownMenuItem
@@ -279,33 +279,33 @@ export function UserManagement() {
                           <Eye className="h-4 w-4" />{" "}
                           {isImpersonating === user.id
                             ? "Initializing..."
-                            : "View As Profile"}
+                            : "Login As User"}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-slate-100" />
                         <DropdownMenuItem
                           onClick={() => handleRoleUpdate(user.id, "admin")}
                           className="gap-x-2 font-bold cursor-pointer hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600 rounded-xl transition-colors"
                         >
-                          <Shield className="h-4 w-4" /> Elevate to Admin
+                          <Shield className="h-4 w-4" /> Make Admin
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleRoleUpdate(user.id, "teacher")}
                           className="gap-x-2 font-bold cursor-pointer hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-50 focus:text-blue-600 rounded-xl transition-colors"
                         >
-                          <UserCog className="h-4 w-4" /> Switch to Teacher
+                          <UserCog className="h-4 w-4" /> Change to Teacher
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleRoleUpdate(user.id, "student")}
                           className="gap-x-2 font-bold cursor-pointer hover:bg-green-50 hover:text-green-600 focus:bg-green-50 focus:text-green-600 rounded-xl transition-colors"
                         >
-                          <Users className="h-4 w-4" /> Demote to Student
+                          <Users className="h-4 w-4" /> Change to Student
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-slate-100" />
                         <DropdownMenuItem
                           onClick={() => handleDeactivate(user.id)}
                           className="gap-x-2 font-bold text-red-600 cursor-pointer hover:bg-red-50 rounded-xl transition-colors"
                         >
-                          <AlertCircle className="h-4 w-4" /> Deactive Access
+                          <AlertCircle className="h-4 w-4" /> Deactive Account
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -326,10 +326,10 @@ export function UserManagement() {
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">
-                Security Protocol
+                System Status
               </p>
               <h4 className="text-sm font-bold tracking-tight">
-                Real-time metadata synchronization is active and monitoring
+                User data is synchronized and monitoring
                 changes.
               </h4>
             </div>

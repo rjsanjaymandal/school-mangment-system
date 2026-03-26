@@ -201,7 +201,7 @@ export function FeesDashboard({
                             <div className="p-10 space-y-8">
                                 <div className="space-y-3">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Structure Identity (Name)</Label>
-                                    <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} className="glass-card border-white/10 h-14 font-black text-sm italic skew-x-[-8deg] focus-visible:ring-emerald-500/50" placeholder="e.g. ANNUAL TUITION MATRIX" />
+                                    <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} className="glass-card border-white/10 h-14 font-black text-sm italic skew-x-[-8deg] focus-visible:ring-emerald-500/50" placeholder="e.g. ANNUAL TUITION FEE" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-8">
                                     <div className="space-y-3">
@@ -217,7 +217,7 @@ export function FeesDashboard({
                                     <div className="space-y-3">
                                         <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Target Sector</Label>
                                         <Select value={feeForm.class_id} onValueChange={(v) => setFeeForm({ ...feeForm, class_id: v })}>
-                                            <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg] focus:ring-emerald-500/50"><SelectValue placeholder="All Matrix Nodes" /></SelectTrigger>
+                                            <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg] focus:ring-emerald-500/50"><SelectValue placeholder="All Classes" /></SelectTrigger>
                                             <SelectContent className="glass-panel border-white/10">
                                                 {classes.map((c) => (
                                                     <SelectItem key={c.id} value={c.id} className="font-black text-[10px] uppercase italic focus:bg-emerald-500/20">{c.name}</SelectItem>
@@ -308,7 +308,7 @@ export function FeesDashboard({
                             className="rounded-xs px-10 py-3 data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] transition-all gap-x-3 shadow-2xl skew-x-[-12deg] data-[state=inactive]:hover:bg-white/5"
                         >
                             <CreditCard className="h-4 w-4 not-skew-x" />
-                            Transaction Matrix
+                            Fee Transactions
                         </TabsTrigger>
                         {!isStudent && (
                             <TabsTrigger
@@ -343,7 +343,7 @@ export function FeesDashboard({
                                         </td>
                                         <td className="px-10 py-6 font-black text-foreground text-sm italic tracking-tighter group-hover:scale-105 origin-left transition-transform">₹{fee.amount.toLocaleString()}</td>
                                         <td className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 italic">{fee.due_date}</td>
-                                        <td className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">{fee.class?.name || "Matrix Core"}</td>
+                                        <td className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">{fee.class?.name || "General"}</td>
                                     </tr>
                                 ))}
                             </tbody>

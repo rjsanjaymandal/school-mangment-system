@@ -226,13 +226,13 @@ export function AttendanceDashboard({
                     <div>
                         <div className="relative">
                             <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Attendance <span className="text-primary italic">{isStudent ? "Registry" : "Portal"}</span>
+                                Attendance <span className="text-primary italic">Records</span>
                             </h2>
                             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
                         </div>
                         <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
                             <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
-                            {isStudent ? "Student Attendance Records" : "Live Attendance Tracking"}
+                            {isStudent ? "View your attendance" : "Mark today's attendance"}
                         </p>
                     </div>
                 </div>
@@ -262,7 +262,7 @@ export function AttendanceDashboard({
                     <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Today_Present</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Today Present</p>
                                 <h3 className="text-4xl font-black text-foreground italic leading-none">{todayPresent}</h3>
                             </div>
                             <UserCheck className="h-8 w-8 text-primary shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse" />
@@ -279,7 +279,7 @@ export function AttendanceDashboard({
                     <div className="relative glass-panel p-8 border-red-500/10 group-hover:border-red-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Today_Absent</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Today Absent</p>
                                 <h3 className="text-4xl font-black text-red-500 italic leading-none">{todayAbsent}</h3>
                             </div>
                             <UserX className="h-8 w-8 text-red-500/40 group-hover:text-red-500 transition-colors" />
@@ -296,7 +296,7 @@ export function AttendanceDashboard({
                     <div className="relative glass-panel p-8 border-amber-500/10 group-hover:border-amber-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Weekly_Late</p>
+                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Weekly Late</p>
                                 <h3 className="text-4xl font-black text-amber-500 italic leading-none">{weekLate}</h3>
                             </div>
                             <AlertTriangle className="h-8 w-8 text-amber-500/40 group-hover:text-amber-500 transition-colors" />
@@ -316,11 +316,11 @@ export function AttendanceDashboard({
                         <div className="not-skew-x flex gap-2">
                             {!isStudent && (
                                 <TabsTrigger value="mark" className="rounded-none px-10 py-5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[11px] transition-all gap-x-3 emerald-glow italic group">
-                                    <ClipboardCheck className="h-4 w-4 group-data-[state=active]:animate-bounce" /> MARK_PRESENCE
+                                    <ClipboardCheck className="h-4 w-4 group-data-[state=active]:animate-bounce" /> MARK ATTENDANCE
                                 </TabsTrigger>
                             )}
                             <TabsTrigger value="history" className="rounded-none px-10 py-5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[11px] transition-all gap-x-3 italic group">
-                                <Calendar className="h-4 w-4 group-data-[state=active]:animate-spin-slow" /> DATA_ARCHIVE
+                                <Calendar className="h-4 w-4 group-data-[state=active]:animate-spin-slow" /> ATTENDANCE HISTORY
                             </TabsTrigger>
                             <TabsTrigger value="stats" className="rounded-none px-10 py-5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[11px] transition-all gap-x-3 italic group">
                                 <BarChart3 className="h-4 w-4" /> ANALYTICS
@@ -331,12 +331,12 @@ export function AttendanceDashboard({
                     {isAdminOrTeacher && (
                         <div className="flex items-center gap-4 skew-x-[-12deg]">
                              <Button variant="outline" onClick={handleExportCSV} className="h-16 px-8 rounded-none border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary uppercase font-black tracking-widest text-[10px] transition-all">
-                                <span className="not-skew-x flex items-center gap-2"><Download className="h-4 w-4" /> Export_Log</span>
+                                <span className="not-skew-x flex items-center gap-2"><Download className="h-4 w-4" /> Export CSV</span>
                              </Button>
                              <div className="h-16 w-[1px] bg-primary/20 mx-2" />
                              <div className="flex items-baseline gap-2 not-skew-x">
                                 <div className="h-3 w-3 rounded-none bg-primary animate-pulse" />
-                                <span className="font-mono text-[10px] font-black text-primary uppercase">Sys_Up: Live</span>
+                                <span className="font-mono text-[10px] font-black text-primary uppercase">Status: Live</span>
                              </div>
                         </div>
                     )}
@@ -348,7 +348,7 @@ export function AttendanceDashboard({
                         <div className="not-skew-x flex flex-wrap gap-8 items-end">
                             <div className="space-y-4 flex-1 min-w-[240px]">
                                 <Label className="text-[10px] font-black uppercase text-primary tracking-[0.3em] flex items-center gap-2 italic">
-                                    <div className="h-1.5 w-1.5 bg-primary animate-pulse" /> TARGET_SECTOR
+                                    <div className="h-1.5 w-1.5 bg-primary animate-pulse" /> SELECT CLASS
                                 </Label>
                                 <Select value={selectedClass} onValueChange={handleClassChange}>
                                     <SelectTrigger className="h-14 rounded-none bg-primary/5 border-primary/20 font-mono font-black uppercase text-[11px] tracking-widest focus:ring-primary/40">
@@ -361,17 +361,17 @@ export function AttendanceDashboard({
                             </div>
                             <div className="space-y-4 flex-1 min-w-[240px]">
                                 <Label className="text-[10px] font-black uppercase text-primary tracking-[0.3em] flex items-center gap-2 italic">
-                                    <div className="h-1.5 w-1.5 bg-primary" /> TEMPORAL_NODE
+                                    <div className="h-1.5 w-1.5 bg-primary" /> SELECT DATE
                                 </Label>
                                 <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="h-14 rounded-none bg-primary/5 border-primary/20 font-mono font-black text-[11px] tracking-widest focus:border-primary transition-all" />
                             </div>
                             <div className="space-y-4 flex-[2] min-w-[320px]">
                                 <Label className="text-[10px] font-black uppercase text-primary tracking-[0.3em] flex items-center gap-2 italic">
-                                    <div className="h-1.5 w-1.5 bg-primary" /> IDENTITY_FILTER
+                                    <div className="h-1.5 w-1.5 bg-primary" /> SEARCH STUDENT
                                 </Label>
                                 <div className="relative group">
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/40 group-focus-within:text-primary transition-colors" />
-                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="ENTER ID OR NOMENCLATURE..." className="h-14 pl-12 rounded-none bg-primary/5 border-primary/20 font-mono font-black text-[11px] tracking-widest placeholder:text-foreground/10 focus:border-primary transition-all" />
+                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="SEARCH BY NAME OR ADMISSION NO..." className="h-14 pl-12 rounded-none bg-primary/5 border-primary/20 font-mono font-black text-[11px] tracking-widest placeholder:text-foreground/10 focus:border-primary transition-all" />
                                 </div>
                             </div>
                         </div>
@@ -383,19 +383,19 @@ export function AttendanceDashboard({
                             <div className="flex flex-wrap items-center justify-between gap-6 glass-panel p-6 border-primary/5 skew-x-[-12deg] rounded-none">
                                 <div className="not-skew-x flex items-center gap-4">
                                     <Button onClick={markAllPresent} variant="outline" className="h-12 px-6 rounded-none border-primary/20 bg-primary/5 hover:bg-primary text-primary hover:text-primary-foreground font-black uppercase tracking-widest text-[9px] transition-all gap-2 italic">
-                                        <Check className="h-3.5 w-3.5" /> MARK_ALL_ACTIVE
+                                        <Check className="h-3.5 w-3.5" /> MARK ALL PRESENT
                                     </Button>
                                     <Button onClick={markAllAbsent} variant="outline" className="h-12 px-6 rounded-none border-red-500/20 bg-red-500/5 hover:bg-red-500 text-red-500 hover:text-white font-black uppercase tracking-widest text-[9px] transition-all gap-2 italic">
-                                        <X className="h-3.5 w-3.5" /> SCAN_FAIL_ALL
+                                        <X className="h-3.5 w-3.5" /> MARK ALL ABSENT
                                     </Button>
                                 </div>
                                 <div className="not-skew-x flex items-center gap-8 border-l border-primary/10 pl-8">
                                     <div className="flex flex-col items-end">
-                                        <span className="text-[8px] font-mono font-black text-primary/40 uppercase tracking-widest">ACTIVE_NODES</span>
+                                        <span className="text-[8px] font-mono font-black text-primary/40 uppercase tracking-widest">PRESENT</span>
                                         <span className="text-xl font-black text-primary italic leading-none">{presentCount}</span>
                                     </div>
                                     <div className="flex flex-col items-end">
-                                        <span className="text-[8px] font-mono font-black text-red-500/40 uppercase tracking-widest">INACTIVE</span>
+                                        <span className="text-[8px] font-mono font-black text-red-500/40 uppercase tracking-widest">ABSENT</span>
                                         <span className="text-xl font-black text-red-500 italic leading-none">{absentCount}</span>
                                     </div>
                                     <div className="flex flex-col items-end">
@@ -411,8 +411,8 @@ export function AttendanceDashboard({
                                     <div className="glass-panel p-20 text-center border-primary/5 skew-x-[-12deg] rounded-none shadow-inner">
                                         <div className="not-skew-x">
                                             <Search className="h-12 w-12 mx-auto text-foreground/10 mb-6" />
-                                            <h3 className="font-black text-xl text-foreground/30 uppercase tracking-[0.3em] italic leading-none">ZERO_MATCHES_FOUND</h3>
-                                            <p className="text-[9px] font-mono font-black text-primary/40 uppercase tracking-[0.2em] mt-3 italic">REFINE_QUERY_PARAMETERS</p>
+                                            <h3 className="font-black text-xl text-foreground/30 uppercase tracking-[0.3em] italic leading-none">NO STUDENTS FOUND</h3>
+                                            <p className="text-[9px] font-mono font-black text-primary/40 uppercase tracking-[0.2em] mt-3 italic">TRY ANOTHER SEARCH TERM</p>
                                         </div>
                                     </div>
                                 ) : (
@@ -432,27 +432,27 @@ export function AttendanceDashboard({
                                                                 )}>
                                                                     <span className="skew-x-[12deg]">{student.profile?.first_name?.[0] || "?"}</span>
                                                                 </div>
-                                                                <span className="absolute -top-3 -left-3 text-[9px] font-mono font-black bg-foreground text-background px-2 py-1 italic tracking-tighter">NODE_{String(idx + 1).padStart(3, '0')}</span>
+                                                                <span className="absolute -top-3 -left-3 text-[9px] font-mono font-black bg-foreground text-background px-2 py-1 italic tracking-tighter">STUDENT_{String(idx + 1).padStart(3, '0')}</span>
                                                             </div>
                                                             <div>
                                                                 <h4 className="font-black text-xl text-foreground tracking-tighter uppercase italic group-hover:text-primary transition-colors">{student.profile?.first_name} {student.profile?.last_name}</h4>
                                                                 <div className="flex items-center gap-4 mt-1">
                                                                     <p className="text-[9px] font-mono font-black text-primary/60 uppercase tracking-[0.2em]">
-                                                                        REC_ID: {student.admission_number || "UNIDENTIFIED"}
+                                                                        ADM_NO: {student.admission_number || "N/A"}
                                                                     </p>
                                                                     <div className="h-1 w-1 rounded-full bg-foreground/10" />
                                                                     <p className="text-[9px] font-mono font-black text-foreground/40 uppercase tracking-[0.2em]">
-                                                                        SEC: {student.class?.name || "SYS_ROOT"}
+                                                                        CLASS: {student.class?.name || "N/A"}
                                                                     </p>
                                                                 </div>
                                                             </div>
                                                         </div>
 
                                                         <div className="flex items-center gap-3">
-                                                            {statusButton(student.id, "present", <Check className="h-4 w-4" />, "ACTIVE", "bg-primary")}
-                                                            {statusButton(student.id, "absent", <X className="h-4 w-4" />, "MISSING", "bg-red-600")}
-                                                            {statusButton(student.id, "late", <Clock className="h-4 w-4" />, "DELAYER", "bg-amber-500")}
-                                                            {statusButton(student.id, "excused", <ShieldCheck className="h-4 w-4" />, "BYPASS", "bg-blue-600")}
+                                                            {statusButton(student.id, "present", <Check className="h-4 w-4" />, "PRESENT", "bg-primary")}
+                                                            {statusButton(student.id, "absent", <X className="h-4 w-4" />, "ABSENT", "bg-red-600")}
+                                                            {statusButton(student.id, "late", <Clock className="h-4 w-4" />, "LATE", "bg-amber-500")}
+                                                            {statusButton(student.id, "excused", <ShieldCheck className="h-4 w-4" />, "EXCUSED", "bg-blue-600")}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -472,7 +472,7 @@ export function AttendanceDashboard({
                                     >
                                         <div className="not-skew-x flex items-center gap-4">
                                             {loading ? <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin rounded-full" /> : <ShieldCheck className="h-6 w-6 group-hover:animate-pulse" />}
-                                            {loading ? "DATA_SYNCHRONIZING..." : `COMMIT_MATRIX_STATE (${Object.keys(studentRecords).length}_NODES)`}
+                                            {loading ? "SAVING..." : `SAVE ATTENDANCE (${Object.keys(studentRecords).length} STUDENTS)`}
                                         </div>
                                     </Button>
                                 </div>
@@ -498,11 +498,11 @@ export function AttendanceDashboard({
                             {!isStudent && (
                                 <div className="space-y-4 flex-1 min-w-[240px]">
                                     <Label className="text-[10px] font-black uppercase text-primary tracking-[0.3em] flex items-center gap-2 italic">
-                                        <div className="h-1.5 w-1.5 bg-primary" /> ARCHIVE_SECTOR
+                                        <div className="h-1.5 w-1.5 bg-primary" /> SELECT CLASS
                                     </Label>
                                     <Select value={historyClass} onValueChange={setHistoryClass}>
                                         <SelectTrigger className="h-14 rounded-none bg-primary/5 border-primary/20 font-mono font-black uppercase text-[11px] tracking-widest focus:ring-primary/40">
-                                            <SelectValue placeholder="SELECT CLASS NODE" />
+                                            <SelectValue placeholder="CHOOSE A CLASS" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-background/95 backdrop-blur-3xl border-primary/20 rounded-none">
                                             {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-mono font-black uppercase text-[10px] tracking-widest focus:bg-primary focus:text-primary-foreground">{c.name}</SelectItem>)}
@@ -512,13 +512,13 @@ export function AttendanceDashboard({
                             )}
                             <div className={cn("space-y-4 flex-1 min-w-[240px]", isStudent ? "flex-[2]" : "")}>
                                 <Label className="text-[10px] font-black uppercase text-primary tracking-[0.3em] flex items-center gap-2 italic">
-                                    <div className="h-1.5 w-1.5 bg-primary" /> TEMPORAL_MARKER
+                                    <div className="h-1.5 w-1.5 bg-primary" /> DATE
                                 </Label>
                                 <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-14 rounded-none bg-primary/5 border-primary/20 font-mono font-black text-[11px] tracking-widest focus:border-primary transition-all" />
                             </div>
                             <Button onClick={fetchHistory} disabled={(!isStudent && !historyClass) || historyLoading} className="h-14 px-10 rounded-none bg-primary text-primary-foreground font-black uppercase tracking-widest text-[11px] transition-all gap-3 emerald-glow shadow-xl italic">
                                 {historyLoading ? <div className="h-4 w-4 border-2 border-white/30 border-t-white animate-spin rounded-full" /> : <Filter className="h-4 w-4" />}
-                                {historyLoading ? "RETRIEVING..." : "SCAN_DATABASE"}
+                                {historyLoading ? "SEARCHING..." : "SEARCH HISTORY"}
                             </Button>
                         </div>
                     </div>
@@ -527,10 +527,10 @@ export function AttendanceDashboard({
                     {historyRecords.length > 0 && (
                         <div className="grid gap-6 md:grid-cols-4 reveal-4">
                             {[
-                                { label: "TOTAL_ACTIVE", val: historyRecords.filter(r => r.status === "present").length, color: "text-primary", bg: "bg-primary/5", border: "border-primary/20" },
-                                { label: "TOTAL_MISSING", val: historyRecords.filter(r => r.status === "absent").length, color: "text-red-500", bg: "bg-red-500/5", border: "border-red-500/20" },
-                                { label: "TOTAL_DELAYED", val: historyRecords.filter(r => r.status === "late").length, color: "text-amber-500", bg: "bg-amber-500/5", border: "border-amber-500/20" },
-                                { label: "TOTAL_BYPASS", val: historyRecords.filter(r => r.status === "excused").length, color: "text-blue-400", bg: "bg-blue-400/5", border: "border-blue-400/20" }
+                                { label: "TOTAL PRESENT", val: historyRecords.filter(r => r.status === "present").length, color: "text-primary", bg: "bg-primary/5", border: "border-primary/20" },
+                                { label: "TOTAL ABSENT", val: historyRecords.filter(r => r.status === "absent").length, color: "text-red-500", bg: "bg-red-500/5", border: "border-red-500/20" },
+                                { label: "TOTAL LATE", val: historyRecords.filter(r => r.status === "late").length, color: "text-amber-500", bg: "bg-amber-500/5", border: "border-amber-500/20" },
+                                { label: "TOTAL EXCUSED", val: historyRecords.filter(r => r.status === "excused").length, color: "text-blue-400", bg: "bg-blue-400/5", border: "border-blue-400/20" }
                             ].map((stat, i) => (
                                 <div key={i} className={cn("p-6 skew-x-[-12deg] rounded-none border text-center transition-all hover:bg-white/[0.02]", stat.bg, stat.border)}>
                                     <div className="not-skew-x">
@@ -548,11 +548,11 @@ export function AttendanceDashboard({
                             <table className="w-full">
                                 <thead>
                                     <tr className="bg-primary/5 border-b border-primary/10">
-                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">IDX</th>
-                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">PERSONNEL_NODE</th>
-                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">REGISTRY_ID</th>
-                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">STATUS_BYTE</th>
-                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">TELEMETRY_LOGS</th>
+                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">NO</th>
+                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">STUDENT NAME</th>
+                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">ADMISSION NUMBER</th>
+                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">STATUS</th>
+                                        <th className="text-left py-6 px-8 font-mono font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">REMARKS</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-primary/5">
@@ -562,7 +562,7 @@ export function AttendanceDashboard({
                                                 <div className="opacity-30">
                                                     <Search className="h-10 w-10 mx-auto mb-4 text-primary/20" />
                                                     <p className="font-mono font-black uppercase tracking-[0.4em] text-[10px] italic">
-                                                        {historyClass ? "ZERO_SHARDS_FOUND" : "SCAN_PARAMETERS_REQUIRED"}
+                                                        {historyClass ? "NO RECORDS FOUND" : "PLEASE SELECT FILTERS"}
                                                     </p>
                                                 </div>
                                             </td>
@@ -598,7 +598,7 @@ export function AttendanceDashboard({
                                                     </div>
                                                 </td>
                                                 <td className="py-5 px-8 font-mono text-[10px] font-bold text-foreground/30 italic group-hover:text-foreground/60 transition-colors">
-                                                    {record.remarks || "NULL_TELEMETRY"}
+                                                    {record.remarks || "No remarks"}
                                                 </td>
                                             </tr>
                                         ))
@@ -615,9 +615,9 @@ export function AttendanceDashboard({
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.05),transparent_70%)]" />
                         <div className="not-skew-x relative z-10">
                             <BarChart3 className="h-20 w-20 mx-auto text-primary/20 mb-10 animate-pulse" />
-                            <h3 className="font-black text-3xl text-foreground/30 uppercase tracking-[0.5em] italic leading-none">ANALYTIC_ENGINE_OFFLINE</h3>
+                            <h3 className="font-black text-3xl text-foreground/30 uppercase tracking-[0.5em] italic leading-none">ANALYTICS COMING SOON</h3>
                             <p className="text-[11px] font-mono font-black text-primary/40 uppercase tracking-[0.3em] mt-6 italic max-w-md mx-auto leading-relaxed">
-                                DEPTH_PROCESSING REQUIRED. CORE AGGREGATOR MODULE INITIALIZATION TO BE DEPLOYED IN NEXT_VERSION.
+                                Data visualization and deep attendance insights will be available in the next update.
                             </p>
                             <div className="flex justify-center gap-6 mt-12">
                                 <div className="h-1 w-20 bg-primary/10" />

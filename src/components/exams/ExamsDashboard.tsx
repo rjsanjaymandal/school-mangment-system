@@ -145,11 +145,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                     </div>
                     <div>
                         <div className="relative">
-                            <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Exam <span className="text-primary italic">Registry</span></h1>
+                            <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Exam <span className="text-primary italic">Management</span></h1>
                             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
                         </div>
                         <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> School Exam Management
+                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> Manage School Examinations
                         </p>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 <TabsList className="bg-white/[0.02] p-2 rounded-none h-20 border border-primary/10 skew-x-[-8deg] mb-12 flex items-center gap-2">
                     <TabsTrigger value="list" className="h-16 px-12 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 not-skew-x rounded-none border border-transparent data-[state=active]:emerald-glow italic">
                         <span className="flex items-center gap-x-3">
-                            <ClipboardCheck className="h-4 w-4" /> Exam Matrix
+                            <ClipboardCheck className="h-4 w-4" /> Exam List
                         </span>
                     </TabsTrigger>
                     <TabsTrigger value="calendar" className="h-16 px-12 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 not-skew-x rounded-none border border-transparent data-[state=active]:emerald-glow italic text-foreground/40">
@@ -185,7 +185,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 <TabsContent value="list" className="mt-0 space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         {[
-                            { label: "Total Assessments", value: exams.length, icon: FileText, width: "78%" },
+                            { label: "Total Exams", value: exams.length, icon: FileText, width: "78%" },
                             { label: "Active Participants", value: students.length, icon: Users, width: "92%" },
                             { label: "Subject Coverage", value: new Set(exams.map(e => e.subject_id)).size, icon: BookOpen, width: "64%" },
                             { label: "Current Cycle", value: "Verified", icon: Calendar, width: "100%" },
@@ -330,10 +330,10 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <Award className="absolute right-[-30px] top-[-30px] h-48 w-48 text-primary opacity-5 rotate-12" />
                         <div className="relative z-10">
                             <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Exam <span className="text-primary italic">Configuration</span>
+                                Exam <span className="text-primary italic">Details</span>
                             </h3>
                             <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                                <span className="h-1 w-1 rounded-full bg-primary" /> Academic Exam Setup
+                                <span className="h-1 w-1 rounded-full bg-primary" /> Create a new exam
                             </p>
                         </div>
                     </div>
@@ -437,14 +437,14 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <ClipboardCheck className="absolute right-[-30px] top-[-30px] h-56 w-56 text-primary opacity-5 rotate-12" />
                         <div className="relative z-10">
                             <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Grading <span className="text-primary italic">Matrix</span>
+                                Exam <span className="text-primary italic">Results</span>
                             </h3>
                             <div className="flex flex-wrap items-center gap-6 mt-6">
                                 <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 italic flex items-center gap-2">
                                     <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Exam: {selectedExam?.name}
                                 </p>
                                 <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 italic flex items-center gap-2 border-l border-primary/20 pl-6">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/50" /> Resolution: {selectedExam?.max_marks}-PT Scale
+                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/50" /> Max Marks: {selectedExam?.max_marks} Points
                                 </p>
                             </div>
                         </div>
@@ -474,7 +474,7 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                                             <p className="font-black text-foreground uppercase tracking-tighter text-lg group-hover:text-primary transition-colors italic leading-none mb-2">
                                                                 {student.profile?.first_name} {student.profile?.last_name}
                                                             </p>
-                                                            <p className="text-[10px] font-mono font-black uppercase tracking-widest text-foreground/30">Node_ID: {student.admission_number || student.id.slice(0, 12)}</p>
+                                                            <p className="text-[10px] font-mono font-black uppercase tracking-widest text-foreground/30">Roll No: {student.admission_number || student.id.slice(0, 12)}</p>
                                                         </div>
                                                     </div>
                                                 </td>

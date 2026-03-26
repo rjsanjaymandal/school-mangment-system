@@ -192,7 +192,7 @@ export function StaffHRManagement({
             className="rounded-xs px-10 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[10px] transition-all gap-x-3 emerald-border-glow shadow-2xl skew-x-[-12deg] data-[state=inactive]:hover:bg-white/5"
           >
             <DollarSign className="h-4 w-4 not-skew-x" />
-            Payroll Matrix
+            Payroll System
           </TabsTrigger>
         </TabsList>
 
@@ -272,7 +272,7 @@ export function StaffHRManagement({
                 
                 <div>
                     <h3 className="text-5xl font-black text-foreground uppercase tracking-tight italic leading-none">
-                        Faculty Payroll Matrix
+                        Faculty Payroll
                     </h3>
                     <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary mt-6">Protocol: Liquidation Cycle Gamma</p>
                 </div>

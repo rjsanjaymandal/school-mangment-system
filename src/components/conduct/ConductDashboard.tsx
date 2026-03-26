@@ -44,10 +44,10 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                        Behavioral Standard
+                        Student Conduct
                     </h2>
                     <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                        Institutional Merit Registry & Ethical Conduct Protocols
+                        Student merits, demerits, and disciplinary records
                     </p>
                 </div>
                 {isAdminOrTeacher && (
@@ -104,21 +104,21 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
             {/* Stats */}
             <div className="grid gap-6 md:grid-cols-3">
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Institutional Merits</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Total Merits</p>
                     <div className="flex items-center gap-x-4">
                         <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{totalMerits}</h3>
                         <TrendingUp className="h-6 w-6 text-primary emerald-glow" />
                     </div>
                 </Card>
                 <Card className="border-destructive/20 bg-destructive/5 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-destructive transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2 italic">Protocol Demerits</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2 italic">Total Demerits</p>
                     <div className="flex items-center gap-x-4">
                         <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{totalDemerits}</h3>
                         <TrendingDown className="h-6 w-6 text-destructive" />
                     </div>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Net Integrity Score</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Overall Conduct Score</p>
                     <div className="flex items-center gap-x-4">
                         <h3 className="text-4xl font-black text-foreground tracking-tighter italic underline decoration-primary/20 underline-offset-4">{totalMerits - totalDemerits}</h3>
                         <Star className="h-6 w-6 text-primary/40" />
@@ -163,7 +163,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                                     </td>
                                     <td className="py-6 px-8 font-black text-foreground text-lg italic tracking-tighter underline decoration-primary/20">{r.points}</td>
                                     <td className="py-6 px-8 text-foreground/60 font-black uppercase tracking-widest text-[10px] italic">{r.category}</td>
-                                    <td className="py-6 px-8 text-foreground/40 text-[10px] font-bold uppercase tracking-widest max-w-[200px] truncate">{r.description || "NO_RECORDS_LOGGED"}</td>
+                                    <td className="py-6 px-8 text-foreground/40 text-[10px] font-bold uppercase tracking-widest max-w-[200px] truncate">{r.description || "NO DESCRIPTION"}</td>
                                     <td className="py-6 px-8 text-primary font-black tracking-widest text-[10px]">{r.incident_date}</td>
                                 </tr>
                             ))

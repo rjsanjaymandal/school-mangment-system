@@ -134,7 +134,7 @@ export default function GradebookDashboard({
                 <div className="bg-background/40 backdrop-blur-3xl p-10">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                         <div>
-                            <h3 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Strategic <span className="text-emerald-500">Matrix</span></h3>
+                            <h3 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Academic <span className="text-emerald-500">Performance</span></h3>
                             <p className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic">Protocol: Weighted Assessment Allocation</p>
                         </div>
                         {isAdminOrTeacher && (
@@ -171,7 +171,7 @@ export default function GradebookDashboard({
 
                                     <div className="flex items-center gap-x-12">
                                         <div className="text-right">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 italic">Matrix Score</p>
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mb-2 italic">Grade Score</p>
                                             <div className="flex items-baseline gap-x-3">
                                                 <span className="text-4xl font-black italic text-foreground leading-none group-hover:text-emerald-500 transition-colors tracking-tighter">{c.score}</span>
                                                 <span className="text-emerald-500/40 font-black text-[12px] leading-none uppercase italic">/ 100</span>

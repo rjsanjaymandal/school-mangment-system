@@ -35,8 +35,8 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
     }));
 
     const filteredInventory = inventory.filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.category?.name && item.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        (item.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+        (item.category?.name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -44,10 +44,10 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
-                        Procurement Hub
+                        School Inventory
                     </h2>
                     <p className="text-foreground/70 font-bold tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">
-                        Autonomous Inventory Monitoring & Asset Lifecycle Management
+                        Manage School Assets and Supplies
                     </p>
                 </div>
                 {isAdminOrTeacher && (
@@ -61,7 +61,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                         </Button>
                         <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]">
                             <Plus className="h-4 w-4" />
-                            New Asset
+                            Add Item
                         </Button>
                     </div>
                 )}
@@ -77,11 +77,11 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                         <Badge
                             className="bg-destructive text-destructive-foreground border-none rounded-xs text-[10px] uppercase font-black tracking-[0.3em] px-2"
                         >
-                            IMMEDIATE
+                            URGENT
                         </Badge>
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
-                        Critical Shortages
+                        Low Stock Items
                     </p>
                     <h3 className="text-3xl font-black mt-1 text-foreground">
                         {inventory
@@ -105,7 +105,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                         </Badge>
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">
-                        Stock Replenishment
+                        Restock List
                     </p>
                     <h3 className="text-3xl font-black mt-1 text-foreground">
                         {inventory.filter((i: any) => i.quantity_in_stock < (i.min_stock_level || 5)).length.toString().padStart(2, '0')} Drafts
@@ -148,12 +148,12 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-x-2">
                             <Truck className="h-4 w-4" />
-                            Stock Telemetry
+                            Stock Levels
                         </h3>
                         <div className="relative w-72">
                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-primary" />
                             <Input
-                                placeholder="SEARCH LEDGER..."
+                                placeholder="SEARCH INVENTORY..."
                                 className="pl-9 rounded-sm border-border bg-card/40 backdrop-blur-md h-10 text-[10px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -251,7 +251,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                                         size="sm"
                                                         className="rounded-sm font-black text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10 transition-all"
                                                     >
-                                                        MANAGE
+                                                        EDIT
                                                     </Button>
                                                 </td>
                                             )}
@@ -274,7 +274,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                 <div className="space-y-6">
                     <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
                         <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                        Procurement Drafts
+                        Order Drafts
                     </h3>
 
                     <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
@@ -297,7 +297,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                             </p>
                                         </div>
                                         <Badge className="bg-destructive text-destructive-foreground border-none text-[8px] font-black rounded-xs">
-                                            CRITICAL
+                                            LOW STOCK
                                         </Badge>
                                     </div>
                                     {isAdminOrTeacher && (
@@ -317,7 +317,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                             </p>
                                         </div>
                                         <Badge className="bg-foreground/10 text-foreground border-none text-[8px] font-black rounded-xs">
-                                            LOW STOCK
+                                            WATCHLIST
                                         </Badge>
                                     </div>
                                     {isAdminOrTeacher && (
