@@ -159,6 +159,19 @@ export default function LoginPage() {
         </CardContent>
       </Card>
       
+      {/* Social Proof / Stats */}
+      <div className="absolute bottom-20 flex gap-x-8 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/20 reveal-3">
+        <div className="flex items-center gap-x-2">
+          <span className="text-primary/40">125+</span> STUDENTS
+        </div>
+        <div className="flex items-center gap-x-2">
+          <span className="text-primary/40">18+</span> EXPERTS
+        </div>
+        <div className="flex items-center gap-x-2">
+          <span className="text-primary/40">31</span> MODULES
+        </div>
+      </div>
+
       {/* Footer Branding */}
       <div className="absolute bottom-8 text-center w-full reveal-3">
         <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/40">
