@@ -142,8 +142,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="font-black text-foreground uppercase tracking-tight text-xs">
-                        {teacher.profile?.first_name}{" "}
-                        {teacher.profile?.last_name}
+                        {teacher.profile?.full_name}
                       </span>
                       <span className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">
                         {teacher.profile?.email || "NO-EMAIL-NODATA"}

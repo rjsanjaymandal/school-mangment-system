@@ -434,11 +434,11 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                                 <div key={a.id} className="group/student relative p-4 bg-muted/20 border border-border rounded-lg hover:border-primary/40 hover:bg-primary/[0.02] transition-all duration-300">
                                                     <div className="flex items-center gap-4">
                                                         <div className="h-10 w-10 bg-primary/10 text-primary border border-primary/20 rounded-lg flex items-center justify-center font-bold text-xs">
-                                                            {a.student?.profile?.first_name?.[0] || "?"}
+                                                            {a.student?.profile?.full_name?.[0] || "?"}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
                                                             <p className="font-bold text-foreground text-[11px] uppercase tracking-tight truncate group-hover/student:text-primary transition-colors">
-                                                                {a.student?.profile?.first_name} {a.student?.profile?.last_name}
+                                                                {a.student?.profile?.full_name}
                                                             </p>
                                                             <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wide truncate mt-0.5">
                                                                 {a.stop?.name || "No stop assigned"}

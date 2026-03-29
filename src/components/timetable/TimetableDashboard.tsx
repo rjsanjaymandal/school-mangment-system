@@ -183,7 +183,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                             <SelectContent className="glass-dark border-primary/20">
                                                 {teachers.map((t: any) => (
                                                     <SelectItem key={t.id} value={t.id} className="font-black uppercase text-[9px] tracking-widest">
-                                                        {t.profile?.first_name} {t.profile?.last_name}
+                                                        {t.profile?.full_name}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -292,7 +292,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                         <span className="text-[6px] font-black">AI</span>
                                                     </div>
                                                     <p className="text-[9px] text-foreground/40 font-black uppercase tracking-[0.2em]">
-                                                        {s.teacher?.profile?.first_name} {s.teacher?.profile?.last_name}
+                                                        {s.teacher?.profile?.full_name}
                                                     </p>
                                                 </div>
                                             </div>

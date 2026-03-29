@@ -1,0 +1,24 @@
+
+> school-sms@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local, .env
+
+ΓÜá The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 23.9s
+  Running TypeScript ...
+Failed to compile.
+
+./src/components/activities/ActivitiesDashboard.tsx:196:73
+Type error: Property 'first_name' does not exist on type 'Profile'.
+
+  194 |                                                     {teachers.map((t) => (
+  195 |                                                         <SelectItem key={t.id} value={t.id} className="text-xs font-bold uppercase tracking-tight">
+> 196 |                                                             {t.profile?.first_name} {t.profile?.last_name}
+      |                                                                         ^
+  197 |                                                         </SelectItem>
+  198 |                                                     ))}
+  199 |                                                 </SelectContent>
+Next.js build worker exited with code: 1 and signal: null

@@ -88,7 +88,7 @@ export function AttendanceDashboard({
         if (!searchQuery) return classStudents;
         const q = searchQuery.toLowerCase();
         return classStudents.filter(s =>
-            `${s.profile?.first_name} ${s.profile?.last_name}`.toLowerCase().includes(q) ||
+            (s.profile?.full_name || "").toLowerCase().includes(q) ||
             (s.admission_number || "").toLowerCase().includes(q)
         );
     }, [classStudents, searchQuery]);
@@ -178,7 +178,7 @@ export function AttendanceDashboard({
         const rows = [
             ["Student", "Roll No", "Status", "Date"],
             ...historyRecords.map(r => [
-                `${r.student?.profile?.first_name} ${r.student?.profile?.last_name}`,
+                r.student?.profile?.full_name || "N/A",
                 r.student?.admission_number || "N/A",
                 r.status,
                 historyDate,
@@ -416,11 +416,11 @@ export function AttendanceDashboard({
                                                                         studentRecords[student.id] === "absent" ? "bg-red-500" :
                                                                             studentRecords[student.id] === "late" ? "bg-amber-500" : "bg-blue-500"
                                                                 )}>
-                                                                    <span>{student.profile?.first_name?.[0] || "?"}</span>
+                                                                    <span>{student.profile?.full_name?.[0] || "?"}</span>
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <h4 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors">{student.profile?.first_name} {student.profile?.last_name}</h4>
+                                                                <h4 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors">{student.profile?.full_name}</h4>
                                                                 <div className="flex items-center gap-3 mt-0.5">
                                                                     <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                                                                         ADM: {student.admission_number || "N/A"}
@@ -564,10 +564,10 @@ export function AttendanceDashboard({
                                                                 record.status === "absent" ? "bg-red-500" :
                                                                     record.status === "late" ? "bg-amber-500" : "bg-blue-500"
                                                         )}>
-                                                            <span className="">{record.student?.profile?.first_name?.[0] || "?"}</span>
+                                                            <span className="">{record.student?.profile?.full_name?.[0] || "?"}</span>
                                                         </div>
                                                         <span className="font-semibold text-sm text-foreground tracking-tight group-hover:text-primary transition-colors">
-                                                            {record.student?.profile?.first_name} {record.student?.profile?.last_name}
+                                                            {record.student?.profile?.full_name}
                                                         </span>
                                                     </div>
                                                 </td>

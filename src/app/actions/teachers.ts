@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { isAdmin } from "@/lib/auth-utils";
 
 export async function createTeacher(data: {
-    first_name: string;
-    last_name: string;
+    full_name: string;
     email: string;
     employee_id: string;
     specialization: string[];
@@ -27,8 +26,7 @@ export async function createTeacher(data: {
             email_confirm: true,
             user_metadata: {
                 role: "teacher",
-                first_name: data.first_name,
-                last_name: data.last_name,
+                full_name: data.full_name,
             }
         });
 
@@ -42,8 +40,7 @@ export async function createTeacher(data: {
         // 2. Create Profile
         const { error: profileError } = await supabase.from("profiles").upsert({
             id: userId,
-            first_name: data.first_name,
-            last_name: data.last_name,
+            full_name: data.full_name,
             email: data.email,
             role: "teacher",
         });
@@ -84,8 +81,7 @@ export async function createTeacher(data: {
 export async function updateTeacher(
     id: string,
     data: {
-        first_name: string;
-        last_name: string;
+        full_name: string;
         email: string;
         employee_id: string;
         specialization: string[];
@@ -102,8 +98,7 @@ export async function updateTeacher(
         const { error: authError } = await supabase.auth.admin.updateUserById(id, {
             email: data.email,
             user_metadata: {
-                first_name: data.first_name,
-                last_name: data.last_name,
+                full_name: data.full_name,
             }
         });
 
@@ -115,8 +110,7 @@ export async function updateTeacher(
         const { error: profileError } = await supabase
             .from("profiles")
             .update({
-                first_name: data.first_name,
-                last_name: data.last_name,
+                full_name: data.full_name,
                 email: data.email,
             })
             .eq("id", id);

@@ -191,9 +191,9 @@ export default function ActivitiesDashboard({
                                                     <SelectValue placeholder="Assign Teacher..." />
                                                 </SelectTrigger>
                                                 <SelectContent className="bg-card border-border">
-                                                    {teachers.map((t) => (
+                                                    {(teachers || []).map((t) => (
                                                         <SelectItem key={t.id} value={t.id} className="text-xs font-bold uppercase tracking-tight">
-                                                            {t.profile?.first_name} {t.profile?.last_name}
+                                                            {t.profile?.first_name || 'Teacher'} {t.profile?.last_name || ''}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>

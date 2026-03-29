@@ -66,7 +66,7 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
         setFetchingStudents(true);
         const { data, error } = await supabase
             .from("students")
-            .select("id, profile:profiles(first_name, last_name)")
+            .select("id, profile:profiles(full_name)")
             .order("id");
 
         if (error) {
@@ -137,7 +137,7 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                                     <span className="flex items-center gap-3">
                                         <Search className="h-4 w-4 text-muted-foreground" />
                                         {selectedStudentId
-                                            ? `${students.find((s) => s.id === selectedStudentId)?.profile?.first_name} ${students.find((s) => s.id === selectedStudentId)?.profile?.last_name}`
+                                            ? students.find((s) => s.id === selectedStudentId)?.profile?.full_name
                                             : fetchingStudents ? "Loading..." : "Select Student..."}
                                     </span>
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -152,7 +152,7 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                                             {students.map((student) => (
                                                 <CommandItem
                                                     key={student.id}
-                                                    value={`${student.profile?.first_name} ${student.profile?.last_name} ${student.id}`}
+                                                    value={`${student.profile?.full_name} ${student.id}`}
                                                     className="py-3 px-4 aria-selected:bg-primary/10 aria-selected:text-primary transition-all cursor-pointer rounded-md group/item mb-1"
                                                     onSelect={() => {
                                                         setSelectedStudentId(student.id);
@@ -162,7 +162,7 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
                                                      <div className="flex items-center justify-between w-full">
                                                         <div className="flex items-center gap-3">
                                                             <div className="h-2 w-2 rounded-full bg-primary/40 group-aria-selected/item:bg-primary transition-colors" />
-                                                            <span className="font-bold text-[13px] tracking-tight">{student.profile?.first_name} {student.profile?.last_name}</span>
+                                                            <span className="font-bold text-[13px] tracking-tight">{student.profile?.full_name}</span>
                                                         </div>
                                                         <Check
                                                             className={cn(

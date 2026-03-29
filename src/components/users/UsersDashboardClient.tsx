@@ -29,8 +29,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
 
     const filteredUsers = users.filter((user) =>
         (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (user.first_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (user.last_name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
+        (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -102,11 +101,11 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                         <td className="p-5">
                                             <div className="flex items-center gap-x-4">
                                                 <div className="h-10 w-10 shrink-0 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-black text-xs transition-all uppercase">
-                                                    {user.first_name?.[0] || 'U'}{user.last_name?.[0] || ''}
+                                                    {user.full_name?.[0] || 'U'}
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-foreground uppercase tracking-tight group-hover:text-primary transition-colors italic">
-                                                        {user.first_name} {user.last_name}
+                                                        {user.full_name}
                                                     </p>
                                                     <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
                                                         UID: {user.id.substring(0, 8)}

@@ -19,8 +19,7 @@ import { toast } from "sonner";
 import { createStudent, updateStudent } from "@/app/actions/students";
 
 const studentSchema = z.object({
-  first_name: z.string().min(2, "First name is too short"),
-  last_name: z.string().min(2, "Last name is too short"),
+  full_name: z.string().min(2, "Full name is too short"),
   email: z.string().email("Invalid email"),
   admission_number: z.string().min(3, "Admission number is required"),
   roll_number: z.string().optional(),
@@ -40,16 +39,14 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
     resolver: zodResolver(studentSchema),
     defaultValues: initialData
       ? {
-        first_name: initialData.profile?.first_name || "",
-        last_name: initialData.profile?.last_name || "",
+        full_name: initialData.profile?.full_name || "",
         email: initialData.profile?.email || "",
         admission_number: initialData.admission_number || "",
         roll_number: initialData.roll_number || "",
         class_id: initialData.class_id || "",
       }
       : {
-        first_name: "",
-        last_name: "",
+        full_name: "",
         email: "",
         admission_number: "",
         roll_number: "",
@@ -85,28 +82,15 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-8">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
-            name="first_name"
+            name="full_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">First Name</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
-                </FormControl>
-                <FormMessage className="text-[9px] font-bold uppercase" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="last_name"
-            render={({ field }) => (
-              <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                  <Input placeholder="John Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
                 <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>

@@ -18,8 +18,7 @@ export async function provisionUser(formData: any) {
       password: formData.password,
       email_confirm: true,
       user_metadata: {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+        full_name: formData.full_name,
         role: formData.role
       }
     });
@@ -34,8 +33,7 @@ export async function provisionUser(formData: any) {
       .upsert({
         id: userId,
         email: formData.email,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+        full_name: formData.full_name,
         role: formData.role,
         updated_at: new Date().toISOString()
       });
@@ -62,8 +60,7 @@ export async function updateIdentity(userId: string, formData: any) {
     // 1. Update auth user (metadata and password)
     const updateData: any = {
       user_metadata: {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+        full_name: formData.full_name,
         role: formData.role
       }
     };
@@ -79,8 +76,7 @@ export async function updateIdentity(userId: string, formData: any) {
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+        full_name: formData.full_name,
         role: formData.role,
         updated_at: new Date().toISOString()
       })

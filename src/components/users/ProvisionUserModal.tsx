@@ -36,8 +36,7 @@ import {
 import { provisionUser } from "@/app/(dashboard)/users/actions";
 
 const formSchema = z.object({
-  first_name: z.string().min(2, "First name must be at least 2 characters"),
-  last_name: z.string().min(2, "Last name must be at least 2 characters"),
+  full_name: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["admin", "teacher", "student", "parent"]),
@@ -53,8 +52,7 @@ export function ProvisionUserModal() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
+      full_name: "",
       email: "",
       password: "",
       role: "student",
@@ -100,28 +98,15 @@ export function ProvisionUserModal() {
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
-                name="first_name"
+                name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[10px] uppercase font-black tracking-widest">First Name</FormLabel>
+                    <FormLabel className="text-[10px] uppercase font-black tracking-widest">Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="JOHN" {...field} className="rounded-sm bg-card/40 border-border text-xs focus-visible:ring-primary shadow-inner" />
-                    </FormControl>
-                    <FormMessage className="text-[10px]" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[10px] uppercase font-black tracking-widest">Last Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="DOE" {...field} className="rounded-sm bg-card/40 border-border text-xs focus-visible:ring-primary shadow-inner" />
+                      <Input placeholder="JOHN DOE" {...field} className="rounded-sm bg-card/40 border-border text-xs focus-visible:ring-primary shadow-inner" />
                     </FormControl>
                     <FormMessage className="text-[10px]" />
                   </FormItem>

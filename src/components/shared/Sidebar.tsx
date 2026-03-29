@@ -251,12 +251,12 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
           </div>
             <div className="flex items-center gap-x-4 relative z-10">
             <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-sm transition-transform duration-300 group-hover:scale-105">
-              {userProfile?.first_name?.[0] || "U"}
+              {userProfile?.full_name?.[0] || "U"}
             </div>
             <div className="flex flex-col overflow-hidden">
               <span className="text-sm font-semibold tracking-tight truncate text-foreground">
                 {userProfile
-                  ? `${userProfile.first_name} ${userProfile.last_name}`
+                  ? userProfile.full_name
                   : "Syncing..."}
               </span>
               <div className="flex items-center gap-x-2">

@@ -17,8 +17,7 @@ import { useTransition } from "react";
 import { createTeacher, updateTeacher } from "@/app/actions/teachers";
 
 const teacherSchema = z.object({
-  first_name: z.string().min(2, "First name is too short"),
-  last_name: z.string().min(2, "Last name is too short"),
+  full_name: z.string().min(2, "Full name is too short"),
   email: z.string().email("Invalid email"),
   employee_id: z.string().min(3, "Employee ID is required"),
   specialization: z.string().min(1, "Specialization is required"),
@@ -37,8 +36,7 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
   const form = useForm<TeacherFormValues>({
     resolver: zodResolver(teacherSchema),
     defaultValues: {
-      first_name: initialData?.profile?.first_name || "",
-      last_name: initialData?.profile?.last_name || "",
+      full_name: initialData?.profile?.full_name || "",
       email: initialData?.profile?.email || "",
       employee_id: initialData?.employee_id || "",
       specialization: initialData?.specialization?.join(", ") || "",
@@ -71,28 +69,15 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-8">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <FormField
             control={form.control}
-            name="first_name"
+            name="full_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">First Name</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Jane" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
-                </FormControl>
-                <FormMessage className="text-[9px] font-bold uppercase" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="last_name"
-            render={({ field }) => (
-              <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Smith" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                  <Input placeholder="Jane Smith" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
                 <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>

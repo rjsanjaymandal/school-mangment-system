@@ -1,0 +1,6 @@
+src/components/activities/ActivitiesDashboard.tsx(196,73): error TS2339: Property 'first_name' does not exist on type 'Profile'.
+src/components/activities/ActivitiesDashboard.tsx(196,97): error TS2339: Property 'last_name' does not exist on type 'Profile'.
+src/components/certificates/CertificatesDashboardClient.tsx(165,96): error TS2339: Property 'first_name' does not exist on type 'Profile'.
+src/components/certificates/CertificatesDashboardClient.tsx(165,120): error TS2339: Property 'last_name' does not exist on type 'Profile'.
+src/components/heritage/HeritageDashboard.tsx(146,79): error TS2339: Property 'first_name' does not exist on type 'Profile'.
+src/components/heritage/HeritageDashboard.tsx(146,109): error TS2339: Property 'last_name' does not exist on type 'Profile'.

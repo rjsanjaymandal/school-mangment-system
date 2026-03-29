@@ -169,7 +169,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                                     <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
                                                         {students.map(s => (
                                                             <SelectItem key={s.id} value={s.id} className="font-mono font-black uppercase text-[10px] tracking-widest focus:bg-primary focus:text-primary-foreground italic py-3 cursor-pointer">
-                                                                {s.profile?.first_name} {s.profile?.last_name} [ID: {s.admission_number}]
+                                                                {s.profile?.full_name} [ID: {s.admission_number}]
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
@@ -438,7 +438,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                                         </div>
                                                     </td>
                                                     <td className="py-8 px-10 flex flex-col">
-                                                        <span className="font-black text-foreground/70 uppercase text-[11px] tracking-widest italic">{tx.student?.profile?.first_name} {tx.student?.profile?.last_name}</span>
+                                                        <span className="font-black text-foreground/70 uppercase text-[11px] tracking-widest italic">{tx.student?.profile?.full_name}</span>
                                                         <span className="text-[9px] font-mono font-black text-primary/40 uppercase tracking-widest mt-1">ID: {tx.student?.admission_number}</span>
                                                     </td>
                                                     <td className="py-8 px-10">

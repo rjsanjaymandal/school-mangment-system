@@ -6,8 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { isAdmin } from "@/lib/auth-utils";
 
 export async function createStudent(data: {
-    first_name: string;
-    last_name: string;
+    full_name: string;
     email: string;
     admission_number: string;
     roll_number?: string;
@@ -29,8 +28,7 @@ export async function createStudent(data: {
             email_confirm: true,
             user_metadata: {
                 role: "student",
-                first_name: data.first_name,
-                last_name: data.last_name,
+                full_name: data.full_name,
             }
         });
 
@@ -45,8 +43,7 @@ export async function createStudent(data: {
         // We use upsert to handle cases where a trigger might have already created it
         const { error: profileError } = await supabase.from("profiles").upsert({
             id: userId,
-            first_name: data.first_name,
-            last_name: data.last_name,
+            full_name: data.full_name,
             email: data.email,
             role: "student",
         });
@@ -91,8 +88,7 @@ export async function createStudent(data: {
 export async function updateStudent(
     id: string,
     data: {
-        first_name: string;
-        last_name: string;
+        full_name: string;
         email: string;
         admission_number: string;
         roll_number?: string;
@@ -109,8 +105,7 @@ export async function updateStudent(
         const { error: authError } = await supabase.auth.admin.updateUserById(id, {
             email: data.email,
             user_metadata: {
-                first_name: data.first_name,
-                last_name: data.last_name,
+                full_name: data.full_name,
             }
         });
 
@@ -124,8 +119,7 @@ export async function updateStudent(
         const { error: profileError } = await supabase
             .from("profiles")
             .update({
-                first_name: data.first_name,
-                last_name: data.last_name,
+                full_name: data.full_name,
                 email: data.email,
             })
             .eq("id", id);

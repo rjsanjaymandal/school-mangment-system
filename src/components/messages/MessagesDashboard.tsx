@@ -69,12 +69,12 @@ export function MessagesDashboard({ inbox, sent, contacts, currentUserId }: Mess
                             )}
                         >
                             <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0", type === "inbox" && !msg.is_read ? "bg-blue-500 neon-blue" : "bg-card")}>
-                                {person?.first_name?.[0] || "?"}
+                                {person?.full_name?.[0] || "?"}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-baseline mb-1">
                                     <span className={cn("text-sm truncate", type === "inbox" && !msg.is_read ? "font-black text-foreground" : "font-bold text-slate-700")}>
-                                        {person?.first_name} {person?.last_name}
+                                        {person?.full_name}
                                     </span>
                                     <span className="text-[10px] font-bold text-muted-foreground shrink-0 ml-2">
                                         {new Date(msg.created_at).toLocaleDateString()}
@@ -115,7 +115,7 @@ export function MessagesDashboard({ inbox, sent, contacts, currentUserId }: Mess
                                             <SelectContent>
                                                 {contacts.map(c => (
                                                     <SelectItem key={c.id} value={c.id}>
-                                                        {c.first_name} {c.last_name} ({c.role})
+                                                        {c.full_name} ({c.role})
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -170,12 +170,11 @@ export function MessagesDashboard({ inbox, sent, contacts, currentUserId }: Mess
                         <div className="p-6 border-b border-border bg-white/40 backdrop-blur-sm shrink-0">
                             <div className="flex items-center gap-x-4">
                                 <div className="h-12 w-12 rounded-2xl bg-card text-white flex items-center justify-center shadow-xl neon-blue font-black text-xl">
-                                    {(selectedMessage.sender?.first_name || selectedMessage.receiver?.first_name)?.[0] || "?"}
+                                    {(selectedMessage.sender?.full_name || selectedMessage.receiver?.full_name)?.[0] || "?"}
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="font-black text-foreground tracking-tight">
-                                        {selectedMessage.sender?.first_name || selectedMessage.receiver?.first_name}{" "}
-                                        {selectedMessage.sender?.last_name || selectedMessage.receiver?.last_name}
+                                        {selectedMessage.sender?.full_name || selectedMessage.receiver?.full_name}
                                     </h3>
                                     <p className="text-xs font-bold text-muted-foreground">{selectedMessage.subject || "(No subject)"}</p>
                                 </div>

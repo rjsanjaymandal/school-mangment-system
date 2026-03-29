@@ -21,11 +21,11 @@ import { Save, FileDown, FileUp, Sparkles, BrainCircuit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const markSchema = z.object({
-  marks: z.record(z.string(), z.coerce.number().min(0).max(100)),
+  marks: z.record(z.string(), z.union([z.coerce.number().min(0).max(100), z.literal("")])),
 });
 
 type MarkFormValues = {
-  marks: Record<string, string | number>;
+  marks: Record<string, number | "">;
 };
 
 interface MarksEntryFormProps {
@@ -45,9 +45,9 @@ export function MarksEntryForm({
   const router = useRouter();
 
   const form = useForm<MarkFormValues>({
-    resolver: zodResolver(markSchema) as any,
+    resolver: zodResolver(markSchema),
     defaultValues: {
-      marks: students.reduce(
+      marks: (students || []).reduce(
         (acc, student) => ({
           ...acc,
           [student.id]: student.mark?.marks_obtained ?? "",

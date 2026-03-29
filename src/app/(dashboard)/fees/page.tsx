@@ -14,7 +14,7 @@ export default async function FeesPage() {
   let classes: any[] = [];
   let staffPayrolls: any[] = [];
   let leaveRequests: any[] = [];
-  let isStudent = role === "student";
+  const isStudent = role === "student";
 
   if (isStudent) {
     const { data: student } = await supabase
@@ -82,7 +82,7 @@ export default async function FeesPage() {
     leaveRequests = allLeaveRequests || [];
   }
 
-  let totalRevenue = (payments || []).filter(p => p.status === "completed").reduce((sum, p) => sum + Number(p.amount_paid), 0);
+  const totalRevenue = (payments || []).filter(p => p.status === "completed").reduce((sum, p) => sum + Number(p.amount_paid), 0);
   let outstanding = 0;
 
   if (isStudent) {
