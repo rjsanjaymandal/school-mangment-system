@@ -28,16 +28,21 @@ async function verifyConnection() {
 
     console.log("✅ Database Connected Successfully!");
 
-    // 2. Data Verification
-    const tablesToVerify = ["profiles", "academic_years", "school_settings"];
+    // 2. Data Verification (Comprehensive Module Audit)
+    const tablesToVerify = [
+      "profiles", "academic_years", "school_settings", 
+      "students", "teachers", "classes", "subjects", 
+      "attendance", "marks", "exams", "fees", "payments"
+    ];
     
+    console.log("\n--- Module Readiness Audit ---");
     for (const table of tablesToVerify) {
-      const { data, error } = await supabase.from(table).select("*").limit(1);
+      const { count, error } = await supabase.from(table).select("*", { count: 'exact', head: true });
       if (error) {
-        console.warn(`⚠️  Warning: Could not fetch data for table '${table}': ${error.message}`);
+        console.warn(`❌ Table '${table}': ERROR - ${error.message}`);
       } else {
-        const columns = data.length > 0 ? Object.keys(data[0]) : "No data to check columns";
-        console.log(`📊 Table '${table}': Columns found: ${JSON.stringify(columns)}`);
+        const status = (count !== null && count > 0) ? "✅ READY" : "⚠️ EMPTY (Seed Required?)";
+        console.log(`${status} Table '${table}': ${count} records found.`);
       }
     }
 
