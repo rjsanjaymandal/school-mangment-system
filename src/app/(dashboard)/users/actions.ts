@@ -123,9 +123,14 @@ export async function deleteIdentity(userId: string) {
   }
 }
 
+import { AuditService } from "@/lib/services/audit";
+import { getAuthContext } from "@/lib/auth-context";
+
 export async function startImpersonation(userId: string) {
-  const adminCheck = await isAdmin();
-  if (!adminCheck) {
+  const { realRole, realUser } = await getAuthContext();
+  
+  // Security: Only a REAL admin can start shadowing
+  if (realRole !== 'admin' || !realUser) {
     return { success: false, message: "Unauthorized: Admin clearance required" };
   }
 
@@ -139,20 +144,41 @@ export async function startImpersonation(userId: string) {
       sameSite: "lax"
     });
 
-    return { success: true, message: "Impersonation started successfully" };
+    // Log the event for compliance
+    await AuditService.logAction({
+        actor_id: realUser.id,
+        action: "SHADOW_START",
+        entity_type: "user",
+        entity_id: userId,
+        new_data: { target_id: userId }
+    });
+
+    return { success: true, message: "Shadow session started" };
   } catch (error: any) {
     console.error("Error starting impersonation:", error);
-    return { success: false, message: "Failed to start impersonation" };
+    return { success: false, message: "Failed to start shadow session" };
   }
 }
 
 export async function stopImpersonation() {
   try {
+    const { realUser, isImpersonating, effectiveUser } = await getAuthContext();
     const cookieStore = await cookies();
+    
+    if (isImpersonating && realUser) {
+        // Log the stop event
+        await AuditService.logAction({
+            actor_id: realUser.id,
+            action: "SHADOW_STOP",
+            entity_type: "user",
+            entity_id: effectiveUser?.id || "unknown",
+        });
+    }
+
     cookieStore.delete("impersonation_user_id");
-    return { success: true, message: "Impersonation stopped successfully" };
+    return { success: true, message: "Shadow session ended" };
   } catch (error: any) {
     console.error("Error stopping impersonation:", error);
-    return { success: false, message: "Failed to stop impersonation" };
+    return { success: false, message: "Failed to end shadow session" };
   }
 }

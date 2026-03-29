@@ -80,7 +80,11 @@ export async function updateSession(request: NextRequest) {
         
         if (targetProfile) {
             effectiveRole = targetProfile.role;
-            effectiveUserId = impersonationId;
+        } else {
+            const response = NextResponse.redirect(new URL(request.url))
+            supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie.name, cookie.value, cookie))
+            response.cookies.delete("impersonation_user_id")
+            return response
         }
     }
 
@@ -99,18 +103,20 @@ export async function updateSession(request: NextRequest) {
     const targetPrefix = restrictedPrefixes.find(p => path.startsWith(p));
 
     if (targetPrefix) {
-        // Find which role is allowed for this prefix
         const allowedRole = Object.keys(rolePaths).find(k => rolePaths[k] === targetPrefix);
         
-        // Admins can ALWAYS access admin routes, even when impersonating (it switches context)
-        // However, if they are impersonating a student, they should be able to access /student routes
+        // Admins can ALWAYS access admin routes, even when shadowing.
+        // Otherwise, the effectiveRole must match the path.
         if (effectiveRole !== allowedRole && realRole !== 'admin') {
             const response = NextResponse.redirect(new URL('/unauthorized', request.url))
-            supabaseResponse.cookies.getAll().forEach((cookie) => {
-              response.cookies.set(cookie.name, cookie.value, cookie)
-            })
+            supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie.name, cookie.value, cookie))
             return response
         }
+    }
+  } else {
+    // Session gone? Clear shadow cookie.
+    if (request.cookies.has("impersonation_user_id")) {
+        supabaseResponse.cookies.delete("impersonation_user_id");
     }
   }
 

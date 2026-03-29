@@ -6,7 +6,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { stopImpersonation } from "@/app/(dashboard)/users/actions";
 
-export function ImpersonationBanner() {
+interface ImpersonationBannerProps {
+  displayName?: string;
+  role?: string;
+}
+
+export function ImpersonationBanner({ displayName, role }: ImpersonationBannerProps) {
   const [isStopping, setIsStopping] = useState(false);
 
   async function handleExit() {
@@ -15,7 +20,7 @@ export function ImpersonationBanner() {
       const result = await stopImpersonation();
       if (result.success) {
         toast.info("Shadow session ended. Returning to Admin view.");
-        // Redirect home to regain admin context
+        // Re-sync by hard-refreshing to "/" (Admin Home)
         window.location.href = "/";
       }
     } catch (error: any) {
@@ -36,7 +41,7 @@ export function ImpersonationBanner() {
                 SHADOW MODE ACTIVE
             </p>
             <p className="text-[8px] font-bold text-white/60 uppercase tracking-widest mt-0.5">
-                You are currently viewing the system as another user.
+                Shadowing: <span className="text-white">{displayName || "Loading..."}</span> ({role || "..."})
             </p>
         </div>
       </div>

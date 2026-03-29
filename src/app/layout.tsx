@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { cookies } from "next/headers";
+import { getAuthContext } from "@/lib/auth-context";
 import { ImpersonationBanner } from "@/components/users/ImpersonationBanner";
 
 export default async function RootLayout({
@@ -27,13 +27,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const isImpersonating = cookieStore.get("impersonation_user_id");
+  const { isImpersonating, effectiveUser, effectiveRole } = await getAuthContext();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geist.variable} font-sans antialiased flex flex-col min-h-screen`}>
-        {isImpersonating && <ImpersonationBanner />}
+        {isImpersonating && (
+          <ImpersonationBanner 
+            displayName={effectiveUser?.full_name} 
+            role={effectiveRole}
+          />
+        )}
         <main className="flex-1 w-full overflow-x-hidden">
           {children}
         </main>

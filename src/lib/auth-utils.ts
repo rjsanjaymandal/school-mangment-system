@@ -1,19 +1,21 @@
-import { createClient } from "./supabase/server";
+import { getAuthContext } from "./auth-context";
 
+/**
+ * getSessionRole
+ * Returns the EFFECTIVE role (shadow role if impersonating, else real role).
+ */
 export async function getSessionRole() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) return null;
+    const { effectiveRole } = await getAuthContext();
+    return effectiveRole;
+}
 
-    const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-    if (error || !profile) return null;
-    return profile.role;
+/**
+ * getRealRole
+ * Returns the ACTUAL role of the logged-in user, regardless of impersonation.
+ */
+export async function getRealRole() {
+    const { realRole } = await getAuthContext();
+    return realRole;
 }
 
 export async function isAdminOrTeacher() {
@@ -24,4 +26,13 @@ export async function isAdminOrTeacher() {
 export async function isAdmin() {
     const role = await getSessionRole();
     return role === "admin";
+}
+
+/**
+ * isImpersonating
+ * Helper to check if the current session is a shadow session.
+ */
+export async function isImpersonating() {
+    const { isImpersonating } = await getAuthContext();
+    return isImpersonating;
 }
