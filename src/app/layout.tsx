@@ -19,15 +19,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+import { cookies } from "next/headers";
+import { ImpersonationBanner } from "@/components/users/ImpersonationBanner";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const isImpersonating = cookieStore.get("impersonation_user_id");
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geist.variable} font-sans antialiased`}>
-        {children}
+      <body className={`${geist.variable} font-sans antialiased flex flex-col min-h-screen`}>
+        {isImpersonating && <ImpersonationBanner />}
+        <main className="flex-1 w-full overflow-x-hidden">
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>

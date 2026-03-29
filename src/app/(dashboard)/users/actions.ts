@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { isAdmin } from "@/lib/auth-utils";
 
 export async function provisionUser(formData: any) {
@@ -119,5 +120,39 @@ export async function deleteIdentity(userId: string) {
   } catch (error: any) {
     console.error("Error deleting identity:", error);
     return { success: false, message: error.message || "Failed to delete identity" };
+  }
+}
+
+export async function startImpersonation(userId: string) {
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    return { success: false, message: "Unauthorized: Admin clearance required" };
+  }
+
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set("impersonation_user_id", userId, { 
+      path: "/", 
+      maxAge: 3600, // 1 hour
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
+    });
+
+    return { success: true, message: "Impersonation started successfully" };
+  } catch (error: any) {
+    console.error("Error starting impersonation:", error);
+    return { success: false, message: "Failed to start impersonation" };
+  }
+}
+
+export async function stopImpersonation() {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete("impersonation_user_id");
+    return { success: true, message: "Impersonation stopped successfully" };
+  } catch (error: any) {
+    console.error("Error stopping impersonation:", error);
+    return { success: false, message: "Failed to stop impersonation" };
   }
 }

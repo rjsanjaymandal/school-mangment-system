@@ -3,13 +3,18 @@
 import { useState } from "react";
 import {
     Users,
-    ShieldAlert,
-    Search,
-    Key,
-    Database,
     UserCheck,
     GlobeLock,
-    Plus
+    Plus,
+    ShieldCheck,
+    GraduationCap,
+    BookOpen,
+    Baby,
+    Filter,
+    ShieldAlert,
+    MoreHorizontal,
+    Key,
+    Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -23,14 +28,38 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ManageAccessModal } from "./ManageAccessModal";
 import { ProvisionUserModal } from "./ProvisionUserModal";
+import { ImpersonationButton } from "./ImpersonationButton";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export default function UsersDashboardClient({ users }: { users: any[] }) {
     const [searchTerm, setSearchTerm] = useState("");
+    const [roleFilter, setRoleFilter] = useState<string>("all");
 
-    const filteredUsers = users.filter((user) =>
-        (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
-    );
+    const filteredUsers = users.filter((user) => {
+        const matchesSearch = 
+            (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+            (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase());
+        
+        const matchesRole = roleFilter === "all" || user.role === roleFilter;
+        
+        return matchesSearch && matchesRole;
+    });
+
+    const getRoleIcon = (role: string) => {
+        switch (role) {
+            case 'admin': return <ShieldCheck className="h-3.5 w-3.5" />;
+            case 'teacher': return <BookOpen className="h-3.5 w-3.5" />;
+            case 'student': return <GraduationCap className="h-3.5 w-3.5" />;
+            case 'parent': return <Baby className="h-3.5 w-3.5" />;
+            default: return <Users className="h-3.5 w-3.5" />;
+        }
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
@@ -75,14 +104,29 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                         <Key className="h-3.5 w-3.5 text-primary" />
                         System Registry
                     </h3>
-                    <div className="relative w-80">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/50" />
-                        <Input
-                            placeholder="Search by name or email..."
-                            className="pl-10 rounded-lg border-border bg-background h-10 text-[10px] uppercase font-bold tracking-widest placeholder:text-muted-foreground/30 focus-visible:ring-primary/20 transition-all"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                    <div className="flex items-center gap-x-4">
+                        <Select value={roleFilter} onValueChange={setRoleFilter}>
+                            <SelectTrigger className="w-[140px] rounded-lg border-border bg-background h-10 text-[10px] uppercase font-black tracking-widest focus:ring-primary/20">
+                                <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground/40" />
+                                <SelectValue placeholder="All Roles" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-lg border-border bg-card">
+                                <SelectItem value="all" className="text-[10px] uppercase font-black">All Roles</SelectItem>
+                                <SelectItem value="admin" className="text-[10px] uppercase font-black">Admins</SelectItem>
+                                <SelectItem value="teacher" className="text-[10px] uppercase font-black">Teachers</SelectItem>
+                                <SelectItem value="student" className="text-[10px] uppercase font-black">Students</SelectItem>
+                                <SelectItem value="parent" className="text-[10px] uppercase font-black">Parents</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <div className="relative w-80">
+                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/50" />
+                            <Input
+                                placeholder="Search by name or email..."
+                                className="pl-10 rounded-lg border-border bg-background h-10 text-[10px] uppercase font-bold tracking-widest placeholder:text-muted-foreground/30 focus-visible:ring-primary/20 transition-all"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="overflow-x-auto">
@@ -118,22 +162,29 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                                 {user.email}
                                             </span>
                                         </td>
-                                        <td className="p-5">
+                                         <td className="p-5">
                                             <Badge
                                                 className={cn(
-                                                    "text-[9px] font-bold px-3 py-1 rounded-lg uppercase tracking-widest italic",
+                                                    "text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest italic flex items-center justify-center gap-x-2 w-fit min-w-[100px]",
                                                     user.role === 'admin'
                                                         ? "bg-primary text-primary-foreground border-none"
                                                         : user.role === 'teacher'
-                                                            ? "bg-primary/10 text-primary border border-primary/20"
-                                                            : "bg-secondary text-muted-foreground border border-border"
+                                                            ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
+                                                            : user.role === 'student'
+                                                                ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                                                                : "bg-secondary text-muted-foreground border border-border"
                                                 )}
                                             >
+                                                {getRoleIcon(user.role)}
                                                 {user.role}
                                             </Badge>
                                         </td>
                                         <td className="p-5 text-right">
-                                            <ManageAccessModal user={user} />
+                                            <div className="flex items-center justify-end gap-x-2">
+                                                <ImpersonationButton userId={user.id} userName={user.full_name} />
+                                                <div className="h-4 w-[1px] bg-border mx-1" />
+                                                <ManageAccessModal user={user} />
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

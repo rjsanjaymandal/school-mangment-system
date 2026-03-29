@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏫 Edu Maysan ERP | Professional School Management System
 
-## Getting Started
+**Edu Maysan ERP** is a high-performance, enterprise-grade school management platform designed to streamline academic operations. Built with modern web technologies, it provides a fast, dynamic, and intuitive experience for students, teachers, parents, and administrators.
 
-First, run the development server:
+---
 
+## 🚀 Key Modules
+
+- **User Registry (Elite)**: Advanced RBAC management with administrative impersonation (Shadow Mode).
+- **Institutional Analytics**: Real-time dashboards for attendance, academic performance, and financial metrics.
+- **Academic Management**: Detailed oversight of classes, teachers, student profiles, and subjects.
+- **Automated Attendance**: Multi-role attendance tracking with historical reporting.
+- **Financial Suite**: Comprehensive fee management and payroll processing.
+- **Inventory & Assets**: Resource management and library tracking.
+- **Communication Hub**: Unified portal for teacher-student-parent interaction.
+
+## 🛠️ Tech Stack
+
+- **Frontend**: [Next.js 15](https://nextjs.org/) (Turbopack, App Router)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Backend/Auth**: [Supabase SSR](https://supabase.com/docs/guides/auth/server-side-rendering)
+- **State Management**: React Hooks & Server Components
+- **Persistence**: PostgreSQL (Supabase DB)
+
+## 🏗️ Architecture Highlights
+
+### Server-Side Rendering (SSR)
+The application leverages the power of Next.js Server Components to keep the data processing on the server, ensuring rapid initial page loads and superior SEO.
+
+### Security First
+All dashboard interactions are protected by a hardened **SSR Auth Middleware** that handles session persistence, role-based access control, and secure administrative impersonation.
+
+---
+
+## 🛡️ Administrative Superpowers: Shadow Mode
+
+Edu Maysan ERP includes **Shadow View**, allowing administrators to troubleshoot and support users by viewing the system from their perspective. 
+
+> [!IMPORTANT]
+> Shadow Mode is strictly restricted to the `admin` role and is monitored for safety. See `AUTH_SECURITY.md` for full implementation details.
+
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- Node.js 20+
+- Supabase Project (URL & Anon Key)
+
+### Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/rjsanjaymandal/school-mangment-system.git
+cd edu-maysan-erp
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Setup
+Create a `.env.local` file with:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Running Locally
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ⚖️ License & Credits
+Developed by **Maysan Labs**. All Rights Reserved.
