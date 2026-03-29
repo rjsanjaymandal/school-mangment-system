@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { FeesDashboard } from "@/components/fees/FeesDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
-import { DollarSign, Landmark, TrendingUp } from "lucide-react";
+import { IndianRupee, Landmark, TrendingUp } from "lucide-react";
 
 export default async function FeesPage() {
   const supabase = await createClient();
@@ -110,7 +110,7 @@ export default async function FeesPage() {
                     Finance <span className="text-emerald-500 tracking-normal not-italic">/</span> Treasury
                 </h2>
                 <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-                    <DollarSign className="h-3 w-3 text-emerald-500" />
+                    <IndianRupee className="h-3 w-3 text-emerald-500" />
                     Institutional Liquidity & Revenue Monitoring
                 </p>
             </div>

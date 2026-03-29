@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-    DollarSign,
+    IndianRupee,
     CreditCard,
     TrendingUp,
     Download,
@@ -296,7 +296,7 @@ export function FeesDashboard({
                             value="fees"
                             className="rounded-lg px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-widest text-[10px] transition-all gap-x-2"
                         >
-                            <DollarSign className="h-3.5 w-3.5" />
+                            <IndianRupee className="h-3.5 w-3.5" />
                             Fee Overview
                         </TabsTrigger>
                         <TabsTrigger

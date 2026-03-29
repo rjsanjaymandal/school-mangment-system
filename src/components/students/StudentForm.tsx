@@ -17,6 +17,13 @@ import { Button } from "@/components/ui/button";
 import { Student } from "@/types/database";
 import { toast } from "sonner";
 import { createStudent, updateStudent } from "@/app/actions/students";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const studentSchema = z.object({
   full_name: z.string().min(2, "Full name is too short"),
@@ -30,10 +37,11 @@ type StudentFormValues = z.infer<typeof studentSchema>;
 
 interface StudentFormProps {
   initialData?: Student | null;
+  classes: any[];
   onSuccess: () => void;
 }
 
-export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
+export function StudentForm({ initialData, classes, onSuccess }: StudentFormProps) {
   const [isPending, startTransition] = useTransition();
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentSchema),
@@ -110,15 +118,15 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="admission_number"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Admission Number</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Admission#</FormLabel>
                 <FormControl>
-                  <Input placeholder="ADM-202X-001" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
+                  <Input placeholder="ADM-001" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase h-10" />
                 </FormControl>
                 <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
@@ -129,10 +137,34 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             name="roll_number"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Roll Number</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Roll#</FormLabel>
                 <FormControl>
-                  <Input placeholder="00" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
+                  <Input placeholder="00" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase h-10" />
                 </FormControl>
+                <FormMessage className="text-[9px] font-bold uppercase" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="class_id"
+            render={({ field }) => (
+              <FormItem className="space-y-1">
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Class</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight h-10">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="bg-card border-border shadow-2xl">
+                    {classes.map((c) => (
+                      <SelectItem key={c.id} value={c.id} className="font-bold text-[10px] uppercase tracking-tighter cursor-pointer focus:bg-primary/10 focus:text-primary">
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
             )}

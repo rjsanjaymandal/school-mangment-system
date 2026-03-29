@@ -1,12 +1,15 @@
 import { InstitutionalService } from "@/lib/services/institutional";
 import { getSessionRole } from "@/lib/auth-utils";
 import { StudentList } from "@/components/students/StudentList";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function StudentsPage() {
+  const supabase = await createClient();
   const role = await getSessionRole();
-  const students = await InstitutionalService.getStudents().catch((err: any) => {
-    return [];
-  });
+  const [students, classes] = await Promise.all([
+    InstitutionalService.getStudents().catch(() => []),
+    supabase.from("classes").select("*").order("name").then(({ data }) => data || []),
+  ]);
 
   return (
     <div className="space-y-6">

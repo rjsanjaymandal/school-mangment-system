@@ -46,10 +46,11 @@ import { BulkImportModal } from "./BulkImportModal";
 
 interface StudentListProps {
   initialData: Student[];
+  classes: any[];
   userRole?: string | null;
 }
 
-export function StudentList({ initialData, userRole }: StudentListProps) {
+export function StudentList({ initialData, classes, userRole }: StudentListProps) {
   const isAdmin = userRole === "admin";
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
@@ -220,6 +221,7 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
           </div>
           <StudentForm
             initialData={editingStudent}
+            classes={classes}
             onSuccess={() => setIsOpen(false)}
           />
         </DialogContent>
