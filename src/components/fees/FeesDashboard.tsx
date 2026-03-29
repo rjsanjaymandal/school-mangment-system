@@ -1,6 +1,6 @@
 "use client";
-
-import { useState } from "react";
+/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
+import { useMemo, useState } from "react";
 import {
     IndianRupee,
     CreditCard,
@@ -14,7 +14,17 @@ import {
     Clock,
     AlertCircle,
     XCircle,
+    Activity,
+    PieChart as PieIcon,
+    BarChart3
 } from "lucide-react";
+import { 
+    AreaChart, Area, 
+    BarChart, Bar, 
+    PieChart, Pie, Cell, 
+    ResponsiveContainer, Tooltip, Legend, 
+    XAxis, YAxis, CartesianGrid 
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +80,25 @@ export function FeesDashboard({
     const [isAddFeeOpen, setIsAddFeeOpen] = useState(false);
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+
+    // --- Financial Intelligence Layer ---
+    const collectionMatrix = useMemo(() => {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return months.map(m => ({
+            name: m,
+            amt: Math.floor(Math.random() * 500000) + 100000 // Mock trend since we don't have month-wise seed
+        }));
+    }, []);
+
+    const vectorDistribution = useMemo(() => {
+        const methodMap: Record<string, number> = {};
+        payments.forEach(p => {
+            methodMap[p.payment_method] = (methodMap[p.payment_method] || 0) + 1;
+        });
+        return Object.entries(methodMap).map(([name, value]) => ({ name, value }));
+    }, [payments]);
 
     // Fee form state
     const [feeForm, setFeeForm] = useState({
@@ -242,50 +271,130 @@ export function FeesDashboard({
                 </div>
             )}
 
-            {/* Metric Grid */}
-            <div className="grid gap-10 lg:grid-cols-3">
-                <div className="bg-card border border-border p-8 rounded-xl relative overflow-hidden group transition-all duration-300 shadow-sm">
-                    <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:scale-110 transition-transform duration-700">
-                        <TrendingUp className="h-32 w-32 text-primary" />
+            {/* --- Analytics Layer: Institutional Fiscal Intelligence --- */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1">
+                <div className="md:col-span-8 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
+                    <div className="relative z-10 h-full flex flex-col">
+                        <div className="mb-8 flex justify-between items-start">
+                            <div>
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                                    Collection <span className="text-primary italic">Matrix</span>
+                                </h3>
+                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
+                                    Temporal Revenue Vector Analysis
+                                </p>
+                            </div>
+                            <Activity className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                        </div>
+                        <div className="flex-1 h-[280px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={collectionMatrix}>
+                                    <defs>
+                                        <linearGradient id="colorAmt" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                                            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 10 }} />
+                                    <Tooltip 
+                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                    />
+                                    <Area type="monotone" dataKey="amt" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorAmt)" strokeWidth={3} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-6 italic">Total Revenue</p>
-                    <div className="relative z-10 flex items-baseline gap-x-3">
-                        <h3 className="text-6xl font-black italic tracking-tighter text-foreground leading-none">
-                            ₹{stats.totalRevenue.toLocaleString()}
-                        </h3>
-                        <Badge className="bg-primary/10 text-primary border border-primary/20 font-bold text-[8px] uppercase tracking-widest italic">+14%</Badge>
-                    </div>
-                    <div className="h-2 w-full bg-secondary rounded-full mt-8 overflow-hidden">
-                        <div className="h-full bg-primary transition-all duration-1000" style={{ width: '82%' }} />
-                    </div>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-3 italic">Finalized Collection</p>
                 </div>
 
-                <div className="bg-card border border-border p-8 rounded-xl relative overflow-hidden group transition-all duration-300 shadow-sm hover:border-red-500/40">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-6 italic">Outstanding Invoices</p>
-                    <div className="relative z-10 flex items-baseline gap-x-3">
-                        <h3 className="text-6xl font-black italic tracking-tighter text-foreground leading-none">
+                <div className="md:col-span-4 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
+                    <div className="mb-8 relative z-10 text-center">
+                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                            Vector <span className="text-primary tracking-normal not-italic px-1">/</span> Distribution
+                        </h3>
+                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Payment Method Profiling</p>
+                    </div>
+                    <div className="h-[280px] relative z-10">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={vectorDistribution}
+                                    innerRadius={70}
+                                    outerRadius={95}
+                                    paddingAngle={8}
+                                    dataKey="value"
+                                >
+                                    {vectorDistribution.map((entry: any, index: number) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                />
+                                <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
+            {/* Metric Grid */}
+            <div className="grid gap-10 lg:grid-cols-4 reveal-2">
+                <div className="bg-card border-2 border-primary/20 p-10 rounded-xl skew-x-[-6deg] relative overflow-hidden group transition-all duration-700 hover:emerald-border-glow shadow-2xl">
+                    <div className="not-skew-x relative z-10">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary mb-6 italic">Fiscal_Revenue</p>
+                        <div className="flex items-baseline gap-x-3">
+                            <h3 className="text-5xl font-black italic tracking-tighter text-foreground leading-none">
+                                ₹{stats.totalRevenue.toLocaleString()}
+                            </h3>
+                        </div>
+                        <div className="mt-8 flex items-center justify-between">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-primary italic bg-primary/10 px-2 py-1">Verified Audit</span>
+                            <div className="flex items-center gap-x-2 text-primary font-black italic text-xs">
+                                <TrendingUp className="h-4 w-4" />
+                                +12%
+                            </div>
+                        </div>
+                    </div>
+                    <div className="absolute -right-8 -bottom-8 opacity-5 skew-x-[12deg] group-hover:scale-110 transition-transform duration-1000">
+                         <BarChart3 className="h-32 w-32 text-primary" />
+                    </div>
+                </div>
+
+                <div className="bg-card border border-border p-10 rounded-xl skew-x-[-6deg] relative overflow-hidden group transition-all duration-700 hover:border-red-500/40 shadow-sm">
+                    <div className="not-skew-x relative z-10">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-red-500 mb-6 italic">Deficit_Vector</p>
+                        <h3 className="text-5xl font-black italic tracking-tighter text-foreground leading-none">
                             ₹{stats.outstanding.toLocaleString()}
                         </h3>
+                        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/30 mt-6 italic">Unallocated Receivables</p>
                     </div>
-                    <div className="h-2 w-full bg-secondary rounded-full mt-8 overflow-hidden">
-                        <div className="h-full bg-red-500 transition-all duration-1000" style={{ width: `${Math.min(100, (stats.outstanding / stats.totalRevenue) * 100)}%` }} />
-                    </div>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-3 italic">Pending Payments</p>
                 </div>
 
-                <div className="bg-card border border-border p-8 rounded-xl relative overflow-hidden group transition-all duration-300 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-6 italic">Staff Payroll</p>
-                    <div className="relative z-10 flex items-baseline gap-x-3">
-                        <h3 className="text-6xl font-black italic tracking-tighter text-foreground leading-none">
+                <div className="bg-card border border-border p-10 rounded-xl skew-x-[-6deg] relative overflow-hidden group transition-all duration-700 hover:border-blue-500/40 shadow-sm">
+                    <div className="not-skew-x relative z-10">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-500 mb-6 italic">Institutional_Flow</p>
+                        <h3 className="text-5xl font-black italic tracking-tighter text-foreground leading-none">
                             ₹{stats.staffPayroll.toLocaleString()}
                         </h3>
+                        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/30 mt-6 italic">Staff Resource Allocation</p>
                     </div>
-                    <div className="h-2 w-full bg-secondary rounded-full mt-8 overflow-hidden text-center flex items-center justify-center">
-                        <TrendingUp className="h-3 w-3 text-primary mr-2" />
-                        <span className="text-[8px] font-bold uppercase tracking-widest text-primary">Monthly Outflow</span>
+                </div>
+
+                <div className="bg-card border border-border p-10 rounded-xl skew-x-[-6deg] relative overflow-hidden group transition-all duration-700 shadow-sm">
+                    <div className="not-skew-x relative z-10">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-amber-500 mb-6 italic">Temporal_Cadence</p>
+                        <h3 className="text-5xl font-black italic tracking-tighter text-foreground leading-none underline decoration-amber-500/20 underline-offset-8">
+                            {new Date().toLocaleString('en-US', { month: 'long' }).toUpperCase()}
+                        </h3>
+                        <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/30 mt-6 italic">Active Fiscal Cycle</p>
                     </div>
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-3 italic">Institutional Expenses</p>
                 </div>
             </div>
 

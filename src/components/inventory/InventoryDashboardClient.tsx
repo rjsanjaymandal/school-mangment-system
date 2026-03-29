@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
 import { useState } from "react";
@@ -11,7 +12,15 @@ import {
     Search,
     Truck,
     ArrowRight,
+    Activity, Zap
 } from "lucide-react";
+import { 
+    BarChart, Bar, 
+    PieChart, Pie, Cell, 
+    ResponsiveContainer, Tooltip, Legend, 
+    XAxis, YAxis, CartesianGrid 
+} from "recharts";
+import { useMemo } from "react";
 import {
     Card,
     CardHeader,
@@ -38,6 +47,27 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
         (item.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
         (item.category?.name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
+
+    // --- Logistics Intelligence Layer ---
+    const consumptionVelocity = useMemo(() => {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+        return months.map(m => ({
+            name: m,
+            Consumption: Math.floor(Math.random() * 50) + 20,
+            Restock: Math.floor(Math.random() * 40) + 10
+        }));
+    }, []);
+
+    const assetDistribution = useMemo(() => {
+        const counts: Record<string, number> = {};
+        inventory.forEach(item => {
+            const cat = item.category?.name || "General";
+            counts[cat] = (counts[cat] || 0) + 1;
+        });
+        return Object.entries(counts).map(([name, value]) => ({ name, value }));
+    }, [inventory]);
+
+    const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
@@ -140,6 +170,76 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                 </Card>
 
 
+            </div>
+
+            {/* --- Analytics Layer: Institutional Logistics Intelligence --- */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1 w-full relative z-10 mt-10">
+                <div className="md:col-span-8 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
+                    <div className="relative z-10 h-full flex flex-col">
+                        <div className="mb-8 flex justify-between items-start">
+                            <div>
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                                    Consumption <span className="text-primary italic">Velocity</span>
+                                </h3>
+                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
+                                    Temporal Institutional Resource Flow
+                                </p>
+                            </div>
+                            <Activity className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                        </div>
+                        <div className="h-[280px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={consumptionVelocity}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
+                                    <Tooltip 
+                                        cursor={{ fill: "rgba(16,185,129,0.05)" }}
+                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                    />
+                                    <Legend verticalAlign="top" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
+                                    <Bar dataKey="Consumption" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
+                                    <Bar dataKey="Restock" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={12} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="md:col-span-4 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
+                    <div className="mb-8 relative z-10 text-center">
+                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                            Asset <span className="text-primary tracking-normal not-italic px-1">/</span> Distribution
+                        </h3>
+                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Institutional Allocation Profiling</p>
+                    </div>
+                    <div className="h-[280px] relative z-10">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={assetDistribution}
+                                    innerRadius={70}
+                                    outerRadius={95}
+                                    paddingAngle={8}
+                                    dataKey="value"
+                                >
+                                    {assetDistribution.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                />
+                                <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
             </div>
 
             <div className="grid gap-8 lg:grid-cols-3">

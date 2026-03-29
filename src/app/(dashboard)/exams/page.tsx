@@ -45,7 +45,13 @@ export default async function ExamsPage() {
     // Admin/Teacher: All data
     const { data: allExams } = await supabase
       .from("exams")
-      .select("*, subject:subjects(*), class:classes(*), academic_year:academic_years(*)")
+      .select(`
+        *,
+        subject:subjects(*),
+        class:classes(*),
+        academic_year:academic_years(*),
+        marks(count)
+      `)
       .order("date", { ascending: false });
     exams = allExams || [];
 
@@ -73,6 +79,10 @@ export default async function ExamsPage() {
     .select("*")
     .order("is_current", { ascending: false });
 
+  const { data: marksSummary } = await supabase
+    .from("marks")
+    .select("marks_obtained, exam:exams(passing_marks, max_marks, subject:subjects(name))");
+
   return (
     <ExamsDashboard
       exams={exams || []}
@@ -80,6 +90,7 @@ export default async function ExamsPage() {
       subjects={subjects || []}
       academicYears={academicYears || []}
       students={students || []}
+      marksSummary={marksSummary || []}
       userRole={role || "student"}
     />
   );

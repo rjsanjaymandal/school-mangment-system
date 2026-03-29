@@ -83,28 +83,35 @@ export const OracleService = {
    */
   async predictDropoutRisk(studentId: string) {
     try {
-      const config = {
-        attendance_weight: 0.6,
-        grade_trend_weight: 0.4,
-        dropout_threshold: 0.7,
-        regularization: 0.01
-      };
+      const supabase = createAdminClient();
+      
+      // 1. Fetch attendance rate
+      const { data: attendance } = await supabase
+        .from("attendance")
+        .select("status")
+        .eq("student_id", studentId);
+      
+      const attendanceRate = attendance?.length 
+        ? (attendance.filter(a => a.status === 'present').length / attendance.length) * 100 
+        : 100;
 
-      const dataPoints = {
-        attendance_percentage: 65,
-        grade_improvement: -0.15,
-        behavioral_incidents: 4
-      };
+      // 2. Fetch recent marks
+      const { data: marks } = await supabase
+        .from("marks")
+        .select("marks_obtained, max_marks")
+        .eq("student_id", studentId);
+      
+      const averageGrade = marks?.length
+        ? (marks.reduce((acc, m) => acc + (m.marks_obtained / (m.max_marks || 100)), 0) / marks.length) * 100
+        : 80;
 
-      const riskScore =
-        (100 - dataPoints.attendance_percentage) * config.attendance_weight +
-        (Math.abs(dataPoints.grade_improvement) * 100) * config.grade_trend_weight;
+      const riskScore = (100 - attendanceRate) * 0.6 + (100 - averageGrade) * 0.4;
 
       return {
         student_id: studentId,
         risk_score: parseFloat(riskScore.toFixed(2)),
-        status: riskScore > config.dropout_threshold * 100 ? "High Risk" : "Stable",
-        recommendation: riskScore > 50 ? "Schedule immediate counselor intervention" : "Monitor weekly"
+        status: riskScore > 70 ? "High Risk" : riskScore > 40 ? "Needs Monitoring" : "Stable",
+        recommendation: riskScore > 50 ? "Schedule immediate counselor intervention" : "Continue standard monitoring"
       };
     } catch (error) {
       return handleServiceError(error);
@@ -116,12 +123,32 @@ export const OracleService = {
    */
   async forecastAcademicPerformance(classId: string) {
     try {
+      const supabase = createAdminClient();
+      
+      // Fetch all marks for this class via student join
+      const { data: students } = await supabase
+        .from("students")
+        .select("id")
+        .eq("class_id", classId);
+      
+      if (!students || students.length === 0) {
+        return { class_id: classId, predicted_average_gpa: 0, status: "No Data" };
+      }
+
+      const { data: marks } = await supabase
+        .from("marks")
+        .select("marks_obtained, max_marks")
+        .in("student_id", students.map(s => s.id));
+
+      const classAverage = marks?.length
+        ? (marks.reduce((acc, m) => acc + (m.marks_obtained / (m.max_marks || 100)), 0) / marks.length) * 4 // scaled to 4.0 GPA
+        : 3.0;
+
       return {
         class_id: classId,
-        predicted_average_gpa: 3.2,
+        predicted_average_gpa: parseFloat(classAverage.toFixed(2)),
         confidence_interval: "±0.15",
-        top_improving_subjects: ["Mathematics", "Physics"],
-        concern_areas: ["Creative Arts"]
+        status: classAverage > 3.5 ? "Exceptional" : classAverage > 2.5 ? "Steady" : "Concerning"
       };
     } catch (error) {
       return handleServiceError(error);

@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { createClient } from "@/lib/supabase/server";
 import {
   Globe,
   CreditCard,
@@ -27,68 +25,42 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
-const gateways = [
-  {
-    id: "1",
-    name: "Stripe Production",
-    type: "Financial",
-    status: "Operational",
-    latency: "42ms",
-    encryption: "TLS 1.3",
-  },
-  {
-    id: "2",
-    name: "PayPal Global",
-    type: "Financial",
-    status: "Operational",
-    latency: "88ms",
-    encryption: "TLS 1.3",
-  },
-  {
-    id: "3",
-    name: "Google Classroom",
-    type: "LMS",
-    status: "Syncing",
-    latency: "112ms",
-    encryption: "OAuth 2.0",
-  },
-  {
-    id: "4",
-    name: "Canvas LMS",
-    type: "LMS",
-    status: "Operational",
-    latency: "95ms",
-    encryption: "OAuth 2.0",
-  },
-];
+export default async function GatewayHub() {
+  const supabase = await createClient();
+  const { data: gateways } = await supabase
+    .from("payment_gateways")
+    .select("*")
+    .order("name", { ascending: true });
 
-export default function GatewayHub() {
+  const activeCount = gateways?.filter(g => g.is_active).length || 0;
+  const syncVolume = "42.5K"; // Placeholder for actual telemetry if needed later
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-700 pb-12">
+    <div className="space-y-8 animate-in fade-in duration-700 pb-12 text-foreground">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-4">
-          <div className="h-14 w-14 rounded-2xl bg-blue-600 border border-white/10 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+        <div className="flex items-center gap-x-4 text-foreground">
+          <div className="h-14 w-14 rounded-2xl bg-primary border border-white/10 flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
             <Globe className="h-7 w-7" />
           </div>
           <div>
-            <h2 className="text-4xl font-black tracking-tight text-foreground">
-              Ecosystem Gateways
+            <h2 className="text-4xl font-black tracking-tight text-foreground uppercase italic leading-none">
+              Ecosystem <span className="text-primary tracking-normal not-italic">/</span> Hub
             </h2>
-            <p className="text-muted-foreground font-medium tracking-tight">
-              Managing Institutional Connectivity & Global Financial/LMS
-              Synchronisation
+            <p className="text-muted-foreground font-black uppercase tracking-widest text-[10px] mt-4 flex items-center gap-x-3">
+              <RefreshCw className="h-3 w-3 text-primary animate-spin-slow" />
+              Institutional Connectivity & Financial Synchronisation
             </p>
           </div>
         </div>
         <div className="flex gap-x-3">
           <Button
             variant="outline"
-            className="rounded-2xl border-border bg-white font-bold gap-x-2"
+            className="rounded-xl border-border bg-card font-black gap-x-2 uppercase tracking-widest text-[10px] h-12 px-6"
           >
             <Key className="h-4 w-4" />
             API Keys
           </Button>
-          <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
+          <Button className="rounded-xl bg-primary text-primary-foreground font-black gap-x-2 px-8 h-12 shadow-lg shadow-primary/20 uppercase tracking-widest text-[10px] hover:scale-105 transition-all">
             <RefreshCw className="h-4 w-4" />
             Sync All
           </Button>
@@ -96,46 +68,46 @@ export default function GatewayHub() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <Card className="border-none glass futuristic-card p-6 bg-card text-white overflow-hidden relative group">
-          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-            <Activity className="h-24 w-24 text-blue-400" />
+        <Card className="border-border bg-card p-6 overflow-hidden relative group rounded-xl shadow-sm hover:border-primary/40 transition-all">
+          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+            <Activity className="h-24 w-24 text-primary" />
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">
             Gateway Health
           </p>
-          <h3 className="text-3xl font-black mt-2 text-white">Optimal</h3>
-          <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-300">
+          <h3 className="text-3xl font-black mt-2 text-foreground uppercase italic tracking-tighter">Optimal</h3>
+          <div className="mt-4 flex items-center gap-x-2 text-[10px] font-black text-primary/60 uppercase tracking-widest italic">
             Uptime: 99.998%
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+        <Card className="border-border bg-card p-6 rounded-xl shadow-sm hover:border-primary/40 transition-all">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
             Total Sync Volume
           </p>
-          <h3 className="text-3xl font-black mt-2 text-foreground">42.5K</h3>
-          <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+          <h3 className="text-3xl font-black mt-2 text-foreground italic tracking-tighter">{syncVolume}</h3>
+          <div className="mt-4 flex items-center gap-x-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest italic">
             Records/Month
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6 border-blue-100 bg-blue-50/10">
-          <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">
+        <Card className="border-primary/20 bg-primary/5 p-6 rounded-xl shadow-sm hover:border-primary/40 transition-all">
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">
             Active Bridges
           </p>
-          <h3 className="text-3xl font-black mt-2 text-foreground">08</h3>
-          <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-blue-500">
+          <h3 className="text-3xl font-black mt-2 text-foreground italic tracking-tighter">{activeCount.toString().padStart(2, '0')}</h3>
+          <div className="mt-4 flex items-center gap-x-2 text-[10px] font-black text-primary uppercase tracking-widest italic">
             <Layers className="h-4 w-4" />
-            Multi-Tenant Ready
+            Active Integration Node
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card p-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+        <Card className="border-border bg-card p-6 rounded-xl shadow-sm hover:border-primary/40 transition-all">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
             Security Layer
           </p>
-          <h3 className="text-3xl font-black mt-2 text-foreground">V3.0</h3>
-          <div className="mt-4 flex items-center gap-x-2 text-xs font-bold text-green-500 uppercase tracking-widest leading-none">
+          <h3 className="text-3xl font-black mt-2 text-foreground italic tracking-tighter">V3.0</h3>
+          <div className="mt-4 flex items-center gap-x-2 text-[10px] font-black text-primary uppercase tracking-widest italic leading-none">
             <ShieldCheck className="h-4 w-4" />
             Encrypted Transit
           </div>
@@ -146,71 +118,69 @@ export default function GatewayHub() {
         {/* Gateway Directory */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary flex items-center gap-x-3 italic">
               <Cloud className="h-4 w-4" />
               External Bridges
             </h3>
           </div>
 
-          <Card className="border-none glass futuristic-card overflow-hidden">
-            <div className="divide-y divide-slate-100">
-              {gateways.map((gate) => (
+          <Card className="border-border bg-card overflow-hidden rounded-xl shadow-sm">
+            <div className="divide-y divide-border">
+              {!gateways || gateways.length === 0 ? (
+                <div className="p-20 text-center">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">No configured gateways detected in the active registry.</p>
+                </div>
+              ) : gateways.map((gate) => (
                 <div
                   key={gate.id}
-                  className="p-6 flex items-center gap-x-6 hover:bg-slate-50 transition-all group"
+                  className="p-8 flex items-center gap-x-8 hover:bg-secondary/20 transition-all group"
                 >
                   <div
                     className={cn(
-                      "h-14 w-14 rounded-2xl flex items-center justify-center transition-all group-hover:bg-card group-hover:text-white",
-                      gate.type === "Financial"
-                        ? "bg-blue-50 text-blue-600"
-                        : "bg-purple-50 text-purple-600",
+                      "h-16 w-16 rounded-xl flex items-center justify-center transition-all group-hover:bg-primary group-hover:text-primary-foreground shadow-sm",
+                      gate.is_active
+                        ? "bg-primary/10 text-primary border border-primary/20"
+                        : "bg-muted text-muted-foreground border border-border",
                     )}
                   >
-                    {gate.type === "Financial" ? (
-                      <CreditCard className="h-7 w-7" />
+                    {gate.provider === "financial" ? (
+                      <CreditCard className="h-8 w-8" />
                     ) : (
-                      <Layers className="h-7 w-7" />
+                      <Layers className="h-8 w-8" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-x-3 mb-1">
-                      <h4 className="font-black text-foreground text-lg">
+                      <h4 className="font-black text-foreground text-xl italic tracking-tight">
                         {gate.name}
                       </h4>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] font-black border-border"
-                      >
-                        {gate.type.toUpperCase()}
-                      </Badge>
                     </div>
-                    <div className="flex items-center gap-x-4 text-xs font-bold text-muted-foreground">
-                      <span className="flex items-center gap-x-1">
-                        <Activity className="h-3 w-3" />
-                        Latency: {gate.latency}
+                    <div className="flex items-center gap-x-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
+                      <span className="flex items-center gap-x-2">
+                        <Activity className="h-3 w-3 text-primary" />
+                        Provider: {gate.provider}
                       </span>
-                      <span className="flex items-center gap-x-1">
-                        <Lock className="h-3 w-3" />
-                        {gate.encryption}
+                      <span className="flex items-center gap-x-2">
+                        <Lock className="h-3 w-3 text-primary" />
+                        TLS 1.3
                       </span>
                     </div>
                   </div>
-                  <div className="text-right flex items-center gap-x-3">
+                  <div className="text-right flex items-center gap-x-6">
                     <Badge
                       className={cn(
-                        "text-[10px] font-black border-none",
-                        gate.status === "Operational"
-                          ? "bg-green-50 text-green-600"
-                          : "bg-blue-50 text-blue-600",
+                        "text-[9px] font-black border-none rounded-lg tracking-widest uppercase px-4 py-1.5 italic",
+                        gate.is_active
+                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                          : "bg-muted text-muted-foreground",
                       )}
                     >
-                      {gate.status.toUpperCase()}
+                      {gate.is_active ? "OPERATIONAL" : "INACTIVE"}
                     </Badge>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-slate-300 hover:text-foreground rounded-xl"
+                      className="text-muted-foreground/40 hover:text-primary rounded-xl transition-all"
                     >
                       <ExternalLink className="h-5 w-5" />
                     </Button>
@@ -218,8 +188,8 @@ export default function GatewayHub() {
                 </div>
               ))}
             </div>
-            <CardFooter className="bg-slate-50 p-4 flex justify-center border-t border-border">
-              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em]">
+            <CardFooter className="bg-secondary/10 p-5 flex justify-center border-t border-border">
+              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] italic">
                 Institutional Hub for Cross-Platform Integrity
               </p>
             </CardFooter>
@@ -228,74 +198,73 @@ export default function GatewayHub() {
 
         {/* Sync Controls */}
         <div className="space-y-6">
-          <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary italic">
             Ecosystem Orchestration
           </h3>
 
-          <Card className="border-none glass futuristic-card bg-card text-white p-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
-              <RefreshCw className="h-24 w-24 text-blue-400" />
+          <Card className="border-primary/20 bg-primary/5 p-10 relative overflow-hidden group rounded-xl shadow-sm">
+            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:rotate-12 transition-transform duration-1000">
+              <RefreshCw className="h-32 w-32 text-primary" />
             </div>
-            <h4 className="text-xl font-black tracking-tight mb-2">
+            <h4 className="text-2xl font-black tracking-tight mb-4 uppercase italic leading-none">
               Omni-Sync Oracle
             </h4>
-            <p className="text-xs opacity-60 font-medium leading-relaxed">
+            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest leading-loose italic">
               Automated synchronization with all connected LMS and Financial
               platforms. Last sync: 12 mins ago.
             </p>
-            <Button className="mt-6 w-full bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 border-none shadow-xl shadow-blue-900/40 py-6">
+            <Button className="mt-10 w-full bg-primary text-primary-foreground font-black rounded-xl hover:scale-105 transition-all shadow-xl shadow-primary/30 h-16 uppercase tracking-[0.2em] text-[10px]">
               MIGRATE RECORDS NOW
             </Button>
           </Card>
 
-          <Card className="border-none glass futuristic-card p-6">
-            <CardHeader className="p-0 mb-4 flex items-center justify-between">
-              <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
+          <Card className="border-border bg-card p-8 rounded-xl shadow-sm">
+            <CardHeader className="p-0 mb-6 flex items-center justify-between border-b border-border pb-4">
+              <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
                 Gateway Traffic
               </CardTitle>
-              <Zap className="h-4 w-4 text-yellow-500" />
+              <Zap className="h-4 w-4 text-primary animate-pulse" />
             </CardHeader>
-            <div className="space-y-6 mt-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-[10px] font-black uppercase">
+            <div className="space-y-8 mt-6">
+              <div className="space-y-3">
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest italic">
                   <span className="text-muted-foreground">Financial Transit</span>
-                  <span className="text-foreground">82%</span>
+                  <span className="text-primary">82%</span>
                 </div>
                 <Progress
                   value={82}
-                  className="h-1.5"
-                  indicatorClassName="bg-blue-500"
+                  className="h-2 rounded-full bg-secondary"
+                  // indicatorClassName="bg-primary shadow-lg shadow-primary/20"
                 />
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-[10px] font-black uppercase">
+              <div className="space-y-3">
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest italic">
                   <span className="text-muted-foreground">LMS Data Stream</span>
-                  <span className="text-foreground">45%</span>
+                  <span className="text-primary">45%</span>
                 </div>
                 <Progress
                   value={45}
-                  className="h-1.5"
-                  indicatorClassName="bg-purple-500"
+                  className="h-2 rounded-full bg-secondary"
+                  // indicatorClassName="bg-primary/60 shadow-lg shadow-primary/10"
                 />
               </div>
             </div>
           </Card>
 
-          <Card className="border-none glass futuristic-card bg-linear-to-br from-blue-600 to-blue-500 text-white p-6 relative group overflow-hidden">
-            <div className="absolute inset-0 bg-linear-to-tr from-black/10 to-transparent" />
-            <div className="relative z-10 space-y-4">
-              <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-                <ArrowRight className="h-6 w-6" />
+          <Card className="border-primary bg-primary text-primary-foreground p-10 relative group overflow-hidden rounded-xl shadow-lg shadow-primary/20">
+            <div className="relative z-10 space-y-6">
+              <div className="h-14 w-14 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-sm transition-all group-hover:scale-110">
+                <ArrowRight className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h4 className="font-black text-lg">Connect New Bridge</h4>
-                <p className="text-xs opacity-80 font-medium">
+                <h4 className="font-black text-2xl italic tracking-tight uppercase leading-none">Connect New Bridge</h4>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-4 italic">
                   Extend your ecosystem with the **Edu Maysan SDK**.
                 </p>
               </div>
               <Button
-                variant="ghost"
-                className="w-full h-10 border border-white/20 bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/20"
+                variant="outline"
+                className="w-full h-14 border-white/20 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-primary transition-all shadow-md"
               >
                 OPEN SDK DOCUMENTATION
               </Button>

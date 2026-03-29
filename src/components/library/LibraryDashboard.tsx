@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import {
     Library,
@@ -31,9 +31,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { 
+    BarChart, Bar, 
+    PieChart, Pie, Cell, 
+    ResponsiveContainer, Tooltip, Legend, 
+    XAxis, YAxis, CartesianGrid 
+} from "recharts";
 import { createBook, issueBook, returnBook } from "@/app/actions/library";
 import { createInventoryItem } from "@/app/actions/modules";
 import { useRouter } from "next/navigation";
+
+const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
 interface LibraryDashboardProps {
     books: any[];
@@ -53,6 +61,28 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
 
     const [bookForm, setBookForm] = useState({ title: "", author: "", isbn: "", category: "", total_copies: "1", shelf_location: "" });
     const [issueForm, setIssueForm] = useState({ book_id: "", student_id: "", due_date: "" });
+
+    // --- Analytics Intelligence Layer ---
+    const circulationVelocity = useMemo(() => {
+        const issued = transactions.filter(t => t.status === "issued").length;
+        const available = books.reduce((acc, b) => acc + b.available_copies, 0);
+        return [
+            { name: "Deployed", value: issued, color: "#3b82f6" },
+            { name: "Reserve", value: available, color: "#10b981" }
+        ];
+    }, [books, transactions]);
+
+    const catalogSaturation = useMemo(() => {
+        const catMap: Record<string, number> = {};
+        books.forEach(b => {
+            const cat = b.category || "General";
+            catMap[cat] = (catMap[cat] || 0) + b.total_copies;
+        });
+        return Object.entries(catMap)
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 5);
+    }, [books]);
 
     const handleCreateBook = async () => {
         setLoading(true);
@@ -261,6 +291,78 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                         </Dialog>
                     </div>
                 )}
+            </div>
+
+            {/* --- Analytics Layer: Institutional Bibliographic Intelligence --- */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-2">
+                <div className="md:col-span-12 lg:col-span-7 bg-card/40 backdrop-blur-3xl border border-primary/10 p-10 skew-x-[-6deg] relative overflow-hidden group">
+                    <div className="not-skew-x relative z-10 flex flex-col h-full">
+                        <div className="flex justify-between items-start mb-10">
+                            <div>
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                                    Circulation <span className="text-primary italic">Velocity</span>
+                                </h3>
+                                <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
+                                    Real-time asset deployment status
+                                </p>
+                            </div>
+                            <ArrowRightLeft className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                        </div>
+                        <div className="h-[280px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={circulationVelocity}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
+                                    <Tooltip 
+                                        cursor={{ fill: "rgba(16,185,129,0.05)" }}
+                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "0", fontSize: "10px", color: "#fff" }}
+                                    />
+                                    <Bar dataKey="value" radius={[2, 2, 0, 0]} barSize={40}>
+                                        {circulationVelocity.map((entry: any, index: number) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="md:col-span-12 lg:col-span-5 bg-card/40 backdrop-blur-3xl border border-primary/10 p-10 skew-x-[-6deg] relative overflow-hidden group">
+                    <div className="not-skew-x relative z-10 text-center mb-8">
+                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                            Catalog <span className="text-primary italic">Saturation</span>
+                        </h3>
+                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mt-3 italic">Subject Matter Distribution</p>
+                    </div>
+                    <div className="not-skew-x h-[280px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={catalogSaturation}
+                                    innerRadius={70}
+                                    outerRadius={95}
+                                    paddingAngle={8}
+                                    dataKey="value"
+                                >
+                                    {catalogSaturation.map((entry: any, index: number) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "0", fontSize: "10px", color: "#fff" }}
+                                />
+                                <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
             </div>
 
             {/* Library Stats Grid */}

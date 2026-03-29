@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Bus, MapPin, Plus, Navigation, ShieldCheck, Wifi, Edit2, Trash2, ArrowRight, UserMinus, Phone, User, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +25,16 @@ import { createRoute, updateRoute, deleteRoute, unassignStudentTransport } from 
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { 
+    BarChart, Bar, 
+    PieChart, Pie, Cell, 
+    ResponsiveContainer, Tooltip, Legend, 
+    XAxis, YAxis, CartesianGrid 
+} from "recharts";
+import { 
+    Search, Filter, Hash, CheckCircle2, Clock, 
+    Zap, Activity, LayoutGrid, ListFilter 
+} from "lucide-react";
 import { StopManagement } from "./StopManagement";
 import { StudentAssignmentDialog } from "./StudentAssignmentDialog";
 
@@ -35,6 +45,8 @@ interface TransportDashboardProps {
     userRole?: string | null;
 }
 
+const COLORS = ["#10b981", "#ef4444", "#3b82f6", "#f59e0b", "#8b5cf6"];
+
 export function TransportDashboard({ routes, stops, assignments, userRole }: TransportDashboardProps) {
     const isAdmin = userRole === "admin";
     const router = useRouter();
@@ -43,6 +55,36 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
     const [loading, setLoading] = useState(false);
     const [selectedRoute, setSelectedRoute] = useState<any>(null);
     const [editingRoute, setEditingRoute] = useState<any>(null);
+
+    // --- Filter State ---
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filterStatus, setFilterStatus] = useState("all");
+
+    // --- Analytics Logic ---
+    const fleetOccupancyData = useMemo(() => {
+        return routes.map(r => {
+            const assigned = assignments.filter(a => a.route_id === r.id).length;
+            const cap = r.capacity || 40;
+            return {
+                name: r.name,
+                occupancy: Math.round((assigned / cap) * 100),
+                raw: `${assigned}/${cap}`
+            };
+        }).sort((a, b) => b.occupancy - a.occupancy).slice(0, 5);
+    }, [routes, assignments]);
+
+    const routeStatusData = useMemo(() => {
+        const statusMap: Record<string, number> = {};
+        routes.forEach(r => {
+            const s = r.status || "active";
+            statusMap[s] = (statusMap[s] || 0) + 1;
+        });
+        return Object.entries(statusMap).map(([name, value], idx) => ({
+            name: name.toUpperCase(),
+            value,
+            color: COLORS[idx % COLORS.length]
+        }));
+    }, [routes]);
 
     const [routeForm, setRouteForm] = useState({
         name: "",
@@ -217,38 +259,147 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 )}
             </div>
 
-            {/* Transport Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-4 reveal-2">
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all">
-                    <div className="flex justify-between items-start mb-4">
+            {/* --- Analytics Layer: Fleet Intelligence --- */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-2">
+                <div className="md:col-span-8 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
+                    <div className="relative z-10 h-full flex flex-col">
+                        <div className="mb-8 flex justify-between items-start">
+                            <div>
+                                <h3 className="text-xl font-bold italic tracking-tight uppercase leading-none text-foreground group-hover:text-primary transition-colors">
+                                    Fleet <span className="text-primary italic">Occupancy</span> Matrix
+                                </h3>
+                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic">
+                                    Real-time utilization percentile per route node
+                                </p>
+                            </div>
+                            <Activity className="h-5 w-5 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <div className="flex-1 h-[280px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={fleetOccupancyData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: "#88888860", fontSize: 10, fontWeight: "bold" }}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 10 }} unit="%" />
+                                    <Tooltip 
+                                        cursor={{ fill: "#ffffff05" }} 
+                                        contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                                    />
+                                    <Bar dataKey="occupancy" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={40} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="md:col-span-4 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
+                    <div className="mb-8 relative z-10 text-center">
+                        <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground italic group-hover:text-primary transition-all">
+                            Service <span className="text-primary tracking-normal not-italic px-1">/</span> Status
+                        </h3>
+                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic text-center">Fleet operational health vector</p>
+                    </div>
+                    <div className="h-[280px] relative z-10">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={routeStatusData}
+                                    innerRadius={70}
+                                    outerRadius={95}
+                                    paddingAngle={8}
+                                    dataKey="value"
+                                >
+                                    {routeStatusData.map((entry: any, index: number) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                                />
+                                <Legend verticalAlign="bottom" height={36}/>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- Control Layer: Logistics Matrix --- */}
+            <div className="bg-muted p-3 rounded-xl border border-border flex flex-col md:flex-row items-center gap-4 reveal-3 shadow-md">
+                <div className="relative flex-1 w-full group">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input 
+                        placeholder="SEARCH FLEET REGISTRY, PLATES, OR DRIVERS..." 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="h-14 pl-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary transition-all shadow-inner"
+                    />
+                </div>
+
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <Select value={filterStatus} onValueChange={setFilterStatus}>
+                        <SelectTrigger className="w-full md:w-[220px] h-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] shadow-inner hover:border-primary transition-all focus:ring-primary">
+                            <div className="flex items-center gap-4">
+                                <ListFilter className="h-4 w-4 text-primary opacity-40" />
+                                <SelectValue placeholder="ROUTE STATUS" />
+                            </div>
+                        </SelectTrigger>
+                        <SelectContent className="glass-panel border-primary/10 rounded-lg">
+                            <SelectItem value="all" className="font-black uppercase text-[10px] tracking-widest p-4">SYSTEM_ALL_STATUS</SelectItem>
+                            <SelectItem value="active" className="font-black uppercase text-[10px] tracking-widest p-4">ACTIVE_NODES</SelectItem>
+                            <SelectItem value="inactive" className="font-black uppercase text-[10px] tracking-widest p-4">OFFLINE_NODES</SelectItem>
+                            <SelectItem value="maintenance" className="font-black uppercase text-[10px] tracking-widest p-4">MAINTENANCE_NODES</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-4 reveal-4">
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
+                    <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                        <Bus className="h-24 w-24 text-primary" />
+                    </div>
+                    <div className="relative z-10 flex justify-between items-start mb-4">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Active Routes</p>
-                        <Navigation className="h-4 w-4 text-primary opacity-40" />
+                        <Navigation className="h-4 w-4 text-primary opacity-40 group-hover:animate-pulse" />
                     </div>
-                    <h3 className="text-3xl font-bold text-foreground tracking-tight leading-none">{routes.length}</h3>
+                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{routes.length}</h3>
                 </div>
 
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-blue-500/40 transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Capacity</p>
-                        <UserMinus className="h-4 w-4 text-blue-500 opacity-40" />
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
+                    <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                        <Users className="h-24 w-24 text-primary" />
                     </div>
-                    <h3 className="text-3xl font-bold text-blue-500 tracking-tight leading-none">{routes.reduce((acc, r) => acc + (r.capacity || 0), 0)}</h3>
+                    <div className="relative z-10 flex justify-between items-start mb-4">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fleet Capacity</p>
+                        <Zap className="h-4 w-4 text-blue-500 opacity-40" />
+                    </div>
+                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{routes.reduce((acc, r) => acc + (r.capacity || 0), 0)}</h3>
                 </div>
 
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-amber-500/40 transition-all">
-                    <div className="flex justify-between items-start mb-4">
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
+                    <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                        <MapPin className="h-24 w-24 text-primary" />
+                    </div>
+                    <div className="relative z-10 flex justify-between items-start mb-4">
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Service Stops</p>
                         <MapPin className="h-4 w-4 text-amber-500 opacity-40" />
                     </div>
-                    <h3 className="text-3xl font-bold text-amber-500 tracking-tight leading-none">{stops.length}</h3>
+                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{stops.length}</h3>
                 </div>
 
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-red-500/40 transition-all">
-                    <div className="flex justify-between items-start mb-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Assigned Students</p>
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
+                     <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                        <ShieldCheck className="h-24 w-24 text-primary" />
+                    </div>
+                    <div className="relative z-10 flex justify-between items-start mb-4">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Boarding Students</p>
                         <ShieldCheck className="h-4 w-4 text-red-500 opacity-40" />
                     </div>
-                    <h3 className="text-3xl font-bold text-red-500 tracking-tight leading-none">{assignments.length}</h3>
+                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{assignments.length}</h3>
                 </div>
             </div>
 
@@ -271,48 +422,69 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                     [No active routes]
                                 </div>
                             ) : (
-                                routes.map((route, idx) => (
+                                routes.filter(r => {
+                                    const matchesSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                                          r.plate_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                          r.driver_name?.toLowerCase().includes(searchTerm.toLowerCase());
+                                    const matchesStatus = filterStatus === "all" || r.status === filterStatus;
+                                    return matchesSearch && matchesStatus;
+                                }).map((route, idx) => (
                                     <div
                                         key={route.id}
                                         onClick={() => setSelectedRoute(route)}
                                         className={cn(
-                                            "group relative p-4 transition-all duration-300 cursor-pointer border rounded-md mb-1",
+                                            "group relative p-6 transition-all duration-500 cursor-pointer border rounded-md mb-2 reveal-item",
                                             selectedRoute?.id === route.id
-                                                ? "bg-primary/5 border-primary/40 shadow-sm"
-                                                : "bg-transparent border-transparent hover:bg-muted/50 hover:border-border"
+                                                ? "bg-primary border-primary shadow-xl shadow-primary/20 translate-x-3 skew-x-[-2deg]"
+                                                : "bg-background/40 border-border hover:bg-muted/50 hover:border-primary/30"
                                         )}
                                     >
                                         <div className="flex justify-between items-start">
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-4">
                                                 <div className={cn(
-                                                    "h-10 w-10 rounded-md flex items-center justify-center transition-all duration-300",
+                                                    "h-12 w-12 rounded-lg flex items-center justify-center transition-all duration-300 shadow-inner",
                                                     selectedRoute?.id === route.id
-                                                        ? "bg-primary text-primary-foreground shadow-sm"
-                                                        : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                                                        ? "bg-white/20 text-white"
+                                                        : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"
                                                 )}>
-                                                    <Bus className="h-5 w-5" />
+                                                    <Bus className="h-6 w-6" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">
+                                                    <h4 className={cn(
+                                                        "text-sm font-black uppercase tracking-tight transition-colors leading-none mb-1.5 italic",
+                                                        selectedRoute?.id === route.id ? "text-white" : "text-foreground group-hover:text-primary"
+                                                    )}>
                                                         {route.name}
                                                     </h4>
-                                                    <span className="text-[10px] font-semibold text-muted-foreground tracking-wide">{route.route_number || "NO_NUMBER"}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={cn(
+                                                            "text-[9px] font-mono font-black uppercase tracking-[0.2em]",
+                                                            selectedRoute?.id === route.id ? "text-white/60" : "text-muted-foreground"
+                                                        )}>{route.route_number || "NO_NUMBER"}</span>
+                                                        <div className={cn(
+                                                            "h-1 w-1 rounded-full",
+                                                            route.status === 'active' ? 'bg-emerald-400' : 'bg-amber-400'
+                                                        )} />
+                                                    </div>
                                                 </div>
                                             </div>
                                             
                                             <div className="text-right">
-                                                <div className="text-[10px] font-bold text-muted-foreground/30">{idx + 1}</div>
+                                                <div className={cn("text-[10px] font-mono font-black", selectedRoute?.id === route.id ? "text-white/20" : "text-foreground/5")}>#{idx + 1}</div>
                                             </div>
                                         </div>
 
-                                        <div className="mt-4 flex items-center justify-between text-[9px] font-semibold uppercase tracking-wider border-t border-border/50 pt-3 text-muted-foreground/60">
-                                            <div className="flex items-center gap-1.5">
-                                                <ShieldCheck className="h-3 w-3 text-primary/40" />
+                                        <div className={cn(
+                                            "mt-5 flex items-center justify-between text-[9px] font-mono font-black uppercase tracking-[0.2em] border-t pt-4",
+                                            selectedRoute?.id === route.id ? "border-white/10 text-white/80" : "border-border/50 text-muted-foreground/60"
+                                        )}>
+                                            <div className="flex items-center gap-2">
+                                                <ShieldCheck className={cn("h-3 w-3", selectedRoute?.id === route.id ? "text-white" : "text-primary")} />
                                                 <span>{route.plate_number || "Pending"}</span>
                                             </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <Users className="h-3 w-3 text-primary/40" />
-                                                <span>{route.capacity || 40} Seats</span>
+                                            <div className="flex items-center gap-2">
+                                                <Users className={cn("h-3 w-3", selectedRoute?.id === route.id ? "text-white" : "text-primary")} />
+                                                <span>{assignments.filter(a => a.route_id === route.id).length}/{route.capacity || 40}</span>
                                             </div>
                                         </div>
                                     </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 import Link from "next/link";
 

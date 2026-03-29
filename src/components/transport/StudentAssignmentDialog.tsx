@@ -56,12 +56,6 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
 
     const [studentPopoverOpen, setStudentPopoverOpen] = useState(false);
 
-    useEffect(() => {
-        if (open) {
-            fetchStudents();
-        }
-    }, [open]);
-
     const fetchStudents = async () => {
         setFetchingStudents(true);
         const { data, error } = await supabase
@@ -76,6 +70,13 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
         }
         setFetchingStudents(false);
     };
+
+    useEffect(() => {
+        if (open) {
+            fetchStudents();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open]);
 
     const handleAssign = async () => {
         if (!selectedStudentId || !selectedRouteId) {

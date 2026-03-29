@@ -15,10 +15,10 @@ export default async function SettingsPage() {
   ]);
 
   const initialSettings = schoolSettings || {
-    school_name: "Edu Maysan Demo School",
+    school_name: "Edu Maysan ERP",
     contact_email: "admin@edumaysan.com",
-    currency: "USD",
-    timezone: "UTC"
+    currency: "INR",
+    timezone: "IST"
   };
 
   const initialGateways = gatewaysResult.data || [];

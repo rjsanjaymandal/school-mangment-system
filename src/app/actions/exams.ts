@@ -20,7 +20,13 @@ export async function createExam(data: {
             throw new Error("Unauthorized: Only administrators and teachers can create exams.");
         }
         const supabase = createAdminClient();
-        const { error } = await supabase.from("exams").insert(data);
+        const examData = {
+            ...data,
+            subject_id: (data.subject_id && data.subject_id !== "") ? data.subject_id : null,
+            class_id: (data.class_id && data.class_id !== "") ? data.class_id : null,
+            date: data.date || new Date().toISOString().split('T')[0]
+        };
+        const { error } = await supabase.from("exams").insert(examData);
         if (error) throw error;
         revalidatePath("/exams");
         return { success: true };
@@ -43,7 +49,13 @@ export async function updateExam(id: string, data: {
             throw new Error("Unauthorized: Only administrators and teachers can update exams.");
         }
         const supabase = createAdminClient();
-        const { error } = await supabase.from("exams").update(data).eq("id", id);
+        const updateData: any = { ...data };
+        
+        if (updateData.subject_id === "") updateData.subject_id = null;
+        if (updateData.class_id === "") updateData.class_id = null;
+        if (updateData.academic_year_id === "") delete updateData.academic_year_id;
+
+        const { error } = await supabase.from("exams").update(updateData).eq("id", id);
         if (error) throw error;
         revalidatePath("/exams");
         return { success: true };

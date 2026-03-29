@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
     FileText, Plus, ClipboardCheck, Calendar, Award, BookOpen, Users, BarChart3, Pencil, Trash2,
 } from "lucide-react";
@@ -20,6 +20,11 @@ import "@/styles/calendar-overrides.css"; // We will create this for glassmorphi
 import { createExam, deleteExam, saveMarks, getMarksByExam } from "@/app/actions/exams";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { 
+    PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
+    BarChart, Bar, XAxis, YAxis, CartesianGrid
+} from "recharts";
+import { Search, Filter, Hash, CheckCircle2, Clock } from "lucide-react";
 
 interface ExamsDashboardProps {
     exams: any[];
@@ -27,8 +32,11 @@ interface ExamsDashboardProps {
     subjects: any[];
     academicYears: any[];
     students: any[];
+    marksSummary?: any[];
     userRole: string;
 }
+
+const COLORS = ["#10b981", "#ef4444", "#3b82f6", "#f59e0b", "#8b5cf6"];
 
 const locales = {
     "en-US": enUS,
@@ -42,7 +50,15 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-export function ExamsDashboard({ exams, classes, subjects, academicYears, students, userRole }: ExamsDashboardProps) {
+export function ExamsDashboard({ 
+    exams, 
+    classes, 
+    subjects, 
+    academicYears, 
+    students, 
+    marksSummary = [], 
+    userRole 
+}: ExamsDashboardProps) {
     const router = useRouter();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [isMarksOpen, setIsMarksOpen] = useState(false);
@@ -51,6 +67,42 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
     const [marks, setMarks] = useState<Record<string, string>>({});
     const [existingMarks, setExistingMarks] = useState<any[]>([]);
     const [calendarView, setCalendarView] = useState<View>("month");
+
+    // --- Filter State ---
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filterClass, setFilterClass] = useState("all");
+    const [filterSubject, setFilterSubject] = useState("all");
+
+    // --- Analytics Logic ---
+    const passFailData = useMemo(() => {
+        if (!marksSummary || marksSummary.length === 0) return [];
+        let pass = 0;
+        let fail = 0;
+        marksSummary.forEach(m => {
+            const passMarks = m.exam?.passing_marks || 35;
+            if (m.marks_obtained >= passMarks) pass++;
+            else fail++;
+        });
+        return [
+            { name: "Pass", value: pass, color: "#10b981" },
+            { name: "Fail", value: fail, color: "#ef4444" }
+        ];
+    }, [marksSummary]);
+
+    const subjectPerformance = useMemo(() => {
+        if (!marksSummary || marksSummary.length === 0) return [];
+        const subMap: Record<string, { total: number, count: number }> = {};
+        marksSummary.forEach(m => {
+            const subName = m.exam?.subject?.name || "Unknown";
+            if (!subMap[subName]) subMap[subName] = { total: 0, count: 0 };
+            subMap[subName].total += m.marks_obtained;
+            subMap[subName].count++;
+        });
+        return Object.entries(subMap).map(([name, data]) => ({
+            name,
+            avg: Math.round(data.total / data.count)
+        })).sort((a, b) => b.avg - a.avg).slice(0, 5);
+    }, [marksSummary]);
 
     const currentAY = academicYears.find((ay: any) => ay.is_current) || academicYears[0];
 
@@ -116,10 +168,15 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
         ? students.filter((s: any) => s.class_id === selectedExam.class_id)
         : [];
 
-    const upcoming = exams.filter(e => new Date(e.date) >= new Date());
-    const completed = exams.filter(e => new Date(e.date) < new Date());
+    const filteredExams = exams.filter(e => {
+        const matchesSearch = e.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              e.subject?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesClass = filterClass === "all" || e.class_id === filterClass;
+        const matchesSubject = filterSubject === "all" || e.subject_id === filterSubject;
+        return matchesSearch && matchesClass && matchesSubject;
+    });
 
-    const calendarEvents = exams.map(e => {
+    const calendarEvents = filteredExams.map(e => {
         // Assume exams default to a standard time if we only have dates
         const dateStr = e.date;
         const start = new Date(dateStr);
@@ -181,12 +238,121 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 </TabsList>
 
                 <TabsContent value="list" className="mt-0 space-y-12">
+                    {/* --- Analytics Layer: Institutional Intelligence --- */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-2">
+                        <div className="md:col-span-8 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:rotate-12 transition-transform duration-1000">
+                                <BarChart3 className="h-48 w-48 text-primary" />
+                            </div>
+                            <div className="relative z-10 h-full flex flex-col">
+                                <div className="mb-8">
+                                    <h3 className="text-xl font-bold italic tracking-tight uppercase leading-none text-foreground group-hover:text-primary transition-colors">
+                                        Performance <span className="text-primary italic">Intelligence</span>
+                                    </h3>
+                                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic">
+                                        Subject-wise average percentile distribution
+                                    </p>
+                                </div>
+                                <div className="flex-1 h-[280px]">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={subjectPerformance}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                            <XAxis 
+                                                dataKey="name" 
+                                                axisLine={false} 
+                                                tickLine={false} 
+                                                tick={{ fill: "#88888860", fontSize: 10, fontWeight: "bold" }}
+                                            />
+                                            <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 10 }} />
+                                            <Tooltip 
+                                                cursor={{ fill: "#ffffff05" }} 
+                                                contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                                            />
+                                            <Bar dataKey="avg" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={40} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="md:col-span-4 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
+                            <div className="mb-8 relative z-10 text-center">
+                                <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground italic group-hover:text-primary transition-all">
+                                    Success <span className="text-primary tracking-normal not-italic px-1">/</span> Vector
+                                </h3>
+                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic text-center">Pass-Fail Distribution Profile</p>
+                            </div>
+                            <div className="h-[280px] relative z-10">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={passFailData}
+                                            innerRadius={70}
+                                            outerRadius={95}
+                                            paddingAngle={8}
+                                            dataKey="value"
+                                        >
+                                            {passFailData.map((entry: any, index: number) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                                        />
+                                        <Legend verticalAlign="bottom" height={36}/>
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* --- Control Layer: Institutional Matrix --- */}
+                    <div className="bg-muted p-3 rounded-xl border border-border flex flex-col md:flex-row items-center gap-4 reveal-3 shadow-md">
+                        <div className="relative flex-1 group">
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                            <Input 
+                                placeholder="SEARCH EXAM REGISTRY OR SUBJECT NODE..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="h-14 pl-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary transition-all shadow-inner"
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <Select value={filterClass} onValueChange={setFilterClass}>
+                                <SelectTrigger className="w-full md:w-[220px] h-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] shadow-inner hover:border-primary transition-all focus:ring-primary">
+                                    <div className="flex items-center gap-4">
+                                        <Hash className="h-4 w-4 text-primary opacity-40" />
+                                        <SelectValue placeholder="CLASS MODULE" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent className="glass-panel border-primary/10 rounded-lg">
+                                    <SelectItem value="all" className="font-black uppercase text-[10px] tracking-widest p-4">SYSTEM_ALL_CLASSES</SelectItem>
+                                    {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-black uppercase text-[10px] tracking-widest p-4">{c.name}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+
+                            <Select value={filterSubject} onValueChange={setFilterSubject}>
+                                <SelectTrigger className="w-full md:w-[220px] h-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] shadow-inner hover:border-primary transition-all focus:ring-primary">
+                                    <div className="flex items-center gap-4">
+                                        <BookOpen className="h-4 w-4 text-primary opacity-40 ml-1" />
+                                        <SelectValue placeholder="SUBJECT SECTOR" />
+                                    </div>
+                                </SelectTrigger>
+                                <SelectContent className="glass-panel border-primary/10 rounded-lg">
+                                    <SelectItem value="all" className="font-black uppercase text-[10px] tracking-widest p-4">SYSTEM_ALL_SUBJECTS</SelectItem>
+                                    {subjects.map(s => <SelectItem key={s.id} value={s.id} className="font-black uppercase text-[10px] tracking-widest p-4">{s.name}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         {[
                             { label: "Total Exams", value: exams.length, icon: FileText, width: "78%" },
                             { label: "Active Participants", value: students.length, icon: Users, width: "92%" },
                             { label: "Subject Coverage", value: new Set(exams.map(e => e.subject_id)).size, icon: BookOpen, width: "64%" },
-                            { label: "Current Cycle", value: "Verified", icon: Calendar, width: "100%" },
+                            { label: "Evaluation Rate", value: `${Math.round((exams.filter(e => e.marks?.[0]?.count > 0).length / (exams.length || 1)) * 100)}%`, icon: Calendar, width: "100%" },
                         ].map((stat, i) => (
                             <div key={i} className="bg-card p-6 border border-border rounded-xl shadow-sm hover:border-primary/50 transition-all group">
                                 <div className="relative z-10">
@@ -210,15 +376,15 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         <table className="w-full text-left border-collapse">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Exam Name</th>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Class</th>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Date</th>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Total Marks</th>
-                                    <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Actions</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Class Module</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border text-center">Telemetry</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Registry Date</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border text-center">Evaluation Status</th>
+                                    <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Module Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-primary/5 font-medium tracking-tight">
-                                {exams.map((exam) => (
+                                {filteredExams.map((exam) => (
                                     <tr key={exam.id} className="group hover:bg-primary/[0.02] transition-all duration-500">
                                         <td className="px-6 py-6">
                                             <div>
@@ -232,27 +398,36 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                             </div>
                                         </td>
                                         <td className="px-6 py-6 font-mono font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                                             {exam.class?.name}
+                                             <div className="p-3 bg-muted rounded-lg border border-border inline-block min-w-[120px] text-center italic">
+                                                {exam.class?.name}
+                                             </div>
                                         </td>
                                         <td className="px-6 py-6">
-                                            <div className="flex flex-col gap-1">
-                                                <p className="font-mono font-bold text-[12px] uppercase tracking-wider text-foreground">
-                                                    {format(new Date(exam.date), "dd-MM-yyyy")}
-                                                </p>
-                                            </div>
-                                        </td>
-                                        <td className="px-12 py-10">
-                                            <div className="flex items-center gap-x-4">
+                                            <div className="flex items-center justify-center gap-x-4">
                                                 <div className="flex flex-col items-end">
                                                     <span className="text-2xl font-black italic text-foreground tracking-tighter leading-none">{exam.max_marks}</span>
-                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-foreground/20">MAX</span>
+                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-foreground/20">MAX_VAL</span>
                                                 </div>
                                                 <div className="h-8 w-px bg-primary/20" />
                                                 <div className="flex flex-col">
                                                     <span className="text-[11px] font-mono font-black uppercase tracking-widest text-primary italic leading-none">{exam.passing_marks}</span>
-                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">PASSING</span>
+                                                    <span className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">PASS_LVL</span>
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td className="px-6 py-6 font-mono font-bold text-[12px] uppercase tracking-wider text-foreground">
+                                            {format(new Date(exam.date), "dd-MM-yyyy")}
+                                        </td>
+                                        <td className="px-6 py-6 text-center">
+                                            {exam.marks?.[0]?.count > 0 ? (
+                                                <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/15 py-1 px-4 rounded-full font-mono font-black text-[9px] uppercase tracking-widest italic flex items-center gap-2 justify-center w-fit mx-auto">
+                                                    <CheckCircle2 className="h-3 w-3" /> Evaluated
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="outline" className="text-amber-500/40 border-amber-500/10 py-1 px-4 rounded-full font-mono font-black text-[9px] uppercase tracking-widest italic flex items-center gap-2 justify-center w-fit mx-auto">
+                                                    <Clock className="h-3 w-3" /> Scheduled
+                                                </Badge>
+                                            )}
                                         </td>
                                         <td className="px-12 py-10 text-right">
                                             <div className="flex items-center justify-end gap-x-4">
@@ -316,9 +491,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 <DialogContent className="bg-card border border-border p-0 overflow-hidden max-w-2xl rounded-xl shadow-2xl">
                     <div className="p-8 bg-muted/50 border-b border-border relative overflow-hidden">
                         <div className="relative z-10">
-                            <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
-                                Exam <span className="text-primary italic">Details</span>
-                            </h3>
+                            <DialogTitle asChild>
+                                <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
+                                    Exam <span className="text-primary italic">Details</span>
+                                </h3>
+                            </DialogTitle>
                             <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 mt-3 flex items-center gap-2">
                                 <span className="h-1 w-1 rounded-full bg-primary" /> Create a new exam
                             </p>
@@ -418,9 +595,11 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 <DialogContent className="bg-card border border-border p-0 overflow-hidden max-w-5xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl">
                     <div className="p-8 bg-muted/50 border-b border-border relative overflow-hidden flex-shrink-0">
                         <div className="relative z-10">
-                            <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
-                                Exam <span className="text-primary italic">Results</span>
-                            </h3>
+                            <DialogTitle asChild>
+                                <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
+                                    Exam <span className="text-primary italic">Results</span>
+                                </h3>
+                            </DialogTitle>
                             <div className="flex flex-wrap items-center gap-6 mt-4">
                                 <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 italic flex items-center gap-2">
                                     <span className="h-1 w-1 rounded-full bg-primary" /> Exam: {selectedExam?.name}
@@ -479,10 +658,26 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         </div>
                     </div>
 
+                    {/* --- Progress Protocol Footer --- */}
                     <div className="p-8 border-t border-border bg-muted/30 flex flex-col md:flex-row items-center justify-between gap-6 flex-shrink-0 relative">
-                        <div className="flex items-center gap-3">
-                            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">Total Students: {examStudents.length}</p>
+                        <div className="flex-1 w-full max-w-md">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">
+                                        Evaluation Progress: <span className="text-primary italic">{Object.values(marks).filter(v => v !== "").length}</span> / {examStudents.length}
+                                    </p>
+                                </div>
+                                <span className="text-[10px] font-mono font-bold text-primary/40">
+                                    {Math.round((Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100)}%
+                                </span>
+                            </div>
+                            <div className="h-1.5 w-full bg-background border border-border rounded-full overflow-hidden">
+                                <div 
+                                    className="h-full bg-primary transition-all duration-700 ease-out"
+                                    style={{ width: `${(Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100}%` }}
+                                />
+                            </div>
                         </div>
                         <div className="flex items-center gap-x-6">
                             <Button 

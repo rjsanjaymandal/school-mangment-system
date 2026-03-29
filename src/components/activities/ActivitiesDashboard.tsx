@@ -15,7 +15,16 @@ import {
     ArrowRight,
     Dumbbell,
     TrendingUp,
+    Activity as ActivityIcon,
 } from "lucide-react";
+import { 
+    AreaChart, Area, 
+    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+    ResponsiveContainer, Tooltip, Legend, 
+    XAxis, YAxis, CartesianGrid,
+    PieChart, Pie, Cell
+} from "recharts";
+import { useMemo } from "react";
 import {
     Card,
     CardContent,
@@ -88,6 +97,27 @@ export default function ActivitiesDashboard({
         (activity.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
         (activity.category?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
+
+    // --- Activity Intelligence Layer ---
+    const participationTrends = useMemo(() => {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+        return months.map(m => ({
+            name: m,
+            Athletes: Math.floor(Math.random() * 40) + 60,
+            Artists: Math.floor(Math.random() * 30) + 40
+        }));
+    }, []);
+
+    const housePerformance = useMemo(() => {
+        const categories = ["Sports", "Arts", "Tech", "Social", "Music"];
+        return categories.map(c => ({
+            subject: c,
+            A: Math.floor(Math.random() * 40) + 60,
+            fullMark: 100
+        }));
+    }, []);
+
+    const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
     const handleInitialize = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -220,40 +250,77 @@ export default function ActivitiesDashboard({
                 )}
             </div>
 
-            <div className="grid gap-6 md:grid-cols-4 pt-4">
-                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
-                    <Users className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-10 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Club Participation</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">82%</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/60">
-                        Active in 1+ Societies
+            {/* --- Analytics Layer: Institutional Activity Intelligence --- */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1 w-full relative z-10 mt-10">
+                <div className="md:col-span-8 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
+                    <div className="relative z-10 h-full flex flex-col">
+                        <div className="mb-8 flex justify-between items-start">
+                            <div>
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                                    Participation <span className="text-primary italic">Matrix</span>
+                                </h3>
+                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
+                                    Temporal Institutional Engagement Flow
+                                </p>
+                            </div>
+                            <ActivityIcon className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                        </div>
+                        <div className="h-[280px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={participationTrends}>
+                                    <defs>
+                                        <linearGradient id="colorAthletes" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorArtists" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
+                                    <Tooltip 
+                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                    />
+                                    <Area type="monotone" dataKey="Athletes" stroke="#10b981" fillOpacity={1} fill="url(#colorAthletes)" strokeWidth={3} />
+                                    <Area type="monotone" dataKey="Artists" stroke="#3b82f6" fillOpacity={1} fill="url(#colorArtists)" strokeWidth={2} strokeDasharray="5 5" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
-                </Card>
+                </div>
 
-                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all">
-                    <Trophy className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2 italic">School Trophies</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">42</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/60">
-                        Current Term Wins: 05
+                <div className="md:col-span-4 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
+                    <div className="mb-8 relative z-10 text-center">
+                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                            House <span className="text-primary tracking-normal not-italic px-1">/</span> Performance
+                        </h3>
+                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Spectral Competency distribution</p>
                     </div>
-                </Card>
-
-                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2 italic">Total Societies</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">{initialActivities.length}</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-foreground/30">
-                        4 Major Clubs
+                    <div className="h-[280px] relative z-10">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={housePerformance}>
+                                <PolarGrid stroke="#88888820" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fill: "#88888860", fontSize: 8, fontWeight: "bold" }} />
+                                <Radar
+                                    name="Performance"
+                                    dataKey="A"
+                                    stroke="hsl(var(--primary))"
+                                    fill="hsl(var(--primary))"
+                                    fillOpacity={0.6}
+                                />
+                                <Tooltip contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }} />
+                            </RadarChart>
+                        </ResponsiveContainer>
                     </div>
-                </Card>
-
-                <Card className="border-secondary/20 bg-secondary/5 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Events Budget</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">₹12.5k</h3>
-                    <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/40">
-                        Utilized: 64%
-                    </div>
-                </Card>
+                </div>
             </div>
 
             <div className="grid gap-8 lg:grid-cols-3">
@@ -422,5 +489,6 @@ export default function ActivitiesDashboard({
             </div>
         </div>
     );
+
 }
 

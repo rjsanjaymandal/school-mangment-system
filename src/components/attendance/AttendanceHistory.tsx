@@ -68,8 +68,10 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
 
   useEffect(() => {
     if (selectedClass) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchHistory();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClass, selectedDate]);
 
   return (

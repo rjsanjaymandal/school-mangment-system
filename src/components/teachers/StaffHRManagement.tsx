@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Users,
   Calendar,
@@ -149,9 +150,11 @@ export function StaffHRManagement({
                 </div>
             </div>
             <div className="pt-8 border-t border-border">
-                <Button className="w-full bg-secondary border border-border hover:bg-primary hover:text-white text-foreground font-bold rounded-lg h-14 transition-all uppercase tracking-widest text-[9px]">
-                    View Global Logs
-                </Button>
+                <Link href="/audit" className="block">
+                    <Button className="w-full bg-secondary border border-border hover:bg-primary hover:text-white text-foreground font-bold rounded-lg h-14 transition-all uppercase tracking-widest text-[9px]">
+                        View Global Logs
+                    </Button>
+                </Link>
             </div>
         </div>
 
