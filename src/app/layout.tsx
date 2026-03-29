@@ -10,10 +10,10 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "EduFox | Professional School Management System",
+  title: "Edu Maysan | Professional School Management System",
   description: "A comprehensive, dynamic school ERP for managing students, teachers, exams, and attendance with real-time analytics.",
   openGraph: {
-    title: "EduFox ERP",
+    title: "Edu Maysan ERP",
     description: "Enterprise-grade school management platform.",
     type: "website",
   },

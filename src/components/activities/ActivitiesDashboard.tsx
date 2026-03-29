@@ -249,7 +249,7 @@ export default function ActivitiesDashboard({
 
                 <Card className="border-secondary/20 bg-secondary/5 backdrop-blur-xl rounded-sm p-8 relative shadow-2xl group hover:border-primary transition-all">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-2 italic">Events Budget</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">$12.5k</h3>
+                    <h3 className="text-4xl font-black text-foreground tracking-tighter italic">₹12.5k</h3>
                     <div className="mt-4 flex items-center gap-x-2 text-[9px] font-black uppercase tracking-widest text-primary/40">
                         Utilized: 64%
                     </div>

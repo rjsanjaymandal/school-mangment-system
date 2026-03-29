@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, DollarSign, Calendar, Edit2, Trash2 } from "lucide-react";
+import { Plus, IndianRupee, Calendar, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {

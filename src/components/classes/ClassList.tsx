@@ -49,9 +49,10 @@ import { useRouter } from "next/navigation";
 interface ClassListProps {
     initialData: Class[];
     userRole?: string | null;
+    teachers: { id: string; full_name: string }[];
 }
 
-export function ClassList({ initialData, userRole }: ClassListProps) {
+export function ClassList({ initialData, userRole, teachers }: ClassListProps) {
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
     const [data, setData] = useState<Class[]>(initialData);
@@ -154,13 +155,14 @@ export function ClassList({ initialData, userRole }: ClassListProps) {
                             <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Class Name</th>
                             <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Capacity</th>
                             <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Room No.</th>
+                            <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Class Teacher</th>
                             {isAdminOrTeacher && <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Actions</th>}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                         {filteredData.length === 0 ? (
                             <tr>
-                                <td colSpan={isAdminOrTeacher ? 4 : 3} className="h-64 text-center">
+                                <td colSpan={isAdminOrTeacher ? 5 : 4} className="h-64 text-center">
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 italic">No classes matched the search criteria.</p>
                                 </td>
                             </tr>
@@ -178,6 +180,9 @@ export function ClassList({ initialData, userRole }: ClassListProps) {
                                     </td>
                                     <td className="px-6 py-5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
                                         {cls.room_number || "UNALLOCATED"}
+                                    </td>
+                                    <td className="px-6 py-5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/80 italic">
+                                        {(cls as any).teacher?.full_name || "NOT ASSIGNED"}
                                     </td>
                                     {isAdminOrTeacher && (
                                         <td className="px-6 py-5 text-right">
@@ -225,6 +230,7 @@ export function ClassList({ initialData, userRole }: ClassListProps) {
                     <div className="p-6">
                         <ClassForm
                             initialData={editingClass}
+                            teachers={teachers}
                             onSuccess={() => setIsOpen(false)}
                         />
                     </div>

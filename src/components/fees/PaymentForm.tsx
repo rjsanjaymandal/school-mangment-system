@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, DollarSign, Wallet, CheckCircle2 } from "lucide-react";
+import { CreditCard, IndianRupee, Wallet, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -74,7 +74,7 @@ export function PaymentForm() {
                 Amount to Pay
               </label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="0.00"
                   className="pl-9 bg-slate-50 border-none"

@@ -19,7 +19,7 @@ import {
   Zap,
   Package,
   Calendar,
-  DollarSign,
+  IndianRupee,
   Truck,
   Award,
   ShieldAlert,

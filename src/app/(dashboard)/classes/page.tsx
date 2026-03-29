@@ -8,8 +8,17 @@ export default async function ClassesPage() {
 
   const { data: classes, error } = await supabase
     .from("classes")
-    .select("*")
+    .select(`
+      *,
+      teacher:profiles!classes_teacher_id_fkey(id, full_name)
+    `)
     .order("name", { ascending: true });
+
+  const { data: teachers } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .eq("role", "teacher")
+    .order("full_name", { ascending: true });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
@@ -24,7 +33,7 @@ export default async function ClassesPage() {
         </div>
       </div>
 
-      <ClassList initialData={classes || []} userRole={role} />
+      <ClassList initialData={classes || []} userRole={role} teachers={teachers || []} />
     </div>
   );
 }

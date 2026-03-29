@@ -8,6 +8,7 @@ export async function createClass(data: {
     name: string;
     capacity?: number;
     room_number?: string;
+    teacher_id?: string | null;
 }) {
     try {
         if (!(await isAdmin())) {
@@ -27,6 +28,7 @@ export async function updateClass(id: string, data: Partial<{
     name: string;
     capacity: number;
     room_number: string;
+    teacher_id: string | null;
 }>) {
     try {
         if (!(await isAdmin())) {

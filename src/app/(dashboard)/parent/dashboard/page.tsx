@@ -9,7 +9,7 @@ import {
   Baby, 
   TrendingUp, 
   Clock, 
-  DollarSign, 
+  IndianRupee, 
   MessageSquare, 
   Activity,
   Calendar,

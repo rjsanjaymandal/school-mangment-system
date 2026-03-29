@@ -13,6 +13,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Class } from "@/types/database";
 import { toast } from "sonner";
 import { createClass, updateClass } from "@/app/actions/classes";
@@ -25,22 +32,25 @@ const classSchema = z.object({
     .refine((val) => !isNaN(Number(val)), "Capacity must be a number")
     .transform(Number),
   room_number: z.string().min(1, "Room number is required"),
+  teacher_id: z.string().optional().nullable(),
 });
 
 type ClassFormValues = z.infer<typeof classSchema>;
 
 interface ClassFormProps {
   initialData?: Class | null;
+  teachers: { id: string; full_name: string }[];
   onSuccess: () => void;
 }
 
-export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
+export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) {
   const router = useRouter();
 
   type RawFormValues = {
     name: string;
     capacity: string;
     room_number: string;
+    teacher_id: string;
   };
 
   const form = useForm<RawFormValues>({
@@ -49,6 +59,7 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
       name: initialData?.name || "",
       capacity: initialData?.capacity?.toString() || "",
       room_number: initialData?.room_number || "",
+      teacher_id: initialData?.teacher_id || "none",
     },
   });
 
@@ -58,6 +69,7 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
         name: data.name,
         capacity: Number(data.capacity),
         room_number: data.room_number,
+        teacher_id: data.teacher_id === "none" ? null : data.teacher_id,
       };
 
       let result;
@@ -137,6 +149,34 @@ export function ClassForm({ initialData, onSuccess }: ClassFormProps) {
                         )}
                     />
                 </div>
+
+                <FormField
+                    control={form.control}
+                    name="teacher_id"
+                    render={({ field }) => (
+                        <FormItem className="space-y-3">
+                            <FormLabel className="text-[10px] font-bold uppercase tracking-widest text-primary/60 italic">Class Teacher</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger className="h-12 bg-card border-border rounded-lg font-bold text-[11px] uppercase tracking-widest focus:ring-primary/50 transition-all">
+                                        <SelectValue placeholder="Select a teacher" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="bg-card border-border shadow-xl rounded-xl">
+                                    <SelectItem value={"none"} className="font-bold uppercase text-[10px] tracking-widest italic cursor-pointer focus:bg-primary focus:text-white">
+                                        -- No Assigned Teacher --
+                                    </SelectItem>
+                                    {teachers.map((teacher) => (
+                                        <SelectItem key={teacher.id} value={teacher.id} className="font-bold uppercase text-[10px] tracking-widest italic cursor-pointer focus:bg-primary focus:text-white">
+                                            {teacher.full_name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage className="text-[9px] font-bold uppercase tracking-widest text-destructive italic" />
+                        </FormItem>
+                    )}
+                />
 
                 <div className="flex items-center justify-end gap-x-4 pt-8 border-t border-border">
                     <button 

@@ -12,7 +12,7 @@ import {
   Plus,
   Filter,
   Search,
-  DollarSign,
+  IndianRupee,
   Shovel,
   TrendingUp,
   UserCheck,
@@ -158,7 +158,7 @@ export function StaffHRManagement({
         {/* Metric Card 3 */}
         <div className="relative group bg-card border border-border p-10 rounded-xl transition-all duration-700 shadow-sm hover:border-primary/40 overflow-hidden">
             <div className="absolute -right-4 -bottom-4 h-32 w-32 text-primary opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
-                <DollarSign className="h-full w-full" />
+                <IndianRupee className="h-full w-full" />
             </div>
             
             <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-8 italic">
@@ -167,7 +167,7 @@ export function StaffHRManagement({
 
             <div className="flex items-center gap-x-8 mb-10 relative z-10">
                 <div className="h-20 w-20 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-sm transition-all group-hover:scale-110">
-                    <DollarSign className="h-10 w-10 text-primary" />
+                    <IndianRupee className="h-10 w-10 text-primary" />
                 </div>
                 <div>
                     <h4 className="text-5xl font-black text-foreground tracking-tighter italic leading-none">
@@ -185,8 +185,15 @@ export function StaffHRManagement({
         </div>
       </div>
 
-      <Tabs defaultValue="leave" className="space-y-10">
+      <Tabs defaultValue="attendance" className="space-y-10">
         <TabsList className="bg-secondary/50 border border-border p-1 rounded-xl h-14 w-fit">
+          <TabsTrigger
+            value="attendance"
+            className="rounded-lg px-10 py-3 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 italic"
+          >
+            <UserCheck className="h-4 w-4" />
+            Daily Presence
+          </TabsTrigger>
           <TabsTrigger
             value="leave"
             className="rounded-lg px-10 py-3 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 italic"
@@ -198,7 +205,7 @@ export function StaffHRManagement({
             value="payouts"
             className="rounded-lg px-10 py-3 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 italic"
           >
-            <DollarSign className="h-4 w-4" />
+            <IndianRupee className="h-4 w-4" />
             Payroll System
           </TabsTrigger>
         </TabsList>
@@ -339,7 +346,7 @@ export function StaffHRManagement({
         <TabsContent value="payouts" className="animate-in slide-in-from-bottom-4 duration-700 outline-none">
           <div className="relative group bg-card border border-border p-16 overflow-hidden shadow-2xl border-l-4 border-l-primary rounded-xl">
             <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:scale-110 transition-transform duration-1000">
-              <DollarSign className="h-64 w-64 text-primary" />
+              <IndianRupee className="h-64 w-64 text-primary" />
             </div>
 
             <div className="relative z-10 flex flex-col items-center text-center space-y-10">

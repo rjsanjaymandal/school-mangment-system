@@ -28,6 +28,7 @@ export interface Class {
   name: string;
   capacity?: number;
   room_number?: string;
+  teacher_id?: string | null;
   created_at: string;
 }
 
