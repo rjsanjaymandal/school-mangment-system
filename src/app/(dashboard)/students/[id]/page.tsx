@@ -51,93 +51,89 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
         <div className="space-y-12 animate-in fade-in transition-all duration-1000">
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
-                <div className="flex items-center gap-x-6">
-                    <Button variant="ghost" size="icon" asChild className="h-14 w-14 rounded-sm bg-white/5 border border-white/5 hover:border-primary/20 transition-all group">
+                <div className="flex items-center gap-x-4">
+                    <Button variant="outline" size="icon" asChild className="h-10 w-10 rounded-md border-border bg-card shadow-sm hover:bg-secondary transition-all group">
                         <Link href="/students">
-                            <ArrowLeft className="h-6 w-6 group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
                         </Link>
                     </Button>
                     <div>
-                        <div className="flex items-center gap-x-3 mb-4">
-                            <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
-                                Personnel Node: {id.slice(0, 8)}
+                        <div className="flex items-center gap-x-2 mb-2">
+                            <div className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                                Student ID: {id.slice(0, 8)}
                             </div>
-                            <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest italic">Verification: Master Registry</span>
+                            <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Verified Profile</span>
                         </div>
-                        <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                            Profile <span className="text-primary tracking-normal not-italic">/</span> {student.profile?.first_name}
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground leading-none">
+                            {student.profile?.first_name} {student.profile?.last_name}
                         </h2>
                     </div>
                 </div>
-                <div className="flex gap-x-4">
-                    <Button className="h-14 rounded-sm bg-white/5 border border-white/5 font-black uppercase tracking-[0.2em] text-[10px] px-8 hover:bg-white/10 transition-all">
-                        Edit Records
+                <div className="flex gap-x-3">
+                    <Button variant="outline" className="h-10 rounded-md font-semibold text-xs tracking-wide px-4 border-border shadow-sm">
+                        Edit Profile
                     </Button>
-                    <Button className="h-14 rounded-sm bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[10px] px-8 emerald-border-glow shadow-2xl">
-                        Generate Transcript
+                    <Button className="h-10 rounded-md bg-primary text-primary-foreground font-semibold text-xs tracking-wide px-6 shadow-sm hover:opacity-90">
+                        Generate Report
                     </Button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
                 {/* Left Pillar: Identity */}
-                <div className="lg:col-span-1 space-y-8">
-                    <div className="relative group glass-card p-10 transition-all duration-700 hover:emerald-border-glow overflow-hidden">
-                        <div className="absolute -right-6 -bottom-6 h-48 w-48 text-primary opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
-                            <User className="h-full w-full" />
-                        </div>
-
-                        <div className="relative z-10 flex flex-col items-center text-center space-y-6">
-                            <div className="relative h-32 w-32 rounded-sm bg-white/5 border border-white/10 p-2 group-hover:emerald-border-glow transition-all duration-700 skew-x-[-4deg]">
-                                <div className="h-full w-full bg-primary/10 flex items-center justify-center">
-                                    <User className="h-16 w-16 text-primary group-hover:scale-110 transition-transform" />
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="bg-card p-8 border border-border rounded-lg shadow-sm">
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="relative h-24 w-24 rounded-full bg-secondary border border-border p-1">
+                                <div className="h-full w-full rounded-full bg-primary/5 flex items-center justify-center">
+                                    <User className="h-12 w-12 text-primary/40" />
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-sm shadow-xl">
+                                <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-md">
                                     {student.status || "Active"}
                                 </div>
                             </div>
                             
                             <div>
-                                <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter italic leading-none">
+                                <h3 className="text-lg font-bold text-foreground tracking-tight">
                                     {student.profile?.first_name} {student.profile?.last_name}
                                 </h3>
-                                <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-3">Level: {student.class?.name || "Unranked"}</p>
+                                <p className="text-[10px] font-semibold text-primary uppercase tracking-wider mt-1.5">Class: {student.class?.name || "N/A"}</p>
                             </div>
                         </div>
 
-                        <div className="space-y-5 mt-10 pt-10 border-t border-white/5 relative z-10">
-                            <div className="flex items-center gap-x-4 text-foreground/50 group/item hover:text-primary transition-colors cursor-pointer">
-                                <Mail className="h-4 w-4 text-primary/40 group-hover/item:text-primary" />
-                                <span className="text-[11px] font-black uppercase tracking-widest truncate">{student.profile?.email}</span>
+                        <div className="space-y-4 mt-8 pt-6 border-t border-border/50">
+                            <div className="flex items-center gap-x-3 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
+                                <Mail className="h-3.5 w-3.5 text-primary/40" />
+                                <span className="text-[10px] font-semibold tracking-wide truncate">{student.profile?.email}</span>
                             </div>
                             {student.profile?.phone && (
-                                <div className="flex items-center gap-x-4 text-foreground/50 group/item hover:text-primary transition-colors cursor-pointer">
-                                    <Phone className="h-4 w-4 text-primary/40 group-hover/item:text-primary" />
-                                    <span className="text-[11px] font-black uppercase tracking-widest">{student.profile?.phone}</span>
+                                <div className="flex items-center gap-x-3 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
+                                    <Phone className="h-3.5 w-3.5 text-primary/40" />
+                                    <span className="text-[10px] font-semibold tracking-wide">{student.profile?.phone}</span>
                                 </div>
                             )}
-                            <div className="flex items-start gap-x-4 text-foreground/50 group/item hover:text-primary transition-colors cursor-pointer">
-                                <MapPin className="h-4 w-4 text-primary/40 group-hover/item:text-primary shrink-0" />
-                                <span className="text-[11px] font-black uppercase tracking-widest leading-relaxed">
-                                    {student.profile?.address || "Location Masked"}
+                            <div className="flex items-start gap-x-3 text-muted-foreground hover:text-primary transition-colors cursor-pointer">
+                                <MapPin className="h-3.5 w-3.5 text-primary/40 shrink-0" />
+                                <span className="text-[10px] font-semibold tracking-wide leading-relaxed">
+                                    {student.profile?.address || "No Address Provided"}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="glass-card p-8 border-dashed border-2 border-primary/10 space-y-6">
-                        <div className="flex items-center justify-between">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 italic">System Meta</h4>
-                            <Hash className="h-3 w-3 text-primary animate-pulse" />
+                    <div className="bg-card p-6 border border-border rounded-lg shadow-sm space-y-4">
+                        <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Information</h4>
+                            <Hash className="h-3 w-3 text-primary/40" />
                         </div>
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <span className="text-[9px] font-black uppercase tracking-widest text-foreground/30">Entry ID</span>
-                                <span className="text-[10px] font-mono font-black text-primary">{student.admission_number}</span>
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60">Admission No.</span>
+                                <span className="text-[10px] font-mono font-bold text-foreground">{student.admission_number}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-[9px] font-black uppercase tracking-widest text-foreground/30">Registry PIN</span>
-                                <span className="text-[10px] font-mono font-black text-primary">{student.roll_number || "PENDING"}</span>
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60">Roll Number</span>
+                                <span className="text-[10px] font-mono font-bold text-foreground">{student.roll_number || "—"}</span>
                             </div>
                         </div>
                     </div>
@@ -146,32 +142,32 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
                 {/* Main Content Area */}
                 <div className="lg:col-span-3 space-y-12">
                     {/* Key Metrics Ribbon */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="glass-card p-8 border-l-4 border-l-primary group">
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-4">Attendance Integrity</p>
-                            <div className="flex items-baseline gap-x-4">
-                                <span className="text-5xl font-black italic tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-card p-6 border border-border rounded-lg shadow-sm border-l-4 border-l-primary transition-all hover:border-r-primary/10">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-primary mb-3">Attendance Rate</p>
+                            <div className="flex items-baseline gap-x-3">
+                                <span className="text-4xl font-bold tracking-tight text-foreground">
                                     {attendanceRate}%
                                 </span>
-                                <CheckCircle2 className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
+                                <CheckCircle2 className="h-5 w-5 text-primary opacity-20" />
                             </div>
                         </div>
-                        <div className="glass-card p-8 border-l-4 border-l-emerald-500 group">
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 mb-4">Academic Index</p>
-                            <div className="flex items-baseline gap-x-4">
-                                <span className="text-5xl font-black italic tracking-tighter text-foreground group-hover:text-emerald-500 transition-colors">
+                        <div className="bg-card p-6 border border-border rounded-lg shadow-sm border-l-4 border-l-emerald-500 transition-all hover:border-r-emerald-500/10">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-3">Academic Score</p>
+                            <div className="flex items-baseline gap-x-3">
+                                <span className="text-4xl font-bold tracking-tight text-foreground">
                                     {avgGrade}%
                                 </span>
-                                <TrendingUp className="h-6 w-6 text-emerald-500 opacity-20 group-hover:opacity-100 transition-opacity" />
+                                <TrendingUp className="h-5 w-5 text-emerald-500 opacity-20" />
                             </div>
                         </div>
-                        <div className="glass-card p-8 border-l-4 border-l-orange-500 group">
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-500 mb-4">Record History</p>
-                            <div className="flex items-baseline gap-x-4">
-                                <span className="text-5xl font-black italic tracking-tighter text-foreground group-hover:text-orange-500 transition-colors">
+                        <div className="bg-card p-6 border border-border rounded-lg shadow-sm border-l-4 border-l-orange-500 transition-all hover:border-r-orange-500/10">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 mb-3">Total Activities</p>
+                            <div className="flex items-baseline gap-x-3">
+                                <span className="text-4xl font-bold tracking-tight text-foreground">
                                     {attendance.length + grades.length}
                                 </span>
-                                <Clock className="h-6 w-6 text-orange-500 opacity-20 group-hover:opacity-100 transition-opacity" />
+                                <Clock className="h-5 w-5 text-orange-500 opacity-20" />
                             </div>
                         </div>
                     </div>
@@ -179,74 +175,74 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
                     {/* Timeline & Records */}
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
                         {/* Attendance Timeline */}
-                        <div className="relative glass-panel p-2 rounded-sm overflow-hidden border border-white/10">
-                            <div className="bg-background/40 backdrop-blur-3xl p-8">
-                                <div className="flex items-center justify-between mb-10">
+                        <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+                            <div className="p-6">
+                                <div className="flex items-center justify-between mb-8">
                                     <div>
-                                        <h3 className="text-xl font-black uppercase tracking-tighter italic leading-none">Attendance Loop</h3>
-                                        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary mt-2">Historical Presence Audit</p>
+                                        <h3 className="text-lg font-bold text-foreground">Attendance Log</h3>
+                                        <p className="text-[10px] font-semibold uppercase tracking-wider text-primary mt-1">Presence History</p>
                                     </div>
-                                    <Badge variant="outline" className="text-[9px] font-black tracking-widest uppercase rounded-none border-primary/20 text-primary">Live Sync</Badge>
+                                    <div className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[9px] font-bold tracking-wider uppercase text-primary">Live</div>
                                 </div>
 
-                                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4 scrollbar-thin">
+                                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
                                     {attendance.length > 0 ? (
                                         attendance.map((record, idx) => (
-                                            <div key={idx} className="flex items-center justify-between p-5 rounded-sm bg-white/5 border border-white/5 hover:border-primary/40 transition-all group">
-                                                <div className="flex items-center gap-x-5">
+                                            <div key={idx} className="flex items-center justify-between p-4 rounded-md bg-muted/30 border border-border/50 hover:border-primary/30 transition-all group">
+                                                <div className="flex items-center gap-x-4">
                                                     <div className={cn(
-                                                        "h-10 w-10 rounded-sm flex items-center justify-center transition-all group-hover:scale-110 shadow-lg",
+                                                        "h-9 w-9 rounded-md flex items-center justify-center transition-all shadow-sm",
                                                         record.status === 'present' ? "bg-primary/10 text-primary border border-primary/20" : "bg-red-500/10 text-red-500 border border-red-500/20"
                                                     )}>
-                                                        {record.status === 'present' ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                                                        {record.status === 'present' ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                                                     </div>
                                                     <div>
-                                                        <p className="text-[11px] font-black uppercase tracking-widest italic text-foreground group-hover:text-primary transition-colors">
+                                                        <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
                                                             {new Date(record.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                         </p>
-                                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/30 mt-1">{record.status === 'present' ? "AUTHENTICATED" : "ABSENT RECORDED"}</p>
+                                                        <p className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/60 mt-0.5">{record.status === 'present' ? "Present" : "Absent"}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         ))
                                     ) : (
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 text-center py-12">No attendance cycles recorded.</p>
+                                        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/40 text-center py-12">No attendance records found.</p>
                                     )}
                                 </div>
                             </div>
                         </div>
 
                         {/* Academic Summary */}
-                        <div className="relative glass-panel p-2 rounded-sm overflow-hidden border border-white/10">
-                            <div className="bg-background/40 backdrop-blur-3xl p-8">
-                                <div className="flex items-center justify-between mb-10">
+                        <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+                            <div className="p-6">
+                                <div className="flex items-center justify-between mb-8">
                                     <div>
-                                        <h3 className="text-xl font-black uppercase tracking-tighter italic leading-none">Academic Node</h3>
-                                        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-500 mt-2">Masters Evaluation Stream</p>
+                                        <h3 className="text-lg font-bold text-foreground">Examination Records</h3>
+                                        <p className="text-[10px] font-semibold uppercase tracking-wider text-emerald-600 mt-1">Academic Performance</p>
                                     </div>
-                                    <FileText className="h-4 w-4 text-emerald-500 animate-pulse" />
+                                    <FileText className="h-4 w-4 text-emerald-500/40" />
                                 </div>
 
-                                <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4 scrollbar-thin">
+                                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin">
                                     {grades.length > 0 ? (
                                         grades.map((grade, idx) => (
-                                            <div key={idx} className="flex items-center justify-between p-5 rounded-sm bg-white/5 border border-white/5 hover:border-emerald-500/40 transition-all group">
-                                                <div className="flex items-center gap-x-5">
-                                                    <div className="h-10 w-10 rounded-sm bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center font-black italic text-xs shadow-lg group-hover:emerald-border-glow-sm transition-all">
+                                            <div key={idx} className="flex items-center justify-between p-4 rounded-md bg-muted/30 border border-border/50 hover:border-emerald-500/30 transition-all group">
+                                                <div className="flex items-center gap-x-4">
+                                                    <div className="h-9 w-9 rounded-md bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center justify-center font-bold text-xs shadow-sm">
                                                         {(grade.marks_obtained / (grade.exam?.max_marks || 100) * 100).toFixed(0)}%
                                                     </div>
                                                     <div>
-                                                        <p className="text-[11px] font-black uppercase tracking-widest italic text-foreground group-hover:text-emerald-500 transition-colors">
-                                                            {grade.exam?.name || "Term Alpha Evaluation"}
+                                                        <p className="text-xs font-bold text-foreground group-hover:text-emerald-600 transition-colors">
+                                                            {grade.exam?.name || "Term Evaluation"}
                                                         </p>
-                                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/30 mt-1">Raw: {grade.marks_obtained} / {grade.exam?.max_marks}</p>
+                                                        <p className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/60 mt-0.5">Marks: {grade.marks_obtained} / {grade.exam?.max_marks}</p>
                                                     </div>
                                                 </div>
-                                                <Badge variant="outline" className="text-[8px] font-black tracking-widest uppercase skew-x-[-12deg] border-emerald-500/20 text-emerald-500">Validated</Badge>
+                                                <Badge variant="outline" className="text-[8px] font-bold tracking-wider uppercase border-emerald-500/20 text-emerald-600 rounded-full">Reported</Badge>
                                             </div>
                                         ))
                                     ) : (
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30 text-center py-12">No evaluation fragments detected.</p>
+                                        <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/40 text-center py-12">No exam results recorded.</p>
                                     )}
                                 </div>
                             </div>

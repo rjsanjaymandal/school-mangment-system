@@ -48,24 +48,24 @@
 }
 
 :root {
-  --radius: 0rem; /* Ultra-sharp for Zen Institutional feel */
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.12 0.03 165);
+  --radius: 0.5rem; /* Precise Modern Radius */
+  --background: oklch(1 0 0); /* Pure White for Clarity */
+  --foreground: oklch(0.08 0.02 165); /* High Contrast Deep Slate */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0.03 165);
+  --card-foreground: oklch(0.08 0.02 165);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.03 165);
-  --primary: oklch(0.48 0.18 165); /* Pure Emerald */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.02 165);
-  --secondary-foreground: oklch(0.2 0.05 165);
-  --muted: oklch(0.96 0.02 165);
-  --muted-foreground: oklch(0.4 0.05 165);
+  --popover-foreground: oklch(0.08 0.02 165);
+  --primary: oklch(0.48 0.18 165); /* Emerald Accents */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.01 165);
+  --secondary-foreground: oklch(0.12 0.03 165);
+  --muted: oklch(0.97 0.01 165);
+  --muted-foreground: oklch(0.45 0.02 165);
   --accent: oklch(0.96 0.02 165);
-  --accent-foreground: oklch(0.2 0.05 165);
+  --accent-foreground: oklch(0.12 0.03 165);
   --destructive: oklch(0.55 0.22 25);
-  --border: oklch(0.92 0.02 165);
-  --input: oklch(0.92 0.02 165);
+  --border: oklch(0.92 0.01 165); /* Precise light-grey border */
+  --input: oklch(0.92 0.01 165);
   --ring: oklch(0.48 0.18 165);
   --chart-1: oklch(0.6 0.15 165);
   --chart-2: oklch(0.5 0.15 165);
@@ -123,20 +123,20 @@
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply bg-background border border-border shadow-lg;
+  .clarity-panel {
+    @apply bg-background border border-border shadow-sm;
   }
   
-  .glass-card {
-    @apply bg-card border border-border shadow-md;
+  .clarity-card {
+    @apply bg-card border border-border shadow-sm;
   }
 
   .premium-border {
-    @apply border-primary/20 shadow-sm;
+    @apply border-border;
   }
 
-  .premium-transition {
-    @apply transition-all duration-300;
+  .precise-transition {
+    @apply transition-all duration-200;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }

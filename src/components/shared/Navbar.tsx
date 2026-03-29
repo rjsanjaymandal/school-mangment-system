@@ -30,20 +30,20 @@ export function Navbar({ user }: { user: User | null }) {
       <div className="flex-1 max-w-lg relative group">
         <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
         <Input
-          placeholder="Search students, staff or records..."
-          className="pl-9 bg-secondary/50 border-border rounded-xl transition-all focus-visible:bg-secondary focus-visible:ring-1 focus-visible:ring-primary font-medium tracking-tight italic"
+          placeholder="Search records..."
+          className="pl-9 bg-secondary border-border rounded-lg transition-all focus-visible:ring-1 focus-visible:ring-primary font-medium"
         />
       </div>
       <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon" className="relative group rounded-xl border border-transparent hover:border-border hover:bg-secondary/40 transition-all">
+        <Button variant="ghost" size="icon" className="relative group rounded-lg border border-transparent hover:border-border hover:bg-secondary transition-all">
           <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="absolute top-2.5 right-2.5 h-1.5 w-1.5 bg-primary rounded-full" />
+          <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-card" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="relative h-9 w-9 rounded-xl p-0 border border-border overflow-hidden"
+              className="relative h-9 w-9 rounded-lg p-0 border border-border overflow-hidden"
             >
               <Avatar className="h-9 w-9 rounded-none">
                 <AvatarImage src="" alt="User" />
@@ -53,25 +53,25 @@ export function Navbar({ user }: { user: User | null }) {
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 mt-2 rounded-xl border-border bg-card shadow-xl" align="end" forceMount>
+          <DropdownMenuContent className="w-56 mt-2 rounded-lg border-border bg-card shadow-lg" align="end" forceMount>
             <DropdownMenuLabel className="p-4">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-bold tracking-tight italic">Account Information</p>
+                <p className="text-sm font-semibold tracking-tight">Account Settings</p>
                 <p className="text-xs font-medium text-muted-foreground truncate">
                   {user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="p-2.5 rounded-lg cursor-pointer group">
-              <span className="font-bold text-foreground italic">View Profile</span>
+            <DropdownMenuItem className="p-2.5 rounded-md cursor-pointer group">
+              <span className="font-medium text-foreground">View Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="p-2.5 rounded-lg cursor-pointer group">
-              <span className="font-bold text-foreground italic">Settings</span>
+            <DropdownMenuItem className="p-2.5 rounded-md cursor-pointer group">
+              <span className="font-medium text-foreground">Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive font-bold p-2.5 rounded-lg cursor-pointer focus:text-destructive italic"
+              className="text-destructive font-semibold p-2.5 rounded-md cursor-pointer focus:text-destructive"
               onClick={handleSignOut}
             >
               Logout

@@ -99,32 +99,30 @@ export default async function DashboardPage() {
     <div className="space-y-12 animate-in fade-in transition-all duration-1000">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
         <div>
-          <div className="flex items-center gap-x-3 mb-4">
-             <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-x-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                System Heartbeat: Optimal
+          <div className="flex items-center gap-x-2 mb-3">
+             <div className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-semibold uppercase tracking-wider text-primary flex items-center gap-x-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                System Active
              </div>
-             <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Node ID: MYS-01</span>
+             <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">MYS-01</span>
           </div>
-          <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-            Registry <span className="text-primary tracking-normal not-italic">/</span> Overview
+          <h2 className="text-4xl font-bold tracking-tight text-foreground leading-none">
+            Dashboard Overview
           </h2>
-          <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-             <BrainCircuit className="h-3 w-3 text-primary" />
-             Neural Intelligence Orchestration Layer
+          <p className="text-muted-foreground font-medium text-xs mt-3 flex items-center gap-x-2">
+             <BrainCircuit className="h-4 w-4 text-primary" />
+             AI-Powered Analytics & Management
           </p>
         </div>
-        <div className="flex items-center gap-x-4">
-          <button className="p-4 rounded-sm bg-white/5 border border-white/10 shadow-2xl hover:border-primary/50 transition-all group reveal-1 relative overflow-hidden">
-            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Bell className="h-5 w-5 text-foreground/60 group-hover:text-primary transition-colors relative z-10" />
+        <div className="flex items-center gap-x-3">
+          <button className="p-3 rounded-md bg-secondary border border-border hover:bg-secondary/80 transition-all text-muted-foreground">
+            <Bell className="h-5 w-5" />
           </button>
-          <Link href="/oracle" className="reveal-2">
-            <button className="relative group px-10 py-5 bg-primary text-primary-foreground rounded-sm overflow-hidden emerald-border-glow transition-all duration-500 hover:scale-105 active:scale-95">
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
-              <div className="flex items-center gap-x-3 relative z-10 font-black text-xs uppercase tracking-[0.3em]">
-                <Zap className="h-4 w-4 animate-pulse" />
-                Initiate Oracle
+          <Link href="/oracle">
+            <button className="relative group px-6 h-11 bg-primary text-primary-foreground rounded-md transition-all hover:opacity-90 active:scale-95 shadow-sm">
+              <div className="flex items-center gap-x-2 font-semibold text-xs tracking-wide">
+                <Zap className="h-4 w-4" />
+                Launch Oracle
               </div>
             </button>
           </Link>
@@ -135,33 +133,32 @@ export default async function DashboardPage() {
         {stats.map((stat, i) => (
           <div
             key={stat.title}
-            className="group relative glass-card p-8 transition-all duration-700 hover:emerald-border-glow hover:-translate-y-2 overflow-hidden"
+            className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all"
           >
-            <div className="absolute -right-4 -top-4 p-8 opacity-5 group-hover:opacity-20 group-hover:rotate-12 transition-all duration-700">
-              <stat.icon className="h-20 w-20 text-primary" />
+            <div className="flex justify-between items-start mb-4">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {stat.title}
+              </p>
+              <stat.icon className="h-5 w-5 text-primary opacity-40" />
             </div>
-            
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mb-6 group-hover:text-primary group-hover:tracking-[0.5em] transition-all">
-              {stat.title}
-            </p>
 
-            <div className="flex items-end gap-x-4">
-              <h3 className="text-5xl font-black text-foreground tracking-tighter leading-none">
+            <div className="flex items-end gap-x-2">
+              <h3 className="text-3xl font-bold text-foreground tracking-tight leading-none">
                 {stat.value}
               </h3>
-              <div className="flex items-center text-[10px] font-black text-primary bg-primary/10 px-2 py-1 rounded-xs border border-primary/20 mb-1">
+              <div className="text-[10px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">
                  {stat.trend}
               </div>
             </div>
 
-            <div className="mt-8 space-y-2">
-               <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-foreground/40">
-                  <span>Operational Load</span>
+            <div className="mt-6 space-y-1.5">
+               <div className="flex justify-between text-[9px] font-medium text-muted-foreground">
+                  <span>Usage Rate</span>
                   <span>{stat.trend}</span>
                </div>
-               <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+               <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-primary shadow-[0_0_15px_oklch(var(--primary))] transition-all duration-1000 group-hover:w-full" 
+                    className="h-full bg-primary transition-all duration-1000" 
                     style={{ width: '65%' }} 
                   />
                </div>
@@ -171,124 +168,111 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3 reveal-2">
-        <div className="lg:col-span-1 glass-card p-8 relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50" />
-          <div className="flex justify-between items-center mb-10 relative z-10">
-            <h3 className="font-black text-foreground flex items-center gap-x-4 text-[11px] uppercase tracking-[0.5em]">
-              <div className="p-2 bg-primary/10 rounded-sm border border-primary/20 shadow-inner">
-                <Activity className="h-4 w-4 text-primary animate-pulse" />
-              </div>
-              Live Telemetry
+        <div className="lg:col-span-1 bg-card p-6 border border-border rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="font-semibold text-muted-foreground flex items-center gap-x-2 text-[10px] uppercase tracking-wider">
+              <Activity className="h-3.5 w-3.5 text-primary" />
+              Recent Activity
             </h3>
-            <div className="flex items-center gap-x-2">
-               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-               <span className="text-[9px] font-black text-primary uppercase tracking-widest">Channel Active</span>
+            <div className="flex items-center gap-x-1.5 text-[10px] font-semibold text-primary uppercase tracking-wider">
+               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+               Live
             </div>
           </div>
-          <div className="space-y-4 relative z-10">
+          <div className="space-y-3">
             {activityFeed.map((event, i) => (
               <div
                 key={i}
-                className="group/item flex gap-x-5 items-center p-4 rounded-sm bg-white/5 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all duration-500 cursor-pointer"
+                className="group/item flex gap-x-4 items-center p-3 rounded-md bg-muted/30 border border-border/50 hover:border-primary/30 hover:bg-muted/50 transition-all cursor-pointer"
               >
-                <div className="h-12 w-12 rounded-sm bg-background border border-border group-hover/item:border-primary/40 flex items-center justify-center shrink-0 shadow-2xl transition-all group-hover/item:scale-110 group-hover/item:rotate-3">
-                  <event.icon className="h-5 w-5 text-primary/60 group-hover/item:text-primary" />
+                <div className="h-10 w-10 rounded-md bg-card border border-border flex items-center justify-center shrink-0 shadow-sm transition-all group-hover/item:border-primary/20">
+                  <event.icon className="h-4 w-4 text-muted-foreground group-hover/item:text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-black text-foreground uppercase tracking-tight text-[11px] truncate group-hover/item:text-primary transition-colors">
+                  <p className="font-semibold text-foreground tracking-tight text-xs group-hover/item:text-primary transition-colors">
                     {event.title}
                   </p>
-                  <p className="text-foreground/40 font-black mt-1 uppercase text-[9px] tracking-widest truncate">{event.desc}</p>
-                </div>
-                <div className="opacity-0 group-hover/item:opacity-100 transition-opacity">
-                   <Zap className="h-3 w-3 text-primary" />
+                  <p className="text-muted-foreground font-medium text-[10px] truncate uppercase tracking-wide mt-0.5">{event.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-          <Link href="/reports" className="w-full block relative z-10">
-            <button className="w-full mt-10 py-5 text-[10px] font-black uppercase tracking-[0.5em] text-primary bg-primary/5 border border-primary/20 rounded-sm hover:bg-primary/10 hover:tracking-[0.6em] transition-all duration-500 group">
-              Decrypt Full Logs
-              <span className="inline-block ml-2 transition-transform group-hover:translate-x-2">→</span>
+          <Link href="/reports" className="w-full block">
+            <button className="w-full mt-6 py-3 text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 rounded-md hover:bg-primary/5 transition-all text-center">
+              View Detailed Logs
             </button>
           </Link>
         </div>
 
-        <div className="lg:col-span-2 glass-panel p-1 rounded-sm reveal-3 overflow-hidden emerald-border-glow">
-          <div className="p-8">
-             <div className="flex items-center justify-between mb-8">
-                <div>
-                   <h3 className="text-2xl font-black uppercase tracking-tighter italic">Predictive Analytics</h3>
-                   <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mt-1">AI-Driven Result Projection</p>
-                </div>
-                <div className="flex gap-x-2">
-                   <div className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
-                   <div className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]" />
-                   <div className="h-2 w-2 rounded-full bg-primary animate-bounce" />
-                </div>
-             </div>
-             <PerformancePredictor />
-          </div>
+        <div className="lg:col-span-2 bg-card p-6 border border-border rounded-lg shadow-sm">
+           <div className="flex items-center justify-between mb-6">
+              <div>
+                 <h3 className="text-xl font-bold text-foreground">Performance Projections</h3>
+                 <p className="text-[10px] font-semibold uppercase tracking-wider text-primary mt-1">AI-Driven Result Prediction</p>
+              </div>
+              <div className="flex gap-x-1">
+                 <div className="h-1.5 w-1.5 rounded-full bg-primary/40" />
+                 <div className="h-1.5 w-1.5 rounded-full bg-primary/60" />
+                 <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+              </div>
+           </div>
+           <PerformancePredictor />
         </div>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7 reveal-3">
-        <div className="col-span-4 glass-card p-10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-12 opacity-[0.03] rotate-12">
-             <TrendingUp className="h-64 w-64 text-primary" />
-          </div>
-          <div className="flex row items-center justify-between mb-12 relative z-10">
+        <div className="col-span-4 bg-card p-8 border border-border rounded-lg shadow-sm relative overflow-hidden">
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none">
-                System Pulse
+              <h3 className="text-xl font-bold text-foreground">
+                Attendance Trends
               </h3>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mt-2">
-                Real-time Node Saturation
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
+                Real-time System Monitoring
               </p>
             </div>
-            <div className="px-4 py-2 bg-primary text-primary-foreground font-black text-[10px] uppercase tracking-widest rounded-sm shadow-2xl emerald-border-glow animate-pulse">
-               High Load
+            <div className="px-3 py-1 bg-primary/10 text-primary font-bold text-[9px] uppercase tracking-wider rounded-full border border-primary/20">
+               Active
             </div>
           </div>
-          <div className="h-[280px] flex flex-col items-center justify-center relative z-10 glass-panel border-dashed border-2 border-primary/20 group hover:border-primary/40 transition-all duration-700 rounded-sm">
-            <Zap className="h-16 w-16 mb-6 text-primary animate-pulse opacity-40 group-hover:opacity-100 group-hover:scale-110 transition-all" />
-            <p className="font-black text-[10px] uppercase tracking-[0.8em] text-primary/40 group-hover:text-primary transition-all">
-              Tuning Analytics Engine...
+          <div className="h-[280px] flex flex-col items-center justify-center border border-dashed border-border rounded-lg bg-muted/20">
+            <Zap className="h-12 w-12 mb-4 text-muted-foreground opacity-20" />
+            <p className="font-semibold text-[10px] uppercase tracking-widest text-muted-foreground/60">
+              Initializing Analytics Engine...
             </p>
           </div>
         </div>
 
-        <div className="col-span-3 glass-card p-10 relative overflow-hidden group">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(var(--primary-rgb),0.05),transparent)]" />
-          <div className="mb-10 relative z-10">
-            <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none">Agenda</h3>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/60 mt-2">
-              Neural Sync Schedule
+        <div className="col-span-3 bg-card p-8 border border-border rounded-lg shadow-sm">
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-foreground">Schedule</h3>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
+              Upcoming Classes
             </p>
           </div>
-          <div className="space-y-6 relative z-10">
+          <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="flex items-center gap-x-6 p-5 rounded-sm bg-white/5 border border-white/5 hover:border-primary/30 hover:bg-white/10 transition-all duration-500 group/agenda cursor-pointer"
+                className="flex items-center gap-x-4 p-4 rounded-md bg-muted/30 border border-border hover:border-primary/30 hover:bg-muted/50 transition-all cursor-pointer group"
               >
-                <div className="h-14 w-14 rounded-sm bg-primary border-4 border-background flex flex-col items-center justify-center text-primary-foreground shadow-2xl group-hover/agenda:scale-110 transition-all duration-500">
-                  <span className="text-[8px] font-black uppercase tracking-tighter opacity-70">
+                <div className="h-12 w-12 rounded-md bg-primary flex flex-col items-center justify-center text-primary-foreground shadow-sm">
+                  <span className="text-[8px] font-bold uppercase tracking-tighter opacity-70">
                     Oct
                   </span>
-                  <span className="text-2xl font-black leading-none italic">
+                  <span className="text-xl font-bold leading-none">
                     {15 + i}
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="text-[13px] font-black text-foreground uppercase tracking-tight group-hover/agenda:text-primary transition-colors">
-                    Quantum Physics {i}
+                  <p className="text-sm font-semibold text-foreground tracking-tight group-hover:text-primary transition-colors">
+                    Physics Department {i}
                   </p>
-                  <p className="text-[9px] text-foreground/40 font-black uppercase tracking-[0.2em] mt-2">
-                    NODE A-102 • 14:00 GST
+                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mt-1">
+                    Room {102 + i} • 14:00
                   </p>
                 </div>
-                <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_15px_oklch(var(--primary))] animate-pulse" />
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40" />
               </div>
             ))}
           </div>

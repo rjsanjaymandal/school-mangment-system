@@ -48,17 +48,17 @@ interface NavGroup {
 
 const navigation: NavGroup[] = [
   {
-    group: "Main Dashboard",
+    group: "Overview",
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
       {
-        name: "System Analytics",
+        name: "Analytics",
         href: "/analytics",
         icon: Zap,
         roles: ["admin", "teacher"],
       },
       {
-        name: "Administrative Reports",
+        name: "Reports",
         href: "/oracle",
         icon: BrainCircuit,
         roles: ["admin"],
@@ -66,11 +66,11 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "People",
+    group: "Personnel",
     roles: ["admin", "teacher", "student"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap },
-      { name: "Staff HR", href: "/teachers", icon: UserSquare2, roles: ["admin"] },
+      { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"] },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck, roles: ["admin", "teacher", "student"] },
       { name: "Conduct", href: "/conduct", icon: ShieldAlert },
       { name: "Health", href: "/health", icon: Stethoscope },
@@ -113,10 +113,10 @@ const navigation: NavGroup[] = [
   {
     group: "Operations",
     items: [
-      { name: "Fees & Payments", href: "/fees", icon: CreditCard },
+      { name: "Fees", href: "/fees", icon: CreditCard },
       { name: "Library", href: "/library", icon: Library },
       {
-        name: "Logistics",
+        name: "Inventory",
         href: "/inventory",
         icon: Package,
         roles: ["admin"],
@@ -124,7 +124,7 @@ const navigation: NavGroup[] = [
       { name: "Transport", href: "/transport", icon: Bus },
       { name: "Messages", href: "/messages", icon: MessageSquare },
       {
-        name: "Parents",
+        name: "Guardians",
         href: "/guardian",
         icon: Heart,
         roles: ["admin", "teacher"],
@@ -132,7 +132,7 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "Settings",
+    group: "System",
     roles: ["admin"],
     items: [
       {
@@ -141,10 +141,10 @@ const navigation: NavGroup[] = [
         icon: ShieldCheck,
         roles: ["admin"],
       },
-      { name: "System Settings", href: "/settings", icon: Settings },
-      { name: "Activity Logs", href: "/audit", icon: Shield },
+      { name: "Settings", href: "/settings", icon: Settings },
+      { name: "Logs", href: "/audit", icon: Shield },
       { name: "Compliance", href: "/compliance", icon: FileText },
-      { name: "Global Gateways", href: "/gateways", icon: Globe },
+      { name: "Gateways", href: "/gateways", icon: Globe },
     ],
   },
 ];
@@ -184,17 +184,17 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
     .filter((group) => group.items.length > 0);
 
   return (
-    <div className="flex h-full flex-col bg-[#020617] border-r border-border text-foreground transition-all duration-300">
+    <div className="flex h-full flex-col bg-background border-r border-border text-foreground transition-all duration-300">
       <div className="p-8 pb-4 flex items-center gap-x-4 reveal-0">
-          <div className="relative bg-primary text-primary-foreground p-2.5 rounded-xl shadow-lg transition-all duration-300 group-hover/logo:scale-105">
-            <GraduationCap className="h-7 w-7" />
+          <div className="relative bg-primary text-primary-foreground p-2 rounded-lg shadow-sm transition-all duration-300 group-hover/logo:scale-105">
+            <GraduationCap className="h-6 w-6" />
           </div>
         <div className="flex flex-col">
-          <span className="font-black text-2xl tracking-tighter text-foreground uppercase italic leading-none">
+          <span className="font-bold text-xl tracking-tight text-foreground leading-none">
             Maysan
           </span>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-primary mt-1">
-            Institutional OS
+          <span className="text-[10px] font-medium text-muted-foreground mt-1">
+            Management System
           </span>
         </div>
       </div>
@@ -203,10 +203,10 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         {filteredNavigation.map((group) => (
           <div key={group.group} className="space-y-4">
             <div className="flex items-center gap-x-3 px-4">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 whitespace-nowrap italic">
+              <h3 className="text-[10px] font-semibold text-muted-foreground/60 whitespace-nowrap">
                 {group.group}
               </h3>
-              <div className="h-[1px] w-full bg-border/50" />
+              <div className="h-[1px] w-full bg-border" />
             </div>
             <div className="space-y-1.5">
               {group.items.map((item) => (
@@ -214,18 +214,18 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "group relative flex items-center gap-x-3 text-muted-foreground text-[11px] font-bold uppercase tracking-widest px-4 py-3 rounded-xl transition-all duration-300 italic",
+                    "group relative flex items-center gap-x-3 text-muted-foreground text-[13px] font-medium px-4 py-2.5 rounded-lg transition-all duration-200",
                     pathname === item.href 
                       ? "bg-primary/10 text-primary" 
-                      : "hover:bg-secondary/20 hover:text-foreground"
+                      : "hover:bg-secondary/60 hover:text-foreground"
                   )}
                 >
                    <div
                     className={cn(
-                      "p-2 rounded-lg transition-all duration-300",
+                      "p-1.5 rounded-md transition-all duration-200",
                       pathname === item.href
-                        ? "bg-primary text-primary-foreground shadow-lg"
-                        : "bg-secondary/40 text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary",
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-secondary text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary",
                     )}
                   >
                     <item.icon className="h-4 w-4" />
@@ -249,19 +249,19 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
           <div className="absolute top-0 right-0 p-1 opacity-20 transition-opacity group-hover:opacity-100">
              <Zap className="h-3 w-3 text-primary" />
           </div>
-           <div className="flex items-center gap-x-4 relative z-10">
-            <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg transition-transform duration-300 group-hover:scale-105">
+            <div className="flex items-center gap-x-4 relative z-10">
+            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-sm transition-transform duration-300 group-hover:scale-105">
               {userProfile?.first_name?.[0] || "U"}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-bold tracking-tight truncate text-foreground uppercase italic">
+              <span className="text-sm font-semibold tracking-tight truncate text-foreground">
                 {userProfile
                   ? `${userProfile.first_name} ${userProfile.last_name}`
                   : "Syncing..."}
               </span>
               <div className="flex items-center gap-x-2">
                 <span className="h-1 w-1 rounded-full bg-primary" />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-primary/80 truncate italic">
+                <span className="text-[10px] font-medium text-muted-foreground truncate">
                     {userRole} Account
                 </span>
               </div>

@@ -103,116 +103,113 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-primary/10">
-                <div className="relative group">
-                    <div className="absolute -left-3 top-0 bottom-0 w-0.5 bg-primary/50 skew-x-[-12deg]" />
-                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight italic pl-2">
-                        Bus <span className="text-primary italic">Stops</span>
-                    </h3>
-                    <p className="text-[9px] text-foreground/40 font-mono font-bold uppercase tracking-[0.2em] italic pl-2 mt-0.5">List of stops for this route</p>
+            <div className="flex items-center justify-between pb-4 border-b border-border">
+                <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 bg-primary/10 rounded-md flex items-center justify-center text-primary">
+                        <MapPin className="h-4 w-4" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-bold text-foreground tracking-tight">
+                            Route Stops
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider mt-0.5">Sequence of pickup and drop points</p>
+                    </div>
                 </div>
                 <Dialog open={isAddStopOpen} onOpenChange={setIsAddStopOpen}>
                     <DialogTrigger asChild>
-                        <Button size="sm" className="group relative rounded-none h-9 bg-primary/10 hover:bg-primary/20 text-primary font-black px-6 skew-x-[-12deg] transition-all duration-300 border border-primary/20 overflow-hidden">
-                            <span className="relative z-10 skew-x-[12deg] flex items-center gap-2 uppercase tracking-tight text-[10px]">
-                                <Plus className="h-3.5 w-3.5" /> Add Stop
-                            </span>
+                        <Button variant="outline" size="sm" className="h-9 px-4 rounded-md font-bold uppercase tracking-wider text-[10px] border-primary/20 hover:bg-primary/5 hover:text-primary transition-all">
+                            <Plus className="h-3.5 w-3.5 mr-2" /> Add Stop
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="p-0 border-none bg-[#050505]/95 backdrop-blur-3xl max-w-md overflow-hidden ring-1 ring-primary/30 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
-                        <div className="bg-primary/10 border-b border-primary/20 p-8 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
-                            <DialogHeader className="relative z-10">
-                                <DialogTitle className="font-black text-2xl italic uppercase tracking-tighter text-primary italic text-center text-primary">Add New Stop</DialogTitle>
-                                <p className="text-primary/70 text-[9px] font-mono font-bold uppercase tracking-[0.3em] mt-2 italic text-center italic flex items-center justify-center gap-2 italic">
-                                    <MapPin className="h-3 w-3 animate-pulse" /> Add a new stop to this route
+                    <DialogContent className="max-w-md p-0 border-none rounded-xl overflow-hidden shadow-2xl">
+                        <div className="bg-primary/5 border-b border-border p-8">
+                            <DialogHeader>
+                                <DialogTitle className="font-bold text-xl tracking-tight text-foreground text-center">Add New Stop</DialogTitle>
+                                <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider mt-1 text-center flex items-center justify-center gap-2">
+                                    <MapPin className="h-3 w-3" /> Define a new service location
                                 </p>
                             </DialogHeader>
                         </div>
-                        <div className="p-8 space-y-6 bg-black/40">
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Name</Label>
+                        <div className="p-8 space-y-5 bg-card">
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Stop Name</Label>
                                 <Input 
                                     value={stopForm.name} 
                                     onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} 
-                                    placeholder="E.G. MAIN GATE" 
-                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                    placeholder="e.g. Central Station" 
+                                    className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Pickup Time</Label>
+                            <div className="grid grid-cols-2 gap-5">
+                                <div className="space-y-1.5">
+                                    <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Pickup Time</Label>
                                     <Input 
                                         type="time" 
                                         value={stopForm.pickup_time} 
                                         onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} 
-                                        className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                        className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Drop Time</Label>
+                                <div className="space-y-1.5">
+                                    <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Drop Time</Label>
                                     <Input 
                                         type="time" 
                                         value={stopForm.drop_time} 
                                         onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} 
-                                        className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                        className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                                     />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Order</Label>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Stop Order</Label>
                                 <Input 
                                     type="number" 
                                     value={stopForm.stop_order} 
                                     onChange={(e) => setStopForm({ ...stopForm, stop_order: e.target.value })} 
-                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                    className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                                 />
                             </div>
                             <Button 
                                 onClick={handleAddStop} 
                                 disabled={loading} 
-                                className="w-full rounded-none h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] italic shadow-xl emerald-glow text-xs mt-4 relative overflow-hidden group"
+                                className="w-full h-11 rounded-md bg-primary text-primary-foreground font-bold uppercase tracking-wider transition-all text-xs mt-4"
                             >
-                                <span className="relative z-10">{loading ? "SAVING..." : "ADD STOP"}</span>
-                                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                {loading ? "Adding..." : "Add Stop"}
                             </Button>
                         </div>
                     </DialogContent>
                 </Dialog>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
                 {stops.length === 0 ? (
-                    <div className="text-center py-20 text-muted-foreground/30 font-mono text-[10px] uppercase tracking-widest italic border border-dashed border-primary/10">
-                        [NO STOPS FOUND]
+                    <div className="text-center py-12 text-muted-foreground font-semibold text-[10px] uppercase tracking-wider italic border border-dashed border-border rounded-lg">
+                        [No stops defined]
                     </div>
                 ) : (
                     stops.map((stop, idx) => (
-                        <div key={stop.id} className="group relative flex items-center justify-between p-6 bg-white/[0.02] border-l-2 border-transparent hover:border-primary hover:bg-white/[0.05] transition-all duration-500 overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
-                                <span className="text-3xl font-black italic tracking-tighter italic">N-{idx + 1}</span>
+                        <div key={stop.id} className="group relative flex items-center justify-between p-4 bg-muted/20 border border-transparent rounded-md hover:border-primary/40 hover:bg-primary/[0.02] transition-all duration-300">
+                            <div className="absolute top-0 right-0 p-3 opacity-10">
+                                <span className="text-xl font-bold tracking-tight">{idx + 1}</span>
                             </div>
                             
-                            <div className="relative z-10 flex items-center gap-6">
-                                <div className="h-12 w-12 bg-primary/10 border border-primary/20 flex items-center justify-center skew-x-[-12deg] group-hover:bg-primary group-hover:border-primary transition-all duration-500 shadow-xl group-hover:shadow-primary/50 group-hover:emerald-glow">
-                                    <MapPin className={cn(
-                                        "h-5 w-5 skew-x-[12deg] transition-all duration-500",
-                                        "text-primary group-hover:text-primary-foreground"
-                                    )} />
+                            <div className="relative z-10 flex items-center gap-4">
+                                <div className="h-10 w-10 bg-primary/10 border border-primary/20 rounded-md flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm">
+                                    <MapPin className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <p className="font-black text-foreground text-sm uppercase tracking-tighter italic group-hover:text-primary transition-colors">{stop.name}</p>
-                                    <div className="flex items-center gap-4 mt-2">
-                                        <div className="flex items-center gap-2 group/time">
-                                            <Clock className="h-3 w-3 text-primary/50 group-hover/time:text-primary transition-colors" />
-                                            <span className="text-[10px] font-mono text-foreground/40 font-bold uppercase tracking-widest italic group-hover/time:text-foreground/80 transition-colors">
+                                    <p className="font-bold text-foreground text-sm tracking-tight group-hover:text-primary transition-colors">{stop.name}</p>
+                                    <div className="flex items-center gap-4 mt-1">
+                                        <div className="flex items-center gap-1.5">
+                                            <Clock className="h-3 w-3 text-muted-foreground" />
+                                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                                                 IN: {stop.pickup_time || "00:00"}
                                             </span>
                                         </div>
-                                        <div className="h-1 w-1 rounded-full bg-white/10" />
-                                        <div className="flex items-center gap-2 group/time">
-                                            <Clock className="h-3 w-3 text-red-500/50 group-hover/time:text-red-500 transition-colors" />
-                                            <span className="text-[10px] font-mono text-foreground/40 font-bold uppercase tracking-widest italic group-hover/time:text-foreground/80 transition-colors">
+                                        <div className="h-1 w-1 rounded-full bg-muted" />
+                                        <div className="flex items-center gap-1.5">
+                                            <Clock className="h-3 w-3 text-muted-foreground" />
+                                            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                                                 OUT: {stop.drop_time || "00:00"}
                                             </span>
                                         </div>
@@ -221,10 +218,10 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
                             </div>
                             
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                <Button variant="ghost" size="icon" onClick={() => openEdit(stop)} className="h-8 w-8 text-foreground/40 hover:text-primary hover:bg-primary/10 rounded-none transition-all">
+                                <Button variant="ghost" size="icon" onClick={() => openEdit(stop)} className="h-8 w-8 text-muted-foreground/30 hover:text-primary hover:bg-primary/10 transition-all">
                                     <Edit2 className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleDeleteStop(stop.id)} className="h-8 w-8 text-foreground/40 hover:text-red-500 hover:bg-red-500/10 rounded-none transition-all">
+                                <Button variant="ghost" size="icon" onClick={() => handleDeleteStop(stop.id)} className="h-8 w-8 text-muted-foreground/30 hover:text-destructive hover:bg-destructive/10 transition-all">
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                             </div>
@@ -234,61 +231,59 @@ export function StopManagement({ routeId, routeName, stops }: StopManagementProp
             </div>
 
             <Dialog open={isEditStopOpen} onOpenChange={setIsEditStopOpen}>
-                <DialogContent className="p-0 border-none bg-[#050505]/95 backdrop-blur-3xl max-w-md overflow-hidden ring-1 ring-primary/30 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
-                    <div className="bg-primary/10 border-b border-primary/20 p-8 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
-                        <DialogHeader className="relative z-10">
-                            <DialogTitle className="font-black text-2xl italic uppercase tracking-tighter text-primary italic text-center text-primary">Edit Stop</DialogTitle>
-                            <p className="text-primary/70 text-[9px] font-mono font-bold uppercase tracking-[0.3em] mt-2 italic text-center italic flex items-center justify-center gap-2 italic">
-                                <Edit2 className="h-3 w-3 animate-pulse" /> Update stop information
+                <DialogContent className="max-w-md p-0 border-none rounded-xl overflow-hidden shadow-2xl">
+                    <div className="bg-primary/5 border-b border-border p-8">
+                        <DialogHeader>
+                            <DialogTitle className="font-bold text-xl tracking-tight text-foreground text-center">Edit Stop</DialogTitle>
+                            <p className="text-muted-foreground text-[10px] font-semibold uppercase tracking-wider mt-1 text-center flex items-center justify-center gap-2">
+                                <Edit2 className="h-3 w-3" /> Update stop information
                             </p>
                         </DialogHeader>
                     </div>
-                    <div className="p-8 space-y-6 bg-black/40">
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Name</Label>
+                    <div className="p-8 space-y-5 bg-card">
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Stop Name</Label>
                             <Input 
                                 value={stopForm.name} 
                                 onChange={(e) => setStopForm({ ...stopForm, name: e.target.value })} 
-                                className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                             />
                         </div>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Pickup Window</Label>
+                        <div className="grid grid-cols-2 gap-5">
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Pickup Time</Label>
                                 <Input 
                                     type="time" 
                                     value={stopForm.pickup_time} 
                                     onChange={(e) => setStopForm({ ...stopForm, pickup_time: e.target.value })} 
-                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                    className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Drop Window</Label>
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Drop Time</Label>
                                 <Input 
                                     type="time" 
                                     value={stopForm.drop_time} 
                                     onChange={(e) => setStopForm({ ...stopForm, drop_time: e.target.value })} 
-                                    className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                    className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                                 />
                             </div>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest italic ml-1 text-primary/60">Stop Order</Label>
+                        <div className="space-y-1.5">
+                            <Label className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider ml-1">Stop Order</Label>
                             <Input 
                                 type="number" 
                                 value={stopForm.stop_order} 
                                 onChange={(e) => setStopForm({ ...stopForm, stop_order: e.target.value })} 
-                                className="rounded-none border-primary/20 bg-primary/5 focus:border-primary focus:ring-primary/20 transition-all h-12 font-bold italic"
+                                className="rounded-md border-border bg-muted/20 focus:border-primary transition-all h-10 font-medium"
                             />
                         </div>
                         <Button 
                             onClick={handleUpdateStop} 
                             disabled={loading} 
-                            className="w-full rounded-none h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] italic shadow-xl emerald-glow text-xs mt-4 relative overflow-hidden group"
+                            className="w-full h-11 rounded-md bg-primary text-primary-foreground font-bold uppercase tracking-wider transition-all text-xs mt-4"
                         >
-                            <span className="relative z-10">{loading ? "SAVING..." : "UPDATE STOP"}</span>
-                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                            {loading ? "Updating..." : "Update Stop"}
                         </Button>
                     </div>
                 </DialogContent>

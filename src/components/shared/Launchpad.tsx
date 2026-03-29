@@ -47,19 +47,19 @@ interface NavGroup {
 
 const navigation: NavGroup[] = [
   {
-    group: "Main Dashboard",
+    group: "Overview",
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard, description: "Overview of school activities and key metrics" },
-      { name: "System Analytics", href: "/analytics", icon: Zap, roles: ["admin", "teacher"], description: "Insights into school performance and trends" },
-      { name: "Administrative Reports", href: "/oracle", icon: BrainCircuit, roles: ["admin"], description: "Advanced statistics for school management" },
+      { name: "Analytics", href: "/analytics", icon: Zap, roles: ["admin", "teacher"], description: "Insights into school performance and trends" },
+      { name: "Reports", href: "/oracle", icon: BrainCircuit, roles: ["admin"], description: "Advanced statistics for school management" },
     ],
   },
   {
-    group: "People",
+    group: "Personnel",
     roles: ["admin", "teacher", "student"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles and enrollment records" },
-      { name: "Staff HR", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage institutional personnel, performance, and payroll" },
+      { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage institutional personnel and payroll" },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance for students and staff" },
       { name: "Conduct", href: "/conduct", icon: ShieldAlert, description: "Monitor student behavior and disciplinary actions" },
       { name: "Health", href: "/health", icon: Stethoscope, description: "Track student health records and medical info" },
@@ -82,23 +82,23 @@ const navigation: NavGroup[] = [
   {
     group: "Operations",
     items: [
-      { name: "Fees & Payments", href: "/fees", icon: CreditCard, description: "Manage fee collection and payment records" },
+      { name: "Fees", href: "/fees", icon: CreditCard, description: "Manage fee collection and payment records" },
       { name: "Library", href: "/library", icon: Library, description: "Manage books, issues, and returns" },
       { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Manage school inventory and assets" },
       { name: "Transport", href: "/transport", icon: Bus, description: "Manage school bus routes and transport detail" },
       { name: "Messages", href: "/messages", icon: MessageSquare, description: "Send announcements and internal messages" },
-      { name: "Parents", href: "/guardian", icon: Heart, roles: ["admin", "teacher"], description: "Communicate with parents and guardians" },
+      { name: "Guardians", href: "/guardian", icon: Heart, roles: ["admin", "teacher"], description: "Communicate with parents and guardians" },
     ],
   },
   {
-    group: "Settings",
+    group: "System",
     roles: ["admin"],
     items: [
       { name: "Users", href: "/users", icon: ShieldCheck, roles: ["admin"], description: "Manage user accounts and system permissions" },
-      { name: "System Settings", href: "/settings", icon: Settings, description: "Configure school details and system options" },
-      { name: "Activity Logs", href: "/audit", icon: Shield, description: "View system activity and security logs" },
+      { name: "Settings", href: "/settings", icon: Settings, description: "Configure school details and system options" },
+      { name: "Logs", href: "/audit", icon: Shield, description: "View system activity and security logs" },
       { name: "Compliance", href: "/compliance", icon: FileText, description: "Manage school policies and legal documents" },
-      { name: "Global Gateways", href: "/gateways", icon: Globe, description: "Configure external payment and notification providers" },
+      { name: "Gateways", href: "/gateways", icon: Globe, description: "Configure external payment and notification providers" },
     ],
   },
 ];
@@ -138,14 +138,14 @@ export function Launchpad({
   }
 
   return (
-    <div className="space-y-16 pb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+    <div className="space-y-16 pb-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
       {filteredNavigation.map((group) => (
         <div key={group.group} className="space-y-8">
           <div className="flex items-center gap-x-6">
-            <h3 className="text-xs font-black uppercase tracking-[0.4em] text-primary whitespace-nowrap">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary whitespace-nowrap">
               {group.group}
             </h3>
-            <div className="h-px flex-1 bg-gradient-to-r from-primary/20 to-transparent" />
+            <div className="h-px flex-1 bg-border" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -153,33 +153,30 @@ export function Launchpad({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative flex flex-col p-8 bg-card border border-border rounded-xl shadow-sm hover:border-primary/40 hover:bg-secondary/20 transition-all duration-300 overflow-hidden"
+                className="group relative flex flex-col p-8 bg-card border border-border rounded-lg shadow-sm hover:border-primary transition-all duration-200"
               >
-                {/* Visual Accent */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
-
                  <div className="flex flex-col gap-y-6 relative z-10">
-                  <div className="w-14 h-14 flex items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105 bg-primary/10 border border-primary/20 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
-                    <item.icon className="h-7 w-7" />
+                  <div className="w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
+                    <item.icon className="h-6 w-6" />
                   </div>
                                     <div className="space-y-2">
                     <div className="flex items-center gap-x-2">
-                      <span className="font-bold text-xl text-foreground tracking-tight group-hover:text-primary transition-colors italic">
+                      <span className="font-semibold text-lg text-foreground tracking-tight group-hover:text-primary transition-colors">
                         {item.name}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed group-hover:text-foreground transition-all line-clamp-2 italic">
+                    <p className="text-[12px] text-muted-foreground font-medium leading-relaxed line-clamp-2">
                       {item.description}
                     </p>
                   </div>
                 </div>
 
-                 <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
-                  <div className="flex items-center gap-x-1.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors italic">
+                  <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
+                  <div className="flex items-center gap-x-1.5 text-[10px] font-semibold text-muted-foreground group-hover:text-primary transition-colors">
                     Open Module
                   </div>
-                  <div className="h-9 w-9 rounded-lg bg-secondary border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-                    <Plus className="h-4 w-4 rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                  <div className="h-8 w-8 rounded-md bg-secondary border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
+                    <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
                   </div>
                 </div>
               </Link>

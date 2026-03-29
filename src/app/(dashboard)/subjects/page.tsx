@@ -11,22 +11,22 @@ export default async function SubjectsPage() {
     .order("name", { ascending: true });
 
   return (
-    <div className="space-y-12 animate-in fade-in transition-all duration-1000">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
+    <div className="space-y-8 animate-in fade-in transition-all duration-700">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border pb-8">
         <div>
-          <div className="flex items-center gap-x-3 mb-4">
-             <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-x-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                Knowledge Base Synchronized
+          <div className="flex items-center gap-x-2 mb-2">
+             <div className="px-2 py-0.5 rounded-full bg-emerald-100 text-[10px] font-bold uppercase tracking-wider text-emerald-700 flex items-center gap-x-1.5 border border-emerald-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                System Active
              </div>
-             <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Vault: MYS-KB-02</span>
+             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-2 border-l border-border ml-2">Curriculum Management</span>
           </div>
-          <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-            Registry <span className="text-primary tracking-normal not-italic">/</span> Subjects
+          <h2 className="text-4xl font-bold tracking-tight text-foreground">
+            Academic <span className="text-primary">Subjects</span>
           </h2>
-          <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-             <BrainCircuit className="h-3 w-3 text-primary" />
-             Core Curriculum & Syllabus Architecture
+          <p className="text-muted-foreground font-medium text-[12px] mt-2 flex items-center gap-x-2">
+             <BookOpen className="h-4 w-4 text-primary/60" />
+             Manage core curriculum, credits, and syllabus details
           </p>
         </div>
       </div>
