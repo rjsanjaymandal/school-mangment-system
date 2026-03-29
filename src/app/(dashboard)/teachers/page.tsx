@@ -11,6 +11,8 @@ export default async function TeachersPage() {
   const role = await getSessionRole();
   const isAdminOrTeacher = role === "admin" || role === "teacher";
 
+  const { data: { user } } = await supabase.auth.getUser();
+
   const [teachers, leaveRequests, payrolls] = await Promise.all([
     InstitutionalService.getTeachers().catch(() => []),
     supabase
@@ -23,6 +25,13 @@ export default async function TeachersPage() {
       .order("year", { ascending: false })
       .order("month", { ascending: false })
   ]);
+
+  // Transform teachers for the attendance list
+  const staffList = (teachers || []).map((t: any) => ({
+    id: t.id,
+    full_name: t.profile?.full_name || "Unknown",
+    email: t.profile?.email
+  }));
 
   return (
     <div className="space-y-12 animate-in fade-in transition-all duration-1000">
@@ -81,8 +90,10 @@ export default async function TeachersPage() {
                 <StaffHRManagement 
                     leaveRequests={leaveRequests.data || []} 
                     payrolls={payrolls.data || []} 
+                    staff={staffList}
                     staffCount={teachers?.length || 0}
                     userRole={role}
+                    currentUserId={user?.id}
                 />
             </TabsContent>
         </Tabs>

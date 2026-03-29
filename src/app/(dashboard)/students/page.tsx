@@ -22,7 +22,11 @@ export default async function StudentsPage() {
         </p>
       </div>
 
-      <StudentList initialData={students || []} userRole={role} />
+      <StudentList 
+        initialData={students || []} 
+        classes={classes || []}
+        userRole={role} 
+      />
     </div>
   );
 }

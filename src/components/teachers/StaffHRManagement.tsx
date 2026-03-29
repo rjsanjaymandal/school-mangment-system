@@ -15,6 +15,8 @@ import {
   DollarSign,
   Shovel,
   TrendingUp,
+  UserCheck,
+  Save,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { markStaffAttendance } from "@/app/actions/staff-attendance";
+import { toast } from "sonner";
 
 interface LeaveRequest {
   id: string;
@@ -51,14 +55,22 @@ interface StaffPayroll {
 export function StaffHRManagement({ 
   leaveRequests = [], 
   payrolls = [],
+  staff = [],
   staffCount = 0,
-  userRole
+  userRole,
+  currentUserId
 }: { 
   leaveRequests?: LeaveRequest[];
   payrolls?: StaffPayroll[];
+  staff?: any[];
   staffCount?: number;
   userRole?: string | null;
+  currentUserId?: string;
 }) {
+  const [attendanceRecords, setAttendanceRecords] = useState<Record<string, string>>(
+    staff.reduce((acc, s) => ({ ...acc, [s.id]: 'present' }), {})
+  );
+  const [isSaving, setIsSaving] = useState(false);
   const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
   const pendingLeaves = leaveRequests.filter(l => l.status === 'pending');
   const totalPayout = payrolls.reduce((acc, curr) => acc + (curr.net_pay || 0), 0);
@@ -120,25 +132,25 @@ export function StaffHRManagement({
         {/* Metric Card 2 */}
         <div className="relative group bg-card border border-border p-10 rounded-xl transition-all duration-700 shadow-sm hover:border-primary/40 overflow-hidden">
             <div className="absolute -right-4 -bottom-4 h-32 w-32 text-primary opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
-                <Calendar className="h-full w-full" />
+                <UserCheck className="h-full w-full" />
             </div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-8 italic">
-                Attendance Trends
+                Registry Presence
             </p>
             <div className="flex items-center gap-x-8 mb-10 relative z-10">
                 <div className="h-20 w-20 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-sm transition-all group-hover:scale-110">
-                    <Clock className="h-10 w-10 text-primary" />
+                    <CheckCircle2 className="h-10 w-10 text-primary" />
                 </div>
                 <div>
                     <h4 className="text-5xl font-black text-foreground tracking-tighter italic leading-none">
-                        {pendingLeaves.length.toString().padStart(2, '0')}
+                        {staffCount.toString().padStart(2, '0')}
                     </h4>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-none italic">Open Requests</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-none italic">Active Nodes</p>
                 </div>
             </div>
             <div className="pt-8 border-t border-border">
                 <Button className="w-full bg-secondary border border-border hover:bg-primary hover:text-white text-foreground font-bold rounded-lg h-14 transition-all uppercase tracking-widest text-[9px]">
-                    Initialize Review
+                    View Global Logs
                 </Button>
             </div>
         </div>
@@ -190,6 +202,76 @@ export function StaffHRManagement({
             Payroll System
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="attendance" className="animate-in slide-in-from-bottom-4 duration-700 outline-none">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="p-8 border-b border-border flex items-center justify-between">
+              <div>
+                <h4 className="text-xl font-black italic uppercase tracking-tighter">Daily Roll Call</h4>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-1 italic">Marking Phase: {new Date().toLocaleDateString()}</p>
+              </div>
+              <Button 
+                onClick={async () => {
+                  setIsSaving(true);
+                  const res = await markStaffAttendance({
+                    date: new Date().toISOString().split('T')[0],
+                    marked_by: currentUserId || 'system',
+                    records: Object.entries(attendanceRecords).map(([id, status]) => ({
+                      staff_id: id,
+                      status
+                    }))
+                  });
+                  setIsSaving(false);
+                  if (res.success) toast.success("Attendance Matrix Updated");
+                  else toast.error(res.error || "Matrix Failure");
+                }}
+                disabled={isSaving}
+                className="bg-primary hover:scale-105 transition-all text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-12 gap-x-3 rounded-lg shadow-lg shadow-primary/20"
+              >
+                <Save className="h-4 w-4" />
+                {isSaving ? "Syncing..." : "Finalize Registry"}
+              </Button>
+            </div>
+            <table className="w-full text-left order-collapse">
+              <thead className="bg-secondary/30">
+                <tr>
+                  <th className="px-10 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Employee Access Node</th>
+                  <th className="px-10 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic text-center">Operational Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {staff.map((s) => (
+                  <tr key={s.id} className="group hover:bg-secondary/10 transition-colors">
+                    <td className="px-10 py-5">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground uppercase tracking-tight text-[13px] italic">{s.full_name}</span>
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground italic group-hover:text-primary transition-colors">Staff ID: {s.id.split('-')[0]}</span>
+                      </div>
+                    </td>
+                    <td className="px-10 py-5">
+                      <div className="flex justify-center items-center gap-x-2">
+                        {['present', 'absent', 'late', 'half_day'].map((status) => (
+                          <button
+                            key={status}
+                            onClick={() => setAttendanceRecords(prev => ({ ...prev, [s.id]: status }))}
+                            className={cn(
+                              "px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all italic border",
+                              attendanceRecords[s.id] === status 
+                                ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105" 
+                                : "bg-secondary/50 text-muted-foreground border-border hover:bg-secondary"
+                            )}
+                          >
+                            {status}
+                          </button>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </TabsContent>
 
         <TabsContent value="leave" className="animate-in slide-in-from-bottom-4 duration-700 outline-none">
           <div className="relative bg-card rounded-xl overflow-hidden border border-border shadow-sm">
