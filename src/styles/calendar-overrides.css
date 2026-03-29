@@ -18,10 +18,9 @@
   }
   
   .rbc-month-view, .rbc-time-view, .rbc-agenda-view {
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
     overflow: hidden;
   }
   
@@ -62,13 +61,12 @@
   }
   
   .rbc-toolbar button {
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: #475569;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
     font-weight: 600;
     padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(8px);
+    background: var(--background);
     transition: all 0.2s ease;
   }
   

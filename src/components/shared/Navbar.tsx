@@ -26,55 +26,55 @@ export function Navbar({ user }: { user: User | null }) {
   };
 
   return (
-    <div className="h-16 border-b border-border bg-card/60 backdrop-blur-md flex items-center px-6 justify-between gap-x-4 reveal-0">
+    <div className="h-16 border-b border-border bg-card flex items-center px-6 justify-between gap-x-4">
       <div className="flex-1 max-w-lg relative group">
         <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
         <Input
-          placeholder="System command: Search data nodes..."
-          className="pl-9 bg-accent/50 border-none rounded-xs transition-all focus-visible:bg-accent focus-visible:ring-1 focus-visible:ring-primary font-medium tracking-tight"
+          placeholder="Search students, staff or records..."
+          className="pl-9 bg-secondary/50 border-border rounded-xl transition-all focus-visible:bg-secondary focus-visible:ring-1 focus-visible:ring-primary font-medium tracking-tight italic"
         />
       </div>
       <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon" className="relative group rounded-xs border border-transparent hover:border-border hover:bg-accent transition-all">
+        <Button variant="ghost" size="icon" className="relative group rounded-xl border border-transparent hover:border-border hover:bg-secondary/40 transition-all">
           <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="absolute top-2 right-2 h-2 w-2 bg-primary rounded-sm border-2 border-card shadow-sm emerald-glow" />
+          <span className="absolute top-2.5 right-2.5 h-1.5 w-1.5 bg-primary rounded-full" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="relative h-9 w-9 rounded-xs p-0 border border-border overflow-hidden"
+              className="relative h-9 w-9 rounded-xl p-0 border border-border overflow-hidden"
             >
               <Avatar className="h-9 w-9 rounded-none">
                 <AvatarImage src="" alt="User" />
-                <AvatarFallback className="bg-primary text-primary-foreground font-black text-xs uppercase shadow-inner">
+                <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs uppercase">
                   {user?.email?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 mt-2 rounded-sm border-border bg-card/90 backdrop-blur-xl shadow-2xl" align="end" forceMount>
+          <DropdownMenuContent className="w-56 mt-2 rounded-xl border-border bg-card shadow-xl" align="end" forceMount>
             <DropdownMenuLabel className="p-4">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-black tracking-tight">Identity Node</p>
+                <p className="text-sm font-bold tracking-tight italic">Account Information</p>
                 <p className="text-xs font-medium text-muted-foreground truncate">
                   {user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="p-2.5 rounded-xs cursor-pointer group">
-              <span className="font-bold text-foreground">View Profile</span>
+            <DropdownMenuItem className="p-2.5 rounded-lg cursor-pointer group">
+              <span className="font-bold text-foreground italic">View Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="p-2.5 rounded-xs cursor-pointer group">
-              <span className="font-bold text-foreground">Node Settings</span>
+            <DropdownMenuItem className="p-2.5 rounded-lg cursor-pointer group">
+              <span className="font-bold text-foreground italic">Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive font-bold p-2.5 rounded-xs cursor-pointer focus:text-destructive"
+              className="text-destructive font-bold p-2.5 rounded-lg cursor-pointer focus:text-destructive italic"
               onClick={handleSignOut}
             >
-              Terminate Session
+              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

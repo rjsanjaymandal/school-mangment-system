@@ -122,63 +122,61 @@ export function FeesDashboard({
         <div className="space-y-12 animate-in fade-in transition-all duration-1000">
             {/* Action Bar */}
             {!isStudent && (
-                <div className="flex items-center justify-end gap-6 mb-12 border-b border-white/5 pb-8">
+                <div className="flex items-center justify-end gap-4 mb-10 border-b border-border pb-8">
                     <Dialog open={isPaymentOpen} onOpenChange={setIsPaymentOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="h-14 px-10 bg-emerald-500/5 border border-emerald-500/20 text-emerald-500 font-black rounded-sm transition-all uppercase tracking-[0.3em] text-[9px] skew-x-[-12deg] hover:bg-emerald-500 hover:text-white group">
-                                <span className="not-skew-x flex items-center gap-x-3">
-                                    Record Transaction
-                                    <CreditCard className="h-4 w-4 group-hover:animate-bounce" />
-                                </span>
+                            <Button variant="outline" className="h-12 px-8 bg-secondary border border-border text-primary font-bold rounded-lg transition-all uppercase tracking-widest text-[9px] hover:bg-primary hover:text-primary-foreground group">
+                                Record Payment
+                                <CreditCard className="ml-2 h-4 w-4 group-hover:animate-bounce" />
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="glass-panel border-white/10 p-0 overflow-hidden max-w-xl">
-                            <div className="p-8 bg-white/5 border-b border-white/10">
-                                <h3 className="text-3xl font-black italic uppercase tracking-tighter text-foreground">Initiate <span className="text-emerald-500">Liquidation</span></h3>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 mt-2">Protocol: Manual Revenue Injection</p>
+                        <DialogContent className="bg-card border-border p-0 overflow-hidden max-w-xl rounded-xl">
+                            <div className="p-6 border-b border-border bg-secondary/30">
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground">Record <span className="text-primary">Payment</span></h3>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-2 italic">Manual Payment Entry</p>
                             </div>
-                            <div className="p-10 space-y-8">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Personnel Node (Student)</Label>
+                            <div className="p-8 space-y-6">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Student</Label>
                                     <Select value={payForm.student_id} onValueChange={(v) => setPayForm({ ...payForm, student_id: v })}>
-                                        <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg]"><SelectValue placeholder="Select Target Node" /></SelectTrigger>
-                                        <SelectContent className="glass-panel">
+                                        <SelectTrigger className="bg-background border-border h-12 font-bold text-xs uppercase italic"><SelectValue placeholder="Select Student" /></SelectTrigger>
+                                        <SelectContent>
                                             {students.map((s) => (
-                                                <SelectItem key={s.id} value={s.id} className="font-black text-[10px] uppercase italic">{s.profile?.full_name} ({s.admission_number})</SelectItem>
+                                                <SelectItem key={s.id} value={s.id} className="font-bold text-[10px] uppercase italic">{s.profile?.full_name} ({s.admission_number})</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Financial Structure Node</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Fee Structure</Label>
                                     <Select value={payForm.fee_id} onValueChange={(v) => setPayForm({ ...payForm, fee_id: v })}>
-                                        <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg]"><SelectValue placeholder="Select Fee Schema" /></SelectTrigger>
-                                        <SelectContent className="glass-panel">
+                                        <SelectTrigger className="bg-background border-border h-12 font-bold text-xs uppercase italic"><SelectValue placeholder="Select Fee" /></SelectTrigger>
+                                        <SelectContent>
                                             {fees.map((f) => (
-                                                <SelectItem key={f.id} value={f.id} className="font-black text-[10px] uppercase italic">{f.name} — ₹{f.amount}</SelectItem>
+                                                <SelectItem key={f.id} value={f.id} className="font-bold text-[10px] uppercase italic">{f.name} — ₹{f.amount}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Transaction Volume</Label>
-                                        <Input type="number" value={payForm.amount_paid} onChange={(e) => setPayForm({ ...payForm, amount_paid: e.target.value })} className="glass-card border-white/10 h-14 font-black text-sm italic skew-x-[-8deg]" placeholder="0.00" />
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Amount (₹)</Label>
+                                        <Input type="number" value={payForm.amount_paid} onChange={(e) => setPayForm({ ...payForm, amount_paid: e.target.value })} className="bg-background border-border h-12 font-bold text-sm italic" placeholder="0.00" />
                                     </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Payment Protocol</Label>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Payment Method</Label>
                                         <Select value={payForm.payment_method} onValueChange={(v) => setPayForm({ ...payForm, payment_method: v })}>
-                                            <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg]"><SelectValue /></SelectTrigger>
-                                            <SelectContent className="glass-panel">
+                                            <SelectTrigger className="bg-background border-border h-12 font-bold text-xs uppercase italic"><SelectValue /></SelectTrigger>
+                                            <SelectContent>
                                                 {["cash", "card", "upi", "bank_transfer", "cheque", "online"].map((m) => (
-                                                    <SelectItem key={m} value={m} className="font-black text-[10px] uppercase italic">{m.toUpperCase()}</SelectItem>
+                                                    <SelectItem key={m} value={m} className="font-bold text-[10px] uppercase italic">{m.toUpperCase()}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
-                                <Button onClick={handleRecordPayment} disabled={loading} className="w-full h-20 bg-emerald-500 text-white font-black uppercase tracking-[0.4em] text-[11px] skew-x-[-12deg] shadow-[0_0_50px_oklch(var(--emerald-500)/0.3)] transition-all hover:scale-[1.02]">
-                                    {loading ? "COMMITTING..." : "COMMIT LIQUIDATION"}
+                                <Button onClick={handleRecordPayment} disabled={loading} className="w-full h-14 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[11px] shadow-sm transition-all hover:scale-[1.02] rounded-lg">
+                                    {loading ? "PROCESSING..." : "RECORD PAYMENT"}
                                 </Button>
                             </div>
                         </DialogContent>
@@ -186,59 +184,57 @@ export function FeesDashboard({
 
                     <Dialog open={isAddFeeOpen} onOpenChange={setIsAddFeeOpen}>
                         <DialogTrigger asChild>
-                            <Button className="h-14 px-10 bg-emerald-500 text-white font-black rounded-sm shadow-[0_0_40px_oklch(var(--emerald-500)/0.2)] emerald-border-glow uppercase tracking-[0.3em] text-[9px] skew-x-[-12deg] transition-all hover:scale-105">
-                                <span className="not-skew-x flex items-center gap-x-3">
-                                    Initialize Fee Node
-                                    <Plus className="h-4 w-4" />
-                                </span>
+                            <Button className="h-12 px-8 bg-primary text-primary-foreground font-bold rounded-lg shadow-sm uppercase tracking-widest text-[9px] transition-all hover:scale-105">
+                                Add New Fee
+                                <Plus className="ml-2 h-4 w-4" />
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="glass-panel border-white/10 p-0 overflow-hidden max-w-xl">
-                            <div className="p-8 bg-white/5 border-b border-white/10">
-                                <h3 className="text-3xl font-black italic uppercase tracking-tighter text-foreground">Initialize <span className="text-emerald-500">Revenue</span> Node</h3>
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 mt-2">Protocol: Financial Schema Definition</p>
+                        <DialogContent className="bg-card border-border p-0 overflow-hidden max-w-xl rounded-xl">
+                            <div className="p-6 border-b border-border bg-secondary/30">
+                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground">Create <span className="text-primary">Fee</span> Structure</h3>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-2 italic">Fee Schema Definition</p>
                             </div>
-                            <div className="p-10 space-y-8">
-                                <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Structure Identity (Name)</Label>
-                                    <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} className="glass-card border-white/10 h-14 font-black text-sm italic skew-x-[-8deg] focus-visible:ring-emerald-500/50" placeholder="e.g. ANNUAL TUITION FEE" />
+                            <div className="p-8 space-y-6">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Fee Name</Label>
+                                    <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} className="bg-background border-border h-12 font-bold text-sm italic focus-visible:ring-primary/50" placeholder="e.g. Annual Tuition Fee" />
                                 </div>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Financial Weight (₹)</Label>
-                                        <Input type="number" value={feeForm.amount} onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })} className="glass-card border-white/10 h-14 font-black text-sm italic skew-x-[-8deg] focus-visible:ring-emerald-500/50" placeholder="0.00" />
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Amount (₹)</Label>
+                                        <Input type="number" value={feeForm.amount} onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })} className="bg-background border-border h-12 font-bold text-sm italic focus-visible:ring-primary/50" placeholder="0.00" />
                                     </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Maturity Date (Due)</Label>
-                                        <Input type="date" value={feeForm.due_date} onChange={(e) => setFeeForm({ ...feeForm, due_date: e.target.value })} className="glass-card border-white/10 h-14 font-black text-sm italic skew-x-[-8deg] focus-visible:ring-emerald-500/50" />
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Due Date</Label>
+                                        <Input type="date" value={feeForm.due_date} onChange={(e) => setFeeForm({ ...feeForm, due_date: e.target.value })} className="bg-background border-border h-12 font-bold text-sm italic focus-visible:ring-primary/50" />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-8">
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Target Sector</Label>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Target Class</Label>
                                         <Select value={feeForm.class_id} onValueChange={(v) => setFeeForm({ ...feeForm, class_id: v })}>
-                                            <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg] focus:ring-emerald-500/50"><SelectValue placeholder="All Classes" /></SelectTrigger>
-                                            <SelectContent className="glass-panel border-white/10">
+                                            <SelectTrigger className="bg-background border-border h-12 font-bold text-xs uppercase italic focus:ring-primary/50"><SelectValue placeholder="All Classes" /></SelectTrigger>
+                                            <SelectContent>
                                                 {classes.map((c) => (
-                                                    <SelectItem key={c.id} value={c.id} className="font-black text-[10px] uppercase italic focus:bg-emerald-500/20">{c.name}</SelectItem>
+                                                    <SelectItem key={c.id} value={c.id} className="font-bold text-[10px] uppercase italic">{c.name}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 italic">Classification</Label>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-primary italic">Category</Label>
                                         <Select value={feeForm.fee_type} onValueChange={(v) => setFeeForm({ ...feeForm, fee_type: v })}>
-                                            <SelectTrigger className="glass-card border-white/10 h-14 font-black text-xs uppercase italic skew-x-[-8deg] focus:ring-emerald-500/50"><SelectValue /></SelectTrigger>
-                                            <SelectContent className="glass-panel border-white/10">
+                                            <SelectTrigger className="bg-background border-border h-12 font-bold text-xs uppercase italic focus:ring-primary/50"><SelectValue /></SelectTrigger>
+                                            <SelectContent>
                                                 {["tuition", "transport", "library", "lab", "sports", "other"].map((t) => (
-                                                    <SelectItem key={t} value={t} className="font-black text-[10px] uppercase italic focus:bg-emerald-500/20">{t.toUpperCase()}</SelectItem>
+                                                    <SelectItem key={t} value={t} className="font-bold text-[10px] uppercase italic">{t.toUpperCase()}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
-                                <Button onClick={handleCreateFee} disabled={loading} className="w-full h-20 bg-emerald-500 text-white font-black uppercase tracking-[0.4em] text-[11px] skew-x-[-12deg] shadow-[0_0_50px_oklch(var(--emerald-500)/0.3)] transition-all hover:scale-[1.02]">
-                                    {loading ? "INITIALIZING NODE..." : "INITIALIZE STRUCTURE"}
+                                <Button onClick={handleCreateFee} disabled={loading} className="w-full h-14 bg-primary text-primary-foreground font-black uppercase tracking-widest text-[11px] shadow-sm transition-all hover:scale-[1.02] rounded-lg">
+                                    {loading ? "CREATING..." : "CREATE FEE STRUCTURE"}
                                 </Button>
                             </div>
                         </DialogContent>
@@ -247,103 +243,103 @@ export function FeesDashboard({
             )}
 
             {/* Metric Grid */}
-            <div className="grid gap-12 lg:grid-cols-3">
-                <div className="glass-card p-10 relative overflow-hidden group hover:emerald-border-glow transition-all duration-700">
-                    <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:scale-110 transition-transform duration-1000">
-                        <TrendingUp className="h-48 w-48 text-emerald-500" />
+            <div className="grid gap-10 lg:grid-cols-3">
+                <div className="bg-card border border-border p-8 rounded-xl relative overflow-hidden group transition-all duration-300 shadow-sm">
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:scale-110 transition-transform duration-700">
+                        <TrendingUp className="h-32 w-32 text-primary" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-8 italic">Revenue Pulse</p>
-                    <div className="relative z-10 flex items-baseline gap-x-4">
-                        <h3 className="text-7xl font-black italic tracking-tighter text-foreground leading-none">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-6 italic">Total Revenue</p>
+                    <div className="relative z-10 flex items-baseline gap-x-3">
+                        <h3 className="text-6xl font-black italic tracking-tighter text-foreground leading-none">
                             ₹{stats.totalRevenue.toLocaleString()}
                         </h3>
-                        <Badge className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-black text-[8px] uppercase tracking-widest italic">+14% SIG</Badge>
+                        <Badge className="bg-primary/10 text-primary border border-primary/20 font-bold text-[8px] uppercase tracking-widest italic">+14%</Badge>
                     </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full mt-10 overflow-hidden">
-                        <div className="h-full bg-emerald-500 shadow-[0_0_20px_oklch(var(--emerald-500))] transition-all duration-1000" style={{ width: '82%' }} />
+                    <div className="h-2 w-full bg-secondary rounded-full mt-8 overflow-hidden">
+                        <div className="h-full bg-primary transition-all duration-1000" style={{ width: '82%' }} />
                     </div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mt-4 italic">Total Processed Revenue</p>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-3 italic">Finalized Collection</p>
                 </div>
 
-                <div className="glass-card p-10 relative overflow-hidden group hover:border-red-500/40 transition-all duration-700">
-                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-red-500 mb-8 italic">Outstanding Flux</p>
-                    <div className="relative z-10 flex items-baseline gap-x-4">
-                        <h3 className="text-7xl font-black italic tracking-tighter text-foreground leading-none">
+                <div className="bg-card border border-border p-8 rounded-xl relative overflow-hidden group transition-all duration-300 shadow-sm hover:border-red-500/40">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-6 italic">Outstanding Invoices</p>
+                    <div className="relative z-10 flex items-baseline gap-x-3">
+                        <h3 className="text-6xl font-black italic tracking-tighter text-foreground leading-none">
                             ₹{stats.outstanding.toLocaleString()}
                         </h3>
                     </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full mt-10 overflow-hidden">
-                        <div className="h-full bg-red-500 shadow-[0_0_20px_oklch(var(--red-500))] transition-all duration-1000" style={{ width: `${Math.min(100, (stats.outstanding / stats.totalRevenue) * 100)}%` }} />
+                    <div className="h-2 w-full bg-secondary rounded-full mt-8 overflow-hidden">
+                        <div className="h-full bg-red-500 transition-all duration-1000" style={{ width: `${Math.min(100, (stats.outstanding / stats.totalRevenue) * 100)}%` }} />
                     </div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mt-4 italic">Unliquidated Debt Nodes</p>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-3 italic">Pending Payments</p>
                 </div>
 
-                <div className="glass-card p-10 relative overflow-hidden group hover:emerald-border-glow transition-all duration-700">
-                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-500 mb-8 italic">Faculty Payouts</p>
-                    <div className="relative z-10 flex items-baseline gap-x-4">
-                        <h3 className="text-7xl font-black italic tracking-tighter text-foreground leading-none">
+                <div className="bg-card border border-border p-8 rounded-xl relative overflow-hidden group transition-all duration-300 shadow-sm">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-6 italic">Staff Payroll</p>
+                    <div className="relative z-10 flex items-baseline gap-x-3">
+                        <h3 className="text-6xl font-black italic tracking-tighter text-foreground leading-none">
                             ₹{stats.staffPayroll.toLocaleString()}
                         </h3>
                     </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full mt-10 overflow-hidden text-center">
-                        <TrendingUp className="h-4 w-4 text-emerald-500 inline mr-2" />
-                        <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500">Liquidation Ready</span>
+                    <div className="h-2 w-full bg-secondary rounded-full mt-8 overflow-hidden text-center flex items-center justify-center">
+                        <TrendingUp className="h-3 w-3 text-primary mr-2" />
+                        <span className="text-[8px] font-bold uppercase tracking-widest text-primary">Monthly Outflow</span>
                     </div>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 mt-4 italic">Monthly Institutional Outflow</p>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-3 italic">Institutional Expenses</p>
                 </div>
             </div>
 
-            <Tabs defaultValue="fees" className="space-y-12 reveal-1">
-                <div className="flex items-center justify-between border-b border-white/5 pb-6">
-                    <TabsList className="bg-white/5 border border-white/10 p-1 rounded-sm h-14 w-fit">
+            <Tabs defaultValue="fees" className="space-y-10">
+                <div className="flex items-center justify-between border-b border-border pb-6">
+                    <TabsList className="bg-secondary/30 border border-border p-1 rounded-xl h-12 w-fit">
                         <TabsTrigger
                             value="fees"
-                            className="rounded-xs px-10 py-3 data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] transition-all gap-x-3 shadow-2xl skew-x-[-12deg] data-[state=inactive]:hover:bg-white/5"
+                            className="rounded-lg px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-widest text-[10px] transition-all gap-x-2"
                         >
-                            <DollarSign className="h-4 w-4 not-skew-x" />
-                            Revenue Registry
+                            <DollarSign className="h-3.5 w-3.5" />
+                            Fee Overview
                         </TabsTrigger>
                         <TabsTrigger
                             value="payments"
-                            className="rounded-xs px-10 py-3 data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] transition-all gap-x-3 shadow-2xl skew-x-[-12deg] data-[state=inactive]:hover:bg-white/5"
+                            className="rounded-lg px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-widest text-[10px] transition-all gap-x-2"
                         >
-                            <CreditCard className="h-4 w-4 not-skew-x" />
-                            Fee Transactions
+                            <CreditCard className="h-3.5 w-3.5" />
+                            Transaction History
                         </TabsTrigger>
                         {!isStudent && (
                             <TabsTrigger
                                 value="payroll"
-                                className="rounded-xs px-10 py-3 data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] transition-all gap-x-3 shadow-2xl skew-x-[-12deg] data-[state=inactive]:hover:bg-white/5"
+                                className="rounded-lg px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-widest text-[10px] transition-all gap-x-2"
                             >
-                                <Briefcase className="h-4 w-4 not-skew-x" />
-                                Payroll Ledger
+                                <Briefcase className="h-3.5 w-3.5" />
+                                Staff Payroll
                             </TabsTrigger>
                         )}
                     </TabsList>
                 </div>
 
-                <TabsContent value="fees" className="animate-in slide-in-from-bottom-2 duration-700 outline-none">
-                    <div className="glass-panel p-2 rounded-sm border border-white/10 overflow-hidden">
+                <TabsContent value="fees" className="outline-none">
+                    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
                         <table className="w-full text-left">
-                            <thead className="bg-white/5">
+                            <thead className="bg-secondary/50">
                                 <tr>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Structure Name</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Classification</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Financial Scope</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Maturity Date</th>
-                                    <th className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Sector Target</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Fee Name</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Category</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Amount</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Due Date</th>
+                                    <th className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-primary italic">Target Class</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-border">
                                 {fees.map((fee) => (
-                                    <tr key={fee.id} className="group hover:bg-white/5 transition-all duration-500">
-                                        <td className="px-10 py-6 font-black text-foreground uppercase italic tracking-tight text-xs group-hover:text-emerald-500 transition-colors">{fee.name}</td>
-                                        <td className="px-10 py-6">
-                                            <Badge variant="outline" className="text-[8px] font-black tracking-widest uppercase border-emerald-500/20 text-emerald-500 bg-emerald-500/5 px-4 py-1 rounded-none italic">{fee.fee_type}</Badge>
+                                    <tr key={fee.id} className="group hover:bg-secondary/20 transition-all duration-300">
+                                        <td className="px-8 py-5 font-bold text-foreground uppercase italic tracking-tight text-xs group-hover:text-primary transition-colors">{fee.name}</td>
+                                        <td className="px-8 py-5">
+                                            <Badge variant="outline" className="text-[8px] font-bold tracking-widest uppercase border-primary/20 text-primary bg-primary/5 px-3 py-1 rounded-lg italic">{fee.fee_type}</Badge>
                                         </td>
-                                        <td className="px-10 py-6 font-black text-foreground text-sm italic tracking-tighter group-hover:scale-105 origin-left transition-transform">₹{fee.amount.toLocaleString()}</td>
-                                        <td className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 italic">{fee.due_date}</td>
-                                        <td className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">{fee.class?.name || "General"}</td>
+                                        <td className="px-8 py-5 font-bold text-foreground text-sm italic tracking-tighter group-hover:translate-x-1 transition-transform">₹{fee.amount.toLocaleString()}</td>
+                                        <td className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">{fee.due_date}</td>
+                                        <td className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 italic">{fee.class?.name || "General"}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -351,39 +347,38 @@ export function FeesDashboard({
                     </div>
                 </TabsContent>
 
-                <TabsContent value="payments" className="animate-in slide-in-from-bottom-2 duration-700 outline-none hover:cursor-crosshair">
-                   {/* Similar Registry Table for Payments */}
-                   <div className="glass-panel p-2 rounded-sm border border-white/10 overflow-hidden">
+                <TabsContent value="payments" className="outline-none">
+                   <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
                         <table className="w-full text-left">
-                            <thead className="bg-white/5">
+                            <thead className="bg-secondary/50">
                                 <tr>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Personnel Node</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Volume</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Protocol</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Status</th>
-                                    <th className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Ledger ID</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Student</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Amount</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Method</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Status</th>
+                                    <th className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-primary italic">Receipt ID</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-border">
                                 {payments.map((p) => (
-                                    <tr key={p.id} className="group hover:bg-white/5 transition-all duration-500">
-                                        <td className="px-10 py-6">
+                                    <tr key={p.id} className="group hover:bg-secondary/20 transition-all duration-300">
+                                        <td className="px-8 py-5">
                                             <div className="flex flex-col">
-                                                <span className="font-black text-foreground uppercase italic tracking-tight text-xs group-hover:text-emerald-500 transition-colors">{p.student?.profile?.full_name}</span>
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-foreground/30 mt-1 italic">{p.student?.admission_number}</span>
+                                                <span className="font-bold text-foreground uppercase italic tracking-tight text-xs group-hover:text-primary transition-colors">{p.student?.profile?.full_name}</span>
+                                                <span className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-1 italic">{p.student?.admission_number}</span>
                                             </div>
                                         </td>
-                                        <td className="px-10 py-6 font-black text-foreground text-sm italic tracking-tighter">₹{p.amount_paid.toLocaleString()}</td>
-                                        <td className="px-10 py-6 text-[10px] font-black uppercase tracking-widest text-emerald-500 italic">{p.payment_method}</td>
-                                        <td className="px-10 py-6">
+                                        <td className="px-8 py-5 font-bold text-foreground text-sm italic tracking-tighter">₹{p.amount_paid.toLocaleString()}</td>
+                                        <td className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">{p.payment_method}</td>
+                                        <td className="px-8 py-5">
                                             <Badge className={cn(
-                                                "text-[8px] font-black tracking-widest uppercase rounded-none skew-x-[-12deg] px-4 py-1",
-                                                p.status === "completed" ? "bg-emerald-500 text-white shadow-[0_0_20px_oklch(var(--emerald-500)/0.4)]" : "bg-red-500 text-white"
+                                                "text-[8px] font-bold tracking-widest uppercase rounded-lg px-3 py-1",
+                                                p.status === "completed" ? "bg-emerald-500 text-white shadow-sm" : "bg-red-500 text-white"
                                             )}>
-                                                <span className="not-skew-x">{p.status}</span>
+                                                {p.status}
                                             </Badge>
                                         </td>
-                                        <td className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-foreground/20 italic">{p.receipt_number || "NO-REID"}</td>
+                                        <td className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground/20 italic">{p.receipt_number || "PENDING"}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -391,40 +386,40 @@ export function FeesDashboard({
                     </div>
                 </TabsContent>
                 
-                <TabsContent value="payroll" className="animate-in slide-in-from-bottom-2 duration-700 outline-none">
-                    <div className="glass-panel p-2 rounded-sm border border-white/10 overflow-hidden shadow-2xl shadow-emerald-500/5">
+                <TabsContent value="payroll" className="outline-none">
+                    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
                         <table className="w-full text-left">
-                            <thead className="bg-white/5">
+                            <thead className="bg-secondary/50">
                                 <tr>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Personnel Node</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Base Liquid</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Incentives</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Deductions</th>
-                                    <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Interval</th>
-                                    <th className="px-10 py-6 text-right text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 italic">Status</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Faculty Name</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Base Salary</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Incentives</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Deductions</th>
+                                    <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Month/Year</th>
+                                    <th className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-primary italic">Status</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5 font-medium tracking-tight">
+                            <tbody className="divide-y divide-border">
                                 {staffPayrolls.map((p) => (
-                                    <tr key={p.id} className="group hover:bg-white/5 transition-all duration-500">
-                                        <td className="px-10 py-6">
+                                    <tr key={p.id} className="group hover:bg-secondary/20 transition-all duration-300">
+                                        <td className="px-8 py-5">
                                             <div className="flex flex-col">
-                                                <span className="font-black text-foreground uppercase italic tracking-tight text-xs group-hover:text-emerald-500 transition-colors">
+                                                <span className="font-bold text-foreground uppercase italic tracking-tight text-xs group-hover:text-primary transition-colors">
                                                     {p.staff?.first_name} {p.staff?.last_name}
                                                 </span>
-                                                <span className="text-[8px] font-black uppercase tracking-widest text-foreground/30 mt-1 italic">{p.staff?.employee_id || "STAFF-NODE"}</span>
+                                                <span className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-1 italic">{p.staff?.employee_id || "STAFF-ID"}</span>
                                             </div>
                                         </td>
-                                        <td className="px-10 py-6 font-black text-foreground text-sm italic tracking-tighter group-hover:scale-105 origin-left transition-transform">₹{p.base_salary.toLocaleString()}</td>
-                                        <td className="px-10 py-6 text-emerald-500 font-black text-xs italic tracking-tighter self-center group-hover:translate-x-1 transition-transform">+₹{(p.bonuses || 0).toLocaleString()}</td>
-                                        <td className="px-10 py-6 text-red-500 font-black text-xs italic tracking-tighter self-center group-hover:-translate-x-1 transition-transform">-₹{(p.deductions || 0).toLocaleString()}</td>
-                                        <td className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 italic">{p.month}/{p.year}</td>
-                                        <td className="px-10 py-6 text-right">
+                                        <td className="px-8 py-5 font-bold text-foreground text-sm italic tracking-tighter transition-transform group-hover:translate-x-1">₹{p.base_salary.toLocaleString()}</td>
+                                        <td className="px-8 py-5 text-emerald-500 font-bold text-xs italic tracking-tighter">+₹{(p.bonuses || 0).toLocaleString()}</td>
+                                        <td className="px-8 py-5 text-red-500 font-bold text-xs italic tracking-tighter">-₹{(p.deductions || 0).toLocaleString()}</td>
+                                        <td className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">{p.month}/{p.year}</td>
+                                        <td className="px-8 py-5 text-right">
                                             <Badge className={cn(
-                                                "text-[8px] font-black tracking-widest uppercase rounded-none skew-x-[-12deg] px-4 py-1",
-                                                p.status === "paid" ? "bg-emerald-500 text-white shadow-[0_0_20px_oklch(var(--emerald-500)/0.4)]" : "bg-yellow-500 text-white"
+                                                "text-[8px] font-bold tracking-widest uppercase rounded-lg px-3 py-1",
+                                                p.status === "paid" ? "bg-emerald-500 text-white shadow-sm" : "bg-yellow-500 text-white"
                                             )}>
-                                                <span className="not-skew-x">{p.status}</span>
+                                                {p.status}
                                             </Badge>
                                         </td>
                                     </tr>

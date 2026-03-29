@@ -33,29 +33,29 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
         <div className="space-y-8 animate-in fade-in duration-700 pb-12">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-x-4">
-                    <div className="h-14 w-14 rounded-sm bg-card/40 border border-primary/20 backdrop-blur-md flex items-center justify-center text-primary emerald-glow">
-                        <BrainCircuit className="h-7 w-7" />
+                    <div className="h-12 w-12 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                        <LineChart className="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
-                            AI Predictive Insights
+                        <h2 className="text-3xl font-bold tracking-tight text-foreground uppercase">
+                            Performance Insights
                         </h2>
-                        <p className="text-foreground/70 font-bold tracking-tight uppercase text-[10px] tracking-[0.2em] mt-1">
-                            AI-powered school performance insights
+                        <p className="text-muted-foreground font-bold tracking-widest uppercase text-[10px] mt-1">
+                            Academic analytics and trend predictions
                         </p>
                     </div>
                 </div>
                 <div className="flex gap-x-3">
                     <Button
-                        variant="ghost"
-                        className="rounded-sm border border-border bg-card/40 backdrop-blur-md font-bold gap-x-2 text-foreground/80 hover:text-primary transition-all shadow-xl"
+                        variant="outline"
+                        className="rounded-lg font-bold gap-x-2 text-muted-foreground hover:text-primary transition-all shadow-sm"
                     >
-                        <LineChart className="h-4 w-4" />
-                        System Logs
+                        <Activity className="h-4 w-4" />
+                        System Health
                     </Button>
-                    <Button className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[160px] uppercase tracking-widest text-[10px]">
+                    <Button className="rounded-lg bg-primary text-primary-foreground font-bold gap-x-2 px-6 shadow-sm uppercase tracking-widest text-[10px]">
                         <Zap className="h-4 w-4" />
-                        Analyze Data
+                        Recalculate
                     </Button>
                 </div>
             </div>
@@ -64,13 +64,13 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                 {projections.map((p: any) => (
                     <Card
                         key={p.id}
-                        className="border-border bg-card/40 backdrop-blur-xl p-6 overflow-hidden relative group rounded-sm shadow-2xl hover:border-primary transition-all"
+                        className="border-border bg-card p-6 overflow-hidden relative group rounded-xl shadow-sm hover:border-primary/50 transition-all"
                     >
                         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-                            <Activity className="h-20 w-20 text-primary" />
+                            <Activity className="h-16 w-16 text-primary" />
                         </div>
                         <div className="flex justify-between items-start mb-4">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">
                                 {p.title}
                             </p>
                             <Badge
@@ -84,12 +84,12 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                                 {p.status.toUpperCase()}
                             </Badge>
                         </div>
-                        <div className="flex items-baseline gap-x-3">
-                            <h3 className="text-3xl font-black text-foreground">{p.value}</h3>
+                        <div className="flex items-baseline gap-x-2">
+                            <h3 className="text-3xl font-bold text-foreground tracking-tight">{p.value}</h3>
                             <div
                                 className={cn(
                                     "flex items-center text-[10px] font-bold uppercase",
-                                    p.trend === "up" ? "text-primary" : "text-foreground/60",
+                                    p.trend === "up" ? "text-primary" : "text-muted-foreground",
                                 )}
                             >
                                 {p.trend === "up" ? (
@@ -100,13 +100,13 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                                 {p.trend.toUpperCase()}
                             </div>
                         </div>
-                        <div className="mt-6 flex items-center justify-between text-[10px] font-black uppercase text-foreground/50">
+                        <div className="mt-6 flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground/60">
                             <span>Accuracy Score</span>
-                            <span className="text-primary font-black tracking-widest">{p.confidence}</span>
+                            <span className="text-primary font-bold tracking-widest">{p.confidence}</span>
                         </div>
-                        <div className="relative h-1.5 w-full bg-accent/20 rounded-none overflow-hidden border border-border/50 mt-2">
+                        <div className="relative h-2 w-full bg-muted rounded-full overflow-hidden mt-2">
                           <div 
-                            className="h-full bg-primary emerald-glow transition-all duration-1000 shadow-[0_0_15px_oklch(var(--primary)/0.4)]"
+                            className="h-full bg-primary transition-all duration-1000"
                             style={{ width: p.confidence }}
                           />
                         </div>
@@ -118,56 +118,56 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                 {/* Deep Analysis */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-primary flex items-center gap-x-2">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-x-2 italic">
                             <TrendingUp className="h-4 w-4" />
-                            Student Dropout Prediction
+                            Academic Risk Assessment
                         </h3>
                         <div className="flex gap-x-2">
                             <Button
-                                variant="ghost"
+                                variant="outline"
                                 size="sm"
-                                className="rounded-sm h-9 border border-border font-black text-[10px] uppercase text-foreground/60 hover:text-primary transition-all"
+                                className="rounded-lg h-9 font-bold text-[10px] uppercase text-muted-foreground hover:text-primary transition-all"
                             >
-                                Refine Data
+                                Recalibrate
                             </Button>
                         </div>
                     </div>
 
-                    <Card className="border-border bg-card/40 backdrop-blur-md rounded-sm p-8 shadow-2xl overflow-hidden relative">
-                        <div className="h-[300px] flex items-end gap-x-4 relative z-10">
+                    <Card className="border-border bg-card rounded-xl p-8 shadow-sm overflow-hidden relative">
+                        <div className="h-[300px] flex items-end gap-x-3 relative z-10">
                             {[65, 42, 88, 35, 76, 54, 95, 62].map((h, i) => (
                                 <div
                                     key={i}
                                     className="flex-1 flex flex-col items-center gap-y-3 group/p"
                                 >
                                     <div className="relative w-full h-[250px] flex items-end">
-                                        <div className="absolute inset-0 bg-accent/20 rounded-none border border-border/30 overflow-hidden" />
+                                        <div className="absolute inset-0 bg-muted/30 rounded-lg overflow-hidden" />
                                         <div
-                                            className="relative w-full bg-primary emerald-glow transition-all duration-1000 shadow-[0_0_15px_oklch(var(--primary)/0.3)]"
+                                            className="relative w-full bg-primary/80 rounded-t-lg transition-all duration-1000 group-hover/p:bg-primary"
                                             style={{ height: `${h}%` }}
                                         >
-                                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-card border border-primary/20 text-primary text-[10px] font-black px-2 py-1 rounded-xs opacity-0 group-hover/p:opacity-100 transition-all shadow-xl backdrop-blur-md">
-                                                {h}% SCORE
+                                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-[10px] font-bold px-2 py-1 rounded-md opacity-0 group-hover/p:opacity-100 transition-all shadow-md border border-border">
+                                                {h}%
                                             </div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-black text-foreground/50 uppercase tracking-widest">
-                                        Dept 0{i + 1}
+                                    <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                                        DEP 0{i + 1}
                                     </span>
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-8 p-4 rounded-xs bg-accent/30 border border-primary/10 flex items-center justify-between text-[10px] font-black text-foreground/60 relative z-10">
-                            <p className="uppercase tracking-[0.2em]">
-                                Based on past 5 years of school data
+                        <div className="mt-8 p-4 rounded-lg bg-muted/50 border border-border flex items-center justify-between text-[10px] font-bold text-muted-foreground/60 relative z-10 italic">
+                            <p className="uppercase tracking-widest">
+                                Based on institutional performance data
                             </p>
-                            <div className="flex gap-x-4">
+                            <div className="flex gap-x-4 tracking-widest">
                                 <span className="flex items-center gap-x-1">
-                                    <div className="h-2 w-2 rounded-none bg-primary emerald-glow" />{" "}
+                                    <div className="h-2 w-2 rounded-full bg-primary" />{" "}
                                     PREDICTED
                                 </span>
                                 <span className="flex items-center gap-x-1">
-                                    <div className="h-2 w-2 rounded-none bg-accent" />{" "}
+                                    <div className="h-2 w-2 rounded-full bg-muted" />{" "}
                                     HISTORICAL
                                 </span>
                             </div>
@@ -177,61 +177,58 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
 
                 {/* AI Recommendations */}
                 <div className="space-y-6">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-primary">
-                        AI Recommendations
-                    </h3>
-
-                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden group shadow-2xl">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                            <ShieldCheck className="h-20 w-20 text-primary" />
+                    <Card className="border-border bg-card rounded-xl p-8 relative overflow-hidden group shadow-sm">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+                            <ShieldCheck className="h-16 w-16 text-primary" />
                         </div>
-                        <h4 className="text-xl font-black tracking-tight mb-2 uppercase text-foreground">
-                            Stability Check
+                        <h4 className="text-xl font-bold tracking-tight mb-2 uppercase text-foreground">
+                            Stability Audit
                         </h4>
-                        <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest leading-relaxed">
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed italic">
                             ML identifies {systemMetrics?.studentCount} active students and {systemMetrics?.teacherCount} faculty.
-                            Capacity balancing indicates stable performance constraints based on current data.
+                            Capacity balancing indicates stable performance constraints based on current metrics.
                         </p>
                         <div className="mt-6 space-y-3">
-                            <Button className="w-full bg-primary text-primary-foreground font-black rounded-xs hover:bg-primary/90 emerald-glow uppercase tracking-widest text-[10px] py-6">
-                                Hire New Staff
+                            <Button className="w-full bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 shadow-sm uppercase tracking-widest text-[10px] py-6">
+                                Staffing Action Plan
                             </Button>
                             <Button
                                 variant="ghost"
-                                className="w-full text-foreground/40 font-black text-[10px] uppercase tracking-[0.4em] hover:text-primary transition-all"
+                                className="w-full text-muted-foreground/60 font-bold text-[10px] uppercase tracking-widest hover:text-primary transition-all underline underline-offset-4"
                             >
-                                View Stress Test →
+                                View Detailed Report →
                             </Button>
                         </div>
                     </Card>
 
-                    <Card className="border-destructive/20 bg-destructive/5 rounded-sm p-6 shadow-2xl">
+
+                    <Card className="border-destructive/20 bg-destructive/5 rounded-xl p-6 shadow-sm">
                         <div className="flex items-center gap-x-3 mb-4">
-                            <div className="h-10 w-10 rounded-xs bg-destructive/10 text-destructive flex items-center justify-center border border-destructive/20">
+                            <div className="h-10 w-10 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center border border-destructive/20">
                                 <AlertTriangle className="h-5 w-5" />
                             </div>
                             <div>
-                                <h5 className="text-[10px] font-black text-destructive uppercase tracking-widest leading-none">
-                                    Yield Warning
+                                <h5 className="text-[10px] font-bold text-destructive uppercase tracking-widest leading-none">
+                                    Yield Variance
                                 </h5>
-                                <p className="text-sm font-black text-foreground uppercase tracking-tight">
-                                    Projected Fee Variance
+                                <p className="text-sm font-bold text-foreground uppercase tracking-tight">
+                                    Projected Deficit
                                 </p>
                             </div>
                         </div>
-                        <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest leading-relaxed mb-6">
-                            Current recorded revenue is ₹{(systemMetrics?.totalRevenue || 0).toFixed(2)}. Deficit forecasted in elective fees due to economic trends.
+                        <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest leading-relaxed mb-6 italic">
+                            Current recorded revenue is ₹{(systemMetrics?.totalRevenue || 0).toFixed(2)}. Potential shortfall forecasted in elective streams.
                         </p>
-                        <div className="p-4 rounded-xs bg-background/50 border border-destructive/20 backdrop-blur-md">
-                            <p className="text-[10px] font-black text-destructive uppercase mb-2">
-                                Recommended Offset
+                        <div className="p-4 rounded-lg bg-background border border-border transition-all hover:border-destructive/30">
+                            <p className="text-[10px] font-bold text-destructive uppercase mb-2 italic">
+                                Recommended Action
                             </p>
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">
-                                    Adjust Elective Surcharge
+                                    Audit Elective Fee Structure
                                 </span>
-                                <Badge className="bg-destructive text-destructive-foreground border-none text-[8px] font-black rounded-xs">
-                                    +4.2%
+                                <Badge variant="destructive" className="border-none text-[8px] font-bold rounded-md tracking-tighter">
+                                    CRITICAL
                                 </Badge>
                             </div>
                         </div>

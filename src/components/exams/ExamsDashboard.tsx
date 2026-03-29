@@ -140,16 +140,15 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
         <div className="space-y-12 reveal-1">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 border-b border-primary/10 pb-10">
                 <div className="flex items-center gap-x-8">
-                    <div className="h-20 w-20 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_40px_rgba(16,185,129,0.15)] skew-x-[-12deg] group hover:bg-primary hover:text-primary-foreground transition-all duration-700">
-                        <Award className="h-10 w-10 skew-x-[12deg] transition-all duration-700" />
+                    <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-lg group hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                        <Award className="h-8 w-8 transition-all duration-300" />
                     </div>
                     <div>
                         <div className="relative">
-                            <h1 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">Exam <span className="text-primary italic">Management</span></h1>
-                            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
+                            <h1 className="text-4xl font-bold uppercase tracking-tight text-foreground leading-none">Exam <span className="text-primary italic">Management</span></h1>
                         </div>
-                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse" /> Manage School Examinations
+                        <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 mt-3 flex items-center gap-2">
+                            <span className="h-1 w-1 rounded-full bg-primary" /> Manage School Examinations
                         </p>
                     </div>
                 </div>
@@ -157,26 +156,25 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                 {(userRole === "admin" || userRole === "teacher") && (
                     <Button
                         onClick={() => setIsCreateOpen(true)}
-                        className="group relative h-16 px-12 bg-primary/10 text-primary font-black rounded-none border border-primary/20 hover:bg-primary/20 transition-all duration-500 skew-x-[-12deg] overflow-hidden"
+                        className="h-12 px-8 bg-primary text-primary-foreground font-bold rounded-lg shadow-sm hover:scale-105 transition-all"
                     >
-                        <span className="relative z-10 skew-x-[12deg] flex items-center gap-x-4 uppercase tracking-[0.2em] text-[10px]">
+                        <span className="flex items-center gap-x-2 uppercase tracking-wider text-[10px]">
                             Create Exam
-                            <Plus className="h-5 w-5 group-hover:rotate-180 transition-transform duration-700" />
+                            <Plus className="h-4 w-4" />
                         </span>
-                        <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500 opacity-20" />
                     </Button>
                 )}
             </div>
 
             <Tabs defaultValue="list" className="w-full">
-                <TabsList className="bg-white/[0.02] p-2 rounded-none h-20 border border-primary/10 skew-x-[-8deg] mb-12 flex items-center gap-2">
-                    <TabsTrigger value="list" className="h-16 px-12 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 not-skew-x rounded-none border border-transparent data-[state=active]:emerald-glow italic">
-                        <span className="flex items-center gap-x-3">
+                <TabsList className="bg-muted/50 border border-border p-1 rounded-lg h-auto mb-8 flex items-center gap-2">
+                    <TabsTrigger value="list" className="rounded-md px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-[11px] uppercase tracking-wide transition-all italic">
+                        <span className="flex items-center gap-x-2">
                             <ClipboardCheck className="h-4 w-4" /> Exam List
                         </span>
                     </TabsTrigger>
-                    <TabsTrigger value="calendar" className="h-16 px-12 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black text-[11px] uppercase tracking-[0.3em] transition-all duration-500 not-skew-x rounded-none border border-transparent data-[state=active]:emerald-glow italic text-foreground/40">
-                        <span className="flex items-center gap-x-3">
+                    <TabsTrigger value="calendar" className="rounded-md px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-[11px] uppercase tracking-wide transition-all italic text-foreground/40">
+                        <span className="flex items-center gap-x-2">
                             <Calendar className="h-4 w-4" /> Exam Calendar
                         </span>
                     </TabsTrigger>
@@ -190,69 +188,57 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                             { label: "Subject Coverage", value: new Set(exams.map(e => e.subject_id)).size, icon: BookOpen, width: "64%" },
                             { label: "Current Cycle", value: "Verified", icon: Calendar, width: "100%" },
                         ].map((stat, i) => (
-                            <div key={i} className="glass-card p-10 relative overflow-hidden group hover:emerald-border-glow transition-all duration-700 skew-x-[-12deg] rounded-none border-primary/10">
-                                <div className="not-skew-x relative z-10">
-                                    <stat.icon className="absolute right-[-20px] bottom-[-20px] h-24 w-24 text-primary opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-700" />
-                                    <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-6 italic">{stat.label}</p>
-                                    <h3 className="text-6xl font-black italic tracking-tighter text-foreground group-hover:text-primary transition-all duration-500 leading-none">
+                            <div key={i} className="bg-card p-6 border border-border rounded-xl shadow-sm hover:border-primary/50 transition-all group">
+                                <div className="relative z-10">
+                                    <stat.icon className="absolute right-[-10px] bottom-[-10px] h-16 w-16 text-primary opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all" />
+                                    <p className="text-[9px] font-mono font-bold uppercase tracking-widest text-primary/60 mb-4 italic">{stat.label}</p>
+                                    <h3 className="text-4xl font-bold italic tracking-tight text-foreground group-hover:text-primary transition-all leading-none">
                                         {stat.value}
                                     </h3>
-                                    <div className="h-[2px] w-full bg-white/5 mt-8 overflow-hidden">
+                                    <div className="h-1 w-full bg-muted mt-6 rounded-full overflow-hidden">
                                         <div 
-                                            className="h-full bg-primary shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-all duration-1000 ease-out" 
+                                            className="h-full bg-primary transition-all duration-1000 ease-out" 
                                             style={{ width: stat.width }} 
                                         />
                                     </div>
                                 </div>
-                                <div className="absolute top-0 right-0 h-10 w-10 border-t border-r border-primary/20 group-hover:border-primary/60 transition-colors" />
                             </div>
                         ))}
                     </div>
 
-                    <div className="glass-panel p-2 rounded-none border border-primary/10 overflow-hidden shadow-2xl relative">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+                    <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-primary/5">
+                            <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">
-                                        <div className="flex items-center gap-2">
-                                            <span className="h-2 w-2 rounded-none bg-primary" /> Exam Name
-                                        </div>
-                                    </th>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Class</th>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Date</th>
-                                    <th className="px-12 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Total Marks</th>
-                                    <th className="px-12 py-8 text-right text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Actions</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Exam Name</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Class</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Date</th>
+                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Total Marks</th>
+                                    <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-primary/5 font-medium tracking-tight">
                                 {exams.map((exam) => (
                                     <tr key={exam.id} className="group hover:bg-primary/[0.02] transition-all duration-500">
-                                        <td className="px-12 py-10">
+                                        <td className="px-6 py-6">
                                             <div>
-                                                <p className="font-black text-foreground uppercase italic tracking-tighter text-xl group-hover:text-primary transition-colors leading-none mb-3">
+                                                <p className="font-bold text-foreground uppercase tracking-tight text-lg group-hover:text-primary transition-colors leading-none mb-2">
                                                     {exam.name}
                                                 </p>
-                                                <div className="flex items-center gap-2">
-                                                    <BookOpen className="h-3 w-3 text-primary/40" />
-                                                    <p className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-foreground/40">{exam.subject?.name}</p>
+                                                <div className="flex items-center gap-2 text-muted-foreground">
+                                                    <BookOpen className="h-3 w-3" />
+                                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest">{exam.subject?.name}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-12 py-10">
-                                            <div className="h-10 px-6 bg-primary/5 border border-primary/10 flex items-center justify-center font-mono font-black text-[11px] uppercase tracking-widest text-foreground group-hover:border-primary/40 transition-all w-fit skew-x-[-12deg]">
-                                                <span className="not-skew-x flex items-center gap-2">
-                                                    <Users className="h-3 w-3 text-primary" />
-                                                    {exam.class?.name}
-                                                </span>
-                                            </div>
+                                        <td className="px-6 py-6 font-mono font-bold text-xs uppercase tracking-wider text-muted-foreground">
+                                             {exam.class?.name}
                                         </td>
-                                        <td className="px-12 py-10">
+                                        <td className="px-6 py-6">
                                             <div className="flex flex-col gap-1">
-                                                <p className="font-mono font-black text-[12px] uppercase tracking-[0.2em] text-foreground italic">
+                                                <p className="font-mono font-bold text-[12px] uppercase tracking-wider text-foreground">
                                                     {format(new Date(exam.date), "dd-MM-yyyy")}
                                                 </p>
-                                                <p className="text-[9px] font-mono font-black uppercase tracking-widest text-primary/30">Schedule Date</p>
                                             </div>
                                         </td>
                                         <td className="px-12 py-10">
@@ -273,27 +259,29 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                                 {(userRole === "admin" || userRole === "teacher") && (
                                                     <Button 
                                                         onClick={() => handleOpenMarks(exam)}
-                                                        className="h-12 px-8 bg-primary/10 border border-primary/20 text-primary font-black uppercase tracking-widest text-[10px] hover:bg-primary hover:text-primary-foreground transition-all duration-500 skew-x-[-12deg] rounded-none group/btn"
+                                                        size="sm"
+                                                        className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-wider text-[10px]"
                                                     >
-                                                        <span className="not-skew-x flex items-center gap-x-3">
-                                                            <Plus className="h-4 w-4 group-hover/btn:rotate-90 transition-transform" /> 
-                                                            Enter Results
+                                                        <span className="flex items-center gap-x-2">
+                                                            <Plus className="h-3 w-3" /> Enter Results
                                                         </span>
                                                     </Button>
                                                 )}
                                                 <Button 
                                                     variant="ghost" 
-                                                    className="h-12 w-12 p-0 text-foreground/30 hover:text-primary hover:bg-primary/10 rounded-none skew-x-[-12deg] border border-transparent hover:border-primary/20"
+                                                    size="icon"
+                                                    className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg border border-transparent hover:border-primary/20"
                                                 >
-                                                    <Pencil className="h-4 w-4 not-skew-x" />
+                                                    <Pencil className="h-4 w-4" />
                                                 </Button>
                                                 {(userRole === "admin" || userRole === "teacher") && (
                                                     <Button 
                                                         onClick={() => handleDeleteExam(exam.id)}
                                                         variant="ghost" 
-                                                        className="h-12 w-12 p-0 text-foreground/30 hover:text-red-500 hover:bg-red-500/10 rounded-none skew-x-[-12deg] border border-transparent hover:border-red-500/20"
+                                                        size="icon"
+                                                        className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg border border-transparent hover:border-red-500/20"
                                                     >
-                                                        <Trash2 className="h-4 w-4 not-skew-x" />
+                                                        <Trash2 className="h-4 w-4" />
                                                     </Button>
                                                 )}
                                             </div>
@@ -325,20 +313,19 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
 
             {/* Create Exam Dialog */}
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                <DialogContent className="glass-panel border-primary/10 p-0 overflow-hidden max-w-2xl rounded-none shadow-2xl">
-                    <div className="p-12 bg-primary/5 border-b border-primary/10 relative overflow-hidden">
-                        <Award className="absolute right-[-30px] top-[-30px] h-48 w-48 text-primary opacity-5 rotate-12" />
+                <DialogContent className="bg-card border border-border p-0 overflow-hidden max-w-2xl rounded-xl shadow-2xl">
+                    <div className="p-8 bg-muted/50 border-b border-border relative overflow-hidden">
                         <div className="relative z-10">
-                            <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
+                            <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
                                 Exam <span className="text-primary italic">Details</span>
                             </h3>
-                            <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
+                            <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 mt-3 flex items-center gap-2">
                                 <span className="h-1 w-1 rounded-full bg-primary" /> Create a new exam
                             </p>
                         </div>
                     </div>
                     
-                    <div className="p-12 space-y-10">
+                    <div className="p-8 space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="space-y-4">
                                 <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Exam Name</Label>
@@ -385,45 +372,41 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 border-t border-primary/5 pt-10">
-                            <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Maximum Marks</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-border pt-8">
+                            <div className="space-y-3">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Maximum Marks</Label>
                                 <Input 
                                     type="number" 
-                                    className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[14px] uppercase tracking-[0.2em] italic focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all"
+                                    className="h-12 bg-background border-border rounded-lg font-bold text-lg"
                                     value={examForm.max_marks} 
                                     onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} 
                                 />
                             </div>
-                            <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Passing Marks</Label>
+                            <div className="space-y-3">
+                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Passing Marks</Label>
                                 <Input 
                                     type="number" 
-                                    className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[14px] uppercase tracking-[0.2em] italic focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all"
+                                    className="h-12 bg-background border-border rounded-lg font-bold text-lg text-primary"
                                     value={examForm.passing_marks} 
                                     onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} 
                                 />
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-end gap-x-8 pt-12 border-t border-primary/5">
-                            <button 
-                                type="button" 
+                        <div className="flex items-center justify-end gap-x-6 pt-8 border-t border-border">
+                            <Button 
+                                variant="ghost"
                                 onClick={() => setIsCreateOpen(false)}
-                                className="text-[11px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 hover:text-foreground transition-colors italic group"
+                                className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground"
                             >
-                                <span className="group-hover:mr-2 transition-all">Cancel</span> [ESC]
-                            </button>
+                                Cancel
+                            </Button>
                             <Button 
                                 onClick={handleCreateExam}
                                 disabled={loading}
-                                className="group relative h-16 px-12 bg-primary text-primary-foreground font-black rounded-none shadow-[0_0_50px_rgba(16,185,129,0.2)] uppercase tracking-[0.3em] text-[10px] skew-x-[-12deg] transition-all hover:scale-105 overflow-hidden border-none"
+                                className="h-12 px-10 bg-primary text-primary-foreground font-bold rounded-lg shadow-md uppercase tracking-wider text-[11px] hover:scale-105 transition-all"
                             >
-                                <span className="not-skew-x relative z-10 flex items-center gap-x-3 italic">
-                                    {loading ? "Saving..." : "Save Exam"}
-                                    {!loading && <Plus className="h-5 w-5" />}
-                                </span>
-                                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                                {loading ? "Saving..." : "Save Exam"}
                             </Button>
                         </div>
                     </div>
@@ -432,25 +415,24 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
 
             {/* Marks Assessment Dialog */}
             <Dialog open={isMarksOpen} onOpenChange={setIsMarksOpen}>
-                <DialogContent className="glass-panel border-primary/10 p-0 overflow-hidden max-w-5xl max-h-[90vh] flex flex-col rounded-none shadow-2xl">
-                    <div className="p-12 bg-primary/5 border-b border-primary/10 relative overflow-hidden flex-shrink-0">
-                        <ClipboardCheck className="absolute right-[-30px] top-[-30px] h-56 w-56 text-primary opacity-5 rotate-12" />
+                <DialogContent className="bg-card border border-border p-0 overflow-hidden max-w-5xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl">
+                    <div className="p-8 bg-muted/50 border-b border-border relative overflow-hidden flex-shrink-0">
                         <div className="relative z-10">
-                            <h3 className="text-4xl font-black italic uppercase tracking-tighter text-foreground leading-none">
+                            <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
                                 Exam <span className="text-primary italic">Results</span>
                             </h3>
-                            <div className="flex flex-wrap items-center gap-6 mt-6">
-                                <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 italic flex items-center gap-2">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Exam: {selectedExam?.name}
+                            <div className="flex flex-wrap items-center gap-6 mt-4">
+                                <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 italic flex items-center gap-2">
+                                    <span className="h-1 w-1 rounded-full bg-primary" /> Exam: {selectedExam?.name}
                                 </p>
-                                <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 italic flex items-center gap-2 border-l border-primary/20 pl-6">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/50" /> Max Marks: {selectedExam?.max_marks} Points
+                                <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 italic flex items-center gap-2 border-l border-border pl-6">
+                                    <span className="h-1 w-1 rounded-full bg-primary/50" /> Max Marks: {selectedExam?.max_marks} Points
                                 </p>
                             </div>
                         </div>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                         <div className="glass-panel p-2 rounded-none border border-primary/10 mb-10 overflow-hidden">
                             <table className="w-full text-left border-collapse">
                                 <thead className="bg-primary/10">
@@ -461,33 +443,32 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                                 </thead>
                                 <tbody className="divide-y divide-primary/5">
                                     {examStudents.length === 0 ? (
-                                        <tr><td colSpan={2} className="py-24 text-center text-foreground/10 font-mono font-black uppercase tracking-[0.6em] text-sm italic">No student records found</td></tr>
+                                        <tr><td colSpan={2} className="py-16 text-center text-muted-foreground/30 font-bold uppercase tracking-widest text-xs italic">No student records found</td></tr>
                                     ) : (
                                         examStudents.map((student: any) => (
-                                            <tr key={student.id} className="group hover:bg-primary/[0.03] transition-all duration-500">
-                                                <td className="px-10 py-8">
-                                                    <div className="flex items-center gap-x-8">
-                                                        <div className="h-14 w-14 flex items-center justify-center bg-primary/5 font-mono font-black text-xs text-primary border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 skew-x-[-12deg]">
-                                                            <span className="not-skew-x">{student.id.slice(0, 3)}</span>
+                                            <tr key={student.id} className="group hover:bg-muted/30 transition-all">
+                                                <td className="px-8 py-6">
+                                                    <div className="flex items-center gap-x-6">
+                                                        <div className="h-10 w-10 flex items-center justify-center bg-muted font-mono font-bold text-[10px] text-muted-foreground border border-border rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                                                            {student.id.slice(0, 3)}
                                                         </div>
                                                         <div>
-                                                            <p className="font-black text-foreground uppercase tracking-tighter text-lg group-hover:text-primary transition-colors italic leading-none mb-2">
+                                                            <p className="font-bold text-foreground uppercase tracking-tight text-md group-hover:text-primary transition-colors leading-none mb-1">
                                                                 {student.profile?.first_name} {student.profile?.last_name}
                                                             </p>
-                                                            <p className="text-[10px] font-mono font-black uppercase tracking-widest text-foreground/30">Roll No: {student.admission_number || student.id.slice(0, 12)}</p>
+                                                            <p className="text-[9px] font-mono font-medium uppercase tracking-wider text-muted-foreground/60">Roll No: {student.admission_number || student.id.slice(0, 12)}</p>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-10 py-8 text-right">
-                                                    <div className="relative inline-block skew-x-[-12deg]">
+                                                <td className="px-8 py-6 text-right">
+                                                    <div className="relative inline-block">
                                                         <Input
                                                             type="number"
-                                                            placeholder="000"
-                                                            className="w-40 h-16 bg-white/[0.03] border-primary/20 rounded-none font-black text-2xl italic text-right focus-visible:ring-primary/50 focus-visible:bg-primary/5 transition-all text-primary placeholder:text-primary/10"
+                                                            placeholder="0"
+                                                            className="w-32 h-12 bg-muted/50 border-border rounded-lg font-bold text-xl text-right text-primary placeholder:text-primary/10"
                                                             value={marks[student.id] || ""}
                                                             onChange={(e) => setMarks({ ...marks, [student.id]: e.target.value })}
                                                         />
-                                                        <div className="absolute -bottom-1 right-0 w-8 h-[2px] bg-primary group-hover:w-full transition-all duration-700" />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -498,29 +479,25 @@ export function ExamsDashboard({ exams, classes, subjects, academicYears, studen
                         </div>
                     </div>
 
-                    <div className="p-12 border-t border-primary/10 bg-black/40 flex flex-col md:flex-row items-center justify-between gap-8 flex-shrink-0 relative">
-                        <div className="absolute top-[-1px] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-                        <div className="flex items-center gap-4">
-                            <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                            <p className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 italic">Total Students: {examStudents.length}</p>
+                    <div className="p-8 border-t border-border bg-muted/30 flex flex-col md:flex-row items-center justify-between gap-6 flex-shrink-0 relative">
+                        <div className="flex items-center gap-3">
+                            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                            <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">Total Students: {examStudents.length}</p>
                         </div>
-                        <div className="flex items-center gap-x-10">
-                            <button 
-                                type="button" 
+                        <div className="flex items-center gap-x-6">
+                            <Button 
+                                variant="ghost"
                                 onClick={() => setIsMarksOpen(false)}
-                                className="text-[11px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 hover:text-foreground transition-colors italic"
+                                className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground"
                             >
-                                Discard Changes
-                            </button>
+                                Discard
+                            </Button>
                             <Button 
                                 onClick={handleSaveMarks}
                                 disabled={loading}
-                                className="group relative h-16 px-14 bg-primary text-primary-foreground font-black rounded-none shadow-[0_0_50px_rgba(16,185,129,0.3)] uppercase tracking-[0.3em] text-[11px] skew-x-[-12deg] transition-all hover:scale-105 overflow-hidden border-none"
+                                className="h-12 px-10 bg-primary text-primary-foreground font-bold rounded-lg shadow-md uppercase tracking-wider text-[11px] hover:scale-105 transition-all"
                             >
-                                <span className="not-skew-x relative z-10 italic">
-                                    {loading ? "Saving..." : "Save Marks"}
-                                </span>
-                                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
+                                {loading ? "Saving..." : "Save Marks"}
                             </Button>
                         </div>
                     </div>

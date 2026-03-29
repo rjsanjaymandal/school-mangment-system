@@ -205,7 +205,7 @@ export function AttendanceDashboard({
             className={cn(
                 "px-3 py-1.5 rounded-sm text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-x-1",
                 studentRecords[studentId] === status
-                    ? `${activeColor} text-white shadow-lg shadow-emerald-500/10 scale-105`
+                    ? `${activeColor} text-white shadow-sm scale-105`
                     : "bg-background border border-border text-muted-foreground hover:bg-accent"
             )}
         >
@@ -215,23 +215,20 @@ export function AttendanceDashboard({
 
     return (
         <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
-            {/* Background Matrix Mesh */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
                 <div className="flex items-center gap-x-8">
-                    <div className="h-20 w-20 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_40px_rgba(16,185,129,0.15)] skew-x-[-12deg] group hover:bg-primary hover:text-primary-foreground transition-all duration-700">
-                        <Users className="h-10 w-10 skew-x-[12deg] transition-all duration-700" />
+                    <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-lg group hover:bg-primary hover:text-primary-foreground transition-all duration-300">
+                        <Users className="h-8 w-8 transition-all duration-300" />
                     </div>
                     <div>
                         <div className="relative">
-                            <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
+                            <h2 className="text-4xl font-bold uppercase tracking-tight text-foreground leading-none">
                                 Attendance <span className="text-primary italic">Records</span>
                             </h2>
-                            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
                         </div>
-                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
+                        <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 mt-3 flex items-center gap-2">
+                            <span className="h-1 w-1 rounded-full bg-primary" /> 
                             {isStudent ? "View your attendance" : "Mark today's attendance"}
                         </p>
                     </div>
@@ -240,9 +237,8 @@ export function AttendanceDashboard({
 
             {/* Matrix Stats Grid */}
             <div className="grid gap-8 md:grid-cols-4 reveal-2 relative z-10">
-                <div className="group relative transition-all duration-700 hover:-translate-y-2">
-                    <div className="absolute inset-0 bg-primary/10 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                <div className="group relative transition-all duration-300">
+                    <div className="relative bg-card p-6 border border-border rounded-xl shadow-sm overflow-hidden hover:border-primary/50 transition-all">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
                                 <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Weekly Attendance</p>
@@ -259,7 +255,7 @@ export function AttendanceDashboard({
 
                 <div className="group relative transition-all duration-700 hover:-translate-y-2">
                     <div className="absolute inset-0 bg-primary/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
+                    <div className="relative bg-card p-8 border border-border rounded-lg shadow-sm overflow-hidden">
                         <div className="not-skew-x flex justify-between items-start">
                             <div>
                                 <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Today Present</p>
@@ -312,10 +308,10 @@ export function AttendanceDashboard({
             {/* Tabs & Controls */}
             <Tabs defaultValue={isStudent ? "history" : "mark"} className="space-y-10 relative z-10">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <TabsList className="bg-primary/5 backdrop-blur-xl border border-primary/20 p-2 rounded-none h-auto w-fit skew-x-[-12deg]">
+                    <TabsList className="bg-muted/50 border border-border p-1 rounded-lg h-auto w-fit">
                         <div className="not-skew-x flex gap-2">
                             {!isStudent && (
-                                <TabsTrigger value="mark" className="rounded-none px-10 py-5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-widest text-[11px] transition-all gap-x-3 emerald-glow italic group">
+                                <TabsTrigger value="mark" className="rounded-md px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-wide text-[11px] transition-all gap-x-2 italic group">
                                     <ClipboardCheck className="h-4 w-4 group-data-[state=active]:animate-bounce" /> MARK ATTENDANCE
                                 </TabsTrigger>
                             )}
@@ -329,15 +325,10 @@ export function AttendanceDashboard({
                     </TabsList>
 
                     {isAdminOrTeacher && (
-                        <div className="flex items-center gap-4 skew-x-[-12deg]">
-                             <Button variant="outline" onClick={handleExportCSV} className="h-16 px-8 rounded-none border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary uppercase font-black tracking-widest text-[10px] transition-all">
-                                <span className="not-skew-x flex items-center gap-2"><Download className="h-4 w-4" /> Export CSV</span>
+                        <div className="flex items-center gap-4">
+                             <Button variant="outline" onClick={handleExportCSV} className="h-12 px-6 rounded-lg border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary uppercase font-bold tracking-wide text-[10px] transition-all">
+                                <span className="flex items-center gap-2"><Download className="h-4 w-4" /> Export CSV</span>
                              </Button>
-                             <div className="h-16 w-[1px] bg-primary/20 mx-2" />
-                             <div className="flex items-baseline gap-2 not-skew-x">
-                                <div className="h-3 w-3 rounded-none bg-primary animate-pulse" />
-                                <span className="font-mono text-[10px] font-black text-primary uppercase">Status: Live</span>
-                             </div>
                         </div>
                     )}
                 </div>
@@ -408,7 +399,7 @@ export function AttendanceDashboard({
                             {/* Personnel Matrix List */}
                             <div className="space-y-4">
                                 {filteredStudents.length === 0 ? (
-                                    <div className="glass-panel p-20 text-center border-primary/5 skew-x-[-12deg] rounded-none shadow-inner">
+                                    <div className="bg-card p-12 text-center border border-border rounded-xl shadow-sm">
                                         <div className="not-skew-x">
                                             <Search className="h-12 w-12 mx-auto text-foreground/10 mb-6" />
                                             <h3 className="font-black text-xl text-foreground/30 uppercase tracking-[0.3em] italic leading-none">NO STUDENTS FOUND</h3>
@@ -425,14 +416,14 @@ export function AttendanceDashboard({
                                                         <div className="flex items-center gap-8">
                                                             <div className="relative">
                                                                 <div className={cn(
-                                                                    "h-14 w-14 flex items-center justify-center font-black text-white text-xl transition-all duration-500 skew-x-[-12deg] shadow-lg",
-                                                                    studentRecords[student.id] === "present" ? "bg-primary emerald-glow" :
-                                                                        studentRecords[student.id] === "absent" ? "bg-red-600 shadow-red-500/20" :
-                                                                            studentRecords[student.id] === "late" ? "bg-amber-500 shadow-amber-500/20" : "bg-blue-600 shadow-blue-500/20"
+                                                                    "h-12 w-12 flex items-center justify-center font-bold text-white text-lg rounded-lg shadow-sm transition-all",
+                                                                    studentRecords[student.id] === "present" ? "bg-primary" :
+                                                                        studentRecords[student.id] === "absent" ? "bg-red-600" :
+                                                                            studentRecords[student.id] === "late" ? "bg-amber-500" : "bg-blue-600"
                                                                 )}>
-                                                                    <span className="skew-x-[12deg]">{student.profile?.first_name?.[0] || "?"}</span>
+                                                                    <span>{student.profile?.first_name?.[0] || "?"}</span>
                                                                 </div>
-                                                                <span className="absolute -top-3 -left-3 text-[9px] font-mono font-black bg-foreground text-background px-2 py-1 italic tracking-tighter">STUDENT_{String(idx + 1).padStart(3, '0')}</span>
+                                                                <span className="absolute -top-2 -left-2 text-[8px] font-mono font-bold bg-foreground text-background px-1.5 py-0.5 rounded-sm">ID:{String(idx + 1).padStart(3, '0')}</span>
                                                             </div>
                                                             <div>
                                                                 <h4 className="font-black text-xl text-foreground tracking-tighter uppercase italic group-hover:text-primary transition-colors">{student.profile?.first_name} {student.profile?.last_name}</h4>
@@ -468,11 +459,11 @@ export function AttendanceDashboard({
                                     <Button 
                                         onClick={handleSave} 
                                         disabled={loading} 
-                                        className="h-20 px-16 skew-x-[-12deg] rounded-none bg-primary text-primary-foreground font-black uppercase tracking-[0.4em] text-xs emerald-glow shadow-[0_0_50px_rgba(16,185,129,0.2)] hover:scale-105 transition-all group"
+                                        className="h-16 px-12 rounded-xl bg-primary text-primary-foreground font-bold uppercase tracking-widest text-sm shadow-md hover:scale-105 transition-all group"
                                     >
-                                        <div className="not-skew-x flex items-center gap-4">
-                                            {loading ? <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin rounded-full" /> : <ShieldCheck className="h-6 w-6 group-hover:animate-pulse" />}
-                                            {loading ? "SAVING..." : `SAVE ATTENDANCE (${Object.keys(studentRecords).length} STUDENTS)`}
+                                        <div className="flex items-center gap-4">
+                                            {loading ? <div className="h-5 w-5 border-2 border-white/30 border-t-white animate-spin rounded-full" /> : <ShieldCheck className="h-6 w-6" />}
+                                            {loading ? "SAVING..." : `Save Attendance (${Object.keys(studentRecords).length} Students)`}
                                         </div>
                                     </Button>
                                 </div>

@@ -50,8 +50,8 @@ const navigation: NavGroup[] = [
     group: "Main Dashboard",
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard, description: "Overview of school activities and key metrics" },
-      { name: "Analytics", href: "/analytics", icon: Zap, futuristic: true, roles: ["admin", "teacher"], description: "Insights into school performance and trends" },
-      { name: "Admin Insights", href: "/oracle", icon: BrainCircuit, futuristic: true, roles: ["admin"], description: "Advanced statistics for school management" },
+      { name: "System Analytics", href: "/analytics", icon: Zap, roles: ["admin", "teacher"], description: "Insights into school performance and trends" },
+      { name: "Administrative Reports", href: "/oracle", icon: BrainCircuit, roles: ["admin"], description: "Advanced statistics for school management" },
     ],
   },
   {
@@ -153,42 +153,33 @@ export function Launchpad({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative flex flex-col p-8 bg-card/40 backdrop-blur-xl border border-border rounded-sm shadow-sm hover:shadow-2xl hover:bg-card hover:-translate-y-1.5 transition-all duration-500 overflow-hidden"
+                className="group relative flex flex-col p-8 bg-card border border-border rounded-xl shadow-sm hover:border-primary/40 hover:bg-secondary/20 transition-all duration-300 overflow-hidden"
               >
                 {/* Visual Accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
 
-                <div className="flex flex-col gap-y-6 relative z-10">
-                  <div className={cn(
-                    "w-14 h-14 flex items-center justify-center rounded-sm transition-all duration-500 group-hover:rotate-3 group-hover:scale-110 shadow-xl",
-                    item.futuristic 
-                      ? "bg-primary text-primary-foreground emerald-glow" 
-                      : "bg-background border border-border text-foreground group-hover:bg-primary group-hover:text-primary-foreground"
-                  )}>
+                 <div className="flex flex-col gap-y-6 relative z-10">
+                  <div className="w-14 h-14 flex items-center justify-center rounded-xl transition-all duration-300 group-hover:scale-105 bg-primary/10 border border-primary/20 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
                     <item.icon className="h-7 w-7" />
                   </div>
-                  
-                  <div className="space-y-2">
+                                    <div className="space-y-2">
                     <div className="flex items-center gap-x-2">
-                      <span className="font-black text-xl text-foreground tracking-tight group-hover:text-primary transition-colors">
+                      <span className="font-bold text-xl text-foreground tracking-tight group-hover:text-primary transition-colors italic">
                         {item.name}
                       </span>
-                      {item.futuristic && (
-                        <div className="h-1.5 w-1.5 rounded-sm bg-primary animate-pulse shadow-sm shadow-primary/50" />
-                      )}
                     </div>
-                    <p className="text-sm text-foreground/70 font-medium leading-relaxed group-hover:text-foreground transition-all line-clamp-2">
+                    <p className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed group-hover:text-foreground transition-all line-clamp-2 italic">
                       {item.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
-                  <div className="flex items-center gap-x-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 group-hover:text-primary transition-colors">
+                 <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
+                  <div className="flex items-center gap-x-1.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors italic">
                     Open Module
                   </div>
-                  <div className="h-10 w-10 rounded-xs bg-accent flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">
-                    <Plus className="h-5 w-5 rotate-45 group-hover:rotate-0 transition-transform duration-500" />
+                  <div className="h-9 w-9 rounded-lg bg-secondary border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
+                    <Plus className="h-4 w-4 rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                   </div>
                 </div>
               </Link>

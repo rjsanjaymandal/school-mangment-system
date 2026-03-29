@@ -52,17 +52,15 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
       {
-        name: "Analytics",
+        name: "System Analytics",
         href: "/analytics",
         icon: Zap,
-        futuristic: true,
         roles: ["admin", "teacher"],
       },
       {
-        name: "Admin Insights",
+        name: "Administrative Reports",
         href: "/oracle",
         icon: BrainCircuit,
-        futuristic: true,
         roles: ["admin"],
       },
     ],
@@ -186,19 +184,16 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
     .filter((group) => group.items.length > 0);
 
   return (
-    <div className="flex h-full flex-col bg-background/60 backdrop-blur-3xl border-r border-white/5 text-foreground transition-all duration-500">
+    <div className="flex h-full flex-col bg-[#020617] border-r border-border text-foreground transition-all duration-300">
       <div className="p-8 pb-4 flex items-center gap-x-4 reveal-0">
-        <div className="relative group/logo">
-          <div className="absolute -inset-2 bg-primary/20 rounded-sm blur-lg group-hover/logo:bg-primary/30 transition-all duration-500" />
-          <div className="relative bg-primary text-primary-foreground p-2.5 rounded-sm shadow-2xl emerald-border-glow transition-all duration-500 group-hover/logo:scale-110 group-hover/logo:rotate-3">
+          <div className="relative bg-primary text-primary-foreground p-2.5 rounded-xl shadow-lg transition-all duration-300 group-hover/logo:scale-105">
             <GraduationCap className="h-7 w-7" />
           </div>
-        </div>
         <div className="flex flex-col">
           <span className="font-black text-2xl tracking-tighter text-foreground uppercase italic leading-none">
             Maysan
           </span>
-          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-primary/80 mt-1">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-primary mt-1">
             Institutional OS
           </span>
         </div>
@@ -208,47 +203,39 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         {filteredNavigation.map((group) => (
           <div key={group.group} className="space-y-4">
             <div className="flex items-center gap-x-3 px-4">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.5em] text-primary/60 whitespace-nowrap">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 whitespace-nowrap italic">
                 {group.group}
               </h3>
-              <div className="h-[1px] w-full bg-primary/10" />
+              <div className="h-[1px] w-full bg-border/50" />
             </div>
             <div className="space-y-1.5">
               {group.items.map((item) => (
-                <Link
+                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "group relative flex items-center gap-x-3 text-foreground/60 text-[11px] font-black uppercase tracking-widest px-4 py-3 rounded-sm transition-all duration-500",
+                    "group relative flex items-center gap-x-3 text-muted-foreground text-[11px] font-bold uppercase tracking-widest px-4 py-3 rounded-xl transition-all duration-300 italic",
                     pathname === item.href 
-                      ? "bg-primary/10 text-primary emerald-border-glow" 
-                      : "hover:bg-white/5 hover:text-foreground"
+                      ? "bg-primary/10 text-primary" 
+                      : "hover:bg-secondary/20 hover:text-foreground"
                   )}
                 >
-                  <div
+                   <div
                     className={cn(
-                      "p-2 rounded-xs transition-all duration-500",
+                      "p-2 rounded-lg transition-all duration-300",
                       pathname === item.href
-                        ? "bg-primary text-primary-foreground shadow-2xl scale-110"
-                        : "bg-white/5 text-foreground/40 group-hover:bg-primary/20 group-hover:text-primary group-hover:scale-110",
+                        ? "bg-primary text-primary-foreground shadow-lg"
+                        : "bg-secondary/40 text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary",
                     )}
                   >
                     <item.icon className="h-4 w-4" />
                   </div>
                   <span className="relative z-10 transition-colors duration-500">{item.name}</span>
                   
-                  {item.futuristic && (
-                    <div className="ml-auto flex items-center gap-x-2">
-                       <span className="h-1 w-1 rounded-full bg-primary animate-ping" />
-                       <span className="text-[8px] font-black text-primary animate-pulse">LIVE</span>
-                    </div>
-                  )}
+                   {/* Status indicators removed */}
 
-                  {pathname === item.href && (
-                    <>
-                      <div className="absolute left-0 w-1 h-3/5 bg-primary rounded-r-full shadow-[4px_0_15px_oklch(var(--primary)/0.6)]" />
-                      <div className="absolute inset-0 bg-primary/5 rounded-sm animate-pulse" />
-                    </>
+                   {pathname === item.href && (
+                    <div className="absolute left-0 w-1 h-3/5 bg-primary rounded-r-full" />
                   )}
                 </Link>
               ))}
@@ -257,25 +244,25 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         ))}
       </div>
 
-      <div className="p-6 border-t border-white/5 bg-background/40 backdrop-blur-2xl reveal-3">
-        <div className="relative group cursor-pointer overflow-hidden p-4 rounded-sm bg-white/5 border border-white/5 transition-all duration-500 hover:bg-white/10 hover:border-primary/30">
+       <div className="p-6 border-t border-border bg-card/20">
+        <div className="relative group cursor-pointer overflow-hidden p-4 rounded-xl bg-secondary/20 border border-border transition-all duration-300 hover:bg-secondary/40">
           <div className="absolute top-0 right-0 p-1 opacity-20 transition-opacity group-hover:opacity-100">
              <Zap className="h-3 w-3 text-primary" />
           </div>
-          <div className="flex items-center gap-x-4 relative z-10">
-            <div className="h-11 w-11 rounded-sm bg-primary text-primary-foreground flex items-center justify-center font-black text-xl shadow-2xl emerald-border-glow transition-transform duration-500 group-hover:scale-105">
+           <div className="flex items-center gap-x-4 relative z-10">
+            <div className="h-10 w-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg transition-transform duration-300 group-hover:scale-105">
               {userProfile?.first_name?.[0] || "U"}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-black tracking-tight truncate text-foreground uppercase italic">
+              <span className="text-xs font-bold tracking-tight truncate text-foreground uppercase italic">
                 {userProfile
                   ? `${userProfile.first_name} ${userProfile.last_name}`
                   : "Syncing..."}
               </span>
               <div className="flex items-center gap-x-2">
-                <span className="h-1 w-1 rounded-full bg-primary animate-pulse" />
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-primary/80 truncate">
-                  {userRole} Node
+                <span className="h-1 w-1 rounded-full bg-primary" />
+                <span className="text-[9px] font-bold uppercase tracking-widest text-primary/80 truncate italic">
+                    {userRole} Account
                 </span>
               </div>
             </div>
