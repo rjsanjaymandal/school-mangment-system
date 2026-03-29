@@ -17,10 +17,13 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
-    // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = '/login'
-    return NextResponse.redirect(url)
+    const response = NextResponse.redirect(url)
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      response.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return response
   }
 
   // Role-based access control & Impersonation Handling
@@ -44,6 +47,9 @@ export async function updateSession(request: NextRequest) {
         if (realRole !== 'admin') {
             // Non-admin trying to impersonate? Clear it immediately.
             const response = NextResponse.redirect(new URL(request.url))
+            supabaseResponse.cookies.getAll().forEach((cookie) => {
+                response.cookies.set(cookie.name, cookie.value, cookie)
+            })
             response.cookies.delete("impersonation_user_id")
             return response
         }
@@ -82,7 +88,11 @@ export async function updateSession(request: NextRequest) {
         // Admins can ALWAYS access admin routes, even when impersonating (it switches context)
         // However, if they are impersonating a student, they should be able to access /student routes
         if (effectiveRole !== allowedRole && realRole !== 'admin') {
-            return NextResponse.redirect(new URL('/unauthorized', request.url))
+            const response = NextResponse.redirect(new URL('/unauthorized', request.url))
+            supabaseResponse.cookies.getAll().forEach((cookie) => {
+              response.cookies.set(cookie.name, cookie.value, cookie)
+            })
+            return response
         }
     }
   }

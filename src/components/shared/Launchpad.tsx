@@ -49,7 +49,6 @@ const navigation: NavGroup[] = [
   {
     group: "Overview",
     items: [
-      { name: "Dashboard", href: "/", icon: LayoutDashboard, description: "Overview of school activities and key metrics" },
       { name: "Analytics", href: "/analytics", icon: Zap, roles: ["admin", "teacher"], description: "Insights into school performance and trends" },
       { name: "Reports", href: "/oracle", icon: BrainCircuit, roles: ["admin"], description: "Advanced statistics for school management" },
     ],
