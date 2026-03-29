@@ -42,5 +42,7 @@ yarn-error.log*
 # ai agent
 .agent/
 .agents/
+.augment/
+.claude/
 .gemini/
 brain/

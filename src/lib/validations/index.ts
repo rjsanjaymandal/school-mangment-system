@@ -5,8 +5,9 @@ export const userRoleSchema = z.enum(['admin', 'teacher', 'student', 'parent']);
 
 export const profileSchema = z.object({
   id: z.string().uuid(),
-  first_name: z.string().min(2),
-  last_name: z.string().min(2),
+  full_name: z.string().min(2),
+  first_name: z.string().optional().nullable(),
+  last_name: z.string().optional().nullable(),
   email: z.string().email(),
   role: userRoleSchema,
   phone: z.string().optional().nullable(),
@@ -28,6 +29,8 @@ export const academicYearSchema = z.object({
 export const classSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
+  capacity: z.number().int().optional().nullable(),
+  room_number: z.string().optional().nullable(),
   grade_level: z.string().optional(),
   academic_year_id: z.string().uuid(),
 });

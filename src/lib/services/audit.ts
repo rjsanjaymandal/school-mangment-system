@@ -37,7 +37,7 @@ export const AuditService = {
         .from("audit_logs")
         .select(`
           *,
-          actor:profiles!actor_id(first_name, last_name, role)
+          actor:profiles!actor_id(full_name, role)
         `)
         .order("created_at", { ascending: false });
 

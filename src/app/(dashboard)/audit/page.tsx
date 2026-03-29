@@ -11,7 +11,7 @@ export default async function AuditPage() {
     .limit(50);
 
   if (error) {
-    console.error("Error fetching audit logs:", error);
+    console.error("Error fetching audit logs:", error.message, error.details);
   }
 
   return <AuditDashboardClient logs={logs || []} />;

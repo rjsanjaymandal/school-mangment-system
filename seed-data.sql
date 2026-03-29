@@ -13,11 +13,11 @@ ON CONFLICT DO NOTHING;
 -- 2. SUBJECTS
 INSERT INTO public.subjects (id, name, code, description)
 VALUES 
-    ('s1111111-1111-4111-s111-111111111111', 'Mathematics', 'MATH101', 'Core mathematics and logic'),
-    ('s2222222-2222-4222-s222-222222222222', 'Science', 'SCI102', 'General science and laboratory experiments'),
-    ('s3333333-3333-4333-s333-333333333333', 'English literature', 'ENG103', 'Grammar, literature and creative writing'),
-    ('s4444444-4444-4444-s444-444444444444', 'History', 'HIST104', 'World history and geography'),
-    ('s5555555-5555-4555-s555-555555555555', 'Computer Science', 'CS105', 'Programming and digital literacy')
+    ('51111111-1111-4111-5111-111111111111', 'Mathematics', 'MATH101', 'Core mathematics and logic'),
+    ('52222222-2222-4222-5222-222222222222', 'Science', 'SCI102', 'General science and laboratory experiments'),
+    ('53333333-3333-4333-5333-333333333333', 'English literature', 'ENG103', 'Grammar, literature and creative writing'),
+    ('54444444-4444-4444-5444-444444444444', 'History', 'HIST104', 'World history and geography'),
+    ('55555555-5555-4555-5555-555555555555', 'Computer Science', 'CS105', 'Programming and digital literacy')
 ON CONFLICT (code) DO NOTHING;
 
 -- 3. CLASSES & SECTIONS
@@ -35,11 +35,11 @@ VALUES
     ('f1111111-1111-4111-f111-111111111111', 'Dr. Aris V.', 'teacher', 'aris@edufox.com'),
     ('f2222222-2222-4222-f222-222222222222', 'Prof. Sarah Jenkins', 'teacher', 'sarah@edufox.com'),
     ('f3333333-3333-4333-f333-333333333333', 'Marcus Thorne', 'teacher', 'marcus@edufox.com'),
-    ('p1111111-1111-4111-p111-111111111111', 'Ethan Hunt', 'student', 'ethan@student.com'),
-    ('p2222222-2222-4222-p222-222222222222', 'Selina Kyle', 'student', 'selina@student.com'),
-    ('p3333333-3333-4333-p333-333333333333', 'Bruce Wayne', 'student', 'bruce@student.com'),
-    ('p4444444-4444-4444-p444-444444444444', 'Diana Prince', 'student', 'diana@student.com'),
-    ('p5555555-5555-4555-p555-555555555555', 'Clark Kent', 'student', 'clark@student.com')
+    ('d1111111-1111-4111-d111-111111111111', 'Ethan Hunt', 'student', 'ethan@student.com'),
+    ('d2222222-2222-4222-d222-222222222222', 'Selina Kyle', 'student', 'selina@student.com'),
+    ('d3333333-3333-4333-d333-333333333333', 'Bruce Wayne', 'student', 'bruce@student.com'),
+    ('d4444444-4444-4444-d444-444444444444', 'Diana Prince', 'student', 'diana@student.com'),
+    ('d5555555-5555-4555-d555-555555555555', 'Clark Kent', 'student', 'clark@student.com')
 ON CONFLICT (id) DO NOTHING;
 
 -- 5. TEACHERS TABLE
@@ -53,11 +53,11 @@ ON CONFLICT (employee_id) DO NOTHING;
 -- 6. STUDENTS TABLE
 INSERT INTO public.students (id, admission_number, roll_number, class_id, date_of_birth, gender)
 VALUES 
-    ('p1111111-1111-4111-p111-111111111111', 'ADM-1001', '1001', 'c1111111-1111-4111-c111-111111111111', '2008-05-12', 'Male'),
-    ('p2222222-2222-4222-p222-222222222222', 'ADM-1002', '1002', 'c1111111-1111-4111-c111-111111111111', '2008-09-21', 'Female'),
-    ('p3333333-3333-4333-p333-333333333333', 'ADM-1003', '1003', 'c1111111-1111-4111-c111-111111111111', '2007-12-01', 'Male'),
-    ('p4444444-4444-4444-p444-444444444444', 'ADM-1004', '1004', 'c2222222-2222-4222-c222-222222222222', '2006-03-15', 'Female'),
-    ('p5555555-5555-4555-p555-555555555555', 'ADM-1005', '1005', 'c2222222-2222-4222-c222-222222222222', '2006-11-28', 'Male')
+    ('d1111111-1111-4111-d111-111111111111', 'ADM-1001', '1001', 'c1111111-1111-4111-c111-111111111111', '2008-05-12', 'Male'),
+    ('d2222222-2222-4222-d222-222222222222', 'ADM-1002', '1002', 'c1111111-1111-4111-c111-111111111111', '2008-09-21', 'Female'),
+    ('d3333333-3333-4333-d333-333333333333', 'ADM-1003', '1003', 'c1111111-1111-4111-c111-111111111111', '2007-12-01', 'Male'),
+    ('d4444444-4444-4444-d444-444444444444', 'ADM-1004', '1004', 'c2222222-2222-4222-c222-222222222222', '2006-03-15', 'Female'),
+    ('d5555555-5555-4555-d555-555555555555', 'ADM-1005', '1005', 'c2222222-2222-4222-c222-222222222222', '2006-11-28', 'Male')
 ON CONFLICT (admission_number) DO NOTHING;
 
 -- 7. ATTENDANCE (Recent 5 days for Grade 10)

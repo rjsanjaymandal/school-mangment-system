@@ -26,11 +26,11 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
         <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                        Audit Ledger
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground uppercase">
+                        Audit Logs
                     </h2>
-                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                        Cryptographic Security Logs & Immutable System Records
+                    <p className="text-muted-foreground font-bold tracking-widest uppercase text-[10px] mt-1">
+                        System Activity Records and History
                     </p>
                 </div>
                 <div className="flex gap-x-3">
@@ -45,22 +45,22 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                <Card className="border-primary/20 bg-primary/5 backdrop-blur-xl rounded-sm p-8 relative overflow-hidden shadow-2xl group hover:border-primary transition-all emerald-glow">
+                <Card className="border-primary/20 bg-primary/5 backdrop-blur-xl rounded-xl p-8 relative overflow-hidden shadow-sm group hover:border-primary transition-all">
                     <ShieldAlert className="absolute right-[-10px] bottom-[-10px] h-24 w-24 text-primary/10 group-hover:text-primary transition-all" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">Integrity Status</p>
-                    <h3 className="text-4xl font-black text-foreground italic tracking-tighter">SECURE</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">System Integrity</p>
+                    <h3 className="text-4xl font-bold text-foreground tracking-tight">PROTECTED</h3>
                 </Card>
-                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Mutations (24h)</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{(logs.length * 1.4).toFixed(0)}</h3>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-xl p-8 shadow-sm">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Activities (24h)</p>
+                    <h3 className="text-4xl font-bold text-foreground tracking-tight">{(logs.length * 1.4).toFixed(0)}</h3>
                 </Card>
-                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm p-8 shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/40 mb-2">Active Identity Sessions</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter">42</h3>
+                <Card className="border-border bg-card/40 backdrop-blur-xl rounded-xl p-8 shadow-sm">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Active Sessions</p>
+                    <h3 className="text-4xl font-bold text-foreground tracking-tight">42</h3>
                 </Card>
-                <Card className="border-destructive/20 bg-destructive/5 rounded-sm p-8 shadow-2xl">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-destructive mb-2">Perimeter Flags</p>
-                    <h3 className="text-4xl font-black text-destructive tracking-tighter">0</h3>
+                <Card className="border-destructive/20 bg-destructive/5 rounded-xl p-8 shadow-sm">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-destructive mb-2">Security Flags</p>
+                    <h3 className="text-4xl font-bold text-destructive tracking-tighter">0</h3>
                 </Card>
             </div>
 
@@ -82,20 +82,20 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                     <table className="w-full text-sm">
                         <thead className="bg-accent/30">
                             <tr className="border-b border-primary/10">
-                                <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                    Chronos (Timestamp)
+                                <th className="text-left p-6 font-bold uppercase tracking-widest text-[10px] text-primary">
+                                    Time
                                 </th>
-                                <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                    Identity Vector
+                                <th className="text-left p-6 font-bold uppercase tracking-widest text-[10px] text-primary">
+                                    User
                                 </th>
-                                <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                    Operational Delta
+                                <th className="text-left p-6 font-bold uppercase tracking-widest text-[10px] text-primary">
+                                    Action
                                 </th>
-                                <th className="text-left p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                    Entity Node
+                                <th className="text-left p-6 font-bold uppercase tracking-widest text-[10px] text-primary">
+                                    Module
                                 </th>
-                                <th className="text-right p-6 font-black uppercase tracking-[0.2em] text-[10px] text-primary italic">
-                                    Network Footprint
+                                <th className="text-right p-6 font-bold uppercase tracking-widest text-[10px] text-primary">
+                                    IP Address
                                 </th>
                             </tr>
                         </thead>
@@ -112,7 +112,7 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                                         <div className="flex items-center gap-x-2">
                                             {log.actor?.role === 'admin' ? <Key className="h-3 w-3 text-destructive" /> : <UserCheck className="h-3 w-3 text-primary" />}
                                             <span className="font-bold text-foreground group-hover:text-primary transition-colors">
-                                                {log.actor?.email || "SYSTEM_DAEMON"}
+                                                {log.actor?.full_name || log.actor?.email || "SYSTEM_DAEMON"}
                                             </span>
                                         </div>
                                     </td>

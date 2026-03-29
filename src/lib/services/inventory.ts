@@ -20,7 +20,7 @@ export const InventoryService = {
       
       return (data || []).map(item => ({
         ...item,
-        status: item.quantity_in_stock < 10 ? "Critical" : item.quantity_in_stock < 50 ? "Low" : "Optimal"
+        status: item.quantity_in_stock < (item.min_stock_level || 10) ? "Critical" : item.quantity_in_stock < 50 ? "Low" : "Optimal"
       }));
     } catch (error) {
       return handleServiceError(error);
