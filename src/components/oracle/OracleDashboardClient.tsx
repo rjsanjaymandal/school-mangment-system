@@ -38,10 +38,10 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                     </div>
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground uppercase">
-                            Performance Insights
+                            School Analytics
                         </h2>
                         <p className="text-muted-foreground font-bold tracking-widest uppercase text-[10px] mt-1">
-                            Academic analytics and trend predictions
+                            Performance overview and trends
                         </p>
                     </div>
                 </div>
@@ -118,9 +118,9 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                 {/* Deep Analysis */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-x-2 italic">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-primary flex items-center gap-x-2">
                             <TrendingUp className="h-4 w-4" />
-                            Academic Risk Assessment
+                            Performance Trends
                         </h3>
                         <div className="flex gap-x-2">
                             <Button
@@ -128,7 +128,7 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                                 size="sm"
                                 className="rounded-lg h-9 font-bold text-[10px] uppercase text-muted-foreground hover:text-primary transition-all"
                             >
-                                Recalibrate
+                                Update
                             </Button>
                         </div>
                     </div>
@@ -157,18 +157,18 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-8 p-4 rounded-lg bg-muted/50 border border-border flex items-center justify-between text-[10px] font-bold text-muted-foreground/60 relative z-10 italic">
+                        <div className="mt-8 p-4 rounded-lg bg-muted/50 border border-border flex items-center justify-between text-[10px] font-bold text-muted-foreground/60 relative z-10">
                             <p className="uppercase tracking-widest">
-                                Based on institutional performance data
+                                Based on school performance data
                             </p>
                             <div className="flex gap-x-4 tracking-widest">
                                 <span className="flex items-center gap-x-1">
                                     <div className="h-2 w-2 rounded-full bg-primary" />{" "}
-                                    PREDICTED
+                                    FORECAST
                                 </span>
                                 <span className="flex items-center gap-x-1">
                                     <div className="h-2 w-2 rounded-full bg-muted" />{" "}
-                                    HISTORICAL
+                                    ACTUAL
                                 </span>
                             </div>
                         </div>
@@ -182,15 +182,15 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                             <ShieldCheck className="h-16 w-16 text-primary" />
                         </div>
                         <h4 className="text-xl font-bold tracking-tight mb-2 uppercase text-foreground">
-                            Stability Audit
+                            Enrollment Overview
                         </h4>
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed italic">
-                            ML identifies {systemMetrics?.studentCount} active students and {systemMetrics?.teacherCount} faculty.
-                            Capacity balancing indicates stable performance constraints based on current metrics.
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
+                            Currently tracking {systemMetrics?.studentCount} students and {systemMetrics?.teacherCount} staff members.
+                            Staff-to-student ratios are within optimal range.
                         </p>
                         <div className="mt-6 space-y-3">
                             <Button className="w-full bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 shadow-sm uppercase tracking-widest text-[10px] py-6">
-                                Staffing Action Plan
+                                View Staffing Details
                             </Button>
                             <Button
                                 variant="ghost"
@@ -209,23 +209,23 @@ export default function OracleDashboardClient({ systemMetrics }: { systemMetrics
                             </div>
                             <div>
                                 <h5 className="text-[10px] font-bold text-destructive uppercase tracking-widest leading-none">
-                                    Yield Variance
+                                    Financials
                                 </h5>
                                 <p className="text-sm font-bold text-foreground uppercase tracking-tight">
-                                    Projected Deficit
+                                    Revenue Overview
                                 </p>
                             </div>
                         </div>
-                        <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest leading-relaxed mb-6 italic">
-                            Current recorded revenue is ₹{(systemMetrics?.totalRevenue || 0).toFixed(2)}. Potential shortfall forecasted in elective streams.
+                        <p className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest leading-relaxed mb-6">
+                            Total collected revenue: ₹{(systemMetrics?.totalRevenue || 0).toFixed(2)}.
                         </p>
                         <div className="p-4 rounded-lg bg-background border border-border transition-all hover:border-destructive/30">
-                            <p className="text-[10px] font-bold text-destructive uppercase mb-2 italic">
-                                Recommended Action
+                            <p className="text-[10px] font-bold text-destructive uppercase mb-2">
+                                Recommendation
                             </p>
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-bold text-foreground uppercase tracking-widest">
-                                    Audit Elective Fee Structure
+                                    Review Fee Structures
                                 </span>
                                 <Badge variant="destructive" className="border-none text-[8px] font-bold rounded-md tracking-tighter">
                                     CRITICAL

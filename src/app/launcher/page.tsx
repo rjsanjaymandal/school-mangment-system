@@ -180,9 +180,9 @@ export default function LauncherPage() {
 
       {/* Footer Branding */}
       <footer className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 reveal-3">
-        <div className="glass-dark border border-border px-6 py-2.5 rounded-sm shadow-lg bg-card/60 backdrop-blur-2xl">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground flex items-center gap-x-2">
-            EduFox Core <span className="h-1 w-1 rounded-full bg-primary emerald-glow" /> Architecture 2.5.0
+        <div className="border border-border px-6 py-2.5 rounded-md shadow-md bg-card/60 backdrop-blur-xl">
+          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-foreground flex items-center gap-x-2">
+            Edu Maysan Core <span className="h-1 w-1 rounded-full bg-primary" /> Architecture 2.5.0
           </p>
         </div>
       </footer>

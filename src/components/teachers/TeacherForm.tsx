@@ -77,7 +77,7 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
             name="first_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Given Identity</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">First Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Jane" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -90,7 +90,7 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
             name="last_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Surname</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Last Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Smith" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -104,9 +104,9 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Digital Liaison (Email)</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Email Address</FormLabel>
               <FormControl>
-                <Input placeholder="jane.smith@institutional.org" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                <Input placeholder="jane.smith@example.com" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
               <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
@@ -117,7 +117,7 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
           name="employee_id"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Faculty ID</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Employee ID</FormLabel>
               <FormControl>
                 <Input placeholder="FAC-202X-101" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
               </FormControl>
@@ -130,7 +130,7 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
           name="qualification"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Pedagogical Credentials</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Qualifications</FormLabel>
               <FormControl>
                 <Input placeholder="Specify degrees and certifications..." {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
@@ -143,9 +143,9 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
           name="specialization"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Disciplinary Expertise (CSV)</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Specialization (comma-separated)</FormLabel>
               <FormControl>
-                <Input placeholder="Quantum Physics, Pure Mathematics, etc." {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                <Input placeholder="English, Mathematics, etc." {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
               <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
@@ -153,10 +153,10 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
         />
         <div className="flex justify-end gap-x-3 pt-6 border-t border-border/50">
           <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
-            Abort
+            Cancel
           </Button>
           <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
-            {isPending ? "Synchronizing..." : initialData ? "Confirm Modification" : "Initialize Personnel Node"}
+            {isPending ? "Saving..." : initialData ? "Save Changes" : "Add Teacher"}
           </Button>
         </div>
       </form>

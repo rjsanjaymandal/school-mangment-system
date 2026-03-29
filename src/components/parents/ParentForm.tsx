@@ -76,7 +76,7 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             name="first_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Given Identity</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">First Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Michael" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -89,7 +89,7 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             name="last_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Surname</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Last Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -103,9 +103,9 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Digital Liaison (Email)</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Email Address</FormLabel>
               <FormControl>
-                <Input placeholder="michael.doe@institutional.org" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                <Input placeholder="michael.doe@example.com" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
               <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
@@ -116,7 +116,7 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
           name="phone"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Telemetric Contact (Phone)</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Phone Number</FormLabel>
               <FormControl>
                 <Input placeholder="+1 234 567 890" {...field} className="rounded-sm bg-background/50 border-border font-mono font-bold text-xs uppercase tracking-tight" />
               </FormControl>
@@ -130,7 +130,7 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             name="occupation"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Professional Role</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Occupation</FormLabel>
                 <FormControl>
                   <Input placeholder="Sector Specialist" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -143,9 +143,9 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
             name="relation_to_student"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Registry Liaison</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Relation to Student</FormLabel>
                 <FormControl>
-                  <Input placeholder="Guardian" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                  <Input placeholder="Father, Mother, etc." {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
                 <FormMessage className="text-[9px] font-bold uppercase" />
               </FormItem>
@@ -154,10 +154,10 @@ export function ParentForm({ studentId, onSuccess }: ParentFormProps) {
         </div>
         <div className="flex justify-end gap-x-3 pt-6">
           <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
-            Abort
+            Cancel
           </Button>
           <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
-            {isPending ? "Synchronizing..." : "Initialize Profile"}
+            {isPending ? "Saving..." : "Add Parent"}
           </Button>
         </div>
       </form>

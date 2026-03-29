@@ -90,7 +90,7 @@ export function ProvisionUserModal() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] border-primary/20 bg-background/95 backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-black uppercase tracking-widest text-primary italic">
+          <DialogTitle className="text-xl font-black uppercase tracking-widest text-primary">
             Create New User Account
           </DialogTitle>
           <DialogDescription className="text-xs uppercase tracking-widest text-foreground/40 font-black pt-2">
@@ -189,10 +189,10 @@ export function ProvisionUserModal() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    CREATING...
+                    Creating...
                   </>
                 ) : (
-                  "CREATE USER"
+                  "Create User"
                 )}
               </Button>
             </div>

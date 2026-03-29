@@ -15,8 +15,8 @@ export default async function SettingsPage() {
   ]);
 
   const initialSettings = schoolSettings || {
-    school_name: "EduFox Demo School",
-    contact_email: "admin@edufox.ai",
+    school_name: "Edu Maysan Demo School",
+    contact_email: "admin@edumaysan.com",
     currency: "USD",
     timezone: "UTC"
   };

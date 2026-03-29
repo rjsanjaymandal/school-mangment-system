@@ -91,12 +91,12 @@ export default function LoginPage() {
           <div className="bg-primary text-primary-foreground p-3 rounded-xs shadow-xl emerald-glow transition-all duration-500 hover:rotate-6">
             <GraduationCap className="h-8 w-8" />
           </div>
-          <div className="text-center space-y-1">
-            <CardTitle className="text-3xl font-black tracking-tight uppercase">
-              Identity Node
+          <div className="text-center space-y-2">
+            <CardTitle className="text-3xl font-bold tracking-tight text-foreground">
+              Welcome Back
             </CardTitle>
-            <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              Authorize session to access core
+            <CardDescription className="text-[12px] font-medium text-muted-foreground">
+              Please enter your credentials to access your account
             </CardDescription>
           </div>
         </CardHeader>
@@ -107,16 +107,16 @@ export default function LoginPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Command: Email</FormLabel>
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Email Address</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="operator@maysan.sys" 
+                        placeholder="your@email.com" 
                         {...field} 
-                        className="bg-accent/30 border-border rounded-xs h-12 focus-visible:ring-primary focus-visible:ring-1 transition-all font-medium"
+                        className="bg-muted/20 border-border rounded-md h-11 focus-visible:ring-primary focus-visible:ring-1 transition-all font-medium"
                       />
                     </FormControl>
-                    <FormMessage className="text-[10px] uppercase font-bold" />
+                    <FormMessage className="text-[10px] font-bold" />
                   </FormItem>
                 )}
               />
@@ -124,34 +124,34 @@ export default function LoginPage() {
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Key: Password</FormLabel>
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Password</FormLabel>
                     <FormControl>
                       <Input
                         type="password"
                         placeholder="••••••••"
                         {...field}
-                        className="bg-accent/30 border-border rounded-xs h-12 focus-visible:ring-primary focus-visible:ring-1 transition-all"
+                        className="bg-muted/20 border-border rounded-md h-11 focus-visible:ring-primary focus-visible:ring-1 transition-all"
                       />
                     </FormControl>
-                    <FormMessage className="text-[10px] uppercase font-bold" />
+                    <FormMessage className="text-[10px] font-bold" />
                   </FormItem>
                 )}
               />
               {error && (
-                <div className="text-[10px] font-black text-destructive uppercase tracking-widest text-center animate-pulse">
-                  Authentication Failed: {error}
+                <div className="text-[10px] font-bold text-destructive uppercase tracking-widest text-center mt-2">
+                  Sign-In Error: {error}
                 </div>
               )}
               <Button 
                 type="submit" 
-                className="w-full h-12 bg-primary text-primary-foreground font-black text-xs uppercase tracking-[0.4em] rounded-xs shadow-2xl hover:bg-primary/90 transition-all emerald-glow" 
+                className="w-full h-11 bg-primary text-primary-foreground font-bold text-xs uppercase tracking-widest rounded-md shadow-md hover:bg-primary/90 transition-all" 
                 disabled={loading}
               >
                 {loading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground" />
                 ) : (
-                  "Initialize Session"
+                  "Sign In"
                 )}
               </Button>
             </form>
@@ -161,7 +161,7 @@ export default function LoginPage() {
       
       {/* Footer Branding */}
       <div className="absolute bottom-8 text-center w-full reveal-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.6em] text-muted-foreground/40">
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/40">
           Edu Maysan Intelligence System • v4.0.0
         </p>
       </div>

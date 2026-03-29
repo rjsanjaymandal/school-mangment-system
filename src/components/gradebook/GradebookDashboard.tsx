@@ -195,8 +195,6 @@ export default function GradebookDashboard({
                     </p>
                 </div>
             </div>
-        </div>
-      </div>
     </div>
   );
 }

@@ -91,7 +91,7 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             name="first_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Given Identity</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">First Name</FormLabel>
                 <FormControl>
                   <Input placeholder="John" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -104,7 +104,7 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             name="last_name"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Surname</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Last Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
                 </FormControl>
@@ -118,9 +118,9 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
           name="email"
           render={({ field }) => (
             <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Digital Liaison (Email)</FormLabel>
+              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Email Address</FormLabel>
               <FormControl>
-                <Input placeholder="john.doe@institutional.org" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                <Input placeholder="john.doe@example.com" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
               </FormControl>
               <FormMessage className="text-[9px] font-bold uppercase" />
             </FormItem>
@@ -132,7 +132,7 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             name="admission_number"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Registry ID</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Admission Number</FormLabel>
                 <FormControl>
                   <Input placeholder="ADM-202X-001" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
                 </FormControl>
@@ -145,7 +145,7 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
             name="roll_number"
             render={({ field }) => (
               <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Sequential ID</FormLabel>
+                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Roll Number</FormLabel>
                 <FormControl>
                   <Input placeholder="00" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase" />
                 </FormControl>
@@ -156,10 +156,10 @@ export function StudentForm({ initialData, onSuccess }: StudentFormProps) {
         </div>
         <div className="flex justify-end gap-x-3 pt-6">
           <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
-            Abort
+            Cancel
           </Button>
           <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
-            {isPending ? "Synchronizing..." : initialData ? "Confirm Modification" : "Initialize Registry"}
+            {isPending ? "Saving..." : initialData ? "Save Changes" : "Add Student"}
           </Button>
         </div>
       </form>

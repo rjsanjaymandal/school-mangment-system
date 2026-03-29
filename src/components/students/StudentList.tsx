@@ -90,7 +90,7 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
             className="rounded-sm bg-primary text-primary-foreground font-black gap-x-2 emerald-glow min-w-[180px] uppercase tracking-widest text-[10px]"
           >
             <Plus className="h-4 w-4" />
-            Initialize Student
+            Add Student
           </Button>
         </div>
       )}
@@ -99,12 +99,12 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
         <Table>
           <TableHeader className="bg-primary/5">
             <TableRow className="border-b border-border hover:bg-transparent">
-              <TableHead className="w-[140px] p-5 font-black uppercase tracking-widest text-[10px] text-primary">Registry ID</TableHead>
-              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Identity</TableHead>
-              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Formation</TableHead>
-              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Sequential ID</TableHead>
+              <TableHead className="w-[140px] p-5 font-black uppercase tracking-widest text-[10px] text-primary">Admission No</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Student Name</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Class</TableHead>
+              <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Roll No</TableHead>
               <TableHead className="p-5 font-black uppercase tracking-widest text-[10px] text-primary">Status</TableHead>
-              <TableHead className="text-right p-5 font-black uppercase tracking-widest text-[10px] text-primary">Operations</TableHead>
+              <TableHead className="text-right p-5 font-black uppercase tracking-widest text-[10px] text-primary">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -147,7 +147,7 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
                     <Badge
                       className="bg-primary/10 text-primary border border-primary/20 emerald-glow-sm text-[9px] font-black px-3 py-0.5 rounded-sm uppercase tracking-[0.2em]"
                     >
-                      Operational
+                      Active
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right p-5">
@@ -158,10 +158,10 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-card border-border rounded-sm shadow-2xl">
-                        <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-50 px-3">Registry Operations</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest opacity-50 px-3">Student Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2">
                           <Link href={`/students/${student.id}`}>
-                            <Eye className="h-3.5 w-3.5" /> View Identity
+                            <Eye className="h-3.5 w-3.5" /> View Profile
                           </Link>
                         </DropdownMenuItem>
                         {isAdmin && (
@@ -169,7 +169,7 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
                             onClick={() => onEdit(student)}
                             className="gap-x-2 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-primary/10 focus:text-primary px-3 py-2"
                           >
-                            <Pencil className="h-3.5 w-3.5" /> Modify Profile
+                            <Pencil className="h-3.5 w-3.5" /> Edit Student
                           </DropdownMenuItem>
                         )}
                         {isAdmin && (
@@ -183,17 +183,17 @@ export function StudentList({ initialData, userRole }: StudentListProps) {
                             <DropdownMenuSeparator className="bg-border/50" />
                             <DropdownMenuItem
                               onClick={() => {
-                                if (confirm("Terminate this student registry?")) {
+                                if (confirm("Delete this student record?")) {
                                   startTransition(async () => {
                                     const res = await deleteStudent(student.id);
                                     if (res.error) toast.error(res.error);
-                                    else toast.success("Registry terminated successfully");
+                                    else toast.success("Student deleted successfully");
                                   });
                                 }
                               }}
                               className="gap-x-2 text-red-500 focus:text-red-600 cursor-pointer font-bold uppercase text-[10px] tracking-tight focus:bg-red-500/10 px-3 py-2"
                             >
-                              <Trash2 className="h-3.5 w-3.5" /> Terminate Node
+                              <Trash2 className="h-3.5 w-3.5" /> Delete Record
                             </DropdownMenuItem>
                           </>
                         )}
