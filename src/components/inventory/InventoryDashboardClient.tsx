@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
 import { useState } from "react";
@@ -38,10 +37,10 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
 
-    const inventory = initialInventory.map((item) => ({
+    const inventory = useMemo(() => initialInventory.map((item) => ({
         ...item,
         status: item.quantity_in_stock < 10 ? "Critical" : item.quantity_in_stock < 50 ? "Volatile" : "Stable"
-    }));
+    })), [initialInventory]);
 
     const filteredInventory = inventory.filter((item) =>
         (item.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
@@ -50,13 +49,24 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
 
     // --- Logistics Intelligence Layer ---
     const consumptionVelocity = useMemo(() => {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-        return months.map(m => ({
-            name: m,
-            Consumption: Math.floor(Math.random() * 50) + 20,
-            Restock: Math.floor(Math.random() * 40) + 10
-        }));
-    }, []);
+        const byCategory = inventory.reduce<Record<string, { name: string; Consumption: number; Restock: number }>>((acc, item) => {
+            const categoryName = item.category?.name || "General";
+            if (!acc[categoryName]) {
+                acc[categoryName] = { name: categoryName, Consumption: 0, Restock: 0 };
+            }
+
+            const minimumStock = item.min_stock_level || 0;
+            const shortage = Math.max(minimumStock - Number(item.quantity_in_stock || 0), 0);
+
+            acc[categoryName].Consumption += shortage;
+            acc[categoryName].Restock += Number(item.quantity_in_stock || 0);
+            return acc;
+        }, {});
+
+        return Object.values(byCategory)
+            .sort((left, right) => (right.Consumption + right.Restock) - (left.Consumption + left.Restock))
+            .slice(0, 6);
+    }, [inventory]);
 
     const assetDistribution = useMemo(() => {
         const counts: Record<string, number> = {};

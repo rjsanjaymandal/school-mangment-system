@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 import { useMemo, useState } from "react";
 import { Heart, Plus, Thermometer, Pill, AlertTriangle, Clock, CheckCircle, Activity, TrendingUp } from "lucide-react";
 import { 
@@ -29,6 +28,8 @@ interface HealthDashboardProps {
     userRole?: string | null;
 }
 
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userRole }: HealthDashboardProps) {
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const router = useRouter();
@@ -38,12 +39,23 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
 
     // --- Clinical Intelligence Layer ---
     const incidentTelemetry = useMemo(() => {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        return months.map(m => ({
-            name: m,
-            visits: Math.floor(Math.random() * 50) + 10 // Mock trend
-        }));
-    }, []);
+        const baseline = MONTH_LABELS.reduce<Record<string, { name: string; visits: number }>>((acc, month) => {
+            acc[month] = { name: month, visits: 0 };
+            return acc;
+        }, {});
+
+        infirmaryLogs.forEach((log) => {
+            const sourceDate = log.created_at || log.visit_date;
+            if (!sourceDate) return;
+
+            const month = new Date(sourceDate).toLocaleDateString("en-US", { month: "short" });
+            if (baseline[month]) {
+                baseline[month].visits += 1;
+            }
+        });
+
+        return MONTH_LABELS.map((month) => baseline[month]);
+    }, [infirmaryLogs]);
 
     const ailmentProfiling = useMemo(() => {
         const reasonMap: Record<string, number> = {};

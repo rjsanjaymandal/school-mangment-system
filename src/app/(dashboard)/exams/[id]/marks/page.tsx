@@ -15,31 +15,52 @@ export default async function MarksPage({
   // 1. Fetch Exam Details
   const { data: exam } = await supabase
     .from("exams")
-    .select(`*, academic_year:academic_years(*)`)
+    .select(`*, academic_year:academic_years(*), subject:subjects(*), class:classes(*)`)
     .eq("id", examId)
     .single();
 
-  // 2. Fetch Subjects and Classes for selection (Mocking selection for now)
   const { data: subjects } = await supabase
     .from("subjects")
     .select("*")
-    .limit(5);
-  const { data: classes } = await supabase.from("classes").select("*").limit(1);
+    .order("name", { ascending: true })
+    .limit(1);
+  const { data: classes } = await supabase
+    .from("classes")
+    .select("*")
+    .order("name", { ascending: true })
+    .limit(1);
 
-  // 3. Fetch Students for the selected class
-  const classId = classes?.[0]?.id;
-  const subjectId = subjects?.[0]?.id;
+  const selectedClass = exam?.class ?? classes?.[0] ?? null;
+  const selectedSubject = exam?.subject ?? subjects?.[0] ?? null;
+  const classId = exam?.class_id ?? selectedClass?.id ?? "";
+  const subjectId = exam?.subject_id ?? selectedSubject?.id ?? "";
 
-  const { data: students } = await supabase
-    .from("students")
-    .select(
-      `
-      *,
-      profile:profiles(*),
-      mark:marks(marks_obtained)
-    `,
-    )
-    .eq("class_id", classId);
+  const { data: students } = classId
+    ? await supabase
+        .from("students")
+        .select(
+          `
+          *,
+          profile:profiles(*)
+        `,
+        )
+        .eq("class_id", classId)
+        .order("roll_number", { ascending: true })
+    : { data: [] };
+
+  const { data: marks } = subjectId
+    ? await supabase
+        .from("marks")
+        .select("student_id, marks_obtained")
+        .eq("exam_id", examId)
+        .eq("subject_id", subjectId)
+    : { data: [] };
+
+  const marksByStudent = new Map((marks || []).map((mark) => [mark.student_id, mark]));
+  const studentsWithMarks = (students || []).map((student) => ({
+    ...student,
+    mark: marksByStudent.get(student.id) ?? null,
+  }));
 
   return (
     <div className="space-y-6">
@@ -61,7 +82,7 @@ export default async function MarksPage({
               </span>
               <span className="flex items-center gap-x-1">
                 <BookOpen className="h-4 w-4" />
-                {subjects?.[0]?.name} (Grade 10-A)
+                {selectedSubject?.name || "Unassigned Subject"} ({selectedClass?.name || "Unassigned Class"})
               </span>
             </div>
           </div>
@@ -72,7 +93,9 @@ export default async function MarksPage({
         examId={examId}
         classId={classId || ""}
         subjectId={subjectId || ""}
-        students={students || []}
+        className={selectedClass?.name || ""}
+        subjectName={selectedSubject?.name || ""}
+        students={studentsWithMarks}
       />
     </div>
   );

@@ -32,8 +32,22 @@ export default async function GatewayHub() {
     .select("*")
     .order("name", { ascending: true });
 
+  const gatewayCount = gateways?.length || 0;
   const activeCount = gateways?.filter(g => g.is_active).length || 0;
-  const syncVolume = "42.5K"; // Placeholder for actual telemetry if needed later
+  const financialGateways = gateways?.filter((gateway) => gateway.provider === "financial") || [];
+  const academicGateways = gateways?.filter((gateway) => gateway.provider !== "financial") || [];
+  const activeFinancialCount = financialGateways.filter((gateway) => gateway.is_active).length;
+  const activeAcademicCount = academicGateways.filter((gateway) => gateway.is_active).length;
+  const gatewayHealth = gatewayCount === 0
+    ? "Offline"
+    : activeCount === gatewayCount
+      ? "Optimal"
+      : activeCount > 0
+        ? "Stable"
+        : "Attention";
+  const operationalRate = gatewayCount > 0 ? Math.round((activeCount / gatewayCount) * 100) : 0;
+  const financialTransit = financialGateways.length > 0 ? Math.round((activeFinancialCount / financialGateways.length) * 100) : 0;
+  const academicTransit = academicGateways.length > 0 ? Math.round((activeAcademicCount / academicGateways.length) * 100) : 0;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-12 text-foreground">
@@ -75,19 +89,19 @@ export default async function GatewayHub() {
           <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">
             Gateway Health
           </p>
-          <h3 className="text-3xl font-black mt-2 text-foreground uppercase italic tracking-tighter">Optimal</h3>
+          <h3 className="text-3xl font-black mt-2 text-foreground uppercase italic tracking-tighter">{gatewayHealth}</h3>
           <div className="mt-4 flex items-center gap-x-2 text-[10px] font-black text-primary/60 uppercase tracking-widest italic">
-            Uptime: 99.998%
+            Active footprint: {operationalRate}%
           </div>
         </Card>
 
         <Card className="border-border bg-card p-6 rounded-xl shadow-sm hover:border-primary/40 transition-all">
           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
-            Total Sync Volume
+            Configured Gateways
           </p>
-          <h3 className="text-3xl font-black mt-2 text-foreground italic tracking-tighter">{syncVolume}</h3>
+          <h3 className="text-3xl font-black mt-2 text-foreground italic tracking-tighter">{gatewayCount.toString().padStart(2, "0")}</h3>
           <div className="mt-4 flex items-center gap-x-2 text-[10px] font-black text-muted-foreground uppercase tracking-widest italic">
-            Records/Month
+            Total bridge definitions
           </div>
         </Card>
 
@@ -211,7 +225,7 @@ export default async function GatewayHub() {
             </h4>
             <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest leading-loose italic">
               Automated synchronization with all connected LMS and Financial
-              platforms. Last sync: 12 mins ago.
+              platforms. Refreshes the status of every configured bridge in one pass.
             </p>
             <Button className="mt-10 w-full bg-primary text-primary-foreground font-black rounded-xl hover:scale-105 transition-all shadow-xl shadow-primary/30 h-16 uppercase tracking-[0.2em] text-[10px]">
               MIGRATE RECORDS NOW
@@ -229,23 +243,21 @@ export default async function GatewayHub() {
               <div className="space-y-3">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest italic">
                   <span className="text-muted-foreground">Financial Transit</span>
-                  <span className="text-primary">82%</span>
+                  <span className="text-primary">{financialTransit}%</span>
                 </div>
                 <Progress
-                  value={82}
+                  value={financialTransit}
                   className="h-2 rounded-full bg-secondary"
-                  // indicatorClassName="bg-primary shadow-lg shadow-primary/20"
                 />
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest italic">
                   <span className="text-muted-foreground">LMS Data Stream</span>
-                  <span className="text-primary">45%</span>
+                  <span className="text-primary">{academicTransit}%</span>
                 </div>
                 <Progress
-                  value={45}
+                  value={academicTransit}
                   className="h-2 rounded-full bg-secondary"
-                  // indicatorClassName="bg-primary/60 shadow-lg shadow-primary/10"
                 />
               </div>
             </div>

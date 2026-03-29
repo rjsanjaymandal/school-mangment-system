@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useMemo } from "react";
@@ -68,13 +67,12 @@ export default function GradebookDashboard({
 
   // --- Academic Intelligence Layer ---
   const performanceDistribution = useMemo(() => {
-    const months = ["Term 1", "Term 2", "Midterm", "Term 3", "Finals"];
-    return months.map(m => ({
-        name: m,
-        score: Math.floor(Math.random() * 20) + 75,
-        average: 78
+    return components.map((component) => ({
+      name: component.label.length > 16 ? `${component.label.slice(0, 16)}…` : component.label,
+      score: component.score,
+      average: gpa,
     }));
-  }, []);
+  }, [components, gpa]);
 
   const competencyProfiling = useMemo(() => {
     return components.map(c => ({

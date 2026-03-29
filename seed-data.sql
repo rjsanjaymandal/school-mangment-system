@@ -74,9 +74,10 @@ FROM
 ON CONFLICT (student_id, date) DO NOTHING;
 
 -- 8. EXAMS & MARKS
-INSERT INTO public.exams (id, name, academic_year_id, start_date, end_date)
+INSERT INTO public.exams (id, name, academic_year_id, subject_id, class_id, date, start_time, end_time, max_marks, passing_marks)
 VALUES 
-    ('e1111111-1111-4111-e111-111111111111', 'Mid-Term Examination', 'a2222222-2222-4222-a222-222222222222', CURRENT_DATE - INTERVAL '30 days', CURRENT_DATE - INTERVAL '20 days')
+    ('e1111111-1111-4111-e111-111111111111', 'Mid-Term Mathematics', 'a2222222-2222-4222-a222-222222222222', '51111111-1111-4111-5111-111111111111', 'c1111111-1111-4111-c111-111111111111', CURRENT_DATE - INTERVAL '25 days', '09:00:00', '12:00:00', 100, 40),
+    ('e2222222-2222-4222-e222-222222222222', 'Mid-Term Science', 'a2222222-2222-4222-a222-222222222222', '52222222-2222-4222-5222-222222222222', 'c1111111-1111-4111-c111-111111111111', CURRENT_DATE - INTERVAL '24 days', '10:00:00', '13:00:00', 100, 40)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO public.marks (exam_id, student_id, subject_id, marks_obtained, max_marks, grade)
@@ -161,3 +162,12 @@ VALUES
     ('f1111111-1111-4111-f111-111111111111', 'Leave Approved', 'Your sick leave for Oct 12-14 has been approved.', 'success'),
     ('f2222222-2222-4222-f222-222222222222', 'Payroll Disbursed', 'Your salary for the month has been credited.', 'info')
 ON CONFLICT DO NOTHING;
+
+-- 15. PAYMENT GATEWAYS
+INSERT INTO public.payment_gateways (name, provider, is_active, api_key)
+VALUES 
+    ('Razorpay Main', 'financial', true, 'rzp_test_5kG89x2B4lP3vQ'),
+    ('Stripe Hub', 'financial', true, 'pk_test_51Px9z2L4m...'),
+    ('Moodle LMS Connector', 'lms', false, 'lms_token_9x882...')
+ON CONFLICT DO NOTHING;
+

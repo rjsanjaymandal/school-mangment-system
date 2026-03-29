@@ -32,6 +32,8 @@ interface MarksEntryFormProps {
   examId: string;
   classId: string;
   subjectId: string;
+  className: string;
+  subjectName: string;
   students: any[];
 }
 
@@ -39,6 +41,8 @@ export function MarksEntryForm({
   examId,
   classId,
   subjectId,
+  className,
+  subjectName,
   students,
 }: MarksEntryFormProps) {
   const [loading, setLoading] = useState(false);
@@ -192,7 +196,7 @@ export function MarksEntryForm({
                             {student.profile?.last_name}
                           </span>
                           <span className="text-[10px] text-muted-foreground font-medium tracking-tight">
-                            Grade 10-A • Physics Core
+                            {className || "Class not assigned"} • {subjectName || "Subject not assigned"}
                           </span>
                         </div>
                       </td>

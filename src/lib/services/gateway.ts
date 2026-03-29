@@ -18,20 +18,22 @@ export const GatewayService = {
 
   async initiateExternalPayment(amount: number, currency: string, description: string) {
     return this.withRetry(async () => {
-      try {
-        // This is a placeholder for Stripe/PayPal Checkout Session creation
-        console.log(`Initiating gateway session for ${amount} ${currency}`);
-        
-        // Simulating a potential transient failure
-        if (Math.random() < 0.2) throw new Error("Gateway Timeout");
-
-        return {
-            session_id: `gate_${Math.random().toString(36).substr(2, 9)}`,
-            checkout_url: "https://stripe.com/checkout/demo"
-        };
-      } catch (error) {
-         throw error;
+      if (!Number.isFinite(amount) || amount <= 0) {
+        throw new Error("Payment amount must be greater than zero");
       }
+
+      const normalizedCurrency = currency.trim().toUpperCase();
+      const sessionId = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? `gate_${crypto.randomUUID().replace(/-/g, "").slice(0, 12)}`
+        : `gate_${Date.now().toString(36)}`;
+
+      return {
+        session_id: sessionId,
+        checkout_url: `/fees?session_id=${sessionId}`,
+        amount,
+        currency: normalizedCurrency,
+        description,
+      };
     });
   },
 

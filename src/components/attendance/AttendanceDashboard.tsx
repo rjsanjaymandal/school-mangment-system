@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
     Check, X, Clock, Search, Users, ClipboardCheck, Calendar, BarChart3,
     ChevronDown, UserCheck, UserX, AlertTriangle, TrendingUp, Filter, Download, ShieldCheck,
@@ -57,54 +56,89 @@ export function AttendanceDashboard({
     const [historyRecords, setHistoryRecords] = useState<any[]>([]);
     const [historyLoading, setHistoryLoading] = useState(false);
 
-    const COLORS = ["#10b981", "#ef4444", "#f59e0b", "#3b82f6", "#8b5cf6"];
+    useEffect(() => {
+        if (!isStudent || classes.length === 0) return;
 
+        let active = true;
 
-    // Auto-load for students
-    useState(() => {
-        if (isStudent && classes.length > 0) {
-            const fetchHistory = async () => {
-                setHistoryLoading(true);
-                const result = await getAttendanceByClassAndDate(classes[0].id, historyDate);
-                if (result.success && result.data) {
-                    // For student, filter to only their own record
-                    const studentId = students[0]?.id;
-                    setHistoryRecords(result.data.filter((r: any) => r.student_id === studentId));
-                }
-                setHistoryLoading(false);
-            };
-            fetchHistory();
-        }
-    });
+        const loadStudentHistory = async () => {
+            setHistoryLoading(true);
+            const result = await getAttendanceByClassAndDate(classes[0].id, historyDate);
+
+            if (!active) return;
+
+            if (result.success && result.data) {
+                const studentId = students[0]?.id;
+                setHistoryRecords(result.data.filter((record: any) => record.student_id === studentId));
+            } else {
+                setHistoryRecords([]);
+            }
+
+            setHistoryLoading(false);
+        };
+
+        void loadStudentHistory();
+
+        return () => {
+            active = false;
+        };
+    }, [classes, historyDate, isStudent, students]);
 
     // Computed stats
     const weekTotal = weekAttendance.length;
     const weekPresent = weekAttendance.filter(a => a.status === "present").length;
     const weekAbsent = weekAttendance.filter(a => a.status === "absent").length;
     const weekLate = weekAttendance.filter(a => a.status === "late").length;
+    const weekExcused = weekAttendance.filter(a => a.status === "excused").length;
     const weekRate = weekTotal > 0 ? Math.round((weekPresent / weekTotal) * 100) : 0;
 
     const todayPresent = todayAttendance.filter(a => a.status === "present").length;
     const todayAbsent = todayAttendance.filter(a => a.status === "absent").length;
+    const todayLate = todayAttendance.filter(a => a.status === "late").length;
+    const todayExcused = todayAttendance.filter(a => a.status === "excused").length;
     const todayTotal = todayAttendance.length;
 
     // --- Presence Intelligence Layer ---
     const presenceMatrix = useMemo(() => {
-        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        return days.map(d => ({
-            name: d,
-            Present: Math.floor(Math.random() * 80) + 150,
-            Absent: Math.floor(Math.random() * 20) + 5
-        }));
-    }, []);
+        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const baseline = days.reduce<Record<string, { name: string; Present: number; Absent: number; Late: number; Excused: number }>>((acc, day) => {
+            acc[day] = { name: day, Present: 0, Absent: 0, Late: 0, Excused: 0 };
+            return acc;
+        }, {});
+
+        weekAttendance.forEach((entry: any) => {
+            const sourceDate = entry.date || entry.created_at;
+            if (!sourceDate) return;
+
+            const dayLabel = new Date(sourceDate).toLocaleDateString("en-US", { weekday: "short" });
+            const bucket = baseline[dayLabel];
+
+            if (!bucket) return;
+
+            if (entry.status === "present") bucket.Present += 1;
+            if (entry.status === "absent") bucket.Absent += 1;
+            if (entry.status === "late") bucket.Late += 1;
+            if (entry.status === "excused") bucket.Excused += 1;
+        });
+
+        return days.map((day) => baseline[day]);
+    }, [weekAttendance]);
 
     const institutionalDensity = useMemo(() => {
         return [
-            { name: "Present", value: todayPresent || 100, color: "#10b981" },
-            { name: "Absent", value: todayAbsent || 10, color: "#ef4444" },
-            { name: "Late", value: weekLate || 5, color: "#f59e0b" }
+            { name: "Present", value: todayPresent, color: "#10b981" },
+            { name: "Absent", value: todayAbsent, color: "#ef4444" },
+            { name: "Late", value: todayLate, color: "#f59e0b" },
+            { name: "Excused", value: todayExcused, color: "#3b82f6" }
         ];
-    }, [todayPresent, todayAbsent, weekLate]);
+    }, [todayPresent, todayAbsent, todayLate, todayExcused]);
+
+    const weeklyStatusDistribution = useMemo(() => ([
+        { name: "Present", value: weekPresent, color: "#10b981" },
+        { name: "Absent", value: weekAbsent, color: "#ef4444" },
+        { name: "Late", value: weekLate, color: "#f59e0b" },
+        { name: "Excused", value: weekExcused, color: "#3b82f6" },
+    ]), [weekAbsent, weekExcused, weekLate, weekPresent]);
 
     // Filter students by class
     const classStudents = useMemo(() => {
@@ -695,14 +729,106 @@ export function AttendanceDashboard({
 
                 {/* ANALYTICS TAB */}
                 <TabsContent value="stats" className="space-y-6 animate-in slide-in-from-bottom-2 mt-0">
-                    <div className="bg-card p-24 text-center border border-dashed border-border rounded-lg min-h-[400px] flex items-center justify-center">
-                        <div className="">
-                            <BarChart3 className="h-16 w-16 mx-auto text-muted-foreground mb-8 opacity-40" />
-                            <h3 className="font-bold text-2xl text-foreground tracking-tight">Analytics coming soon</h3>
-                            <p className="text-xs text-muted-foreground mt-2 max-w-sm mx-auto">
-                                Comprehensive reports and attendance trends will be available in the next system update.
-                            </p>
-                        </div>
+                    <div className="grid gap-4 md:grid-cols-4">
+                        {[
+                            {
+                                label: "Weekly Attendance Rate",
+                                value: `${weekRate}%`,
+                                helper: `${weekPresent} present records in the last 7 days`,
+                                accent: "text-primary",
+                            },
+                            {
+                                label: "Absence Load",
+                                value: weekAbsent.toString(),
+                                helper: "Records marked absent this week",
+                                accent: "text-red-500",
+                            },
+                            {
+                                label: "Late Arrivals",
+                                value: weekLate.toString(),
+                                helper: `${weekExcused} excused records captured`,
+                                accent: "text-amber-500",
+                            },
+                            {
+                                label: "Today Coverage",
+                                value: todayTotal.toString(),
+                                helper: "Students marked across today's register",
+                                accent: "text-blue-500",
+                            },
+                        ].map((metric) => (
+                            <Card key={metric.label} className="border-border bg-card shadow-sm">
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                                        {metric.label}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <p className={`text-3xl font-bold leading-none ${metric.accent}`}>{metric.value}</p>
+                                    <p className="text-xs text-muted-foreground">{metric.helper}</p>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+
+                    <div className="grid gap-6 lg:grid-cols-2">
+                        <Card className="border-border bg-card shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                                    Weekly Attendance Trend
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-[320px]">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={presenceMatrix}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#88888820" />
+                                            <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                                            <YAxis allowDecimals={false} axisLine={false} tickLine={false} />
+                                            <Tooltip />
+                                            <Legend />
+                                            <Bar dataKey="Present" stackId="attendance" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                            <Bar dataKey="Absent" stackId="attendance" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                                            <Bar dataKey="Late" stackId="attendance" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                                            <Bar dataKey="Excused" stackId="attendance" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="border-border bg-card shadow-sm">
+                            <CardHeader>
+                                <CardTitle className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                                    Status Distribution
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-[320px]">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={weeklyStatusDistribution.filter((entry) => entry.value > 0)}
+                                                dataKey="value"
+                                                nameKey="name"
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={70}
+                                                outerRadius={110}
+                                                paddingAngle={3}
+                                            >
+                                                {weeklyStatusDistribution
+                                                    .filter((entry) => entry.value > 0)
+                                                    .map((entry) => (
+                                                        <Cell key={entry.name} fill={entry.color} />
+                                                    ))}
+                                            </Pie>
+                                            <Tooltip />
+                                            <Legend />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </TabsContent>
             </Tabs>

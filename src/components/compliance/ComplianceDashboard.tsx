@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
 import { useState } from "react";
@@ -28,12 +27,16 @@ interface ComplianceDashboardProps {
     auditLogs: any[];
 }
 
+const DOCUMENT_CATEGORIES = ["Legal", "Academic", "HR", "Financial", "Administrative"];
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboardProps) {
     const router = useRouter();
     const [isUploadOpen, setIsUploadOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
     const [docForm, setDocForm] = useState({ title: "", category: "Academic", expiry_date: "" });
+    const [currentTimestamp] = useState(() => Date.now());
 
     const handleCreate = async () => {
         setLoading(true);
@@ -45,31 +48,57 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
     };
 
     const filteredDocs = documents.filter(d => (d.title?.toLowerCase() || "").includes(search.toLowerCase()));
-    const categories = ["Legal", "Academic", "HR", "Financial", "Administrative"];
-    const categoryCount = categories.map(c => ({ name: c, count: documents.filter(d => d.category === c).length }));
+    const categoryCount = DOCUMENT_CATEGORIES.map(c => ({ name: c, count: documents.filter(d => d.category === c).length }));
     const expiringDocs = documents.filter(d => {
         if (!d.expiry_date) return false;
-        const diff = new Date(d.expiry_date).getTime() - Date.now();
+        const diff = new Date(d.expiry_date).getTime() - currentTimestamp;
         return diff > 0 && diff < 90 * 24 * 60 * 60 * 1000;
     });
 
     // --- Compliance Intelligence Layer ---
     const auditVelocity = useMemo(() => {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-        return months.map(m => ({
-            name: m,
-            Audits: Math.floor(Math.random() * 15) + 5,
-            Findings: Math.floor(Math.random() * 5)
-        }));
-    }, []);
+        const baseline = MONTH_LABELS.reduce<Record<string, { name: string; Audits: number; Findings: number }>>((acc, month) => {
+            acc[month] = { name: month, Audits: 0, Findings: 0 };
+            return acc;
+        }, {});
+
+        auditLogs.forEach((log) => {
+            if (!log.created_at) return;
+
+            const month = new Date(log.created_at).toLocaleDateString("en-US", { month: "short" });
+            const bucket = baseline[month];
+
+            if (!bucket) return;
+
+            bucket.Audits += 1;
+            if (/(delete|revoke|reject|error|fail)/i.test(log.action || "")) {
+                bucket.Findings += 1;
+            }
+        });
+
+        return MONTH_LABELS.map((month) => baseline[month]);
+    }, [auditLogs]);
 
     const riskProfiling = useMemo(() => {
-        return categories.map(c => ({
-            subject: c,
-            A: Math.floor(Math.random() * 30) + 70,
-            fullMark: 100
-        }));
-    }, [categories]);
+        return DOCUMENT_CATEGORIES.map((category) => {
+            const docsInCategory = documents.filter((doc) => doc.category === category);
+            const expiringCount = docsInCategory.filter((doc) => {
+                if (!doc.expiry_date) return false;
+                const diff = new Date(doc.expiry_date).getTime() - currentTimestamp;
+                return diff > 0 && diff < 90 * 24 * 60 * 60 * 1000;
+            }).length;
+
+            const coverage = docsInCategory.length === 0
+                ? 100
+                : Math.max(0, Math.round(((docsInCategory.length - expiringCount) / docsInCategory.length) * 100));
+
+            return {
+                subject: category,
+                A: coverage,
+                fullMark: 100,
+            };
+        });
+    }, [currentTimestamp, documents]);
 
     const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
@@ -101,7 +130,7 @@ export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboar
                                         <Label className="text-xs font-bold uppercase text-muted-foreground">Category</Label>
                                         <Select value={docForm.category} onValueChange={(v) => setDocForm({ ...docForm, category: v })}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
-                                            <SelectContent>{categories.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                                            <SelectContent>{DOCUMENT_CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                                         </Select>
                                     </div>
                                     <div className="space-y-2">

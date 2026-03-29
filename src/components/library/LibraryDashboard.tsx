@@ -176,7 +176,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                                 </Label>
                                                 <Select value={issueForm.book_id} onValueChange={(v) => setIssueForm({ ...issueForm, book_id: v })}>
                                                     <SelectTrigger className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 focus:ring-primary/20 font-mono font-black uppercase text-[11px] tracking-widest transition-all">
-                                                        <SelectValue placeholder="SELECT_VOID" />
+                                                        <SelectValue placeholder="Select available book" />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
                                                         {books.filter(b => b.available_copies > 0).map(b => (
@@ -194,7 +194,7 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                                 </Label>
                                                 <Select value={issueForm.student_id} onValueChange={(v) => setIssueForm({ ...issueForm, student_id: v })}>
                                                     <SelectTrigger className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 focus:ring-primary/20 font-mono font-black uppercase text-[11px] tracking-widest transition-all">
-                                                        <SelectValue placeholder="SELECT_VOID" />
+                                                        <SelectValue placeholder="Select borrower" />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
                                                         {students.map(s => (
@@ -255,22 +255,22 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                             <div className="grid grid-cols-2 gap-8">
                                                 <div className="space-y-3">
                                                     <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">BOOK TITLE</Label>
-                                                    <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="TITLE_ID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="The Great Gatsby" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                                 <div className="space-y-3">
                                                     <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">AUTHOR</Label>
-                                                    <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="AUTHOR_NAME" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="F. Scott Fitzgerald" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-3 gap-8">
                                                 <div className="space-y-3">
                                                     <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">ISBN</Label>
-                                                    <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="KEY_VALUE" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="9780141182636" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                                 <div className="space-y-3">
                                                     <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">CATEGORY</Label>
-                                                    <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="SECTOR_VOID" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="Literature" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
                                                 </div>
                                                 <div className="space-y-3">
                                                     <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">TOTAL COPIES</Label>
@@ -519,11 +519,11 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                 <table className="w-full text-sm">
                                     <thead className="bg-primary/5 border-b border-primary/10">
                                         <tr>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Reposit_Node</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Personnel_ID</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Deployment_Date</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Duration_Cycle</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Status_Flag</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Book</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Borrower</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Issued On</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Due Date</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Status</th>
                                             {isStaff && <th className="text-right py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Operations</th>}
                                         </tr>
                                     </thead>
@@ -591,11 +591,11 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                 <table className="w-full text-sm">
                                     <thead className="bg-primary/5 border-b border-primary/10">
                                         <tr>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Asset_Item_Node</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Containment_Sector</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Volume_Depth</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Unit_Valuation</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Operational_Status</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Item</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Category</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Stock</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Unit Price</th>
+                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Availability</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-primary/5">

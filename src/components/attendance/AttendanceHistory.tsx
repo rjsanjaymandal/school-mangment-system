@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Filter, Search } from "lucide-react";
+import { Filter } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,15 +21,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Class } from "@/types/database";
-import { AttendanceService } from "@/lib/services/attendance";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 interface AttendanceHistoryProps {
   classes: Class[];
+}
+
+async function readAttendanceHistory(classId: string, selectedDate: string) {
+  const supabase = createClient();
+
+  return supabase
+    .from("attendance")
+    .select(
+      `
+        *,
+        student:students(
+          id,
+          roll_number,
+          profile:profiles(first_name, last_name)
+        )
+      `,
+    )
+    .eq("class_id", classId)
+    .eq("date", selectedDate);
 }
 
 export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
@@ -39,39 +56,38 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
   );
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
-
   const fetchHistory = async () => {
     if (!selectedClass || !selectedDate) return;
     setLoading(true);
 
-    const { data, error } = await supabase
-      .from("attendance")
-      .select(
-        `
-        *,
-        student:students(
-          id,
-          roll_number,
-          profile:profiles(first_name, last_name)
-        )
-      `,
-      )
-      .eq("class_id", selectedClass)
-      .eq("date", selectedDate);
+    const { data, error } = await readAttendanceHistory(selectedClass, selectedDate);
 
-    if (data) {
-      setRecords(data);
+    if (error) {
+      setRecords([]);
+    } else {
+      setRecords(data ?? []);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    if (selectedClass) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchHistory();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!selectedClass) return;
+
+    let active = true;
+
+    readAttendanceHistory(selectedClass, selectedDate).then(({ data, error }) => {
+      if (!active) return;
+
+      if (error) {
+        setRecords([]);
+      } else {
+        setRecords(data ?? []);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
   }, [selectedClass, selectedDate]);
 
   return (

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useMemo } from "react";
@@ -46,6 +45,7 @@ interface ConductDashboardProps {
 
 const CATEGORIES = ["Discipline", "Academics", "Sports", "Leadership", "Community", "Other"];
 const COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#64748b"];
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function ConductDashboard({ records, students, teachers, userRole }: ConductDashboardProps) {
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
@@ -87,13 +87,26 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
 
     // --- Behavioral Intelligence Layer ---
     const behavioralMatrix = useMemo(() => {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        return months.map(m => ({
-            name: m,
-            merits: Math.floor(Math.random() * 20) + 5,
-            demerits: Math.floor(Math.random() * 10) + 2
-        }));
-    }, []);
+        const baseline = MONTH_LABELS.reduce<Record<string, { name: string; merits: number; demerits: number }>>((acc, month) => {
+            acc[month] = { name: month, merits: 0, demerits: 0 };
+            return acc;
+        }, {});
+
+        records.forEach((record) => {
+            const sourceDate = record.incident_date || record.created_at;
+            if (!sourceDate) return;
+
+            const month = new Date(sourceDate).toLocaleDateString("en-US", { month: "short" });
+            const bucket = baseline[month];
+
+            if (!bucket) return;
+
+            if (record.type === "merit") bucket.merits += Number(record.points || 1);
+            if (record.type === "demerit") bucket.demerits += Number(record.points || 1);
+        });
+
+        return MONTH_LABELS.map((month) => baseline[month]);
+    }, [records]);
 
     const sectorAnalysis = useMemo(() => {
         return CATEGORIES.map(c => ({

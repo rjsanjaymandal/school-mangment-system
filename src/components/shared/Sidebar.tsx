@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 
 import Link from "next/link";
@@ -158,21 +157,26 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
   const [userProfile, setUserProfile] = useState<any>(initialProfile || null);
 
   useEffect(() => {
-    if (initialProfile) {
-      setUserProfile(initialProfile);
-      return;
-    }
+    if (initialProfile) return;
+
+    let active = true;
 
     const fetchProfile = async () => {
       const profile = await UserService.getCurrentProfile();
-      if (profile && !("error" in profile)) {
+      if (active && profile && !("error" in profile)) {
         setUserProfile(profile);
       }
     };
-    fetchProfile();
+
+    void fetchProfile();
+
+    return () => {
+      active = false;
+    };
   }, [initialProfile]);
 
-  const userRole = userProfile?.role || "student";
+  const resolvedProfile = initialProfile ?? userProfile;
+  const userRole = resolvedProfile?.role || "student";
 
   const filteredNavigation = navigation
     .filter((group) => !group.roles || group.roles.includes(userRole))

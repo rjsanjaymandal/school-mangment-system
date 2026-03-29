@@ -47,9 +47,15 @@ CREATE TABLE IF NOT EXISTS public.exams (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
     academic_year_id UUID REFERENCES public.academic_years(id) ON DELETE SET NULL,
-    start_date DATE,
-    end_date DATE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    subject_id UUID REFERENCES public.subjects(id) ON DELETE SET NULL,
+    class_id UUID REFERENCES public.classes(id) ON DELETE SET NULL,
+    date DATE,
+    start_time TIME,
+    end_time TIME,
+    max_marks DECIMAL(5,2) DEFAULT 100,
+    passing_marks DECIMAL(5,2) DEFAULT 40,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- =====================================================
@@ -381,7 +387,23 @@ CREATE TABLE IF NOT EXISTS public.notifications (
 );
 
 -- =====================================================
--- 26. SCHOOL SETTINGS
+-- 27. PAYMENT GATEWAYS
+-- =====================================================
+CREATE TABLE IF NOT EXISTS public.payment_gateways (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL,
+    provider TEXT NOT NULL, -- 'financial', 'lms', etc.
+    is_active BOOLEAN DEFAULT true,
+    api_key TEXT,
+    secret_key TEXT,
+    webhook_secret TEXT,
+    config JSONB DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================
+-- 28. SCHOOL SETTINGS
 -- =====================================================
 CREATE TABLE IF NOT EXISTS public.school_settings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -423,7 +445,8 @@ BEGIN
             'bus_routes', 'bus_stops', 'student_transport',
             'health_profiles', 'infirmary_logs', 'student_conduct',
             'messages', 'inventory_items', 'document_archives',
-            'audit_logs', 'guardian_students', 'notifications', 'school_settings'
+            'audit_logs', 'guardian_students', 'notifications', 'school_settings',
+            'payment_gateways'
         ])
     LOOP
         EXECUTE format('ALTER TABLE IF EXISTS public.%I ENABLE ROW LEVEL SECURITY', tbl);

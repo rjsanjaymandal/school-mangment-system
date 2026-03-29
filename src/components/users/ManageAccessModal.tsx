@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Trash2 } from "lucide-react";
+import { Plus, Loader2, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -37,8 +38,8 @@ import { updateIdentity, deleteIdentity } from "@/app/(dashboard)/users/actions"
 
 const formSchema = z.object({
   full_name: z.string().min(2, "Full name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().optional(),
+  email: z.string().email("Invalid email address").or(z.literal("")).or(z.literal("user@edumaysan.com")), // Handle missing or placeholder scenarios
+  password: z.string().optional().or(z.literal("")),
   role: z.enum(["admin", "teacher", "student", "parent"]),
 });
 
@@ -146,9 +147,20 @@ export function ManageAccessModal({ user }: { user: any }) {
                 <FormItem>
                   <FormLabel className="text-[10px] uppercase font-black tracking-widest">Email Address</FormLabel>
                   <FormControl>
-                    <Input type="email" disabled placeholder="user@edumaysan.com" {...field} className="rounded-sm bg-background/50 border-border text-xs focus-visible:ring-0 opacity-70 cursor-not-allowed shadow-inner" />
+                    <Input 
+                      type="email" 
+                      disabled={!!user.email} 
+                      placeholder="user@edumaysan.com" 
+                      {...field} 
+                      className={cn(
+                        "rounded-sm border-border text-xs shadow-inner",
+                        user.email ? "bg-background/50 opacity-70 cursor-not-allowed focus-visible:ring-0" : "bg-card/40 focus-visible:ring-primary"
+                      )} 
+                    />
                   </FormControl>
-                  <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">Email address cannot be changed.</p>
+                  <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">
+                    {user.email ? "Email address cannot be changed." : "Provide email to sync missing profile data."}
+                  </p>
                   <FormMessage className="text-[10px]" />
                 </FormItem>
               )}

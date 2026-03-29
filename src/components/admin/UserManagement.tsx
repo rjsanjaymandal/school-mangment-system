@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 "use client";
 import Link from "next/link";
 
@@ -45,7 +44,7 @@ export function UserManagement() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(true);
 
   const fetchUsers = async () => {
     setIsRefreshing(true);
@@ -60,7 +59,24 @@ export function UserManagement() {
   };
 
   useEffect(() => {
-    fetchUsers();
+    let active = true;
+
+    UserService.getAllProfiles().then((data) => {
+      if (!active) return;
+
+      if (data && !("error" in data)) {
+        setUsers(data);
+      } else {
+        toast.error("Failed to load users");
+      }
+
+      setLoading(false);
+      setIsRefreshing(false);
+    });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleRoleUpdate = async (userId: string, newRole: any) => {

@@ -44,7 +44,6 @@ interface StudentAssignmentDialogProps {
 
 export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDialogProps) {
     const router = useRouter();
-    const supabase = createClient();
     const [open, setOpen] = useState(false);
     const [students, setStudents] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
@@ -56,26 +55,35 @@ export function StudentAssignmentDialog({ routes, stops }: StudentAssignmentDial
 
     const [studentPopoverOpen, setStudentPopoverOpen] = useState(false);
 
-    const fetchStudents = async () => {
-        setFetchingStudents(true);
-        const { data, error } = await supabase
-            .from("students")
-            .select("id, profile:profiles(full_name)")
-            .order("id");
-
-        if (error) {
-            toast.error("Failed to fetch students");
-        } else {
-            setStudents(data || []);
-        }
-        setFetchingStudents(false);
-    };
-
     useEffect(() => {
-        if (open) {
-            fetchStudents();
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (!open) return;
+
+        let active = true;
+
+        const loadStudents = async () => {
+            setFetchingStudents(true);
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from("students")
+                .select("id, profile:profiles(full_name)")
+                .order("id");
+
+            if (!active) return;
+
+            if (error) {
+                toast.error("Failed to fetch students");
+            } else {
+                setStudents(data || []);
+            }
+
+            setFetchingStudents(false);
+        };
+
+        void loadStudents();
+
+        return () => {
+            active = false;
+        };
     }, [open]);
 
     const handleAssign = async () => {

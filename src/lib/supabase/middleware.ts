@@ -10,7 +10,24 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error
   } = await supabase.auth.getUser()
+
+  // Senior Fix: If we have an AuthApiError related to Refresh Token, we MUST clear the session
+  if (error && error.name === 'AuthApiError') {
+    console.warn("Auth Middleware: Session invalid, redirecting to login.", error.message);
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    const response = NextResponse.redirect(url)
+    
+    // Clear all sb- cookies on the way out to stop the refresh loop
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+        if (cookie.name.startsWith('sb-')) {
+            response.cookies.delete(cookie.name)
+        }
+    })
+    return response
+  }
 
   if (
     !user &&

@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable react-hooks/purity, react-hooks/exhaustive-deps, react-hooks/set-state-in-effect */
 import { useMemo, useState } from "react";
 import {
     IndianRupee,
@@ -65,6 +64,8 @@ interface FeesDashboardProps {
     };
 }
 
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 export function FeesDashboard({
     fees,
     payments,
@@ -85,12 +86,23 @@ export function FeesDashboard({
 
     // --- Financial Intelligence Layer ---
     const collectionMatrix = useMemo(() => {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        return months.map(m => ({
-            name: m,
-            amt: Math.floor(Math.random() * 500000) + 100000 // Mock trend since we don't have month-wise seed
-        }));
-    }, []);
+        const totals = MONTH_LABELS.reduce<Record<string, { name: string; amt: number }>>((acc, month) => {
+            acc[month] = { name: month, amt: 0 };
+            return acc;
+        }, {});
+
+        payments.forEach((payment) => {
+            const sourceDate = payment.payment_date || payment.created_at;
+            if (!sourceDate) return;
+
+            const month = new Date(sourceDate).toLocaleDateString("en-US", { month: "short" });
+            if (!totals[month]) return;
+
+            totals[month].amt += Number(payment.amount_paid || 0);
+        });
+
+        return MONTH_LABELS.map((month) => totals[month]);
+    }, [payments]);
 
     const vectorDistribution = useMemo(() => {
         const methodMap: Record<string, number> = {};

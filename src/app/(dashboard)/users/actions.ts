@@ -27,21 +27,26 @@ export async function provisionUser(formData: any) {
     if (!authData.user) throw new Error("Failed to create user identity");
 
     const userId = authData.user.id;
+    const userEmail = authData.user.email || formData.email;
 
+    // 2. Clear and explicit sync to profiles
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .upsert({
         id: userId,
-        email: formData.email,
+        email: userEmail,
         full_name: formData.full_name,
         role: formData.role,
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'id' });
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      console.error("Profile sync failed:", profileError);
+      throw profileError;
+    }
 
     revalidatePath("/users");
-    return { success: true, message: "Identity provisioned successfully", userId };
+    return { success: true, message: "Identity and profile provisioned successfully", userId };
   } catch (error: any) {
     console.error("Error provisioning identity:", error);
     return { success: false, message: error.message || "An unexpected error occurred" };
@@ -72,17 +77,20 @@ export async function updateIdentity(userId: string, formData: any) {
     const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, updateData);
     if (authError) throw authError;
 
-    // 2. Update profile
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
         full_name: formData.full_name,
         role: formData.role,
+        email: formData.email, // Ensure email is synced if it was missing
         updated_at: new Date().toISOString()
       })
       .eq('id', userId);
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      console.error("Profile update failed:", profileError);
+      throw profileError;
+    }
 
     revalidatePath("/users");
     return { success: true, message: "Identity updated successfully" };

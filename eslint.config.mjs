@@ -20,6 +20,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".agent/**",
+    ".agents/**",
     "lint_errors_final.log",
     "lint_fix_report.json",
     "lint_errors.json",
