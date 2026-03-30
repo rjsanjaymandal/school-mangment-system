@@ -86,7 +86,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
       } else {
         toast.error(result.error || "Failed to save class");
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
     }
   }
