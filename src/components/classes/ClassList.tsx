@@ -9,19 +9,9 @@ import {
     Users,
     School,
     DoorOpen,
-    Hash,
-    Search,
-    Building2
+    Search
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import {
     DropdownMenu,
     DropdownMenuContent,

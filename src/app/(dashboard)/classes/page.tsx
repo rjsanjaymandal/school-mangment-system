@@ -41,7 +41,7 @@ export default async function ClassesPage() {
         </div>
       </div>
 
-      <ClassList initialData={joinedClasses} userRole={role} teachers={teachers || []} />
+      <ClassList initialData={joinedClasses as any} userRole={role} teachers={teachers || []} />
     </div>
   );
 }
