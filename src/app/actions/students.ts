@@ -200,3 +200,188 @@ export async function deleteStudent(id: string) {
         return { error: "An unexpected error occurred." };
     }
 }
+
+export async function getClassCapacity(classId: string) {
+    try {
+        const supabase = createAdminClient();
+        
+        const { data: classData, error: classError } = await supabase
+            .from("classes")
+            .select("capacity")
+            .eq("id", classId)
+            .single();
+
+        if (classError) throw classError;
+
+        const { count: currentCount, error: countError } = await supabase
+            .from("students")
+            .select("*", { count: 'exact', head: true })
+            .eq("class_id", classId);
+
+        if (countError) throw countError;
+
+        return {
+            success: true,
+            capacity: classData?.capacity || null,
+            currentCount: currentCount || 0,
+            available: classData?.capacity ? classData.capacity - (currentCount || 0) : null
+        };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function assignStudentToClass(
+    studentId: string,
+    classId: string,
+    academicYearId?: string
+) {
+    try {
+        if (!(await isAdmin())) {
+            throw new Error("Unauthorized: Only administrators can assign students to classes.");
+        }
+        const supabase = createAdminClient();
+
+        // Check class capacity
+        const capacityInfo = await getClassCapacity(classId);
+        if (capacityInfo.success && capacityInfo.capacity !== null && capacityInfo.available !== null && capacityInfo.available !== undefined) {
+            if (capacityInfo.available <= 0) {
+                return { success: false, error: `Class is at full capacity (${capacityInfo.capacity} students). Cannot assign more students.` };
+            }
+        }
+
+        // Update student class
+        const { error: updateError } = await supabase
+            .from("students")
+            .update({ class_id: classId })
+            .eq("id", studentId);
+
+        if (updateError) throw updateError;
+
+        // If academic year provided, could also create a class_enrollment record
+        if (academicYearId) {
+            const { error: enrollmentError } = await supabase
+                .from("class_enrollments")
+                .upsert({
+                    student_id: studentId,
+                    class_id: classId,
+                    academic_year_id: academicYearId,
+                    enrolled_at: new Date().toISOString()
+                }, { onConflict: 'student_id,academic_year_id' });
+            
+            if (enrollmentError) {
+                console.warn("Enrollment record creation warning:", enrollmentError);
+            }
+        }
+
+        revalidatePath("/students");
+        revalidatePath("/classes");
+        revalidatePath("/admin/dashboard");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function bulkAssignStudentsToClass(
+    studentIds: string[],
+    classId: string,
+    academicYearId?: string
+) {
+    try {
+        if (!(await isAdmin())) {
+            throw new Error("Unauthorized: Only administrators can assign students to classes.");
+        }
+        
+        if (!studentIds || studentIds.length === 0) {
+            return { success: false, error: "No students selected." };
+        }
+
+        const supabase = createAdminClient();
+
+        // Check class capacity
+        const capacityInfo = await getClassCapacity(classId);
+        if (capacityInfo.success && capacityInfo.capacity !== null && capacityInfo.available !== null && capacityInfo.available !== undefined) {
+            if (studentIds.length > capacityInfo.available) {
+                return { success: false, error: `Not enough capacity. Class has ${capacityInfo.available} spots left, but ${studentIds.length} students selected.` };
+            }
+        }
+
+        // Bulk update students
+        const { error: updateError } = await supabase
+            .from("students")
+            .update({ class_id: classId })
+            .in("id", studentIds);
+
+        if (updateError) throw updateError;
+
+        // Create enrollment records if academic year provided
+        if (academicYearId) {
+            const enrollmentRecords = studentIds.map(studentId => ({
+                student_id: studentId,
+                class_id: classId,
+                academic_year_id: academicYearId,
+                enrolled_at: new Date().toISOString()
+            }));
+
+            const { error: enrollmentError } = await supabase
+                .from("class_enrollments")
+                .upsert(enrollmentRecords, { onConflict: 'student_id,academic_year_id' });
+            
+            if (enrollmentError) {
+                console.warn("Enrollment records creation warning:", enrollmentError);
+            }
+        }
+
+        revalidatePath("/students");
+        revalidatePath("/classes");
+        revalidatePath("/admin/dashboard");
+        return { success: true, assignedCount: studentIds.length };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function getStudentsByClass(classId: string) {
+    try {
+        const supabase = createAdminClient();
+
+        const { data, error } = await supabase
+            .from("students")
+            .select(`
+                *,
+                profile:profiles(*)
+            `)
+            .eq("class_id", classId)
+            .order("roll_number", { ascending: true });
+
+        if (error) throw error;
+
+        return { success: true, students: data || [] };
+    } catch (error: any) {
+        return { success: false, error: error.message, students: [] };
+    }
+}
+
+export async function getUnassignedStudents(academicYearId?: string) {
+    try {
+        const supabase = createAdminClient();
+
+        const query = supabase
+            .from("students")
+            .select(`
+                *,
+                profile:profiles(*)
+            `)
+            .is("class_id", null)
+            .order("profile:full_name", { ascending: true });
+
+        const { data, error } = await query;
+
+        if (error) throw error;
+
+        return { success: true, students: data || [] };
+    } catch (error: any) {
+        return { success: false, error: error.message, students: [] };
+    }
+}

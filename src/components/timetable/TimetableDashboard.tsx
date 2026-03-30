@@ -13,8 +13,13 @@ import {
     Activity,
     BookMarked,
     LayoutGrid,
-    Trash2
+    Trash2,
+    Edit,
+    Printer,
+    ArrowLeftRight,
+    Search
 } from "lucide-react";
+import { useEffect, useTransition } from "react";
 import { 
     BarChart, Bar, 
     PieChart, Pie, Cell, 
@@ -40,12 +45,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { createTimetableSlot, deleteTimetableSlot } from "@/app/actions/timetable";
+import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot, getTimetableByClass } from "@/app/actions/timetable";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"];
+const TIME_SLOTS = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 const COLORS = ["blue", "purple", "indigo", "emerald", "amber", "rose"];
 
 interface TimetableDashboardProps {
@@ -61,9 +66,35 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
     const router = useRouter();
     const [selectedDay, setSelectedDay] = useState("Monday");
     const [selectedClass, setSelectedClass] = useState(classes[0]?.id || "");
-    const [isAddSlotOpen, setIsAddSlotOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [selectedTeacher, setSelectedTeacher] = useState("");
+    const [viewMode, setViewMode] = useState<"class" | "teacher">("class");
     
+    const [isAddSlotOpen, setIsAddSlotOpen] = useState(false);
+    const [isEditSlotOpen, setIsEditSlotOpen] = useState(false);
+    const [editingSlot, setEditingSlot] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+
+    // --- Today Auto-Detection ---
+    const [today, setToday] = useState(() => new Date().toLocaleDateString('en-US', { weekday: 'long' }));
+    const [isTodaySet, setIsTodaySet] = useState(false);
+    useEffect(() => {
+        if (!isTodaySet) {
+            const t = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+            setToday(t);
+            if (WEEKDAYS.includes(t)) {
+                setSelectedDay(t);
+            }
+            setIsTodaySet(true);
+        }
+    }, [isTodaySet]);
+
+    useEffect(() => {
+        // Default teacher selection if in teacher mode
+        if (viewMode === "teacher" && !selectedTeacher && teachers.length > 0) {
+            setSelectedTeacher(teachers[0].id);
+        }
+    }, [viewMode, teachers, selectedTeacher]);
+
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
 
     // --- Analytics Logic ---
@@ -132,7 +163,18 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
     }, [timetables, selectedDay, slotForm.start_time, slotForm.end_time]);
 
     const handleCreateSlot = async () => {
-        if (!selectedClass || !currentAY) return;
+        if (!selectedClass) {
+            toast.error("Please select a class first.");
+            return;
+        }
+        if (!currentAY) {
+            toast.error("No active academic year found in settings.");
+            return;
+        }
+        if (!slotForm.subject_id || !slotForm.teacher_id || !slotForm.start_time || !slotForm.end_time) {
+            toast.error("Please fill in all required fields (Subject, Teacher, Start/End Time).");
+            return;
+        }
         setLoading(true);
         const result = await createTimetableSlot({
             class_id: selectedClass,
@@ -145,6 +187,12 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
             setIsAddSlotOpen(false);
             setSlotForm({ subject_id: "", teacher_id: "", start_time: "", end_time: "", room_number: "" });
             router.refresh();
+            
+            // Force a brief delay to ensure revalidation completes
+            setTimeout(() => {
+                router.refresh();
+            }, 100);
+            
             toast.success("Schedule slot added successfully");
         } else {
             toast.error(result.error || "Failed to add slot");
@@ -158,22 +206,116 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         setLoading(false);
         if (result.success) {
             router.refresh();
+            setTimeout(() => {
+                router.refresh();
+            }, 100);
             toast.success("Schedule slot deleted successfully");
         } else {
             toast.error(result.error || "Failed to delete slot");
         }
     };
 
-    // Filter timetable for current class and day
-    const dayTimetable = timetables.find(
-        (t: any) => t.class_id === selectedClass && t.day_of_week === selectedDay
-    );
-    const slots = dayTimetable?.slots || [];
+    const handleUpdateSlot = async () => {
+        if (!currentAY || !editingSlot) return;
+        if (!slotForm.subject_id || !slotForm.teacher_id || !slotForm.start_time || !slotForm.end_time) {
+            toast.error("Please fill in all required fields.");
+            return;
+        }
+        setLoading(true);
+        const result = await updateTimetableSlot(editingSlot.id, {
+            academic_year_id: currentAY.id,
+            day_of_week: selectedDay,
+            ...slotForm,
+        });
+        setLoading(false);
+        if (result.success) {
+            setIsEditSlotOpen(false);
+            setEditingSlot(null);
+            setSlotForm({ subject_id: "", teacher_id: "", start_time: "", end_time: "", room_number: "" });
+            router.refresh();
+            toast.success("Schedule slot updated successfully");
+        } else {
+            toast.error(result.error || "Failed to update schedule slot");
+        }
+    };
 
-    // Count total slots across all days
-    const totalSlots = timetables
-        .filter((t: any) => t.class_id === selectedClass)
-        .reduce((sum: number, t: any) => sum + (t.slots?.length || 0), 0);
+    const handleEditClick = (s: any) => {
+        setEditingSlot(s);
+        setSlotForm({
+            subject_id: s.subject_id,
+            teacher_id: s.teacher_id,
+            start_time: s.start_time?.slice(0, 5) || "",
+            end_time: s.end_time?.slice(0, 5) || "",
+            room_number: s.room_number || ""
+        });
+        setIsEditSlotOpen(true);
+    };
+
+    const handlePrint = () => {
+        window.print();
+    };
+
+    // Debug: Log data to console
+    useEffect(() => {
+        console.log("Timetable Debug:", {
+            timetablesCount: timetables.length,
+            slotsInTimetables: timetables.reduce((sum, t) => sum + (t.slots?.length || 0), 0),
+            currentAY: currentAY?.id,
+            selectedClass,
+            selectedDay,
+            viewMode
+        });
+    }, [timetables, currentAY, selectedClass, selectedDay, viewMode]);
+
+    // Filter timetable slots based on view mode (Class vs Teacher)
+    const activeSlots = useMemo(() => {
+        // Aggregate all slots across all timetables for this criteria on this day
+        const filteredSlots: any[] = [];
+        const matchingTimetables = timetables.filter(
+            (t: any) => t.day_of_week === selectedDay && t.academic_year_id === currentAY?.id
+        );
+
+        if (viewMode === "class") {
+            matchingTimetables
+                .filter((t: any) => t.class_id === selectedClass)
+                .forEach((t: any) => {
+                    t.slots?.forEach((s: any) => {
+                        filteredSlots.push(s);
+                    });
+                });
+        } else {
+            matchingTimetables.forEach((t: any) => {
+                t.slots?.forEach((s: any) => {
+                    if (s.teacher_id === selectedTeacher) {
+                        filteredSlots.push({ ...s, class_name: t.class?.name });
+                    }
+                });
+            });
+        }
+        return filteredSlots;
+    }, [timetables, selectedClass, selectedTeacher, viewMode, selectedDay, currentAY]);
+
+    // Slots that don't fit into the 07:00-20:00 hourly buckets
+    const unmappedSlots = useMemo(() => {
+        const hoursInGrid = new Set(TIME_SLOTS.map(t => t.split(':')[0].padStart(2, '0')));
+        return activeSlots.filter((s: any) => {
+            const h = s.start_time?.split(':')[0]?.padStart(2, '0');
+            return !hoursInGrid.has(h);
+        });
+    }, [activeSlots]);
+
+    // Count total slots across all days for analytics
+    const totalSlots = useMemo(() => {
+        if (viewMode === "class") {
+            return timetables
+                .filter((t: any) => t.class_id === selectedClass && t.academic_year_id === currentAY?.id)
+                .reduce((sum: number, t: any) => sum + (t.slots?.length || 0), 0);
+        } else {
+            return timetables
+                .filter((t: any) => t.academic_year_id === currentAY?.id)
+                .reduce((sum: number, t: any) => sum + (t.slots?.filter((s: any) => s.teacher_id === selectedTeacher).length || 0), 0);
+        }
+    }, [timetables, selectedClass, selectedTeacher, viewMode, currentAY]);
 
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
@@ -189,13 +331,43 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                     <h2 className="text-4xl font-bold tracking-tight text-foreground">
                         Class <span className="text-primary font-light">/</span> Schedule
                     </h2>
+                    {viewMode === "class" && selectedClass && (
+                        <div className="flex items-center gap-x-2 mt-2">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Class Teacher:</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                                {classes.find((c: any) => c.id === selectedClass)?.teacher?.profile?.full_name || "Not Assigned"}
+                            </span>
+                        </div>
+                    )}
                     <p className="text-muted-foreground mt-4 text-sm max-w-md">
                         Manage your weekly class timetable and institutional resource allocations.
                     </p>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-4">
-                    {classes.length > 0 && (
+                    {/* View Mode Toggle */}
+                    {isAdminOrTeacher && (
+                        <div className="flex items-center bg-muted/50 p-1 rounded-xl border border-border">
+                            <Button 
+                                variant={viewMode === "class" ? "default" : "ghost"} 
+                                size="sm" 
+                                className="h-9 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                onClick={() => setViewMode("class")}
+                            >
+                                <LayoutGrid className="h-3.5 w-3.5 mr-2" /> Class
+                            </Button>
+                            <Button 
+                                variant={viewMode === "teacher" ? "default" : "ghost"} 
+                                size="sm" 
+                                className="h-9 px-4 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                onClick={() => setViewMode("teacher")}
+                            >
+                                <User className="h-3.5 w-3.5 mr-2" /> Teacher
+                            </Button>
+                        </div>
+                    )}
+
+                    {viewMode === "class" ? (
                         <div className="relative group">
                             <Select value={selectedClass} onValueChange={setSelectedClass}>
                                 <SelectTrigger className="w-[240px] h-12 bg-background border-border font-medium">
@@ -203,14 +375,34 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                 </SelectTrigger>
                                 <SelectContent>
                                     {classes.map((c: any) => (
-                                        <SelectItem key={c.id} value={c.id}>
-                                            {c.name}
-                                        </SelectItem>
+                                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    ) : (
+                        <div className="relative group">
+                            <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
+                                <SelectTrigger className="w-[240px] h-12 bg-background border-border font-medium">
+                                    <SelectValue placeholder="Select Teacher" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {teachers.map((t: any) => (
+                                        <SelectItem key={t.id} value={t.id}>{t.profile?.full_name}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
                         </div>
                     )}
+
+                    <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-12 w-12 rounded-xl bg-background border-border hover:bg-muted transition-all no-print"
+                        onClick={handlePrint}
+                    >
+                        <Printer className="h-4 w-4" />
+                    </Button>
 
                     {isAdminOrTeacher && (
                         <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
@@ -237,6 +429,19 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                         </div>
                                     </div>
                                     
+                                    {(subjects.length === 0 || teachers.length === 0) && (
+                                        <div className="p-3 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 text-xs rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-start gap-2">
+                                            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+                                            <p>
+                                                {subjects.length === 0 && teachers.length === 0 
+                                                    ? "No subjects or teachers found. Please add them in their respective modules before creating a schedule."
+                                                    : subjects.length === 0 
+                                                        ? "No subjects found. Please add subjects before creating a schedule."
+                                                        : "No active teachers found. Please add teachers before creating a schedule."}
+                                            </p>
+                                        </div>
+                                    )}
+
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label className="text-sm font-medium">Subject</Label>
@@ -403,7 +608,14 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                         : "text-muted-foreground hover:text-foreground hover:bg-muted"
                                 }`}
                             >
-                                <span className="relative z-10">{day}</span>
+                                <div className="flex items-center gap-x-2 relative z-10">
+                                    <span>{day}</span>
+                                    {today === day && (
+                                        <span className={`px-1.5 py-0.5 rounded-sm text-[8px] font-black tracking-tighter uppercase ${
+                                            selectedDay === day ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+                                        }`}>Today</span>
+                                    )}
+                                </div>
                                 {selectedDay === day ? (
                                     <CheckCircle2 className="h-4 w-4 relative z-10" />
                                 ) : (
@@ -416,11 +628,18 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
 
                 {/* Schedule Grid Content */}
                 <div className="lg:col-span-3 space-y-12">
-                    <div className="flex gap-x-10 overflow-x-auto pb-10 scrollbar-emerald">
-                        {TIME_SLOTS.map((time) => {
-                            const matchingSlots = slots.filter((s: any) => s.start_time?.startsWith(time));
+                        <div className="flex gap-x-10 overflow-x-auto pb-10 scrollbar-emerald">
+                            {TIME_SLOTS.map((time) => {
+                            const hour = time.split(':')[0].padStart(2, '0');
+                            const matchingSlots = activeSlots
+                                .filter((s: any) => {
+                                    const sHour = s.start_time?.split(':')[0]?.padStart(2, '0');
+                                    return sHour === hour;
+                                })
+                                .sort((a: any, b: any) => (a.start_time || "").localeCompare(b.start_time || ""));
+                                
                             return (
-                                <div key={time} className="flex-1 min-w-[220px] space-y-8 animate-in slide-in-from-bottom-5 duration-700" style={{ animationDelay: `${parseInt(time) * 50}ms` }}>
+                                <div key={time} className="flex-1 min-w-[220px] space-y-8 no-print animate-in slide-in-from-bottom-5 duration-700" style={{ animationDelay: `${parseInt(time) * 50}ms` }}>
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-x-4">
                                             <p className="text-[11px] font-bold uppercase tracking-widest text-primary italic">{time}</p>
@@ -436,41 +655,47 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-x-2">
                                                         <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                                                        <span className="text-[9px] font-bold uppercase tracking-widest text-primary">Active</span>
+                                                        <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{s.start_time?.slice(0, 5)} - {s.end_time?.slice(0, 5)}</span>
                                                     </div>
                                                     {isAdminOrTeacher && (
-                                                        <Button 
-                                                            variant="ghost" 
-                                                            size="icon" 
-                                                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                                                            onClick={() => handleDeleteSlot(s.id)}
-                                                        >
-                                                            <Trash2 className="h-3.5 w-3.5" />
-                                                        </Button>
+                                                        <div className="flex items-center gap-x-1">
+                                                            <Button 
+                                                                variant="ghost" 
+                                                                size="icon" 
+                                                                className="h-7 w-7 text-muted-foreground hover:text-primary transition-colors"
+                                                                onClick={() => handleEditClick(s)}
+                                                            >
+                                                                <Edit className="h-3.5 w-3.5" />
+                                                            </Button>
+                                                            <Button 
+                                                                variant="ghost" 
+                                                                size="icon" 
+                                                                className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors"
+                                                                onClick={() => handleDeleteSlot(s.id)}
+                                                            >
+                                                                <Trash2 className="h-3.5 w-3.5" />
+                                                            </Button>
+                                                        </div>
                                                     )}
                                                 </div>
                                                 
                                                 <div className="space-y-1">
-                                                    <h4 className="font-bold text-foreground text-sm uppercase tracking-tight group-hover:text-primary transition-colors">
+                                                    <h4 className="font-bold text-foreground text-sm uppercase tracking-tight group-hover:text-primary transition-colors leading-tight">
                                                         {s.subject?.name || "No Subject"}
                                                     </h4>
-                                                    <p className="text-[10px] text-muted-foreground font-medium">
-                                                        {s.teacher?.profile?.full_name}
+                                                    <p className="text-[10px] text-muted-foreground font-semibold flex items-center gap-x-2 uppercase">
+                                                        {viewMode === "class" ? s.teacher?.profile?.full_name : s.class_name}
                                                     </p>
-                                                </div>
-                                                
-                                                <div className="flex items-center justify-between pt-4 border-t border-border text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
-                                                    <div className="flex items-center gap-x-2">
-                                                        <MapPin className="h-3 w-3 text-primary/60" />
-                                                        {s.room_number || "TBD"}
-                                                    </div>
-                                                    <div className="px-2 py-0.5 bg-muted rounded-full">
-                                                        {s.end_time?.slice(0, 5)}
-                                                    </div>
+                                                    {s.room_number && (
+                                                        <p className="text-[9px] text-primary/70 font-bold uppercase tracking-widest border-t border-border pt-1 mt-1 flex items-center gap-x-1">
+                                                            <MapPin className="h-2.5 w-2.5" /> Room {s.room_number}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
-                                        {matchingSlots.length === 0 && isAdminOrTeacher && (
+
+                                        {isAdminOrTeacher && matchingSlots.length === 0 && (
                                             <button 
                                                 onClick={() => { 
                                                     setSlotForm({ 
@@ -480,16 +705,77 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                     }); 
                                                     setIsAddSlotOpen(true); 
                                                 }}
-                                                className="h-32 w-full rounded-xl border-2 border-dashed border-border bg-muted/20 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-primary/5 transition-all"
+                                                className="h-32 w-full rounded-xl border-2 border-dashed border-border bg-muted/20 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-primary/5 transition-all mt-4"
                                             >
                                                 <Plus className="h-6 w-6 text-muted-foreground/30 group-hover:text-primary transition-all" />
-                                                <span className="mt-2 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/0 group-hover:text-primary group-hover:opacity-100 opacity-0 transition-all">Add Slot</span>
+                                                <span className="mt-2 text-[9px] font-bold uppercase tracking-widest text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">Add Slot</span>
                                             </button>
                                         )}
                                     </div>
                                 </div>
                             );
                         })}
+
+                        {/* Unmapped / Other Slots */}
+                        {unmappedSlots.length > 0 && (
+                            <div className="flex-1 min-w-[220px] space-y-8 no-print animate-in slide-in-from-right-10 duration-1000">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-x-4">
+                                        <p className="text-[11px] font-bold uppercase tracking-widest text-rose-500 italic">Others</p>
+                                        <div className="h-px flex-1 bg-rose-500/20" />
+                                    </div>
+                                </div>
+                                <div className="space-y-6">
+                                    {unmappedSlots.map((s: any) => (
+                                        <div 
+                                            key={s.id} 
+                                            className="group relative bg-rose-500/5 border border-rose-500/20 p-5 rounded-xl space-y-4 shadow-sm hover:shadow-md transition-all"
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-x-2">
+                                                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest text-rose-500">{s.start_time?.slice(0, 5)} - {s.end_time?.slice(0, 5)}</span>
+                                                </div>
+                                                {isAdminOrTeacher && (
+                                                    <div className="flex items-center gap-x-1">
+                                                        <Button 
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            className="h-7 w-7 text-muted-foreground hover:text-rose-500 transition-colors"
+                                                            onClick={() => handleEditClick(s)}
+                                                        >
+                                                            <Edit className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                        <Button 
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors"
+                                                            onClick={() => handleDeleteSlot(s.id)}
+                                                        >
+                                                            <Trash2 className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
+                                            <div className="space-y-1">
+                                                <h4 className="font-bold text-foreground text-sm uppercase tracking-tight group-hover:text-rose-500 transition-colors leading-tight">
+                                                    {s.subject?.name || "No Subject"}
+                                                </h4>
+                                                <p className="text-[10px] text-muted-foreground font-semibold flex items-center gap-x-2 uppercase">
+                                                    {viewMode === "class" ? s.teacher?.profile?.full_name : s.class_name}
+                                                </p>
+                                                {s.room_number && (
+                                                    <p className="text-[9px] text-rose-500/70 font-bold uppercase tracking-widest border-t border-rose-500/10 pt-1 mt-1 flex items-center gap-x-1">
+                                                        <MapPin className="h-2.5 w-2.5 text-rose-500/60" /> Room {s.room_number}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="grid gap-10 md:grid-cols-2">
@@ -522,6 +808,148 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                     </div>
                 </div>
             </div>
+
+            {/* Hidden Print Content */}
+            <div className="print-only hidden p-10 bg-white text-black min-h-screen">
+                <div className="flex justify-between items-end mb-10 border-b-2 border-black pb-6">
+                    <div>
+                        <h1 className="text-4xl font-black uppercase tracking-tighter">Academic Timetable</h1>
+                        <p className="text-sm font-bold uppercase tracking-widest text-gray-600 mt-2">
+                            {viewMode === "class" 
+                                ? `Class: ${classes.find(c => c.id === selectedClass)?.name || "N/A"}` 
+                                : `Teacher: ${teachers.find(t => t.id === selectedTeacher)?.profile?.full_name || "N/A"}`}
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Academic Year</p>
+                        <p className="text-lg font-black uppercase tracking-tight">{currentAY?.name || "N/A"}</p>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-8">
+                    {WEEKDAYS.map(day => (
+                        <div key={day} className="space-y-4">
+                            <h3 className="text-xl font-bold uppercase tracking-widest text-black border-l-4 border-black pl-4">{day}</h3>
+                            <div className="grid grid-cols-4 gap-4">
+                                {activeSlots.filter((s: any) => {
+                                    // Filter by day since aggregate list contains all slots
+                                    // If in class mode, 'timetables' find handles it
+                                    // If in teacher mode, we need to match the day
+                                    if (viewMode === "teacher") return true; 
+                                    const t = timetables.find(t => t.slots?.some((slot: any) => slot.id === s.id));
+                                    return t?.day_of_week === day;
+                                }).map((s: any) => (
+                                    <div key={s.id} className="border border-gray-300 p-4 rounded-none bg-gray-50">
+                                        <p className="text-[10px] font-bold uppercase mb-1">{s.start_time?.slice(0, 5)} - {s.end_time?.slice(0, 5)}</p>
+                                        <h4 className="text-sm font-black uppercase tracking-tight mb-1">{s.subject?.name}</h4>
+                                        <p className="text-[10px] text-gray-600 font-bold uppercase">
+                                            {viewMode === "class" ? s.teacher?.profile?.full_name : s.class_name} | {s.room_number}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Edit Slot Dialog */}
+            <Dialog open={isEditSlotOpen} onOpenChange={setIsEditSlotOpen}>
+                <DialogContent className="sm:max-w-[500px] p-0">
+                    <DialogHeader className="p-6 border-b border-border bg-muted/50">
+                        <DialogTitle>Edit Schedule Slot</DialogTitle>
+                        <p className="text-sm text-muted-foreground mt-1">Modify the existing class schedule entry.</p>
+                    </DialogHeader>
+                    <div className="p-6 space-y-6">
+                        <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 flex items-start gap-x-4">
+                            <div className="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-full">
+                                <Edit className="h-5 w-5 text-amber-600" />
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Editing Entry</p>
+                                <p className="font-semibold text-lg text-foreground">
+                                    {selectedDay} <span className="text-muted-foreground font-light px-1">/</span> {editingSlot?.subject?.name}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Subject</Label>
+                                <Select value={slotForm.subject_id} onValueChange={(v) => setSlotForm({ ...slotForm, subject_id: v })}>
+                                    <SelectTrigger className="h-10">
+                                        <SelectValue placeholder="Subject" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {subjects.map((sub) => (
+                                            <SelectItem key={sub.id} value={sub.id}>{sub.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Teacher</Label>
+                                <Select value={slotForm.teacher_id} onValueChange={(v) => setSlotForm({ ...slotForm, teacher_id: v })}>
+                                    <SelectTrigger className="h-10">
+                                        <SelectValue placeholder="Teacher" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {teachers.map((t: any) => (
+                                            <SelectItem key={t.id} value={t.id}>{t.profile?.full_name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Start Time</Label>
+                                <Input type="time" className="h-10" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">End Time</Label>
+                                <Input type="time" className="h-10" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">Room Number</Label>
+                            <Select value={slotForm.room_number} onValueChange={(v) => setSlotForm({ ...slotForm, room_number: v })}>
+                                <SelectTrigger className="h-10">
+                                    <SelectValue placeholder="Select Room" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {allRooms.map((room) => {
+                                        const isOccupied = occupiedRooms.has(room);
+                                        return (
+                                            <SelectItem key={room} value={room} disabled={isOccupied}>
+                                                <div className="flex items-center justify-between w-full gap-x-2">
+                                                    <span>{room}</span>
+                                                    {isOccupied && <span className="text-[10px] text-destructive font-bold uppercase">(Occupied)</span>}
+                                                </div>
+                                            </SelectItem>
+                                        );
+                                    })}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <Button onClick={handleUpdateSlot} disabled={loading} className="w-full h-12 text-sm font-semibold uppercase tracking-wider bg-amber-600 hover:bg-amber-700">
+                            {loading ? "Updating..." : "Update Schedule Slot"}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <style jsx global>{`
+                @media print {
+                    .no-print { display: none !important; }
+                    .print-only { display: block !important; }
+                    body { background: white !important; }
+                    @page { margin: 1cm; }
+                }
+            `}</style>
         </div>
     );
 }

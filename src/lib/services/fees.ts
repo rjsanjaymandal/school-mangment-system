@@ -233,7 +233,7 @@ export const FeesService = {
       if (academicYearId) feesQuery = feesQuery.eq("academic_year_id", academicYearId);
       const { data: fees } = await feesQuery;
 
-      let paymentsQuery = supabase.from("payments").select("amount_paid, status");
+      const paymentsQuery = supabase.from("payments").select("amount_paid, status");
       const { data: payments } = await paymentsQuery;
 
       const totalExpected = (fees || []).reduce((sum, f) => sum + Number(f.amount), 0);

@@ -57,7 +57,7 @@ export async function updateSession(request: NextRequest) {
 
     const realRole = realProfile?.role;
     let effectiveRole = realRole;
-    let effectiveUserId = user.id;
+    const effectiveUserId = user.id;
 
     // Security check for impersonation
     if (impersonationId) {

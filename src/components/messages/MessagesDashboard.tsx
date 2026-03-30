@@ -43,13 +43,6 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
         }
     }, [messages]);
 
-    // Load messages when conversation is selected
-    useEffect(() => {
-        if (selectedConversation) {
-            loadConversation(selectedConversation.contact.id);
-        }
-    }, [selectedConversation]);
-
     const loadConversation = async (contactId: string) => {
         const result = await MessagesService.getConversationMessages(currentUserId, contactId);
         if (result.data) {
@@ -61,6 +54,14 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
             }
         }
     };
+
+    // Load messages when conversation is selected
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    useEffect(() => {
+        if (selectedConversation) {
+            loadConversation(selectedConversation.contact.id);
+        }
+    }, [selectedConversation, loadConversation]);
 
     const handleSend = async () => {
         if (!newMessage.trim() || !selectedConversation) return;
