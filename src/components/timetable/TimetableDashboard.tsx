@@ -12,7 +12,8 @@ import {
     User,
     Activity,
     BookMarked,
-    LayoutGrid
+    LayoutGrid,
+    Trash2
 } from "lucide-react";
 import { 
     BarChart, Bar, 
@@ -39,8 +40,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { createTimetableSlot } from "@/app/actions/timetable";
+import { createTimetableSlot, deleteTimetableSlot } from "@/app/actions/timetable";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_SLOTS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"];
@@ -61,6 +63,8 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
     const [selectedClass, setSelectedClass] = useState(classes[0]?.id || "");
     const [isAddSlotOpen, setIsAddSlotOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    
+    const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
 
     // --- Analytics Logic ---
     const subjectDistribution = useMemo(() => {
@@ -100,6 +104,33 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         room_number: "",
     });
 
+    const allRooms = useMemo(() => {
+        const rooms = new Set<string>();
+        classes.forEach(c => {
+            if (c.room_number) rooms.add(c.room_number);
+        });
+        return Array.from(rooms).sort();
+    }, [classes]);
+
+    const occupiedRooms = useMemo(() => {
+        if (!slotForm.start_time || !slotForm.end_time) return new Set<string>();
+        
+        const occupied = new Set<string>();
+        timetables.forEach(t => {
+            if (t.day_of_week === selectedDay) {
+                t.slots?.forEach((s: any) => {
+                    // Simple overlap check: (StartA < EndB) and (EndA > StartB)
+                    if (s.room_number && 
+                        slotForm.start_time < s.end_time && 
+                        slotForm.end_time > s.start_time) {
+                        occupied.add(s.room_number);
+                    }
+                });
+            }
+        });
+        return occupied;
+    }, [timetables, selectedDay, slotForm.start_time, slotForm.end_time]);
+
     const handleCreateSlot = async () => {
         if (!selectedClass || !currentAY) return;
         setLoading(true);
@@ -114,6 +145,22 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
             setIsAddSlotOpen(false);
             setSlotForm({ subject_id: "", teacher_id: "", start_time: "", end_time: "", room_number: "" });
             router.refresh();
+            toast.success("Schedule slot added successfully");
+        } else {
+            toast.error(result.error || "Failed to add slot");
+        }
+    };
+
+    const handleDeleteSlot = async (slotId: string) => {
+        if (!confirm("Are you sure you want to delete this schedule slot?")) return;
+        setLoading(true);
+        const result = await deleteTimetableSlot(slotId);
+        setLoading(false);
+        if (result.success) {
+            router.refresh();
+            toast.success("Schedule slot deleted successfully");
+        } else {
+            toast.error(result.error || "Failed to delete slot");
         }
     };
 
@@ -129,36 +176,34 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         .reduce((sum: number, t: any) => sum + (t.slots?.length || 0), 0);
 
     return (
-        <div className="space-y-12 animate-in fade-in transition-all duration-1000">
+        <div className="space-y-12 animate-in fade-in duration-700">
             {/* Header / Command Row */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 reveal-0">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                 <div>
                     <div className="flex items-center gap-x-3 mb-4">
-                        <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-x-2">
-                            <Clock className="h-3 w-3 animate-pulse" />
-                            Temporal Registry Active
+                        <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-x-2">
+                            <Clock className="h-3.5 w-3.5" />
+                            Class Schedule Active
                         </div>
                     </div>
-                    <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                        Temporal <span className="text-primary tracking-normal not-italic">/</span> Allocation
+                    <h2 className="text-4xl font-bold tracking-tight text-foreground">
+                        Class <span className="text-primary font-light">/</span> Schedule
                     </h2>
-                    <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-                        <MapPin className="h-3 w-3 text-primary" />
-                        Institutional Resource Distribution Engine
+                    <p className="text-muted-foreground mt-4 text-sm max-w-md">
+                        Manage your weekly class timetable and institutional resource allocations.
                     </p>
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-4">
                     {classes.length > 0 && (
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-primary/5 blur-xl group-hover:bg-primary/10 transition-all" />
                             <Select value={selectedClass} onValueChange={setSelectedClass}>
-                                <SelectTrigger className="w-[240px] h-14 rounded-sm border-white/10 bg-white/5 backdrop-blur-2xl font-black uppercase tracking-widest text-[11px] relative z-10 hover:border-primary/40 transition-all">
-                                    <SelectValue placeholder="Select Sector" />
+                                <SelectTrigger className="w-[240px] h-12 bg-background border-border font-medium">
+                                    <SelectValue placeholder="Select Class" />
                                 </SelectTrigger>
-                                <SelectContent className="glass-dark border-primary/20 p-2">
+                                <SelectContent>
                                     {classes.map((c: any) => (
-                                        <SelectItem key={c.id} value={c.id} className="font-black uppercase text-[10px] tracking-widest p-3 hover:bg-primary/10 rounded-xs transition-colors cursor-pointer">
+                                        <SelectItem key={c.id} value={c.id}>
                                             {c.name}
                                         </SelectItem>
                                     ))}
@@ -167,63 +212,54 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                         </div>
                     )}
 
-                    {(userRole === "admin" || userRole === "teacher") && (
+                    {isAdminOrTeacher && (
                         <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
                             <DialogTrigger asChild>
-                                <button className="relative group px-8 h-14 bg-primary text-primary-foreground rounded-sm overflow-hidden emerald-border-glow transition-all duration-500 hover:scale-105 active:scale-95">
-                                    <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
-                                    <div className="flex items-center gap-x-3 relative z-10 font-black text-xs uppercase tracking-[0.3em]">
-                                        <Plus className="h-4 w-4" /> Initialize Node
-                                    </div>
-                                </button>
+                                <Button className="h-12 px-8 flex items-center gap-x-2 shadow-sm">
+                                    <Plus className="h-4 w-4" /> Add Slot
+                                </Button>
                             </DialogTrigger>
-                            <DialogContent className="p-0 border-white/10 bg-background/40 backdrop-blur-3xl max-w-xl overflow-hidden shadow-2xl rounded-sm ring-1 ring-white/10">
-                                <div className="bg-primary/20 p-10 border-b border-white/10 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-12 opacity-5 rotate-12 group-hover:rotate-45 transition-all duration-1000">
-                                        <Zap className="h-32 w-32 text-primary" />
-                                    </div>
-                                    <DialogHeader className="relative z-10">
-                                        <DialogTitle className="font-black text-3xl uppercase tracking-tighter italic">Temporal Command</DialogTitle>
-                                        <p className="text-primary font-black uppercase tracking-[0.4em] text-[10px] mt-2 italic">Phase Initialization Interface</p>
-                                    </DialogHeader>
-                                </div>
-                                <div className="p-10 space-y-8">
-                                    <div className="p-6 rounded-sm bg-primary/5 border border-primary/10 flex items-start gap-x-6 relative group overflow-hidden">
-                                         <div className="absolute inset-0 bg-primary text-primary-foreground opacity-0 group-hover:opacity-5 transition-opacity" />
-                                        <div className="p-3 bg-primary/10 rounded-sm">
+                            <DialogContent className="sm:max-w-[500px] p-0">
+                                <DialogHeader className="p-6 border-b border-border bg-muted/50">
+                                    <DialogTitle>Add Schedule Slot</DialogTitle>
+                                    <p className="text-sm text-muted-foreground mt-1">Configure the class schedule for the selected day.</p>
+                                </DialogHeader>
+                                <div className="p-6 space-y-6">
+                                    <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 flex items-start gap-x-4">
+                                        <div className="p-2 bg-primary/10 rounded-full">
                                             <AlertCircle className="h-5 w-5 text-primary" />
                                         </div>
-                                        <div className="space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Target Sector / Cycle</p>
-                                            <p className="font-black text-xl text-foreground uppercase italic leading-none">
-                                                {selectedDay} <span className="text-primary tracking-normal not-italic px-2">/</span> {classes.find((c: any) => c.id === selectedClass)?.name || "—"}
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Target Class</p>
+                                            <p className="font-semibold text-lg text-foreground">
+                                                {selectedDay} <span className="text-primary font-light px-1">/</span> {classes.find((c: any) => c.id === selectedClass)?.name || "—"}
                                             </p>
                                         </div>
                                     </div>
                                     
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/40 ml-1">Curriculum Node</Label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-sm font-medium">Subject</Label>
                                             <Select value={slotForm.subject_id} onValueChange={(v) => setSlotForm({ ...slotForm, subject_id: v })}>
-                                                <SelectTrigger className="bg-white/5 border-white/10 rounded-sm h-14 font-black uppercase text-[10px] tracking-widest hover:border-primary/40 transition-all">
+                                                <SelectTrigger className="h-10">
                                                     <SelectValue placeholder="Select Subject" />
                                                 </SelectTrigger>
-                                                <SelectContent className="glass-dark border-primary/20">
+                                                <SelectContent>
                                                     {subjects.map((s: any) => (
-                                                        <SelectItem key={s.id} value={s.id} className="font-black uppercase text-[9px] tracking-widest">{s.name}</SelectItem>
+                                                        <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/40 ml-1">Personnel ID</Label>
+                                        <div className="space-y-2">
+                                            <Label className="text-sm font-medium">Teacher</Label>
                                             <Select value={slotForm.teacher_id} onValueChange={(v) => setSlotForm({ ...slotForm, teacher_id: v })}>
-                                                <SelectTrigger className="bg-white/5 border-white/10 rounded-sm h-14 font-black uppercase text-[10px] tracking-widest hover:border-primary/40 transition-all">
-                                                    <SelectValue placeholder="Select Staff" />
+                                                <SelectTrigger className="h-10">
+                                                    <SelectValue placeholder="Select Teacher" />
                                                 </SelectTrigger>
-                                                <SelectContent className="glass-dark border-primary/20">
+                                                <SelectContent>
                                                     {teachers.map((t: any) => (
-                                                        <SelectItem key={t.id} value={t.id} className="font-black uppercase text-[9px] tracking-widest">
+                                                        <SelectItem key={t.id} value={t.id}>
                                                             {t.profile?.full_name}
                                                         </SelectItem>
                                                     ))}
@@ -232,28 +268,45 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/40 ml-1">Activation</Label>
-                                            <Input type="time" className="bg-white/5 border-white/10 rounded-sm h-14 font-black text-foreground hover:border-primary/40 transition-all px-4" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-sm font-medium">Start Time</Label>
+                                            <Input type="time" className="h-10" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
                                         </div>
-                                        <div className="space-y-3">
-                                            <Label className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/40 ml-1">Termination</Label>
-                                            <Input type="time" className="bg-white/5 border-white/10 rounded-sm h-14 font-black text-foreground hover:border-primary/40 transition-all px-4" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
+                                        <div className="space-y-2">
+                                            <Label className="text-sm font-medium">End Time</Label>
+                                            <Input type="time" className="h-10" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.5em] text-foreground/40 ml-1">Geospatial Coordinator</Label>
-                                        <Input className="bg-white/5 border-white/10 rounded-sm h-14 font-black uppercase text-[10px] tracking-[0.2em] px-4 placeholder:text-foreground/20 hover:border-primary/40 transition-all" value={slotForm.room_number} onChange={(e) => setSlotForm({ ...slotForm, room_number: e.target.value })} placeholder="Logistics Hub / Lab 302" />
+                                    <div className="space-y-2">
+                                        <Label className="text-sm font-medium">Room Number</Label>
+                                        <Select value={slotForm.room_number} onValueChange={(v) => setSlotForm({ ...slotForm, room_number: v })}>
+                                            <SelectTrigger className="h-10">
+                                                <SelectValue placeholder="Select Room" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {allRooms.map((room) => {
+                                                    const isOccupied = occupiedRooms.has(room);
+                                                    return (
+                                                        <SelectItem key={room} value={room} disabled={isOccupied}>
+                                                            <div className="flex items-center justify-between w-full gap-x-2">
+                                                                <span>{room}</span>
+                                                                {isOccupied && <span className="text-[10px] text-destructive font-bold uppercase">(Occupied)</span>}
+                                                            </div>
+                                                        </SelectItem>
+                                                    );
+                                                })}
+                                                {allRooms.length === 0 && (
+                                                    <SelectItem value="none" disabled>No rooms defined in classes</SelectItem>
+                                                )}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
-                                    <button onClick={handleCreateSlot} disabled={loading} className="w-full relative group h-16 bg-primary text-primary-foreground rounded-sm overflow-hidden emerald-border-glow transition-all duration-500 hover:scale-[1.02] active:scale-95 disabled:opacity-50">
-                                        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-[length:250%_250%] animate-[shimmer_3s_infinite]" />
-                                        <span className="relative z-10 font-black text-[13px] uppercase tracking-[0.5em] italic">
-                                            {loading ? "Initializing..." : "Commit Temporal Node"}
-                                        </span>
-                                    </button>
+                                    <Button onClick={handleCreateSlot} disabled={loading} className="w-full h-12 text-sm font-semibold uppercase tracking-wider">
+                                        {loading ? "Saving..." : "Save Schedule Slot"}
+                                    </Button>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -261,16 +314,16 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                 </div>
             </div>
 
-            {/* Analytics Layer: Institutional Scheduling Intelligence */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1">
+            {/* Analytics Layer */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                 <div className="md:col-span-7 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
                     <div className="relative z-10 h-full flex flex-col">
                         <div className="mb-8 flex justify-between items-start">
                             <div>
-                                <h3 className="text-xl font-bold italic tracking-tight uppercase leading-none text-foreground group-hover:text-primary transition-colors">
-                                    Curriculum <span className="text-primary italic">Distribution</span>
+                                <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground">
+                                    Course <span className="text-primary italic">Distribution</span>
                                 </h3>
-                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-3">
                                     Subject-wise hour allocation for current class
                                 </p>
                             </div>
@@ -300,10 +353,10 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
 
                 <div className="md:col-span-5 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
                     <div className="mb-8 relative z-10 text-center">
-                        <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground italic group-hover:text-primary transition-all">
-                            Resource <span className="text-primary tracking-normal not-italic px-1">/</span> Saturation
+                        <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground">
+                            Teacher <span className="text-primary font-light px-1">/</span> Load
                         </h3>
-                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic text-center">Global Staff Load Profile</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-3">Global Staff Load Profile</p>
                     </div>
                     <div className="h-[280px] relative z-10">
                         <ResponsiveContainer width="100%" height="100%">
@@ -335,27 +388,26 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                 <div className="lg:col-span-1 space-y-6">
                     <div className="flex items-center justify-between ml-2">
                         <div className="flex items-center gap-x-3">
-                            <Calendar className="h-4 w-4 text-primary animate-pulse" />
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.5em] text-foreground/40">Cycle Phases</h3>
+                            <Calendar className="h-4 w-4 text-primary" />
+                            <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Weekdays</h3>
                         </div>
                     </div>
-                    <div className="glass-card p-3 space-y-2 border-white/10">
+                    <div className="p-3 space-y-2 border border-border bg-card rounded-xl">
                         {WEEKDAYS.map((day) => (
                             <button
                                 key={day}
                                 onClick={() => setSelectedDay(day)}
-                                className={`w-full group relative flex items-center justify-between p-5 rounded-sm transition-all duration-700 font-black text-[11px] uppercase tracking-[0.3em] overflow-hidden ${
+                                className={`w-full group relative flex items-center justify-between p-4 rounded-lg transition-all font-bold text-[11px] uppercase tracking-wider ${
                                     selectedDay === day 
-                                        ? "bg-primary text-primary-foreground shadow-[0_0_30px_oklch(var(--primary)/0.3)] translate-x-3 italic" 
-                                        : "text-foreground/40 hover:text-foreground hover:bg-white/5"
+                                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30" 
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
                                 }`}
                             >
-                                <div className={`absolute inset-0 bg-white/10 transition-transform duration-700 ${selectedDay === day ? "translate-x-0" : "-translate-x-full group-hover:translate-x-0"}`} />
                                 <span className="relative z-10">{day}</span>
                                 {selectedDay === day ? (
-                                    <Zap className="h-4 w-4 relative z-10 animate-bounce" />
+                                    <CheckCircle2 className="h-4 w-4 relative z-10" />
                                 ) : (
-                                    <div className="h-1.5 w-1.5 rounded-full bg-foreground/10 group-hover:bg-primary transition-colors" />
+                                    <div className="h-1.5 w-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
                                 )}
                             </button>
                         ))}
@@ -371,54 +423,54 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                 <div key={time} className="flex-1 min-w-[220px] space-y-8 animate-in slide-in-from-bottom-5 duration-700" style={{ animationDelay: `${parseInt(time) * 50}ms` }}>
                                     <div className="space-y-4">
                                         <div className="flex items-center gap-x-4">
-                                            <p className="text-[11px] font-black uppercase tracking-[0.6em] text-primary italic">{time}</p>
-                                            <div className="h-px flex-1 bg-gradient-to-r from-primary/30 via-transparent to-transparent" />
+                                            <p className="text-[11px] font-bold uppercase tracking-widest text-primary italic">{time}</p>
+                                            <div className="h-px flex-1 bg-border" />
                                         </div>
                                     </div>
                                     <div className="space-y-6">
                                         {matchingSlots.map((s: any) => (
                                             <div 
                                                 key={s.id} 
-                                                className="group relative glass-card p-6 space-y-6 transition-all duration-700 hover:emerald-border-glow hover:-translate-y-2 overflow-hidden"
+                                                className="group relative bg-card border border-border p-5 rounded-xl space-y-4 shadow-sm hover:shadow-md transition-all"
                                             >
-                                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                
-                                                <div className="flex items-center justify-between relative z-10">
+                                                <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-x-2">
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-                                                        <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary">Node active</span>
+                                                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                                        <span className="text-[9px] font-bold uppercase tracking-widest text-primary">Active</span>
                                                     </div>
-                                                    <div className="p-1.5 bg-white/5 rounded-xs border border-white/10 group-hover:border-primary/40 transition-colors">
-                                                        <Clock className="h-3 w-3 text-foreground/40 group-hover:text-primary transition-colors" />
-                                                    </div>
+                                                    {isAdminOrTeacher && (
+                                                        <Button 
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                                            onClick={() => handleDeleteSlot(s.id)}
+                                                        >
+                                                            <Trash2 className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                    )}
                                                 </div>
                                                 
-                                                <div className="space-y-2 relative z-10">
-                                                    <h4 className="font-black text-foreground text-lg uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors">
-                                                        {s.subject?.name || "Neural TBD"}
+                                                <div className="space-y-1">
+                                                    <h4 className="font-bold text-foreground text-sm uppercase tracking-tight group-hover:text-primary transition-colors">
+                                                        {s.subject?.name || "No Subject"}
                                                     </h4>
-                                                    <div className="flex items-center gap-x-2">
-                                                        <div className="h-4 w-4 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                                                            <span className="text-[6px] font-black">AI</span>
-                                                        </div>
-                                                        <p className="text-[9px] text-foreground/40 font-black uppercase tracking-[0.2em]">
-                                                            {s.teacher?.profile?.full_name}
-                                                        </p>
-                                                    </div>
+                                                    <p className="text-[10px] text-muted-foreground font-medium">
+                                                        {s.teacher?.profile?.full_name}
+                                                    </p>
                                                 </div>
                                                 
-                                                <div className="flex items-center justify-between pt-6 border-t border-white/5 text-[9px] font-black uppercase tracking-[0.3em] text-foreground/20 group-hover:text-foreground/60 transition-colors relative z-10">
+                                                <div className="flex items-center justify-between pt-4 border-t border-border text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
                                                     <div className="flex items-center gap-x-2">
-                                                        <MapPin className="h-3.5 w-3.5 text-primary/40 group-hover:text-primary transition-all" />
-                                                        {s.room_number || "Field-X"}
+                                                        <MapPin className="h-3 w-3 text-primary/60" />
+                                                        {s.room_number || "TBD"}
                                                     </div>
-                                                    <div className="px-2 py-1 bg-white/5 rounded-xs border border-white/10 group-hover:text-primary group-hover:border-primary/20">
+                                                    <div className="px-2 py-0.5 bg-muted rounded-full">
                                                         {s.end_time?.slice(0, 5)}
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
-                                        {matchingSlots.length === 0 && (userRole === "admin" || userRole === "teacher") && (
+                                        {matchingSlots.length === 0 && isAdminOrTeacher && (
                                             <button 
                                                 onClick={() => { 
                                                     setSlotForm({ 
@@ -428,11 +480,10 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                     }); 
                                                     setIsAddSlotOpen(true); 
                                                 }}
-                                                className="h-40 w-full rounded-sm border-2 border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-primary/[0.03] transition-all duration-700 relative overflow-hidden"
+                                                className="h-32 w-full rounded-xl border-2 border-dashed border-border bg-muted/20 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-primary/5 transition-all"
                                             >
-                                                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                <Plus className="h-6 w-6 text-foreground/10 group-hover:text-primary group-hover:scale-125 transition-all duration-700 relative z-10" />
-                                                <span className="mt-4 text-[9px] font-black uppercase tracking-[0.5em] text-foreground/0 group-hover:text-primary group-hover:translate-y-0 translate-y-2 opacity-0 group-hover:opacity-60 transition-all duration-500 relative z-10">Initialize</span>
+                                                <Plus className="h-6 w-6 text-muted-foreground/30 group-hover:text-primary transition-all" />
+                                                <span className="mt-2 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/0 group-hover:text-primary group-hover:opacity-100 opacity-0 transition-all">Add Slot</span>
                                             </button>
                                         )}
                                     </div>
@@ -442,36 +493,30 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                     </div>
 
                     <div className="grid gap-10 md:grid-cols-2">
-                        <div className="group relative glass-card p-10 space-y-8 transition-all duration-700 hover:emerald-border-glow overflow-hidden">
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] rotate-12 group-hover:rotate-0 transition-transform duration-1000">
-                                 <CheckCircle2 className="h-48 w-48 text-primary" />
-                            </div>
+                        <div className="bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden">
                             <div className="flex items-center justify-between relative z-10">
                                 <div className="space-y-3">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Structural Integrity</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Schedule Status</p>
                                     <div className="flex items-center gap-x-4">
-                                        <h4 className="text-6xl font-black text-foreground italic leading-none">100</h4>
-                                        <div className="px-2 py-1 bg-primary/20 border border-primary/20 rounded-xs text-primary font-black text-[10px] uppercase">Optimal</div>
+                                        <h4 className="text-5xl font-bold text-foreground leading-none">Healthy</h4>
+                                        <div className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-primary font-bold text-[10px] uppercase">No Conflicts</div>
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 leading-relaxed max-w-[280px] relative z-10 italic">
-                                Temporal resource alignment verification complete. Zero collision probability detected.
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
+                                Schedule validation complete. No time-slot overlaps or resource conflicts detected.
                             </p>
                         </div>
                         
-                        <div className="group relative glass-card p-10 space-y-8 transition-all duration-700 hover:emerald-border-glow overflow-hidden">
-                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] rotate-12 group-hover:rotate-0 transition-transform duration-1000">
-                                 <Zap className="h-48 w-48 text-primary" />
-                            </div>
+                        <div className="bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden">
                             <div className="flex items-center justify-between relative z-10">
                                 <div className="space-y-3">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Node Saturation</p>
-                                    <h4 className="text-6xl font-black text-foreground italic leading-none">{totalSlots}</h4>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Total Slots</p>
+                                    <h4 className="text-5xl font-bold text-foreground leading-none">{totalSlots}</h4>
                                 </div>
                             </div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30 leading-relaxed max-w-[280px] relative z-10 italic">
-                                Total institutional memory nodes allocated across the current operational cycle.
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
+                                Total scheduled periods across the current academic week.
                             </p>
                         </div>
                     </div>
