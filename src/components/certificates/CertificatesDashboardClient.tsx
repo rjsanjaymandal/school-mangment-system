@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import {
     Award,
-    Download,
     ShieldCheck,
     GraduationCap,
     Star,
@@ -12,7 +11,6 @@ import {
     Plus,
     Trash2,
     Shield,
-    Loader2,
     Activity, Zap
 } from "lucide-react";
 import { 
@@ -26,8 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import dynamic from 'next/dynamic';
-import { CertificatePDF } from "./CertificatePDF";
+import { PDFDownloadButton } from "./PDFDownloadButton";
 import { useRouter } from "next/navigation";
 import {
     Dialog,
@@ -48,11 +45,6 @@ import {
 import { toast } from "sonner";
 import { issueCertificate, revokeCertificate } from "@/app/actions/certificates";
 import { Student } from "@/types/database";
-
-const PDFDownloadLink = dynamic(
-    () => import('@react-pdf/renderer').then(mod => mod.PDFDownloadLink),
-    { ssr: false, loading: () => <Button variant="ghost" size="icon" disabled className="h-8 w-8 text-slate-300"><Download className="h-4 w-4" /></Button> }
-);
 
 export default function CertificatesDashboardClient({ 
     initialCertificates,
@@ -384,21 +376,10 @@ export default function CertificatesDashboardClient({
                                             </td>
                                             <td className="p-5 text-right">
                                                 <div className="flex justify-end gap-x-2">
-                                                    <PDFDownloadLink
-                                                        document={<CertificatePDF certificate={cert} />}
+                                                    <PDFDownloadButton
+                                                        certificate={cert}
                                                         fileName={`${cert.reference_number || 'cert'}.pdf`}
-                                                    >
-                                                        {({ loading }) => (
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                disabled={loading}
-                                                                className="h-9 w-9 border border-border rounded-sm text-foreground/40 hover:text-primary hover:border-primary transition-all"
-                                                            >
-                                                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                                                            </Button>
-                                                        )}
-                                                    </PDFDownloadLink>
+                                                    />
                                                     {isAdminOrTeacher && (
                                                         <Button
                                                             variant="ghost"
