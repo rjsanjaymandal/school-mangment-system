@@ -4,11 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 export const updateSession = async (request: NextRequest) => {
   try {
     // Create an unmodified response
-    let supabaseResponse = NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+    let supabaseResponse = NextResponse.next();
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,9 +18,7 @@ export const updateSession = async (request: NextRequest) => {
             cookiesToSet.forEach(({ name, value, options }) =>
               request.cookies.set(name, value)
             );
-            supabaseResponse = NextResponse.next({
-              request,
-            });
+            supabaseResponse = NextResponse.next();
             cookiesToSet.forEach(({ name, value, options }) =>
               supabaseResponse.cookies.set(name, value, options)
             );
@@ -40,6 +34,9 @@ export const updateSession = async (request: NextRequest) => {
       error,
     } = await supabase.auth.getUser();
 
+    // Diagnostic log
+    console.log(`[MIDDLEWARE] Path: ${request.nextUrl.pathname}, User: ${user?.id || 'null'}, Error: ${error?.message || 'none'}`);
+
     // Prevent redirect loops on /login
     if (error && error.name === 'AuthApiError' && !request.nextUrl.pathname.startsWith('/login')) {
       const url = request.nextUrl.clone();
@@ -53,6 +50,14 @@ export const updateSession = async (request: NextRequest) => {
         }
       });
       return response;
+    }
+
+    // Authentication check: redirect to /login if no user and path is not /login
+    if (!user && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/unauthorized')) {
+      console.log(`[MIDDLEWARE] No user found, redirecting to /login from ${request.nextUrl.pathname}`);
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      return NextResponse.redirect(url);
     }
 
     // Role-based redirection logic (Ported from hardened middleware)
@@ -79,11 +84,12 @@ export const updateSession = async (request: NextRequest) => {
 
     return supabaseResponse;
   } catch (e) {
-    // Fail safe to allow the request to proceed if middleware errors out
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+    // Fail safe: If middleware errors out on a protected route, redirect to login
+    if (!request.nextUrl.pathname.startsWith('/login')) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
   }
 };
