@@ -4,6 +4,18 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { isAdminOrTeacher } from "@/lib/auth-utils";
 
+type AlumniPayload = {
+    first_name: string;
+    last_name: string;
+    graduation_year: number;
+    email?: string;
+    phone?: string;
+    current_profession?: string;
+    company?: string;
+    achievements?: string;
+    profile_picture_url?: string;
+};
+
 export async function graduateStudent(studentId: string, graduationData: {
     graduation_year: number;
     current_profession?: string;
@@ -29,13 +41,16 @@ export async function graduateStudent(studentId: string, graduationData: {
             throw new Error("Student record not found in active registry");
         }
 
+        const [firstName = "", ...restName] = (student.profile?.full_name || "").trim().split(" ");
+        const lastName = restName.join(" ").trim();
+
         // 2. Insert into alumni table
         const { error: alumniError } = await supabaseAdmin
             .from("alumni")
             .insert({
                 id: student.id, // Keep the same ID for continuity if possible, or let it gen
-                first_name: student.profile.first_name,
-                last_name: student.profile.last_name,
+                first_name: student.profile.first_name || firstName || student.admission_number,
+                last_name: student.profile.last_name || lastName || "Graduate",
                 graduation_year: graduationData.graduation_year,
                 email: student.profile.email,
                 current_profession: graduationData.current_profession,
@@ -65,7 +80,7 @@ export async function graduateStudent(studentId: string, graduationData: {
     }
 }
 
-export async function addAlumnusManual(data: any) {
+export async function addAlumnusManual(data: AlumniPayload) {
     const authorized = await isAdminOrTeacher();
     if (!authorized) return { success: false, message: "Unauthorized" };
 
@@ -78,6 +93,44 @@ export async function addAlumnusManual(data: any) {
         if (error) throw error;
         revalidatePath("/heritage");
         return { success: true, message: "Manual record inserted into Heritage Registry" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+}
+
+export async function updateAlumnus(id: string, data: Partial<AlumniPayload>) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) return { success: false, message: "Unauthorized" };
+
+    try {
+        const supabaseAdmin = createAdminClient();
+        const { error } = await supabaseAdmin
+            .from("alumni")
+            .update(data)
+            .eq("id", id);
+
+        if (error) throw error;
+        revalidatePath("/heritage");
+        return { success: true, message: "Alumni record updated successfully" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+}
+
+export async function deleteAlumnus(id: string) {
+    const authorized = await isAdminOrTeacher();
+    if (!authorized) return { success: false, message: "Unauthorized" };
+
+    try {
+        const supabaseAdmin = createAdminClient();
+        const { error } = await supabaseAdmin
+            .from("alumni")
+            .delete()
+            .eq("id", id);
+
+        if (error) throw error;
+        revalidatePath("/heritage");
+        return { success: true, message: "Alumni record removed successfully" };
     } catch (error: any) {
         return { success: false, message: error.message };
     }

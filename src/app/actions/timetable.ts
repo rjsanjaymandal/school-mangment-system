@@ -66,6 +66,10 @@ async function checkConflicts(supabase: any, data: {
     return null;
 }
 
+function isValidTimeRange(startTime: string, endTime: string) {
+    return Boolean(startTime && endTime && startTime < endTime);
+}
+
 export async function createTimetableSlot(data: {
     class_id: string;
     academic_year_id: string;
@@ -80,7 +84,22 @@ export async function createTimetableSlot(data: {
         if (!(await isAdminOrTeacher())) {
             throw new Error("Unauthorized: Only administrators and teachers can modify the timetable.");
         }
+        if (!isValidTimeRange(data.start_time, data.end_time)) {
+            return { success: false, error: "End time must be later than start time." };
+        }
         const supabase = createAdminClient();
+
+        const { data: classSubjects, error: classSubjectsError } = await supabase
+            .from("class_subjects")
+            .select("id")
+            .eq("class_id", data.class_id)
+            .eq("subject_id", data.subject_id)
+            .or(`academic_year_id.eq.${data.academic_year_id},academic_year_id.is.null`);
+
+        if (classSubjectsError) throw classSubjectsError;
+        if (classSubjects && classSubjects.length > 0) {
+            // Allowed subject assignment exists for this class/year.
+        }
 
         // Ensure timetable exists for this class/day
         const { data: existingRecords, error: findErr } = await supabase
@@ -134,6 +153,7 @@ export async function createTimetableSlot(data: {
         revalidatePath("/timetable");
         revalidatePath("/classes");
         revalidatePath("/teachers");
+        revalidatePath("/");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -152,6 +172,9 @@ export async function updateTimetableSlot(slotId: string, data: {
     try {
         if (!(await isAdminOrTeacher())) {
             throw new Error("Unauthorized: Only administrators and teachers can modify the timetable.");
+        }
+        if (!isValidTimeRange(data.start_time, data.end_time)) {
+            return { success: false, error: "End time must be later than start time." };
         }
         const supabase = createAdminClient();
 
@@ -191,6 +214,7 @@ export async function updateTimetableSlot(slotId: string, data: {
         revalidatePath("/timetable");
         revalidatePath("/classes");
         revalidatePath("/teachers");
+        revalidatePath("/");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -208,6 +232,7 @@ export async function deleteTimetableSlot(slotId: string) {
         revalidatePath("/timetable");
         revalidatePath("/classes");
         revalidatePath("/teachers");
+        revalidatePath("/");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

@@ -48,27 +48,33 @@ import { Badge } from "@/components/ui/badge";
 import { ParentForm } from "../parents/ParentForm";
 import { StudentForm } from "./StudentForm";
 import { Card } from "@/components/ui/card";
-import { deleteStudent } from "@/app/actions/students";
+import { bulkAssignStudentsToClass, deleteStudent, getClassCapacity } from "@/app/actions/students";
 import { toast } from "sonner";
 import { BulkImportModal } from "./BulkImportModal";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface StudentListProps {
   initialData: Student[];
   classes: any[];
   userRole?: string | null;
+  currentAcademicYearId?: string;
 }
 
-export function StudentList({ initialData, classes, userRole }: StudentListProps) {
+export function StudentList({ initialData, classes, userRole, currentAcademicYearId }: StudentListProps) {
   const isAdmin = userRole === "admin";
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [isParentOpen, setIsParentOpen] = useState(false);
   const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
+  const [isBulkAssignOpen, setIsBulkAssignOpen] = useState(false);
   const [linkingStudentId, setLinkingStudentId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [capacityInfo, setCapacityInfo] = useState<{ capacity?: number | null; currentCount?: number; available?: number | null } | null>(null);
 
   const filteredData = initialData.filter(student => 
     student.profile?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -88,6 +94,45 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
   const onLinkParent = (studentId: string) => {
     setLinkingStudentId(studentId);
     setIsParentOpen(true);
+  };
+
+  const toggleSelection = (studentId: string) => {
+    setSelectedStudentIds((current) => current.includes(studentId) ? current.filter((id) => id !== studentId) : [...current, studentId]);
+  };
+
+  const handleClassSelection = async (classId: string) => {
+    setSelectedClassId(classId);
+    if (!classId) {
+      setCapacityInfo(null);
+      return;
+    }
+
+    const result = await getClassCapacity(classId);
+    if (result.success) {
+      setCapacityInfo({
+        capacity: result.capacity,
+        currentCount: result.currentCount,
+        available: result.available,
+      });
+    }
+  };
+
+  const handleBulkAssign = async () => {
+    if (!selectedClassId || selectedStudentIds.length === 0) {
+      toast.error("Select at least one student and a class.");
+      return;
+    }
+
+    const result = await bulkAssignStudentsToClass(selectedStudentIds, selectedClassId, currentAcademicYearId);
+    if (!result.success) {
+      toast.error(result.error || "Failed to assign students");
+      return;
+    }
+
+    toast.success(`${result.assignedCount || selectedStudentIds.length} students assigned successfully`);
+    setSelectedStudentIds([]);
+    setSelectedClassId("");
+    setIsBulkAssignOpen(false);
   };
 
   return (
@@ -156,7 +201,7 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
             
             <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
                 {isAdmin && (
-                    <>
+                     <>
                         <Button
                             onClick={() => setIsBulkImportOpen(true)}
                             variant="outline"
@@ -170,6 +215,14 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
                         >
                             <UserPlus className="h-4 w-4" /> Add Student
                         </Button>
+                        <Button
+                            onClick={() => setIsBulkAssignOpen(true)}
+                            variant="outline"
+                            className="h-11 px-6 font-medium transition-all flex items-center gap-2"
+                            disabled={selectedStudentIds.length === 0}
+                        >
+                            <Users className="h-4 w-4" /> Bulk Assign ({selectedStudentIds.length})
+                        </Button>
                     </>
                 )}
             </div>
@@ -180,6 +233,7 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
                 <Table>
                     <TableHeader>
                         <TableRow className="hover:bg-transparent">
+                            {isAdmin && <TableHead className="py-4 px-6 font-semibold w-12" />}
                             <TableHead className="py-4 px-6 font-semibold">Student Profile</TableHead>
                             <TableHead className="py-4 px-6 font-semibold">Class</TableHead>
                             <TableHead className="py-4 px-6 font-semibold">Status</TableHead>
@@ -189,7 +243,7 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
                     <TableBody className="divide-y divide-border">
                         {filteredData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} className="py-24 text-center">
+                                <TableCell colSpan={isAdmin ? 5 : 4} className="py-24 text-center">
                                     <div className="flex flex-col items-center">
                                         <GraduationCap className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
                                         <p className="text-sm font-medium text-muted-foreground">No students found.</p>
@@ -199,6 +253,16 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
                         ) : (
                             filteredData.map((student) => (
                                 <TableRow key={student.id} className="group hover:bg-muted/50 transition-colors">
+                                    {isAdmin && (
+                                        <TableCell className="py-4 px-6">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedStudentIds.includes(student.id)}
+                                                onChange={() => toggleSelection(student.id)}
+                                                aria-label={`Select ${student.profile?.full_name || student.admission_number}`}
+                                            />
+                                        </TableCell>
+                                    )}
                                     <TableCell className="py-4 px-6">
                                         <div className="flex items-center gap-4">
                                             <div className="h-10 w-10 flex items-center justify-center font-bold text-white text-sm rounded-full bg-primary/20 border border-primary/20">
@@ -340,6 +404,46 @@ export function StudentList({ initialData, classes, userRole }: StudentListProps
                     onCancel={() => setIsBulkImportOpen(false)}
                 />
              </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isBulkAssignOpen} onOpenChange={setIsBulkAssignOpen}>
+        <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden bg-background border-border shadow-lg">
+          <div className="p-6 border-b border-border bg-card/50">
+            <DialogTitle className="text-xl font-semibold text-foreground">Bulk Assign Students</DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-1 text-sm">
+              Assign the selected students to a class and create enrollment records for the active academic year.
+            </DialogDescription>
+          </div>
+          <div className="p-6 space-y-5">
+            <div className="space-y-2">
+              <Label>Select Class</Label>
+              <select
+                className="w-full h-10 rounded-md border border-border bg-background px-3 text-sm"
+                value={selectedClassId}
+                onChange={(e) => { void handleClassSelection(e.target.value); }}
+              >
+                <option value="">Choose a class</option>
+                {classes.map((cls) => (
+                  <option key={cls.id} value={cls.id}>{cls.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {capacityInfo && (
+              <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm">
+                Capacity: {capacityInfo.capacity ?? "Unlimited"} | Current: {capacityInfo.currentCount ?? 0} | Available: {capacityInfo.available ?? "Unlimited"}
+              </div>
+            )}
+
+            <div className="rounded-lg border border-border bg-muted/20 p-4 text-sm">
+              Selected students: {selectedStudentIds.length}
+            </div>
+
+            <Button onClick={handleBulkAssign} className="w-full">
+              Assign Selected Students
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

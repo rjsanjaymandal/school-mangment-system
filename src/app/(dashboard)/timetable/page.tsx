@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { TimetableDashboard } from "@/components/timetable/TimetableDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
-import { debugTimetableData } from "@/app/actions/timetable";
 
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +20,17 @@ export default async function TimetablePage() {
   let classes: any[] = [];
   let subjects: any[] = [];
   let teachers: any[] = [];
+  let classSubjects: any[] = [];
   const isStudent = role === "student";
+
+  if (currentAY?.id) {
+    const { data: assignedSubjects } = await supabase
+      .from("class_subjects")
+      .select("*, subject:subjects(*)")
+      .or(`academic_year_id.eq.${currentAY.id},academic_year_id.is.null`);
+
+    classSubjects = assignedSubjects || [];
+  }
 
   if (isStudent) {
     const { data: student } = await supabase
@@ -31,6 +40,15 @@ export default async function TimetablePage() {
       .single();
 
     if (student) {
+      const { data: enrollment } = await supabase
+        .from("class_enrollments")
+        .select("class_id")
+        .eq("student_id", student.id)
+        .eq("academic_year_id", currentAY?.id || "00000000-0000-0000-0000-000000000000")
+        .maybeSingle();
+
+      const activeClassId = enrollment?.class_id || student.class_id;
+
       const { data: classTimetables } = await supabase
         .from("timetables")
         .select(`
@@ -38,12 +56,12 @@ export default async function TimetablePage() {
           class:classes(*),
           slots:timetable_slots(*, subject:subjects(*), teacher:teachers(*, profile:profiles(*)))
         `)
-        .eq("class_id", student.class_id)
+        .eq("class_id", activeClassId)
         .eq("academic_year_id", currentAY?.id || "00000000-0000-0000-0000-000000000000")
         .order("day_of_week");
       
       timetables = classTimetables || [];
-      classes = student.class ? [student.class] : [];
+      classes = student.class ? [{ ...student.class, id: activeClassId || student.class.id }] : [];
 
       // Extract unique subjects and teachers from slots
       const subjectIds = new Set<string>();
@@ -73,7 +91,6 @@ export default async function TimetablePage() {
       }
     }
   } else {
-    // Admin/Teacher: All data - fetch all timetables (ignore academic year filter for debugging)
     const { data: allTimetables } = await supabase
       .from("timetables")
       .select(`
@@ -81,21 +98,9 @@ export default async function TimetablePage() {
         class:classes(*),
         slots:timetable_slots(*, subject:subjects(*), teacher:teachers(*, profile:profiles(*)))
       `)
-      // Remove academic_year filter temporarily to debug
-      // .eq("academic_year_id", currentAY?.id || "00000000-0000-0000-0000-000000000000")
+      .eq("academic_year_id", currentAY?.id || "00000000-0000-0000-0000-000000000000")
       .order("day_of_week");
     timetables = allTimetables || [];
-    
-    // Then filter by academic year in memory
-    if (currentAY?.id) {
-      timetables = timetables.filter(t => t.academic_year_id === currentAY.id);
-    }
-
-    console.log("Timetable Page Debug:", {
-      currentAY: currentAY?.id,
-      timetablesFound: timetables.length,
-      totalSlots: timetables.reduce((sum, t) => sum + (t.slots?.length || 0), 0)
-    });
 
     const { data: allClasses } = await supabase
       .from("classes")
@@ -124,6 +129,7 @@ export default async function TimetablePage() {
       classes={classes || []}
       subjects={subjects || []}
       teachers={teachers || []}
+      classSubjects={classSubjects || []}
       academicYears={academicYears || []}
       userRole={role || "student"}
     />

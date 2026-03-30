@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import {
     Award,
     Download,
-    Share2,
-    Printer,
     ShieldCheck,
     GraduationCap,
     Star,
@@ -13,7 +11,6 @@ import {
     Search,
     Plus,
     Trash2,
-    Eye,
     Shield,
     Loader2,
     Activity, Zap
@@ -24,7 +21,6 @@ import {
     ResponsiveContainer, Tooltip, Legend, 
     XAxis, YAxis, CartesianGrid 
 } from "recharts";
-import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import dynamic from 'next/dynamic';
 import { CertificatePDF } from "./CertificatePDF";
+import { useRouter } from "next/navigation";
 import {
     Dialog,
     DialogContent,
@@ -60,15 +57,14 @@ const PDFDownloadLink = dynamic(
 export default function CertificatesDashboardClient({ 
     initialCertificates,
     students,
-    currentUserId,
     userRole
 }: { 
     initialCertificates: any[],
     students: Student[],
-    currentUserId?: string,
     userRole?: string | null
 }) {
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [open, setOpen] = useState(false);
     const [isIssuing, setIsIssuing] = useState(false);
@@ -76,25 +72,36 @@ export default function CertificatesDashboardClient({
 
     const filteredCertificates = certificates.filter((cert) =>
         cert.reference_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cert.certificate_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cert.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (cert.student?.profile?.first_name && cert.student.profile.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (cert.student?.profile?.last_name && cert.student.profile.last_name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     // --- Credential Intelligence Layer ---
     const issuanceTrends = useMemo(() => {
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-        return months.map(m => ({
-            name: m,
-            Issued: Math.floor(Math.random() * 20) + 10,
-            Verified: Math.floor(Math.random() * 15) + 5
-        }));
-    }, []);
+        const formatter = new Intl.DateTimeFormat("en-US", { month: "short" });
+        const monthBuckets = new Map<string, { name: string; Issued: number; Revoked: number }>();
+
+        certificates.forEach((certificate) => {
+            const month = formatter.format(new Date(certificate.issued_date || certificate.created_at || Date.now()));
+            const bucket = monthBuckets.get(month) || { name: month, Issued: 0, Revoked: 0 };
+
+            if (certificate.status === "revoked") {
+                bucket.Revoked += 1;
+            } else {
+                bucket.Issued += 1;
+            }
+
+            monthBuckets.set(month, bucket);
+        });
+
+        return Array.from(monthBuckets.values());
+    }, [certificates]);
 
     const certTypes = useMemo(() => {
         const counts: Record<string, number> = {};
         certificates.forEach(c => {
-            const type = c.certificate_type || "General";
+            const type = c.type || "General";
             counts[type] = (counts[type] || 0) + 1;
         });
         return Object.entries(counts).map(([name, value]) => ({ name, value }));
@@ -117,7 +124,7 @@ export default function CertificatesDashboardClient({
             if (result.success) {
                 toast.success(result.message);
                 setOpen(false);
-                window.location.reload();
+                router.refresh();
             } else {
                 toast.error(result.message);
             }
@@ -135,7 +142,12 @@ export default function CertificatesDashboardClient({
             const result = await revokeCertificate(id);
             if (result.success) {
                 toast.success(result.message);
-                setCertificates(prev => prev.filter(c => c.id !== id));
+                setCertificates(prev => prev.map((certificate) => (
+                    certificate.id === id
+                        ? { ...certificate, status: "revoked" }
+                        : certificate
+                )));
+                router.refresh();
             } else {
                 toast.error(result.message);
             }
@@ -269,7 +281,7 @@ export default function CertificatesDashboardClient({
                                         contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
                                     />
                                     <Area type="monotone" dataKey="Issued" stroke="#10b981" fillOpacity={1} fill="url(#colorIssued)" strokeWidth={3} />
-                                    <Area type="monotone" dataKey="Verified" stroke="#3b82f6" strokeWidth={1} strokeDasharray="5 5" fill="transparent" />
+                                    <Area type="monotone" dataKey="Revoked" stroke="#ef4444" strokeWidth={1} strokeDasharray="5 5" fill="transparent" />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
@@ -349,7 +361,7 @@ export default function CertificatesDashboardClient({
                                                             {cert.reference_number || "PENDING"}
                                                         </p>
                                                         <p className="text-[10px] font-black text-foreground/40 uppercase tracking-widest mt-0.5">
-                                                            TYPE: {cert.certificate_type}
+                                                            TYPE: {cert.type}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -359,7 +371,7 @@ export default function CertificatesDashboardClient({
                                                     {cert.student?.profile?.first_name} {cert.student?.profile?.last_name}
                                                 </p>
                                                 <p className="text-[10px] text-foreground/60 font-bold uppercase tracking-widest">
-                                                    ID: {cert.student?.admission_number}
+                                                    ID: {cert.student?.admission_number} • {cert.issued_date}
                                                 </p>
                                             </td>
                                             <td className="p-5">

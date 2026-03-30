@@ -19,6 +19,17 @@ export default async function ClassesPage() {
     .eq("role", "teacher")
     .order("full_name", { ascending: true });
 
+  const { data: subjects } = await supabase
+    .from("subjects")
+    .select("id, name, code")
+    .order("name", { ascending: true });
+
+  const { data: currentAcademicYear } = await supabase
+    .from("academic_years")
+    .select("id, name")
+    .eq("is_current", true)
+    .maybeSingle();
+
   if (error) {
     console.error("Classes query error details:", JSON.stringify(error, null, 2));
     return <div className="p-8 text-destructive">Error loading classes: {error.message}</div>;
@@ -41,7 +52,13 @@ export default async function ClassesPage() {
         </div>
       </div>
 
-      <ClassList initialData={joinedClasses as any} userRole={role} teachers={teachers || []} />
+      <ClassList
+        initialData={joinedClasses as any}
+        userRole={role}
+        teachers={teachers || []}
+        subjects={subjects || []}
+        currentAcademicYearId={currentAcademicYear?.id}
+      />
     </div>
   );
 }

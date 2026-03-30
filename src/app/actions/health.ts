@@ -1,5 +1,6 @@
 "use server";
 
+import { isAdminOrTeacher } from "@/lib/auth-utils";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
@@ -15,6 +16,9 @@ export async function upsertHealthProfile(studentId: string, data: {
     insurance_number?: string;
 }) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can manage health profiles.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("health_profiles").upsert({
             id: studentId,
@@ -56,6 +60,9 @@ export async function createInfirmaryLog(data: {
     temperature?: number;
 }) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can record infirmary visits.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("infirmary_logs").insert(data);
         if (error) throw error;
@@ -68,6 +75,9 @@ export async function createInfirmaryLog(data: {
 
 export async function dischargeFromInfirmary(logId: string) {
     try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can discharge infirmary visits.");
+        }
         const supabase = createAdminClient();
         const { error } = await supabase.from("infirmary_logs").update({
             check_out_time: new Date().toISOString(),
@@ -81,3 +91,27 @@ export async function dischargeFromInfirmary(logId: string) {
     }
 }
 
+export async function updateInfirmaryStatus(logId: string, status: "under_observation" | "discharged" | "referral") {
+    try {
+        if (!(await isAdminOrTeacher())) {
+            throw new Error("Unauthorized: Only administrators and teachers can update infirmary visits.");
+        }
+        const supabase = createAdminClient();
+        const updatePayload: Record<string, string> = { status };
+
+        if (status === "discharged") {
+            updatePayload.check_out_time = new Date().toISOString();
+        }
+
+        const { error } = await supabase
+            .from("infirmary_logs")
+            .update(updatePayload)
+            .eq("id", logId);
+
+        if (error) throw error;
+        revalidatePath("/health");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}

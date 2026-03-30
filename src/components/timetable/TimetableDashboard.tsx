@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Calendar,
     Clock,
@@ -16,10 +16,7 @@ import {
     Trash2,
     Edit,
     Printer,
-    ArrowLeftRight,
-    Search
 } from "lucide-react";
-import { useEffect, useTransition } from "react";
 import { 
     BarChart, Bar, 
     PieChart, Pie, Cell, 
@@ -45,7 +42,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot, getTimetableByClass } from "@/app/actions/timetable";
+import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot } from "@/app/actions/timetable";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -58,13 +55,18 @@ interface TimetableDashboardProps {
     classes: any[];
     subjects: any[];
     teachers: any[];
+    classSubjects: any[];
     academicYears: any[];
     userRole: string;
 }
 
-export function TimetableDashboard({ timetables, classes, subjects, teachers, academicYears, userRole }: TimetableDashboardProps) {
+export function TimetableDashboard({ timetables, classes, subjects, teachers, classSubjects, academicYears, userRole }: TimetableDashboardProps) {
     const router = useRouter();
-    const [selectedDay, setSelectedDay] = useState("Monday");
+    const today = useMemo(() => {
+        const detectedDay = new Date().toLocaleDateString("en-US", { weekday: "long" });
+        return WEEKDAYS.includes(detectedDay) ? detectedDay : "Monday";
+    }, []);
+    const [selectedDay, setSelectedDay] = useState(today);
     const [selectedClass, setSelectedClass] = useState(classes[0]?.id || "");
     const [selectedTeacher, setSelectedTeacher] = useState("");
     const [viewMode, setViewMode] = useState<"class" | "teacher">("class");
@@ -74,28 +76,8 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
     const [editingSlot, setEditingSlot] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
-    // --- Today Auto-Detection ---
-    const [today, setToday] = useState(() => new Date().toLocaleDateString('en-US', { weekday: 'long' }));
-    const [isTodaySet, setIsTodaySet] = useState(false);
-    useEffect(() => {
-        if (!isTodaySet) {
-            const t = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-            setToday(t);
-            if (WEEKDAYS.includes(t)) {
-                setSelectedDay(t);
-            }
-            setIsTodaySet(true);
-        }
-    }, [isTodaySet]);
-
-    useEffect(() => {
-        // Default teacher selection if in teacher mode
-        if (viewMode === "teacher" && !selectedTeacher && teachers.length > 0) {
-            setSelectedTeacher(teachers[0].id);
-        }
-    }, [viewMode, teachers, selectedTeacher]);
-
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
+    const selectedTeacherId = selectedTeacher || teachers[0]?.id || "";
 
     // --- Analytics Logic ---
     const subjectDistribution = useMemo(() => {
@@ -126,6 +108,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
     }, [timetables]);
 
     const currentAY = academicYears.find((ay: any) => ay.is_current) || academicYears[0];
+    const currentAcademicYearId = currentAY?.id || "";
 
     const [slotForm, setSlotForm] = useState({
         subject_id: "",
@@ -162,6 +145,60 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         return occupied;
     }, [timetables, selectedDay, slotForm.start_time, slotForm.end_time]);
 
+    const assignedSubjectIds = useMemo(() => {
+        return classSubjects
+            .filter((item: any) => item.class_id === selectedClass && (!currentAcademicYearId || !item.academic_year_id || item.academic_year_id === currentAcademicYearId))
+            .map((item: any) => item.subject_id);
+    }, [classSubjects, currentAcademicYearId, selectedClass]);
+
+    const availableSubjects = useMemo(() => {
+        if (assignedSubjectIds.length === 0) return subjects;
+        const allowed = new Set(assignedSubjectIds);
+        return subjects.filter((subject: any) => allowed.has(subject.id));
+    }, [assignedSubjectIds, subjects]);
+
+    const validationIssues = useMemo(() => {
+        const issues: string[] = [];
+        const dayBuckets = timetables.filter((t: any) => t.academic_year_id === currentAcademicYearId);
+
+        dayBuckets.forEach((timetable: any) => {
+            const slots = [...(timetable.slots || [])].sort((a: any, b: any) => (a.start_time || "").localeCompare(b.start_time || ""));
+            slots.forEach((slot: any, index: number) => {
+                if (!slot.start_time || !slot.end_time || slot.start_time >= slot.end_time) {
+                    issues.push(`Invalid time range for ${slot.subject?.name || "slot"}`);
+                }
+
+                slots.slice(index + 1).forEach((nextSlot: any) => {
+                    const overlaps = slot.start_time < nextSlot.end_time && slot.end_time > nextSlot.start_time;
+                    if (overlaps) {
+                        issues.push(`Class overlap on ${timetable.day_of_week}`);
+                    }
+                });
+            });
+        });
+
+        const teacherSlots = dayBuckets.flatMap((timetable: any) =>
+            (timetable.slots || []).map((slot: any) => ({
+                ...slot,
+                day_of_week: timetable.day_of_week,
+            })),
+        );
+
+        teacherSlots.forEach((slot: any, index: number) => {
+            teacherSlots.slice(index + 1).forEach((nextSlot: any) => {
+                const sameTeacher = slot.teacher_id && slot.teacher_id === nextSlot.teacher_id;
+                const sameDay = slot.day_of_week === nextSlot.day_of_week;
+                const overlaps = slot.start_time < nextSlot.end_time && slot.end_time > nextSlot.start_time;
+
+                if (sameTeacher && sameDay && overlaps) {
+                    issues.push(`Teacher conflict on ${slot.day_of_week}`);
+                }
+            });
+        });
+
+        return Array.from(new Set(issues));
+    }, [currentAcademicYearId, timetables]);
+
     const handleCreateSlot = async () => {
         if (!selectedClass) {
             toast.error("Please select a class first.");
@@ -169,6 +206,10 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         }
         if (!currentAY) {
             toast.error("No active academic year found in settings.");
+            return;
+        }
+        if (availableSubjects.length === 0) {
+            toast.error("No subjects are assigned to this class yet.");
             return;
         }
         if (!slotForm.subject_id || !slotForm.teacher_id || !slotForm.start_time || !slotForm.end_time) {
@@ -272,7 +313,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
         // Aggregate all slots across all timetables for this criteria on this day
         const filteredSlots: any[] = [];
         const matchingTimetables = timetables.filter(
-            (t: any) => t.day_of_week === selectedDay && t.academic_year_id === currentAY?.id
+            (t: any) => t.day_of_week === selectedDay && t.academic_year_id === currentAcademicYearId
         );
 
         if (viewMode === "class") {
@@ -285,15 +326,15 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                 });
         } else {
             matchingTimetables.forEach((t: any) => {
-                t.slots?.forEach((s: any) => {
-                    if (s.teacher_id === selectedTeacher) {
-                        filteredSlots.push({ ...s, class_name: t.class?.name });
-                    }
+                    t.slots?.forEach((s: any) => {
+                        if (s.teacher_id === selectedTeacherId) {
+                            filteredSlots.push({ ...s, class_name: t.class?.name });
+                        }
+                    });
                 });
-            });
         }
         return filteredSlots;
-    }, [timetables, selectedClass, selectedTeacher, viewMode, selectedDay, currentAY]);
+    }, [currentAcademicYearId, selectedClass, selectedDay, selectedTeacherId, timetables, viewMode]);
 
     // Slots that don't fit into the 07:00-20:00 hourly buckets
     const unmappedSlots = useMemo(() => {
@@ -308,14 +349,39 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
     const totalSlots = useMemo(() => {
         if (viewMode === "class") {
             return timetables
-                .filter((t: any) => t.class_id === selectedClass && t.academic_year_id === currentAY?.id)
+                .filter((t: any) => t.class_id === selectedClass && t.academic_year_id === currentAcademicYearId)
                 .reduce((sum: number, t: any) => sum + (t.slots?.length || 0), 0);
         } else {
             return timetables
-                .filter((t: any) => t.academic_year_id === currentAY?.id)
-                .reduce((sum: number, t: any) => sum + (t.slots?.filter((s: any) => s.teacher_id === selectedTeacher).length || 0), 0);
+                .filter((t: any) => t.academic_year_id === currentAcademicYearId)
+                .reduce((sum: number, t: any) => sum + (t.slots?.filter((s: any) => s.teacher_id === selectedTeacherId).length || 0), 0);
         }
-    }, [timetables, selectedClass, selectedTeacher, viewMode, currentAY]);
+    }, [currentAcademicYearId, selectedClass, selectedTeacherId, timetables, viewMode]);
+
+    const printableSlotsByDay = useMemo(() => {
+        return WEEKDAYS.reduce<Record<string, any[]>>((acc, day) => {
+            const matchingTimetables = timetables.filter(
+                (t: any) => t.day_of_week === day && t.academic_year_id === currentAcademicYearId,
+            );
+
+            if (viewMode === "class") {
+                acc[day] = matchingTimetables
+                    .filter((t: any) => t.class_id === selectedClass)
+                    .flatMap((t: any) => (t.slots || []).map((slot: any) => ({ ...slot, class_name: t.class?.name })))
+                    .sort((a: any, b: any) => (a.start_time || "").localeCompare(b.start_time || ""));
+            } else {
+                acc[day] = matchingTimetables
+                    .flatMap((t: any) =>
+                        (t.slots || [])
+                            .filter((slot: any) => slot.teacher_id === selectedTeacherId)
+                            .map((slot: any) => ({ ...slot, class_name: t.class?.name })),
+                    )
+                    .sort((a: any, b: any) => (a.start_time || "").localeCompare(b.start_time || ""));
+            }
+
+            return acc;
+        }, {});
+    }, [currentAcademicYearId, selectedClass, selectedTeacherId, timetables, viewMode]);
 
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
@@ -382,7 +448,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                         </div>
                     ) : (
                         <div className="relative group">
-                            <Select value={selectedTeacher} onValueChange={setSelectedTeacher}>
+                            <Select value={selectedTeacherId} onValueChange={setSelectedTeacher}>
                                 <SelectTrigger className="w-[240px] h-12 bg-background border-border font-medium">
                                     <SelectValue placeholder="Select Teacher" />
                                 </SelectTrigger>
@@ -404,7 +470,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                         <Printer className="h-4 w-4" />
                     </Button>
 
-                    {isAdminOrTeacher && (
+                    {isAdminOrTeacher && viewMode === "class" && (
                         <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
                             <DialogTrigger asChild>
                                 <Button className="h-12 px-8 flex items-center gap-x-2 shadow-sm">
@@ -429,16 +495,22 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                         </div>
                                     </div>
                                     
-                                    {(subjects.length === 0 || teachers.length === 0) && (
+                                    {(availableSubjects.length === 0 || teachers.length === 0) && (
                                         <div className="p-3 bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 text-xs rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-start gap-2">
                                             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                                             <p>
-                                                {subjects.length === 0 && teachers.length === 0 
-                                                    ? "No subjects or teachers found. Please add them in their respective modules before creating a schedule."
-                                                    : subjects.length === 0 
-                                                        ? "No subjects found. Please add subjects before creating a schedule."
+                                                {availableSubjects.length === 0 && teachers.length === 0 
+                                                    ? "No class subjects or teachers found. Please complete both before creating a schedule."
+                                                    : availableSubjects.length === 0 
+                                                        ? "No subjects are assigned to this class yet. Use class subject management first."
                                                         : "No active teachers found. Please add teachers before creating a schedule."}
                                             </p>
+                                        </div>
+                                    )}
+
+                                    {assignedSubjectIds.length > 0 && (
+                                        <div className="p-3 rounded-lg border border-primary/15 bg-primary/5 text-[11px] text-primary">
+                                            Subject options are limited to the subjects assigned to this class for the active academic year.
                                         </div>
                                     )}
 
@@ -450,7 +522,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                                     <SelectValue placeholder="Select Subject" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {subjects.map((s: any) => (
+                                                    {availableSubjects.map((s: any) => (
                                                         <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -695,7 +767,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                             </div>
                                         ))}
 
-                                        {isAdminOrTeacher && matchingSlots.length === 0 && (
+                                        {isAdminOrTeacher && viewMode === "class" && matchingSlots.length === 0 && (
                                             <button 
                                                 onClick={() => { 
                                                     setSlotForm({ 
@@ -784,13 +856,23 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                 <div className="space-y-3">
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Schedule Status</p>
                                     <div className="flex items-center gap-x-4">
-                                        <h4 className="text-5xl font-bold text-foreground leading-none">Healthy</h4>
-                                        <div className="px-2 py-1 bg-primary/10 border border-primary/20 rounded-md text-primary font-bold text-[10px] uppercase">No Conflicts</div>
+                                        <h4 className="text-5xl font-bold text-foreground leading-none">
+                                            {validationIssues.length === 0 ? "Healthy" : "Review"}
+                                        </h4>
+                                        <div className={`px-2 py-1 rounded-md font-bold text-[10px] uppercase ${
+                                            validationIssues.length === 0
+                                                ? "bg-primary/10 border border-primary/20 text-primary"
+                                                : "bg-amber-500/10 border border-amber-500/20 text-amber-600"
+                                        }`}>
+                                            {validationIssues.length === 0 ? "No Conflicts" : `${validationIssues.length} Issue${validationIssues.length > 1 ? "s" : ""}`}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
-                                Schedule validation complete. No time-slot overlaps or resource conflicts detected.
+                                {validationIssues.length === 0
+                                    ? "Schedule validation complete. No time-slot overlaps or resource conflicts detected."
+                                    : validationIssues[0]}
                             </p>
                         </div>
                         
@@ -831,14 +913,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                         <div key={day} className="space-y-4">
                             <h3 className="text-xl font-bold uppercase tracking-widest text-black border-l-4 border-black pl-4">{day}</h3>
                             <div className="grid grid-cols-4 gap-4">
-                                {activeSlots.filter((s: any) => {
-                                    // Filter by day since aggregate list contains all slots
-                                    // If in class mode, 'timetables' find handles it
-                                    // If in teacher mode, we need to match the day
-                                    if (viewMode === "teacher") return true; 
-                                    const t = timetables.find(t => t.slots?.some((slot: any) => slot.id === s.id));
-                                    return t?.day_of_week === day;
-                                }).map((s: any) => (
+                                {printableSlotsByDay[day]?.map((s: any) => (
                                     <div key={s.id} className="border border-gray-300 p-4 rounded-none bg-gray-50">
                                         <p className="text-[10px] font-bold uppercase mb-1">{s.start_time?.slice(0, 5)} - {s.end_time?.slice(0, 5)}</p>
                                         <h4 className="text-sm font-black uppercase tracking-tight mb-1">{s.subject?.name}</h4>
@@ -881,7 +956,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, ac
                                         <SelectValue placeholder="Subject" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {subjects.map((sub) => (
+                                        {availableSubjects.map((sub) => (
                                             <SelectItem key={sub.id} value={sub.id}>{sub.name}</SelectItem>
                                         ))}
                                     </SelectContent>

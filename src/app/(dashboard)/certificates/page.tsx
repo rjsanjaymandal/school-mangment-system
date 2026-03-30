@@ -47,9 +47,8 @@ export default async function CertificatesPage() {
 
   return (
     <CertificatesDashboardClient 
-      initialCertificates={(certificates as any[]) || []} 
+      initialCertificates={(certificates as Certificate[]) || []} 
       students={students as Student[]}
-      currentUserId={user?.id}
       userRole={role}
     />
   );

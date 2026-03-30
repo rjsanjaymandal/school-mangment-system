@@ -15,9 +15,9 @@ export default async function HealthPage() {
   if (isStudent) {
     const { data: student } = await supabase
       .from("students")
-      .select("*")
-      .eq("profile_id", user?.id)
-      .single();
+      .select("*, profile:profiles(*)")
+      .eq("id", user?.id)
+      .maybeSingle();
 
     if (student) {
       const { data: logs } = await supabase
@@ -28,12 +28,13 @@ export default async function HealthPage() {
       
       infirmaryLogs = logs || [];
 
-      const { data: profiles } = await supabase
+      const { data: profile } = await supabase
         .from("health_profiles")
         .select("*")
-        .eq("student_id", student.id);
+        .eq("id", student.id)
+        .maybeSingle();
       
-      healthProfiles = profiles || [];
+      healthProfiles = profile ? [profile] : [];
       students = [student];
     }
   } else {

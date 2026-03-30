@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { isAdminOrTeacher } from "@/lib/auth-utils";
 
@@ -13,6 +14,8 @@ export async function issueCertificate(data: {
     if (!authorized) return { success: false, message: "Unauthorized" };
 
     try {
+        const authClient = await createClient();
+        const { data: { user } } = await authClient.auth.getUser();
         const supabaseAdmin = createAdminClient();
         
         // Generate a unique reference number
@@ -25,6 +28,7 @@ export async function issueCertificate(data: {
                 type: data.type,
                 remarks: data.remarks,
                 reference_number: refNumber,
+                issued_by: user?.id || null,
                 status: "issued"
             });
 
@@ -36,7 +40,7 @@ export async function issueCertificate(data: {
     }
 }
 
-export async function revokeCertificate(id: string) {
+export async function revokeCertificate(id: string, remarks?: string) {
     const authorized = await isAdminOrTeacher();
     if (!authorized) return { success: false, message: "Unauthorized" };
 
@@ -44,7 +48,7 @@ export async function revokeCertificate(id: string) {
         const supabaseAdmin = createAdminClient();
         const { error } = await supabaseAdmin
             .from("certificates")
-            .update({ status: "revoked" })
+            .update({ status: "revoked", remarks: remarks || null })
             .eq("id", id);
 
         if (error) throw error;

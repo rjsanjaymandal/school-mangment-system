@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import {
     ShieldAlert,
     ActivitySquare,
@@ -10,18 +11,51 @@ import {
     GlobeLock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 
 export default function AuditDashboardClient({ logs }: { logs: any[] }) {
+    const [search, setSearch] = useState("");
+
+    const filteredLogs = useMemo(() => {
+        return logs.filter((log) => {
+            const haystack = `${log.action} ${log.entity_type} ${log.entity_id} ${log.actor?.full_name || log.actor?.email || ""} ${log.ip_address || ""}`.toLowerCase();
+            return haystack.includes(search.toLowerCase());
+        });
+    }, [logs, search]);
+
+    const securityFlags = useMemo(() => {
+        return logs.filter((log) => /(delete|revoke|fail|error|unauthorized)/i.test(log.action || "")).length;
+    }, [logs]);
+
+    const exportCsv = () => {
+        const rows = [
+            ["time", "user", "action", "module", "entity_id", "ip_address"],
+            ...filteredLogs.map((log) => [
+                log.created_at,
+                log.actor?.full_name || log.actor?.email || "SYSTEM_DAEMON",
+                log.action,
+                log.entity_type,
+                log.entity_id,
+                log.ip_address || "Internal Router",
+            ]),
+        ];
+
+        const csv = rows
+            .map((row) => row.map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`).join(","))
+            .join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "audit-log-export.csv";
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
             <div className="flex items-center justify-between">
@@ -35,8 +69,8 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                 </div>
                 <div className="flex gap-x-3">
                     <Button
-                        disabled
-                        className="rounded-sm bg-card/40 border border-border backdrop-blur-md text-foreground font-black flex items-center gap-x-2 text-[10px] uppercase tracking-widest opacity-50 cursor-not-allowed h-10 px-4"
+                        onClick={exportCsv}
+                        className="rounded-sm bg-card/40 border border-border backdrop-blur-md text-foreground font-black flex items-center gap-x-2 text-[10px] uppercase tracking-widest h-10 px-4"
                     >
                         <Database className="h-4 w-4" />
                         Export Archive
@@ -52,15 +86,15 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-xl p-8 shadow-sm">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Activities (24h)</p>
-                    <h3 className="text-4xl font-bold text-foreground tracking-tight">{(logs.length * 1.4).toFixed(0)}</h3>
+                    <h3 className="text-4xl font-bold text-foreground tracking-tight">{filteredLogs.length}</h3>
                 </Card>
                 <Card className="border-border bg-card/40 backdrop-blur-xl rounded-xl p-8 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Active Sessions</p>
-                    <h3 className="text-4xl font-bold text-foreground tracking-tight">42</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-2">Tracked Users</p>
+                    <h3 className="text-4xl font-bold text-foreground tracking-tight">{new Set(logs.map((log) => log.actor?.id || log.actor?.email || "system")).size}</h3>
                 </Card>
                 <Card className="border-destructive/20 bg-destructive/5 rounded-xl p-8 shadow-sm">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-destructive mb-2">Security Flags</p>
-                    <h3 className="text-4xl font-bold text-destructive tracking-tighter">0</h3>
+                    <h3 className="text-4xl font-bold text-destructive tracking-tighter">{securityFlags}</h3>
                 </Card>
             </div>
 
@@ -75,6 +109,8 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                         <Input
                             placeholder="Search hashes, users or IDs..."
                             className="pl-9 rounded-xs border-border bg-background/50 text-foreground h-10 text-xs placeholder:text-foreground/40 focus-visible:ring-primary"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                 </div>
@@ -100,7 +136,7 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                             </tr>
                         </thead>
                         <tbody className="divide-y">
-                            {logs.map((log) => (
+                            {filteredLogs.map((log) => (
                                 <tr
                                     key={log.id}
                                     className="hover:bg-accent/20 border-b border-border transition-colors font-mono text-xs group"
@@ -139,7 +175,7 @@ export default function AuditDashboardClient({ logs }: { logs: any[] }) {
                                     </td>
                                 </tr>
                             ))}
-                            {logs.length === 0 && (
+                            {filteredLogs.length === 0 && (
                                 <tr>
                                     <td colSpan={5} className="text-center p-12 text-foreground/50 text-xs font-bold uppercase tracking-widest">
                                         Ledger is awaiting initialization. Run DB triggers to capture data payload mutations.

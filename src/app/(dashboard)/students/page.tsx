@@ -7,9 +7,10 @@ import { Users } from "lucide-react";
 export default async function StudentsPage() {
   const supabase = await createClient();
   const role = await getSessionRole();
-  const [students, classes] = await Promise.all([
+  const [students, classes, currentAcademicYear] = await Promise.all([
     InstitutionalService.getStudents().catch(() => []),
     supabase.from("classes").select("*").order("name").then(({ data }) => data || []),
+    supabase.from("academic_years").select("id").eq("is_current", true).maybeSingle().then(({ data }) => data),
   ]);
 
   return (
@@ -35,6 +36,7 @@ export default async function StudentsPage() {
       <StudentList 
         initialData={students || []} 
         classes={classes || []}
+        currentAcademicYearId={currentAcademicYear?.id}
         userRole={role} 
       />
     </div>

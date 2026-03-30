@@ -1,286 +1,149 @@
 "use client";
 
-import { useState } from "react";
-import {
-    FileText, Shield, Download, Eye, AlertTriangle, Calendar, Upload, Search, Lock, CheckCircle2, Plus, Activity, Zap
-} from "lucide-react";
-import { 
-    BarChart, Bar, 
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-    ResponsiveContainer, Tooltip, Legend, 
-    XAxis, YAxis, CartesianGrid 
-} from "recharts";
-import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useMemo, useState } from "react";
+import { Activity, Calendar, FileText, Lock, Plus, Search, Trash2 } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from "recharts";
+import { createDocumentArchive, deleteDocumentArchive, updateDocumentArchive } from "@/app/actions/compliance";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createDocument } from "@/app/actions/modules";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
-interface ComplianceDashboardProps {
-    documents: any[];
-    auditLogs: any[];
-}
+const CATEGORIES = ["Legal", "Academic", "HR", "Financial", "Administrative"];
+const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
-const DOCUMENT_CATEGORIES = ["Legal", "Academic", "HR", "Financial", "Administrative"];
-const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-export function ComplianceDashboard({ documents, auditLogs }: ComplianceDashboardProps) {
+export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]; auditLogs: any[] }) {
     const router = useRouter();
-    const [isUploadOpen, setIsUploadOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
-    const [docForm, setDocForm] = useState({ title: "", category: "Academic", expiry_date: "" });
-    const [currentTimestamp] = useState(() => Date.now());
+    const [editingDocument, setEditingDocument] = useState<any>(null);
+    const [form, setForm] = useState({ title: "", category: "Academic", expiry_date: "", file_path: "", version: "1", is_encrypted: "false" });
 
-    const handleCreate = async () => {
+    const filteredDocs = useMemo(() => {
+        return documents.filter((doc) => `${doc.title} ${doc.category}`.toLowerCase().includes(search.toLowerCase()));
+    }, [documents, search]);
+
+    const categoryData = useMemo(() => {
+        return CATEGORIES.map((category) => ({ name: category, count: documents.filter((doc) => doc.category === category).length }));
+    }, [documents]);
+
+    const auditVelocity = useMemo(() => {
+        const actionCounts: Record<string, number> = {};
+        auditLogs.forEach((log) => {
+            const key = log.action || "UNKNOWN";
+            actionCounts[key] = (actionCounts[key] || 0) + 1;
+        });
+        return Object.entries(actionCounts).slice(0, 6).map(([name, count]) => ({ name, count }));
+    }, [auditLogs]);
+
+    const resetForm = () => setForm({ title: "", category: "Academic", expiry_date: "", file_path: "", version: "1", is_encrypted: "false" });
+
+    const handleSave = async () => {
+        if (!form.title) return toast.error("Document title is required.");
         setLoading(true);
-        await createDocument({ ...docForm, expiry_date: docForm.expiry_date || undefined });
+        const payload = {
+            title: form.title,
+            category: form.category,
+            expiry_date: form.expiry_date || undefined,
+            file_path: form.file_path || undefined,
+            version: Number(form.version) || 1,
+            is_encrypted: form.is_encrypted === "true",
+        };
+        const result = editingDocument
+            ? await updateDocumentArchive(editingDocument.id, payload)
+            : await createDocumentArchive(payload);
         setLoading(false);
-        setIsUploadOpen(false);
-        setDocForm({ title: "", category: "Academic", expiry_date: "" });
+        if (!result.success) return toast.error(result.error || "Failed to save document");
+        toast.success(editingDocument ? "Document updated" : "Document created");
+        setOpen(false);
+        setEditingDocument(null);
+        resetForm();
         router.refresh();
     };
 
-    const filteredDocs = documents.filter(d => (d.title?.toLowerCase() || "").includes(search.toLowerCase()));
-    const categoryCount = DOCUMENT_CATEGORIES.map(c => ({ name: c, count: documents.filter(d => d.category === c).length }));
-    const expiringDocs = documents.filter(d => {
-        if (!d.expiry_date) return false;
-        const diff = new Date(d.expiry_date).getTime() - currentTimestamp;
-        return diff > 0 && diff < 90 * 24 * 60 * 60 * 1000;
-    });
-
-    // --- Compliance Intelligence Layer ---
-    const auditVelocity = useMemo(() => {
-        const baseline = MONTH_LABELS.reduce<Record<string, { name: string; Audits: number; Findings: number }>>((acc, month) => {
-            acc[month] = { name: month, Audits: 0, Findings: 0 };
-            return acc;
-        }, {});
-
-        auditLogs.forEach((log) => {
-            if (!log.created_at) return;
-
-            const month = new Date(log.created_at).toLocaleDateString("en-US", { month: "short" });
-            const bucket = baseline[month];
-
-            if (!bucket) return;
-
-            bucket.Audits += 1;
-            if (/(delete|revoke|reject|error|fail)/i.test(log.action || "")) {
-                bucket.Findings += 1;
-            }
+    const handleEdit = (document: any) => {
+        setEditingDocument(document);
+        setForm({
+            title: document.title || "",
+            category: document.category || "Academic",
+            expiry_date: document.expiry_date || "",
+            file_path: document.file_path || "",
+            version: String(document.version || 1),
+            is_encrypted: document.is_encrypted ? "true" : "false",
         });
+        setOpen(true);
+    };
 
-        return MONTH_LABELS.map((month) => baseline[month]);
-    }, [auditLogs]);
-
-    const riskProfiling = useMemo(() => {
-        return DOCUMENT_CATEGORIES.map((category) => {
-            const docsInCategory = documents.filter((doc) => doc.category === category);
-            const expiringCount = docsInCategory.filter((doc) => {
-                if (!doc.expiry_date) return false;
-                const diff = new Date(doc.expiry_date).getTime() - currentTimestamp;
-                return diff > 0 && diff < 90 * 24 * 60 * 60 * 1000;
-            }).length;
-
-            const coverage = docsInCategory.length === 0
-                ? 100
-                : Math.max(0, Math.round(((docsInCategory.length - expiringCount) / docsInCategory.length) * 100));
-
-            return {
-                subject: category,
-                A: coverage,
-                fullMark: 100,
-            };
-        });
-    }, [currentTimestamp, documents]);
-
-    const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
+    const handleDelete = async (id: string) => {
+        if (!confirm("Delete this document record?")) return;
+        const result = await deleteDocumentArchive(id);
+        if (!result.success) return toast.error(result.error || "Failed to delete document");
+        toast.success("Document deleted");
+        router.refresh();
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-                        School Documents
-                    </h2>
-                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-                        Official Document Management
-                    </p>
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">School Documents</h2>
+                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">Compliance archives and audit visibility</p>
                 </div>
-                <div className="flex gap-x-3">
-                    <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
-                        <DialogTrigger asChild>
-                            <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue"><Upload className="h-4 w-4" /> Upload Document</Button>
-                        </DialogTrigger>
-                        <DialogContent className="glass border-none">
-                            <DialogHeader><DialogTitle className="font-black text-2xl">Upload Document</DialogTitle></DialogHeader>
-                            <div className="space-y-4 pt-4">
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase text-muted-foreground">Document Title</Label>
-                                    <Input value={docForm.title} onChange={(e) => setDocForm({ ...docForm, title: e.target.value })} placeholder="Document Title..." />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Category</Label>
-                                        <Select value={docForm.category} onValueChange={(v) => setDocForm({ ...docForm, category: v })}>
-                                            <SelectTrigger><SelectValue /></SelectTrigger>
-                                            <SelectContent>{DOCUMENT_CATEGORIES.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold uppercase text-muted-foreground">Expiry Date</Label>
-                                        <Input type="date" value={docForm.expiry_date} onChange={(e) => setDocForm({ ...docForm, expiry_date: e.target.value })} />
-                                    </div>
-                                </div>
-                                <Button onClick={handleCreate} disabled={loading} className="w-full rounded-xl py-6 bg-card text-white font-bold">
-                                    {loading ? "Uploading..." : "Upload Document"}
-                                </Button>
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild><Button onClick={() => { setEditingDocument(null); resetForm(); }}><Plus className="h-4 w-4 mr-2" /> Add Document</Button></DialogTrigger>
+                    <DialogContent className="max-w-xl">
+                        <DialogHeader><DialogTitle>{editingDocument ? "Edit Document" : "Add Document"}</DialogTitle></DialogHeader>
+                        <div className="grid gap-4">
+                            <div className="space-y-2"><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2"><Label>Category</Label><Select value={form.category} onValueChange={(value) => setForm({ ...form, category: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{CATEGORIES.map((category) => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
+                                <div className="space-y-2"><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} /></div>
                             </div>
-                        </DialogContent>
-                    </Dialog>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2"><Label>File Path</Label><Input value={form.file_path} onChange={(e) => setForm({ ...form, file_path: e.target.value })} placeholder="/docs/policy.pdf" /></div>
+                                <div className="space-y-2"><Label>Version</Label><Input type="number" min="1" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} /></div>
+                            </div>
+                            <div className="space-y-2"><Label>Encryption</Label><Select value={form.is_encrypted} onValueChange={(value) => setForm({ ...form, is_encrypted: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="false">Standard</SelectItem><SelectItem value="true">Encrypted</SelectItem></SelectContent></Select></div>
+                            <Button onClick={handleSave} disabled={loading}>{loading ? "Saving..." : editingDocument ? "Update Document" : "Create Document"}</Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
+
+            <div className="grid md:grid-cols-12 gap-8">
+                <Card className="md:col-span-7 p-8 border border-border"><div className="mb-6 flex items-center justify-between"><div><h3 className="text-xl font-bold">Audit Activity</h3><p className="text-xs text-muted-foreground">Recent compliance trail by action</p></div><Activity className="h-5 w-5 text-primary" /></div><div className="h-[260px]"><ResponsiveContainer width="100%" height="100%"><BarChart data={auditVelocity}><CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} /><XAxis dataKey="name" axisLine={false} tickLine={false} /><YAxis axisLine={false} tickLine={false} /><Tooltip /><Legend /><Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer></div></Card>
+                <Card className="md:col-span-5 p-8 border border-border"><div className="mb-6"><h3 className="text-xl font-bold">Document Distribution</h3><p className="text-xs text-muted-foreground">Archive count by category</p></div><div className="h-[260px]"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={categoryData} dataKey="count" innerRadius={60} outerRadius={90}>{categoryData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}</Pie><Tooltip /><Legend verticalAlign="bottom" height={36} /></PieChart></ResponsiveContainer></div></Card>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Documents</p><h3 className="text-4xl font-bold mt-2">{documents.length}</h3></Card>
+                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Encrypted</p><h3 className="text-4xl font-bold mt-2">{documents.filter((doc) => doc.is_encrypted).length}</h3></Card>
+                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Expiring Soon</p><h3 className="text-4xl font-bold mt-2">{documents.filter((doc) => doc.expiry_date && new Date(doc.expiry_date) >= new Date()).length}</h3></Card>
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+                <div className="relative w-full max-w-sm">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" placeholder="Search documents..." />
                 </div>
             </div>
 
-            {/* --- Analytics Layer: Institutional Compliance Intelligence --- */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1 w-full relative z-10 mt-10">
-                <div className="md:col-span-8 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
-                    <div className="relative z-10 h-full flex flex-col">
-                        <div className="mb-8 flex justify-between items-start">
-                            <div>
-                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                                    Audit <span className="text-primary italic">Velocity</span>
-                                </h3>
-                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
-                                    Temporal Institutional Safety Flow
-                                </p>
-                            </div>
-                            <Activity className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
-                        </div>
-                        <div className="h-[280px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={auditVelocity}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
-                                    <XAxis 
-                                        dataKey="name" 
-                                        axisLine={false} 
-                                        tickLine={false} 
-                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
-                                    />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
-                                    <Tooltip 
-                                        cursor={{ fill: "rgba(16,185,129,0.05)" }}
-                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
-                                    />
-                                    <Legend verticalAlign="top" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
-                                    <Bar dataKey="Audits" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
-                                    <Bar dataKey="Findings" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={8} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
+            <Card className="overflow-hidden border border-border">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                        <thead className="bg-muted"><tr><th className="p-4 text-left">Title</th><th className="p-4 text-left">Category</th><th className="p-4 text-left">Expiry</th><th className="p-4 text-left">Security</th><th className="p-4 text-right">Actions</th></tr></thead>
+                        <tbody className="divide-y divide-border">
+                            {filteredDocs.length === 0 ? <tr><td colSpan={5} className="p-10 text-center text-muted-foreground">No documents found.</td></tr> : filteredDocs.map((doc) => <tr key={doc.id}><td className="p-4"><div className="font-medium flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /> {doc.title}</div><div className="text-xs text-muted-foreground">{doc.file_path || "Metadata only"}</div></td><td className="p-4">{doc.category}</td><td className="p-4"><div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-muted-foreground" /> {doc.expiry_date || "None"}</div></td><td className="p-4"><Badge variant="outline" className={doc.is_encrypted ? "border-primary/20 text-primary bg-primary/5" : "border-border"}><Lock className="h-3 w-3 mr-1" /> {doc.is_encrypted ? "Encrypted" : "Standard"}</Badge></td><td className="p-4 text-right"><div className="flex justify-end gap-2"><Button variant="ghost" size="sm" onClick={() => handleEdit(doc)}>Edit</Button><Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(doc.id)}><Trash2 className="h-4 w-4" /></Button></div></td></tr>)}
+                        </tbody>
+                    </table>
                 </div>
-
-                <div className="md:col-span-4 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
-                    <div className="mb-8 relative z-10 text-center">
-                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                            Risk <span className="text-primary tracking-normal not-italic px-1">/</span> Profiling
-                        </h3>
-                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Spectral Institutional Safety distribution</p>
-                    </div>
-                    <div className="h-[280px] relative z-10">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <RadarChart cx="50%" cy="50%" outerRadius="80%" data={riskProfiling}>
-                                <PolarGrid stroke="#88888820" />
-                                <PolarAngleAxis dataKey="subject" tick={{ fill: "#88888860", fontSize: 8, fontWeight: "bold" }} />
-                                <Radar
-                                    name="Compliance"
-                                    dataKey="A"
-                                    stroke="hsl(var(--primary))"
-                                    fill="hsl(var(--primary))"
-                                    fillOpacity={0.6}
-                                />
-                                <Tooltip contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }} />
-                            </RadarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid gap-8 lg:grid-cols-3">
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Document List</h3>
-                        <div className="relative w-64">
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input placeholder="Search documents..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 h-9 text-xs rounded-xl" />
-                        </div>
-                    </div>
-
-                    <Card className="border-border bg-card/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-2xl">
-                        <div className="divide-y divide-primary/10">
-                            {filteredDocs.length === 0 ? (
-                                <div className="p-16 text-center text-foreground/20 font-black uppercase tracking-[0.3em] italic">No Documents Found.</div>
-                            ) : (
-                                filteredDocs.map((doc) => (
-                                    <div key={doc.id} className="p-8 flex items-center gap-x-8 hover:bg-primary/5 transition-all group border-b border-primary/5 last:border-0">
-                                        <div className="h-16 w-14 rounded-sm bg-background border border-border flex items-center justify-center text-foreground/20 group-hover:bg-primary group-hover:text-primary-foreground transition-all emerald-glow shadow-md">
-                                            <FileText className="h-8 w-8" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-x-4 mb-2">
-                                                <h4 className="text-lg font-black text-foreground uppercase tracking-tight italic group-hover:text-primary transition-colors">{doc.title}</h4>
-                                                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-primary/20 text-primary bg-primary/5 px-2 py-0.5 rounded-sm italic">{(doc.category || "General").toUpperCase()}</Badge>
-                                            </div>
-                                            <div className="flex items-center gap-x-6 text-[10px] font-black text-foreground/40 uppercase tracking-widest">
-                                                <span className="flex items-center gap-x-2 italic"><Calendar className="h-3 w-3 text-primary/40" /> Expiry Date: {doc.expiry_date || "UNDEFINED"}</span>
-                                                <span className="flex items-center gap-x-2 italic"><Shield className="h-3 w-3 text-primary/40" /> Version: V{doc.version || 1}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </Card>
-                </div>
-
-                <div className="space-y-6">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-x-2"><Lock className="h-4 w-4 text-muted-foreground" /> Document Categories</h3>
-                    <Card className="border-none glass futuristic-card overflow-hidden">
-                        <CardHeader className="bg-card p-6"><CardTitle className="text-xs font-black uppercase tracking-widest text-blue-400">Categories</CardTitle></CardHeader>
-                        <CardContent className="p-0">
-                            <div className="divide-y divide-slate-100">
-                                {categoryCount.map((cat) => (
-                                    <div key={cat.name} className="w-full p-4 flex items-center justify-between font-bold">
-                                        <span className="text-sm text-slate-700">{cat.name} Archives</span>
-                                        <Badge className="bg-slate-100 text-foreground">{cat.count}</Badge>
-                                    </div>
-                                ))}
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {auditLogs.length > 0 && (
-                        <Card className="border-none glass futuristic-card overflow-hidden">
-                            <CardHeader><CardTitle className="text-sm font-bold">Recent Audit Trail</CardTitle></CardHeader>
-                            <CardContent className="space-y-3">
-                                {auditLogs.slice(0, 5).map((log) => (
-                                    <div key={log.id} className="p-3 rounded-xl bg-slate-50 border border-border">
-                                        <p className="text-xs font-bold text-slate-700">{log.action} — {log.entity_type}</p>
-                                        <p className="text-[10px] text-muted-foreground">{log.actor?.first_name} {log.actor?.last_name} • {new Date(log.created_at).toLocaleString()}</p>
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    )}
-                </div>
-            </div>
+            </Card>
         </div>
     );
 }
-

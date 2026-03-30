@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import {
   Users,
@@ -7,20 +6,101 @@ import {
   CreditCard,
   Activity,
   Zap,
-  TrendingUp,
   Bell,
   BrainCircuit,
+  CalendarDays,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { PerformancePredictor } from "@/components/ai/PerformancePredictor";
 import { UserService } from "@/lib/services/user";
 import { AuditService } from "@/lib/services/audit";
+import { createClient } from "@/lib/supabase/server";
+import { getSessionRole } from "@/lib/auth-utils";
 
 export default async function DashboardPage() {
-  const [statsData, recentLogs] = await Promise.all([
+  const supabase = await createClient();
+  const role = await getSessionRole();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const [statsData, recentLogs, currentAY] = await Promise.all([
     UserService.getSystemStats(),
     AuditService.getAuditEntries(),
+    supabase
+      .from("academic_years")
+      .select("id, name")
+      .eq("is_current", true)
+      .maybeSingle()
+      .then(({ data }) => data),
   ]);
+
+  const todayLabel = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date());
+  const currentTime = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date());
+
+  let studentClassId: string | null = null;
+  if (role === "student" && user?.id && currentAY?.id) {
+    const { data: enrollment } = await supabase
+      .from("class_enrollments")
+      .select("class_id")
+      .eq("student_id", user.id)
+      .eq("academic_year_id", currentAY.id)
+      .maybeSingle();
+
+    if (enrollment?.class_id) {
+      studentClassId = enrollment.class_id;
+    } else {
+      const { data: studentRecord } = await supabase
+        .from("students")
+        .select("class_id")
+        .eq("id", user.id)
+        .maybeSingle();
+      studentClassId = studentRecord?.class_id || null;
+    }
+  }
+
+  const { data: todayTimetables } = currentAY?.id
+    ? await supabase
+        .from("timetables")
+        .select(`
+          id,
+          class_id,
+          day_of_week,
+          class:classes(name, room_number),
+          slots:timetable_slots(
+            id,
+            teacher_id,
+            start_time,
+            end_time,
+            room_number,
+            subject:subjects(name),
+            teacher:teachers(
+              profile:profiles(full_name)
+            )
+          )
+        `)
+        .eq("academic_year_id", currentAY.id)
+        .eq("day_of_week", todayLabel)
+    : { data: [] };
+
+  const todaySchedule = (todayTimetables || [])
+    .flatMap((timetable: any) =>
+      (timetable.slots || []).map((slot: any) => ({
+        ...slot,
+        class_id: timetable.class_id,
+        class_name: timetable.class?.name || "Unknown class",
+        room_name: slot.room_number || timetable.class?.room_number || "TBA",
+      })),
+    )
+    .filter((slot: any) => {
+      if (role === "student") return slot.class_id === studentClassId;
+      if (role === "teacher") return slot.teacher_id === user?.id;
+      return true;
+    })
+    .sort((a: any, b: any) => (a.start_time || "").localeCompare(b.start_time || ""));
+
+  const upcomingSchedule = todaySchedule.filter((slot: any) => (slot.end_time || "") >= currentTime).slice(0, 3);
 
   // Handle case where service returns an error object
   const realStats =
@@ -247,34 +327,36 @@ export default async function DashboardPage() {
           <div className="mb-8">
             <h3 className="text-xl font-bold text-foreground">Schedule</h3>
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
-              Upcoming Classes
+              {todayLabel} agenda
             </p>
           </div>
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
+            {upcomingSchedule.length > 0 ? upcomingSchedule.map((slot: any) => (
               <div
-                key={i}
+                key={slot.id}
                 className="flex items-center gap-x-4 p-4 rounded-md bg-muted/30 border border-border hover:border-primary/30 hover:bg-muted/50 transition-all cursor-pointer group"
               >
-                <div className="h-12 w-12 rounded-md bg-primary flex flex-col items-center justify-center text-primary-foreground shadow-sm">
-                  <span className="text-[8px] font-bold uppercase tracking-tighter opacity-70">
-                    Oct
-                  </span>
-                  <span className="text-xl font-bold leading-none">
-                    {15 + i}
-                  </span>
+                <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
+                  <CalendarDays className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-foreground tracking-tight group-hover:text-primary transition-colors">
-                    Physics Department {i}
+                    {role === "teacher" ? slot.class_name : slot.subject?.name || "Scheduled class"}
                   </p>
                   <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mt-1">
-                    Room {102 + i} • 14:00
+                    {slot.room_name} • {slot.start_time?.slice(0, 5)} - {slot.end_time?.slice(0, 5)}
                   </p>
                 </div>
                 <div className="h-1.5 w-1.5 rounded-full bg-primary/40" />
               </div>
-            ))}
+            )) : (
+              <div className="h-[220px] flex flex-col items-center justify-center border border-dashed border-border rounded-lg bg-muted/20">
+                <CalendarDays className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
+                <p className="font-semibold text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                  No upcoming schedule items for today
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
