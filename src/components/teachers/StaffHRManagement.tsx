@@ -18,12 +18,17 @@ import {
   TrendingUp,
   UserCheck,
   Save,
+  ShieldCheck,
+  Activity,
+  Zap,
+  Download
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { markStaffAttendance } from "@/app/actions/staff-attendance";
 import { toast } from "sonner";
@@ -79,14 +84,17 @@ export function StaffHRManagement({
 
   if (!isAdminOrTeacher) {
     return (
-      <div className="p-32 text-center space-y-8 animate-in fade-in duration-1000">
-        <div className="h-32 w-32 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto text-red-500 shadow-sm transition-all hover:scale-105">
-          <XCircle className="h-16 w-16" />
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6 animate-in fade-in transition-all duration-1000 reveal-1">
+        <div className="h-16 w-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center">
+          <XCircle className="h-8 w-8" />
         </div>
-        <div>
-            <h2 className="text-4xl font-black italic uppercase tracking-tighter text-foreground decoration-red-500/30 underline-offset-8">Access Denied</h2>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-6 max-w-sm mx-auto leading-loose italic">
-                Personnel & Payroll data are restricted to administrative accounts.
+        <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight">
+              Access Denied
+            </h2>
+            <p className="text-muted-foreground max-w-sm mx-auto flex items-center justify-center gap-2">
+              <ShieldCheck className="h-4 w-4" /> 
+              You don't have permission to view Staff HR components.
             </p>
         </div>
       </div>
@@ -94,131 +102,106 @@ export function StaffHRManagement({
   }
 
   return (
-    <div className="space-y-12 animate-in fade-in transition-all duration-1000">
-      <div className="grid gap-12 lg:grid-cols-3">
-        {/* Metric Card 1 */}
-        <div className="relative group bg-card border border-border p-10 rounded-xl transition-all duration-700 shadow-sm hover:border-primary/40 overflow-hidden">
-            <div className="absolute -right-4 -bottom-4 h-32 w-32 text-primary opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
-                <Briefcase className="h-full w-full" />
+    <div className="space-y-8 animate-in fade-in transition-all duration-1000">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border pb-6">
+        <div className="flex items-center gap-x-4">
+            <div className="h-12 w-12 bg-primary/10 flex items-center justify-center text-primary rounded-lg">
+                <Users className="h-6 w-6" />
             </div>
-            
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-8 transition-all italic">
-                Staff Population
-            </p>
-            <div className="flex items-baseline gap-x-6 mb-10 relative z-10">
-                <h3 className="text-8xl font-black tracking-tighter text-foreground italic leading-none group-hover:text-primary transition-colors">
-                    {staffCount.toString().padStart(2, '0')}
-                </h3>
-                <div className={cn(
-                    "px-4 py-2 text-primary-foreground text-sm font-bold italic rounded-lg shadow-sm",
-                    pendingLeaves.length === 0 ? "bg-primary" : "bg-orange-500"
-                )}>
-                    {pendingLeaves.length === 0 ? "STABLE" : "ATTENTION"}
-                </div>
-            </div>
-            <div className="space-y-3 relative z-10">
-                <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-muted-foreground italic">
-                    <span>Pending Leave Requests</span>
-                    <span className="text-primary italic">{pendingLeaves.length} Pending</span>
-                </div>
-                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                    <div 
-                        className="h-full bg-primary transition-all duration-1000"
-                        style={{ width: `${Math.max(10, (1 - pendingLeaves.length / (staffCount || 1)) * 100)}%` }}
-                    />
-                </div>
+            <div>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                    Staff & HR Management
+                </h2>
+                <p className="text-sm font-medium text-muted-foreground flex items-center gap-2 mt-1">
+                    <Activity className="h-4 w-4" /> 
+                    Manage staff attendance, leaves, and payroll
+                </p>
             </div>
         </div>
 
-        {/* Metric Card 2 */}
-        <div className="relative group bg-card border border-border p-10 rounded-xl transition-all duration-700 shadow-sm hover:border-primary/40 overflow-hidden">
-            <div className="absolute -right-4 -bottom-4 h-32 w-32 text-primary opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
-                <UserCheck className="h-full w-full" />
-            </div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-8 italic">
-                Registry Presence
-            </p>
-            <div className="flex items-center gap-x-8 mb-10 relative z-10">
-                <div className="h-20 w-20 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-sm transition-all group-hover:scale-110">
-                    <CheckCircle2 className="h-10 w-10 text-primary" />
-                </div>
-                <div>
-                    <h4 className="text-5xl font-black text-foreground tracking-tighter italic leading-none">
-                        {staffCount.toString().padStart(2, '0')}
-                    </h4>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-none italic">Active Nodes</p>
-                </div>
-            </div>
-            <div className="pt-8 border-t border-border">
-                <Link href="/audit" className="block">
-                    <Button className="w-full bg-secondary border border-border hover:bg-primary hover:text-white text-foreground font-bold rounded-lg h-14 transition-all uppercase tracking-widest text-[9px]">
-                        View Global Logs
-                    </Button>
-                </Link>
-            </div>
-        </div>
-
-        {/* Metric Card 3 */}
-        <div className="relative group bg-card border border-border p-10 rounded-xl transition-all duration-700 shadow-sm hover:border-primary/40 overflow-hidden">
-            <div className="absolute -right-4 -bottom-4 h-32 w-32 text-primary opacity-[0.03] rotate-12 group-hover:rotate-0 transition-all duration-1000">
-                <IndianRupee className="h-full w-full" />
-            </div>
-            
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-8 italic">
-                Financial Overview
-            </p>
-
-            <div className="flex items-center gap-x-8 mb-10 relative z-10">
-                <div className="h-20 w-20 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-sm transition-all group-hover:scale-110">
-                    <IndianRupee className="h-10 w-10 text-primary" />
-                </div>
-                <div>
-                    <h4 className="text-5xl font-black text-foreground tracking-tighter italic leading-none">
-                        {paidCount}<span className="text-primary/30 not-italic tracking-normal">/</span>{payrolls.length || staffCount}
-                    </h4>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2 leading-none italic">Payroll Status</p>
-                </div>
-            </div>
-
-            <div className="pt-8 border-t border-border">
-                <Button className="w-full bg-primary text-primary-foreground font-bold rounded-lg h-14 shadow-sm uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-all">
-                    Process Payouts
-                </Button>
-            </div>
+        <div className="flex items-center gap-4">
+            <Button variant="outline" className="h-10 px-4 font-medium transition-all gap-2">
+                <Download className="h-4 w-4" /> Export HR Data
+            </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="attendance" className="space-y-10">
-        <TabsList className="bg-secondary/50 border border-border p-1 rounded-xl h-14 w-fit">
-          <TabsTrigger
-            value="attendance"
-            className="rounded-lg px-10 py-3 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 italic"
-          >
-            <UserCheck className="h-4 w-4" />
-            Daily Presence
-          </TabsTrigger>
-          <TabsTrigger
-            value="leave"
-            className="rounded-lg px-10 py-3 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 italic"
-          >
-            <Clock className="h-4 w-4" />
-            Leave Registry
-          </TabsTrigger>
-          <TabsTrigger
-            value="payouts"
-            className="rounded-lg px-10 py-3 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 italic"
-          >
-            <IndianRupee className="h-4 w-4" />
-            Payroll System
-          </TabsTrigger>
-        </TabsList>
+      <div className="grid gap-6 md:grid-cols-3 reveal-2">
+        {/* Metric Node 1 */}
+        <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+            <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Briefcase className="h-24 w-24 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-muted-foreground mb-2">Total Staff</p>
+            <div className="flex items-baseline gap-4">
+                <h3 className="text-3xl font-bold text-foreground">
+                    {staffCount.toString().padStart(2, '0')}
+                </h3>
+                <div className={cn(
+                    "px-2.5 py-0.5 text-[10px] font-semibold rounded-full uppercase",
+                    pendingLeaves.length === 0 ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-red-50 text-red-600 border border-red-200"
+                )}>
+                    {pendingLeaves.length === 0 ? "Stable" : "Action Needed"}
+                </div>
+            </div>
+            <p className="text-xs font-semibold text-muted-foreground mt-4 flex items-center gap-2">
+               <Activity className="h-3.5 w-3.5" /> Data Verified
+            </p>
+        </div>
 
-        <TabsContent value="attendance" className="animate-in slide-in-from-bottom-4 duration-700 outline-none">
-          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-            <div className="p-8 border-b border-border flex items-center justify-between">
+        {/* Metric Node 2 */}
+        <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+            <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Clock className="h-24 w-24 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-muted-foreground mb-2">Leave Requests</p>
+            <h3 className="text-3xl font-bold text-foreground">
+                {pendingLeaves.length.toString().padStart(2, '0')}
+            </h3>
+            <p className="text-xs font-semibold text-muted-foreground mt-4 flex items-center gap-2">
+               <FileText className="h-3.5 w-3.5" /> Pending Approval
+            </p>
+        </div>
+
+        {/* Metric Node 3 */}
+        <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+            <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Zap className="h-24 w-24 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-muted-foreground mb-2">Payroll Status</p>
+            <h3 className="text-3xl font-bold text-foreground">
+                {paidCount} <span className="text-muted-foreground text-xl font-medium">/ {payrolls.length || staffCount}</span>
+            </h3>
+            <p className="text-xs font-semibold text-muted-foreground mt-4 flex items-center gap-2">
+               <CheckCircle2 className="h-3.5 w-3.5" /> Processed This Month
+            </p>
+        </div>
+      </div>
+
+      <Tabs defaultValue="attendance" className="space-y-6">
+        <div className="flex justify-between items-center gap-6">
+            <TabsList className="bg-muted p-1 rounded-sm h-11 w-full justify-start overflow-x-auto">
+                <TabsTrigger value="attendance" className="text-sm font-medium px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">
+                    <UserCheck className="h-4 w-4 mr-2" /> Attendance
+                </TabsTrigger>
+                <TabsTrigger value="leave" className="text-sm font-medium px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">
+                    <Calendar className="h-4 w-4 mr-2" /> Leave Requests
+                </TabsTrigger>
+                <TabsTrigger value="payouts" className="text-sm font-medium px-6 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">
+                    <Briefcase className="h-4 w-4 mr-2" /> Payroll
+                </TabsTrigger>
+            </TabsList>
+        </div>
+
+        <TabsContent value="attendance" className="animate-in slide-in-from-bottom-2 mt-0 outline-none space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-6 p-6 border border-border bg-card/40 rounded-sm">
               <div>
-                <h4 className="text-xl font-black italic uppercase tracking-tighter">Daily Roll Call</h4>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-1 italic">Marking Phase: {new Date().toLocaleDateString()}</p>
+                <h4 className="text-base font-semibold text-foreground">Staff Attendance</h4>
+                <p className="text-sm font-medium text-muted-foreground mt-1 flex items-center gap-2">
+                  <Clock className="h-4 w-4" /> Date: {new Date().toLocaleDateString()}
+                </p>
               </div>
               <Button 
                 onClick={async () => {
@@ -232,46 +215,53 @@ export function StaffHRManagement({
                     }))
                   });
                   setIsSaving(false);
-                  if (res.success) toast.success("Attendance Matrix Updated");
-                  else toast.error(res.error || "Matrix Failure");
+                  if (res.success) toast.success("Attendance updated successfully");
+                  else toast.error(res.error || "Failed to update attendance");
                 }}
                 disabled={isSaving}
-                className="bg-primary hover:scale-105 transition-all text-primary-foreground font-black uppercase tracking-widest text-[10px] px-8 h-12 gap-x-3 rounded-lg shadow-lg shadow-primary/20"
+                className="h-10 px-6 font-medium transition-all"
               >
-                <Save className="h-4 w-4" />
-                {isSaving ? "Syncing..." : "Finalize Registry"}
+                <Save className="h-4 w-4 mr-2" />
+                {isSaving ? "Saving..." : "Save Attendance"}
               </Button>
-            </div>
-            <table className="w-full text-left order-collapse">
-              <thead className="bg-secondary/30">
-                <tr>
-                  <th className="px-10 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Employee Access Node</th>
-                  <th className="px-10 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic text-center">Operational Status</th>
+          </div>
+
+          <div className="border border-border bg-card/40 rounded-sm overflow-hidden">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/50">
+                  <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Staff Member</th>
+                  <th className="py-3 px-6 text-sm font-semibold text-muted-foreground text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {staff.map((s) => (
-                  <tr key={s.id} className="group hover:bg-secondary/10 transition-colors">
-                    <td className="px-10 py-5">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-foreground uppercase tracking-tight text-[13px] italic">{s.full_name}</span>
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground italic group-hover:text-primary transition-colors">Staff ID: {s.id.split('-')[0]}</span>
+                  <tr key={s.id} className="group hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 flex items-center justify-center font-bold text-white text-sm rounded-full bg-primary/20 border border-primary/20">
+                            {s.full_name?.[0] || "?"}
+                        </div>
+                        <div>
+                            <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors block">{s.full_name}</span>
+                            <span className="text-xs font-medium text-muted-foreground mt-1 block font-mono">ID: {s.id.split('-')[0]}</span>
+                        </div>
                       </div>
                     </td>
-                    <td className="px-10 py-5">
-                      <div className="flex justify-center items-center gap-x-2">
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center items-center gap-2">
                         {['present', 'absent', 'late', 'half_day'].map((status) => (
                           <button
                             key={status}
                             onClick={() => setAttendanceRecords(prev => ({ ...prev, [s.id]: status }))}
                             className={cn(
-                              "px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all italic border",
-                              attendanceRecords[s.id] === status 
-                                ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105" 
-                                : "bg-secondary/50 text-muted-foreground border-border hover:bg-secondary"
+                                "px-3 py-1.5 rounded-sm text-xs font-semibold uppercase transition-all",
+                                attendanceRecords[s.id] === status
+                                    ? "bg-primary text-white"
+                                    : "bg-muted text-muted-foreground hover:bg-muted/80"
                             )}
                           >
-                            {status}
+                            {status.replace('_', ' ')}
                           </button>
                         ))}
                       </div>
@@ -283,55 +273,59 @@ export function StaffHRManagement({
           </div>
         </TabsContent>
 
-        <TabsContent value="leave" className="animate-in slide-in-from-bottom-4 duration-700 outline-none">
-          <div className="relative bg-card rounded-xl overflow-hidden border border-border shadow-sm">
-            <div className="overflow-hidden">
+        <TabsContent value="leave" className="animate-in slide-in-from-bottom-2 mt-0 outline-none space-y-6">
+          <div className="border border-border bg-card/40 rounded-sm overflow-hidden">
                 <table className="w-full text-left border-collapse">
-                    <thead className="bg-secondary/30">
-                        <tr>
-                            <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-primary italic">Employee Name</th>
-                            <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-primary italic">Leave Category</th>
-                            <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-primary italic">Duration Scope</th>
-                            <th className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-primary italic">Reason/Context</th>
-                            <th className="px-10 py-6 text-right text-[10px] font-bold uppercase tracking-widest text-primary italic">Status / Actions</th>
+                    <thead>
+                        <tr className="border-b border-border bg-muted/50">
+                            <th className="px-6 py-3 text-sm font-semibold text-muted-foreground">Staff Member</th>
+                            <th className="px-6 py-3 text-sm font-semibold text-muted-foreground">Type</th>
+                            <th className="px-6 py-3 text-sm font-semibold text-muted-foreground">Duration</th>
+                            <th className="px-6 py-3 text-sm font-semibold text-muted-foreground">Reason</th>
+                            <th className="px-6 py-3 text-sm font-semibold text-muted-foreground text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
                         {leaveRequests.length === 0 ? (
                             <tr>
-                                <td colSpan={5} className="py-24 text-center text-[10px] font-black uppercase tracking-[0.5em] text-foreground/20 italic">No permission fragments detected in memory.</td>
+                                <td colSpan={5} className="py-24 text-center">
+                                    <div className="flex flex-col items-center">
+                                        <Clock className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
+                                        <p className="text-sm font-medium text-muted-foreground">No leave requests found.</p>
+                                    </div>
+                                </td>
                             </tr>
                         ) : (
                             leaveRequests.map((leave) => (
-                                <tr key={leave.id} className="group hover:bg-secondary/10 transition-all duration-500">
-                                    <td className="px-10 py-6 font-bold text-foreground uppercase tracking-tight text-[13px] italic group-hover:text-primary transition-colors">
-                                        {leave.staff?.full_name || "Unknown Staff"}
+                                <tr key={leave.id} className="group hover:bg-muted/30 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">{leave.staff?.full_name || "Unknown Staff"}</span>
                                     </td>
-                                    <td className="px-10 py-6">
-                                        <Badge variant="outline" className="text-[8px] font-bold tracking-widest uppercase border-primary/20 text-primary bg-primary/5 rounded-lg px-3 py-1 italic">
+                                    <td className="px-6 py-4">
+                                        <Badge variant="outline" className="text-xs font-semibold capitalize">
                                             {leave.leave_type}
                                         </Badge>
                                     </td>
-                                    <td className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
-                                        {new Date(leave.start_date).toLocaleDateString()} <span className="text-primary/30 mx-2">→</span> {new Date(leave.end_date).toLocaleDateString()}
+                                    <td className="px-6 py-4 text-sm font-medium text-muted-foreground">
+                                        {new Date(leave.start_date).toLocaleDateString()} - {new Date(leave.end_date).toLocaleDateString()}
                                     </td>
-                                    <td className="px-10 py-6 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 truncate max-w-[200px] italic">
+                                    <td className="px-6 py-4 text-sm text-foreground/80 truncate max-w-[200px]">
                                         {leave.reason}
                                     </td>
-                                    <td className="px-10 py-6 text-right">
+                                    <td className="px-6 py-4 text-right">
                                         {leave.status === 'pending' ? (
-                                            <div className="flex justify-end gap-x-3">
-                                                <Button size="icon" className="h-9 w-9 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary hover:text-white shadow-sm transition-all">
+                                            <div className="flex justify-end gap-x-2">
+                                                <Button size="icon" variant="outline" className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50">
                                                     <CheckCircle2 className="h-4 w-4" />
                                                 </Button>
-                                                <Button size="icon" className="h-9 w-9 rounded-lg bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white shadow-sm transition-all">
+                                                <Button size="icon" variant="outline" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50">
                                                     <XCircle className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         ) : (
                                             <div className={cn(
-                                                "inline-flex items-center gap-x-2 px-4 py-1.5 rounded-lg text-[8px] font-bold uppercase tracking-widest shadow-sm italic",
-                                                leave.status === 'approved' ? "bg-primary/10 text-primary border border-primary/20" : "bg-red-500/10 text-red-500 border border-red-500/20"
+                                                "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize border",
+                                                leave.status === 'approved' ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-red-50 text-red-600 border-red-200"
                                             )}>
                                                 <span>{leave.status}</span>
                                             </div>
@@ -342,50 +336,47 @@ export function StaffHRManagement({
                         )}
                     </tbody>
                 </table>
-            </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="payouts" className="animate-in slide-in-from-bottom-4 duration-700 outline-none">
-          <div className="relative group bg-card border border-border p-16 overflow-hidden shadow-2xl border-l-4 border-l-primary rounded-xl">
-            <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:scale-110 transition-transform duration-1000">
-              <IndianRupee className="h-64 w-64 text-primary" />
+        <TabsContent value="payouts" className="animate-in slide-in-from-bottom-2 mt-0 outline-none space-y-6">
+          <div className="relative group bg-card border border-border p-12 overflow-hidden rounded-xl shadow-sm text-center flex flex-col items-center">
+            <div className="absolute -right-4 -top-4 p-8 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+              <IndianRupee className="h-48 w-48 text-primary" />
             </div>
 
-            <div className="relative z-10 flex flex-col items-center text-center space-y-10">
-                <div className="h-24 w-24 rounded-sm bg-primary text-primary-foreground flex items-center justify-center shadow-[0_0_50px_oklch(var(--primary)/0.3)]">
-                    <Shovel className="h-10 w-10" />
+            <div className="relative z-10 flex flex-col items-center space-y-8">
+                <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <Briefcase className="h-10 w-10" />
                 </div>
                 
-                <div>
-                    <h3 className="text-5xl font-black text-foreground uppercase tracking-tight italic leading-none">
-                        Employee Payroll
+                <div className="space-y-2">
+                    <h3 className="text-4xl font-bold tracking-tight text-foreground">
+                        Payroll Processing
                     </h3>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mt-6 italic">Fiscal Management & Disbursement</p>
+                    <p className="text-sm font-medium text-muted-foreground">Manage and disburse staff salaries.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-2xl py-12 border-y border-border">
-                    <div className="text-center space-y-4">
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">Monthly Total Payout</p>
-                        <p className="text-5xl font-black italic text-foreground tracking-tighter leading-none decoration-primary/30 underline underline-offset-8 transition-all hover:text-primary decoration-2">₹{totalPayout.toLocaleString()}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-2xl py-8 border-y border-border">
+                    <div className="space-y-2">
+                        <p className="text-sm font-semibold text-muted-foreground uppercase">Total Payout</p>
+                        <p className="text-4xl font-bold text-foreground">₹{totalPayout.toLocaleString()}</p>
                     </div>
-                    <div className="text-center space-y-4 border-l border-border">
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">Active Employee Records</p>
-                        <p className="text-5xl font-black italic text-foreground tracking-tighter leading-none">{payrolls.length || staffCount}</p>
+                    <div className="space-y-2 border-l border-border pl-12">
+                        <p className="text-sm font-semibold text-muted-foreground uppercase">Staff Count</p>
+                        <p className="text-4xl font-bold text-foreground">{payrolls.length || staffCount}</p>
                     </div>
                 </div>
 
-                <div className="max-w-xl">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-loose italic">
-                        Automated payroll processing enabled. Compensation is calculated based on attendance records, holiday policies, and institutional tax schemas.
+                <div className="max-w-xl pb-4">
+                    <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                        Automatic calculation based on attendance and performance. Please review all leaves before processing payroll.
                     </p>
                 </div>
 
-                <Button className="h-16 px-16 bg-primary text-primary-foreground font-black shadow-sm uppercase tracking-widest text-[11px] transition-all hover:scale-105 active:scale-95 rounded-xl">
-                    <span className="flex items-center gap-x-4">
-                        Process All Payments
-                        <TrendingUp className="h-5 w-5" />
-                    </span>
+                <Button className="h-12 px-8 font-medium transition-all gap-2">
+                    Process Payroll
+                    <TrendingUp className="h-4 w-4" />
                 </Button>
             </div>
           </div>
@@ -394,5 +385,3 @@ export function StaffHRManagement({
     </div>
   );
 }
-
-

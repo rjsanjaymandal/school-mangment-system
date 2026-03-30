@@ -8,6 +8,7 @@ import {
   Search,
   Filter,
   ClipboardCheck,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,57 +18,123 @@ import {
   generateCertificate,
   generateReportCard,
 } from "@/lib/reports/generator";
+import { ReportsService } from "@/lib/services/reports";
+import { useEffect, useState } from "react";
 
-const students = [
-  {
-    id: 1,
-    name: "Alexander Pierce",
-    class: "Grade 10-A",
-    gpa: "3.9",
-    status: "Honors",
-  },
-  {
-    id: 2,
-    name: "Sophia Martinez",
-    class: "Grade 10-A",
-    gpa: "3.7",
-    status: "Stable",
-  },
-  {
-    id: 3,
-    name: "Liam O'Connor",
-    class: "Grade 11-C",
-    gpa: "4.0",
-    status: "Honors",
-  },
-  {
-    id: 4,
-    name: "Isabella Rossi",
-    class: "Grade 9-B",
-    gpa: "3.5",
-    status: "Stable",
-  },
-];
+interface StudentData {
+  id: string;
+  admission_number: string;
+  profile: { full_name: string; avatar_url?: string };
+  class?: { name: string };
+  gpa: string;
+  total_marks: number;
+}
 
 export default function ReportsPage() {
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [stats, setStats] = useState({
+    certificatesIssued: 0,
+    reportCardsReady: 0,
+    completionRate: "0",
+  });
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [studentsRes, certRes, feesRes, statsRes] = await Promise.all([
+          ReportsService.getStudentsWithGrades(),
+          ReportsService.getCertificatesSummary(),
+          ReportsService.getFeesSummary(),
+          ReportsService.getAcademicSummary(),
+        ]);
+
+        if (studentsRes.data) {
+          const formattedStudents = studentsRes.data.map((s: any) => ({
+            id: s.id,
+            admission_number: s.admission_number,
+            profile: { full_name: s.profile?.full_name || "Unknown", avatar_url: s.profile?.avatar_url },
+            class: s.class,
+            gpa: s.gpa,
+            total_marks: s.total_marks,
+          }));
+          setStudents(formattedStudents);
+        }
+
+        const totalCerts = certRes.data?.total_issued || 0;
+        const totalRevenue = feesRes.data?.total_collected || 0;
+        const feeRate = feesRes.data?.rate || "0";
+
+        setStats({
+          certificatesIssued: totalCerts,
+          reportCardsReady: studentsRes.data?.length || 0,
+          completionRate: feeRate,
+        });
+      } catch (error) {
+        console.error("Failed to load reports data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  const filteredStudents = students.filter(
+    (s) =>
+      s.profile.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.admission_number.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const handleCertDownload = (name: string) => {
     generateCertificate(name, "Exceptional Innovation & Leadership");
   };
 
-  const handleReportDownload = (student: any) => {
-    const results = [
-      { subject: "Advanced Physics", maxMarks: 100, obtained: 92, grade: "A" },
-      { subject: "Mathematics", maxMarks: 100, obtained: 98, grade: "A+" },
-      { subject: "Computer Science", maxMarks: 100, obtained: 95, grade: "A" },
-      {
-        subject: "English Literature",
-        maxMarks: 100,
-        obtained: 88,
-        grade: "B+",
-      },
-    ];
-    generateReportCard(student, results);
+  const handleReportDownload = async (student: StudentData) => {
+    try {
+      const result = await ReportsService.getStudentReportCard(student.id);
+      if (result.data) {
+        generateReportCard(
+          {
+            name: student.profile.full_name,
+            class: student.class?.name || "N/A",
+            admission_number: student.admission_number,
+          },
+          result.data.results
+        );
+      }
+    } catch (error) {
+      console.error("Failed to generate report:", error);
+      const results = [
+        { subject: "No Data", maxMarks: 0, obtained: 0, grade: "N/A" },
+      ];
+      generateReportCard(
+        {
+          name: student.profile.full_name,
+          class: student.class?.name || "N/A",
+          admission_number: student.admission_number,
+        },
+        results
+      );
+    }
   };
+
+  const getStatus = (gpa: string) => {
+    const gpaNum = parseFloat(gpa);
+    if (gpaNum >= 3.5) return "Honors";
+    if (gpaNum >= 3.0) return "Excellent";
+    if (gpaNum >= 2.5) return "Good";
+    return "Stable";
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -103,7 +170,7 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-black text-foreground leading-none">
-                124
+                {stats.certificatesIssued}
               </p>
               <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
                 Certificates Issued
@@ -118,7 +185,7 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-black text-foreground leading-none">
-                842
+                {students.length}
               </p>
               <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
                 Report Cards Ready
@@ -133,10 +200,10 @@ export default function ReportsPage() {
             </div>
             <div>
               <p className="text-2xl font-black text-foreground leading-none">
-                92%
+                {stats.completionRate}%
               </p>
               <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
-                Completion Rate
+                Fee Completion Rate
               </p>
             </div>
           </CardContent>
@@ -149,6 +216,8 @@ export default function ReportsPage() {
           <Input
             placeholder="Search students by name or enrollment ID..."
             className="pl-9 bg-white border-border rounded-2xl h-12 shadow-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Button className="h-12 rounded-2xl px-6 bg-slate-100 hover:bg-slate-200 text-foreground/70 font-bold border-none transition-all">
@@ -178,21 +247,21 @@ export default function ReportsPage() {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {students.map((student) => (
+            {filteredStudents.map((student) => (
               <tr
                 key={student.id}
                 className="hover:bg-white/60 transition-colors group"
               >
                 <td className="py-6 px-8 flex items-center gap-x-4">
                   <div className="h-10 w-10 rounded-xl bg-card text-white flex items-center justify-center font-bold neon-blue">
-                    {student.name[0]}
+                    {student.profile.full_name[0]}
                   </div>
                   <span className="font-bold text-foreground">
-                    {student.name}
+                    {student.profile.full_name}
                   </span>
                 </td>
                 <td className="py-6 px-8 text-muted-foreground font-medium">
-                  {student.class}
+                  {student.class?.name || "N/A"}
                 </td>
                 <td className="py-6 px-8">
                   <span className="font-black text-blue-500">
@@ -203,18 +272,18 @@ export default function ReportsPage() {
                   <Badge
                     variant="outline"
                     className={
-                      student.status === "Honors"
+                      getStatus(student.gpa) === "Honors"
                         ? "bg-blue-50 text-blue-600 border-blue-100 font-bold"
                         : "border-border text-muted-foreground font-bold"
                     }
                   >
-                    {student.status.toUpperCase()}
+                    {getStatus(student.gpa).toUpperCase()}
                   </Badge>
                 </td>
                 <td className="py-6 px-8 text-right">
                   <div className="flex justify-end gap-x-2">
                     <Button
-                      onClick={() => handleCertDownload(student.name)}
+                      onClick={() => handleCertDownload(student.profile.full_name)}
                       variant="ghost"
                       size="sm"
                       className="rounded-xl font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-blue-500 hover:bg-blue-50 transition-all gap-x-2"
@@ -237,8 +306,12 @@ export default function ReportsPage() {
             ))}
           </tbody>
         </table>
+        {filteredStudents.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            No students found
+          </div>
+        )}
       </div>
     </div>
   );
 }
-

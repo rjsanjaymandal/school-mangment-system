@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { MessagesDashboard } from "@/components/messages/MessagesDashboard";
+import { MessagesService } from "@/lib/services/messages";
+import { redirect } from "next/navigation";
 
 export default async function MessagesPage() {
   const supabase = await createClient();
@@ -8,35 +10,23 @@ export default async function MessagesPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return null;
+  if (!user) {
+    redirect("/login");
+  }
 
-  // Get inbox messages
-  const { data: inbox } = await supabase
-    .from("messages")
-    .select("*, sender:profiles!sender_id(*)")
-    .eq("receiver_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(50);
+  // Get modern conversation threads
+  const { data: conversations } = await MessagesService.getConversations(user.id);
 
-  // Get sent messages
-  const { data: sent } = await supabase
-    .from("messages")
-    .select("*, receiver:profiles!receiver_id(*)")
-    .eq("sender_id", user.id)
-    .order("created_at", { ascending: false })
-    .limit(50);
-
-  // Get all profiles for compose
+  // Get all profiles for starting new conversations
   const { data: contacts } = await supabase
     .from("profiles")
-    .select("id, first_name, last_name, role, email")
+    .select("id, full_name, role, avatar_url")
     .neq("id", user.id)
-    .order("first_name");
+    .order("full_name");
 
   return (
     <MessagesDashboard
-      inbox={inbox || []}
-      sent={sent || []}
+      initialConversations={conversations || []}
       contacts={contacts || []}
       currentUserId={user.id}
     />

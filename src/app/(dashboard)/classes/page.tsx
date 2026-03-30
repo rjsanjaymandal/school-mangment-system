@@ -9,8 +9,7 @@ export default async function ClassesPage() {
   const { data: classes, error } = await supabase
     .from("classes")
     .select(`
-      *,
-      teacher:profiles!classes_teacher_id_fkey(id, full_name)
+      *
     `)
     .order("name", { ascending: true });
 
@@ -20,20 +19,29 @@ export default async function ClassesPage() {
     .eq("role", "teacher")
     .order("full_name", { ascending: true });
 
+  if (error) {
+    console.error("Classes query error details:", JSON.stringify(error, null, 2));
+    return <div className="p-8 text-destructive">Error loading classes: {error.message}</div>;
+  }
+
+  // Manually join teacher data since the database foreign key might be missing
+  const joinedClasses = classes?.map(cls => {
+    const teacher = teachers?.find(t => t.id === cls.teacher_id);
+    return { ...cls, teacher };
+  }) || [];
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">
-            Academic Formations
-          </h2>
-          <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">
-            Grade Levels, Sectional Nodes & Spatial Allocation
+          <h2 className="text-3xl font-bold tracking-tight">Classes</h2>
+          <p className="text-muted-foreground mt-2">
+            Manage grade levels, sections, and room allocations.
           </p>
         </div>
       </div>
 
-      <ClassList initialData={classes || []} userRole={role} teachers={teachers || []} />
+      <ClassList initialData={joinedClasses} userRole={role} teachers={teachers || []} />
     </div>
   );
 }

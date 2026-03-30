@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-
 import { useEffect, useState } from "react";
 import {
   Users,
@@ -13,6 +12,11 @@ import {
   ShieldCheck,
   AlertCircle,
   Eye,
+  Activity,
+  Zap,
+  GlobeLock,
+  Download,
+  Key
 } from "lucide-react";
 import { UserService } from "@/lib/services/user";
 import { startImpersonation } from "@/lib/services/impersonation";
@@ -36,7 +40,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -95,7 +98,6 @@ export function UserManagement() {
     const res = await UserService.deactivateUser(userId);
     if (res && !("error" in res)) {
       toast.success("User access deactivated");
-      // Optionally update local state if status is added
     } else {
       toast.error("Failed to deactivate access");
     }
@@ -122,50 +124,36 @@ export function UserManagement() {
   );
 
   const getRoleBadge = (role: string) => {
+    const baseClass = "text-xs font-medium px-3 py-1 rounded-full flex items-center justify-center gap-x-2 w-fit min-w-[100px] mx-auto capitalize";
     switch (role) {
       case "admin":
         return (
-          <Badge
-            variant="futuristic"
-            className="bg-red-500/10 text-red-500 border-red-500/20 shadow-xs shadow-red-500/10"
-          >
-            <ShieldCheck className="h-3 w-3 mr-1" /> ADMIN
+          <Badge variant="outline" className={cn(baseClass, "bg-primary text-primary-foreground border-primary shadow-sm")}>
+            <ShieldCheck className="h-4 w-4" /> Admin
           </Badge>
         );
       case "teacher":
         return (
-          <Badge
-            variant="futuristic"
-            className="bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-xs shadow-blue-500/10"
-          >
-            <UserCheck className="h-3 w-3 mr-1" /> TEACHER
+          <Badge variant="outline" className={cn(baseClass, "bg-indigo-500/10 text-indigo-500 border-indigo-500/20")}>
+            <UserCheck className="h-4 w-4" /> Teacher
           </Badge>
         );
       case "student":
         return (
-          <Badge
-            variant="futuristic"
-            className="bg-green-500/10 text-green-500 border-green-500/20 shadow-xs shadow-green-500/10"
-          >
-            <Users className="h-3 w-3 mr-1" /> STUDENT
+          <Badge variant="outline" className={cn(baseClass, "bg-emerald-500/10 text-emerald-500 border-emerald-500/20")}>
+            <Users className="h-4 w-4" /> Student
           </Badge>
         );
       case "parent":
         return (
-          <Badge
-            variant="futuristic"
-            className="bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-xs shadow-amber-500/10"
-          >
-            <Shield className="h-3 w-3 mr-1" /> PARENT
+          <Badge variant="outline" className={cn(baseClass, "bg-muted text-muted-foreground border-border")}>
+            <Shield className="h-4 w-4" /> Parent
           </Badge>
         );
       default:
         return (
-          <Badge
-            variant="futuristic"
-            className="bg-slate-500/10 text-muted-foreground border-slate-500/20 tracking-tighter uppercase font-black"
-          >
-            {role || "USER"}
+          <Badge variant="outline" className={cn(baseClass, "bg-muted text-muted-foreground border-border")}>
+            {role || "User"}
           </Badge>
         );
     }
@@ -173,96 +161,153 @@ export function UserManagement() {
 
   if (loading)
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-12 w-full" />
-        <Skeleton className="h-64 w-full" />
+      <div className="space-y-8 animate-pulse">
+        <div className="h-20 bg-primary/5 border border-primary/10 rounded-sm" />
+        <div className="grid grid-cols-4 gap-8">
+            <div className="h-32 bg-primary/5 border border-primary/10 rounded-sm" />
+            <div className="h-32 bg-primary/5 border border-primary/10 rounded-sm" />
+            <div className="h-32 bg-primary/5 border border-primary/10 rounded-sm" />
+            <div className="h-32 bg-primary/5 border border-primary/10 rounded-sm" />
+        </div>
+        <div className="h-96 bg-primary/5 border border-primary/10 rounded-sm" />
       </div>
     );
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search user accounts..."
-            className="pl-10 rounded-2xl border-white/10 bg-white/50 backdrop-blur-md shadow-xl focus:ring-slate-900 transition-all font-medium"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+    <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
+      
+      {/* Header Architecture */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
+        <div className="flex items-center gap-x-8">
+            <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-sm group hover:bg-primary hover:text-primary-foreground transition-all duration-300 emerald-glow-sm">
+                <Shield className="h-8 w-8 transition-all duration-300" />
+            </div>
+            <div>
+                <div className="relative">
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                        System Administration
+                    </h2>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" /> 
+                    Manage site settings and core access
+                </p>
+            </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={fetchUsers}
-          disabled={isRefreshing}
-          className="rounded-2xl border-white/10 bg-white/50 backdrop-blur-md font-bold gap-x-2 shadow-xl hover:bg-white transition-all"
-        >
-          <RefreshCw
-            className={cn("h-4 w-4", isRefreshing && "animate-spin")}
-          />
-          Refresh User List
-        </Button>
+
+        <div className="flex items-center gap-4">
+            <Button
+                variant="outline"
+                onClick={fetchUsers}
+                disabled={isRefreshing}
+                className="h-11 px-6 font-medium transition-all"
+            >
+                <RefreshCw className={cn("h-4 w-4 mr-2", isRefreshing && "animate-spin")} />
+                Refresh
+            </Button>
+            <Button variant="default" className="h-11 px-6 font-medium transition-all">
+                <Download className="h-4 w-4 mr-2" /> Export Users
+            </Button>
+        </div>
       </div>
 
-      <Card
-        variant="glass"
-        className="overflow-hidden border-none shadow-2xl bg-white/30 backdrop-blur-xl"
-      >
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 reveal-2 relative z-10">
+        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Total Users</p>
+            <h3 className="text-4xl font-bold text-foreground leading-none">{users.length.toString().padStart(2, '0')}</h3>
+            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
+               <Users className="h-3.5 w-3.5" /> All System Accounts
+            </p>
+        </div>
+
+        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Administrators</p>
+            <h3 className="text-4xl font-bold text-foreground leading-none">{users.filter(u => u.role === 'admin').length.toString().padStart(2, '0')}</h3>
+            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
+               <ShieldCheck className="h-3.5 w-3.5 text-red-500" /> Root Permissions
+            </p>
+        </div>
+
+        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Teachers</p>
+            <h3 className="text-4xl font-bold text-foreground leading-none">{users.filter(u => u.role === 'teacher').length.toString().padStart(2, '0')}</h3>
+            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
+               <UserCog className="h-3.5 w-3.5" /> Subject Masters
+            </p>
+        </div>
+
+        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Students</p>
+            <h3 className="text-4xl font-bold text-foreground leading-none">{users.filter(u => u.role === 'student').length.toString().padStart(2, '0')}</h3>
+            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
+               <Users className="h-3.5 w-3.5" /> Enrolled Students
+            </p>
+        </div>
+      </div>
+
+      {/* Surface Control */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 p-6 border border-border bg-card/40 backdrop-blur-sm rounded-sm reveal-3">
+          <div className="relative flex-1 max-w-md group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-hover:text-primary transition-all duration-300" />
+            <Input
+                placeholder="Search users by name or ID..."
+                className="h-11 pl-12 bg-background border-border text-foreground font-medium rounded-sm focus:ring-1 focus:ring-primary/40 transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-6">
+             <div className="flex items-center gap-3 text-muted-foreground">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-medium">Live Sync</span>
+             </div>
+          </div>
+      </div>
+
+      <div className="border border-border bg-card/40 rounded-sm overflow-hidden reveal-3">
         <Table>
-          <TableHeader className="bg-card/5">
-            <TableRow className="border-white/10 hover:bg-transparent">
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                User Details
-              </TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                Role
-              </TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                Registered
-              </TableHead>
-              <TableHead className="text-right text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                Actions
-              </TableHead>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="py-4 px-6 font-semibold">User</TableHead>
+              <TableHead className="py-4 px-6 font-semibold text-center">Role</TableHead>
+              <TableHead className="py-4 px-6 font-semibold text-center">Joined Date</TableHead>
+              <TableHead className="py-4 px-6 font-semibold text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="divide-y divide-border">
             {filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-32 text-center text-muted-foreground font-bold uppercase tracking-widest"
-                >
-                  No users found matching your search.
+                <TableCell colSpan={4} className="py-24 text-center">
+                    <div className="flex flex-col items-center">
+                        <Users className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
+                        <p className="text-sm font-medium text-muted-foreground">No users found matching your search.</p>
+                    </div>
                 </TableCell>
               </TableRow>
             ) : (
               filteredUsers.map((user) => (
-                <TableRow
-                  key={user.id}
-                  className="border-white/5 hover:bg-white/40 transition-colors group"
-                >
-                  <TableCell>
-                    <div className="flex items-center gap-x-4">
-                      <div className="h-10 w-10 rounded-xl bg-card text-white flex items-center justify-center font-black shadow-lg neon-blue">
-                        {user.first_name?.[0] || "U"}
+                <TableRow key={user.id} className="group hover:bg-muted/50 transition-colors">
+                  <TableCell className="py-4 px-6">
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 flex items-center justify-center font-bold text-white text-sm rounded-full bg-primary/20 border border-primary/20">
+                          {user.first_name?.[0] || "U"}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-foreground leading-tight">
+                        <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors leading-none mb-1">
                           {user.first_name} {user.last_name}
                         </span>
-                        <span className="text-[10px] font-medium text-muted-foreground tracking-tight font-mono">
-                          {user.id}
+                        <span className="text-xs text-muted-foreground font-mono">
+                           ID: {user.id.substring(0, 8)}
                         </span>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{getRoleBadge(user.role)}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-foreground/70">
-                        {new Date(user.created_at).toLocaleDateString()}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground uppercase font-black">
+                  <TableCell className="py-4 px-6 text-center">{getRoleBadge(user.role)}</TableCell>
+                  <TableCell className="py-4 px-6 text-center">
+                    <div className="flex flex-col items-center gap-1 text-xs">
+                      <span className="text-foreground/80 font-medium">{new Date(user.created_at).toLocaleDateString()}</span>
+                      <span className="text-muted-foreground">
                         {new Date(user.created_at).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -270,59 +315,59 @@ export function UserManagement() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="py-4 px-6 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-card hover:text-white rounded-lg transition-all"
+                          className="h-8 w-8 p-0 rounded-sm hover:bg-muted transition-colors"
                         >
-                          <MoreHorizontal className="h-4 w-4" />
+                          <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="w-56 rounded-2xl border-white/10 bg-white/80 backdrop-blur-xl shadow-2xl animate-in zoom-in-95 duration-200"
+                        className="w-56 p-2 rounded-sm border border-border shadow-md"
                       >
-                        <DropdownMenuLabel className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                          Manage Access
+                        <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground px-2 py-1.5">
+                          User Actions
                         </DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-slate-100" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => handleImpersonate(user.id)}
                           disabled={isImpersonating === user.id}
-                          className="gap-x-2 font-bold cursor-pointer hover:bg-card hover:text-white focus:bg-card focus:text-white rounded-xl transition-colors"
+                          className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm"
                         >
                           <Eye className="h-4 w-4" />{" "}
                           {isImpersonating === user.id
-                            ? "Initializing..."
-                            : "Login As User"}
+                            ? "Logging in..."
+                            : "Login as User"}
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-slate-100" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => handleRoleUpdate(user.id, "admin")}
-                          className="gap-x-2 font-bold cursor-pointer hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600 rounded-xl transition-colors"
+                          className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm"
                         >
-                          <Shield className="h-4 w-4" /> Make Admin
+                          <ShieldCheck className="h-4 w-4" /> Make Admin
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleRoleUpdate(user.id, "teacher")}
-                          className="gap-x-2 font-bold cursor-pointer hover:bg-blue-50 hover:text-blue-600 focus:bg-blue-50 focus:text-blue-600 rounded-xl transition-colors"
+                          className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm"
                         >
-                          <UserCog className="h-4 w-4" /> Change to Teacher
+                          <UserCog className="h-4 w-4" /> Make Teacher
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleRoleUpdate(user.id, "student")}
-                          className="gap-x-2 font-bold cursor-pointer hover:bg-green-50 hover:text-green-600 focus:bg-green-50 focus:text-green-600 rounded-xl transition-colors"
+                          className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm"
                         >
-                          <Users className="h-4 w-4" /> Change to Student
+                          <Users className="h-4 w-4" /> Make Student
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-slate-100" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => handleDeactivate(user.id)}
-                          className="gap-x-2 font-bold text-red-600 cursor-pointer hover:bg-red-50 rounded-xl transition-colors"
+                          className="flex items-center gap-3 px-2 py-2 text-sm text-red-500 cursor-pointer rounded-sm hover:text-red-600 focus:text-red-600 focus:bg-red-50"
                         >
-                          <AlertCircle className="h-4 w-4" /> Deactive Account
+                          <AlertCircle className="h-4 w-4" /> Deactivate Account
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -332,35 +377,36 @@ export function UserManagement() {
             )}
           </TableBody>
         </Table>
-      </Card>
+      </div>
 
-      <div className="p-4 rounded-3xl bg-card border border-white/10 shadow-2xl relative overflow-hidden group">
-        <div className="absolute inset-0 bg-linear-to-tr from-blue-500/10 to-transparent opacity-50" />
-        <div className="relative flex items-center justify-between">
-          <div className="flex items-center gap-x-4 text-white">
-            <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md">
-              <ShieldCheck className="h-6 w-6 text-blue-400" />
+      {/* Audit Log Banner */}
+      <div className="p-8 rounded-sm border border-border bg-card/40 backdrop-blur-sm relative overflow-hidden group reveal-3 mt-8">
+        <div className="absolute inset-0 bg-primary/5 opacity-50" />
+        <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-x-6">
+            <div className="h-14 w-14 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-full shadow-sm">
+              <ShieldCheck className="h-7 w-7" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">
-                System Status
+              <p className="text-sm font-medium text-primary mb-1">
+                Audit Logs
               </p>
-              <h4 className="text-sm font-bold tracking-tight">
-                User data is synchronized and monitoring
-                changes.
+              <h4 className="text-base font-medium text-foreground leading-tight">
+                Review system activity and administrative changes in the global log.
               </h4>
             </div>
           </div>
           <Button
             asChild
             variant="outline"
-            className="rounded-xl border-white/20 bg-white/10 text-white font-black hover:bg-white/20 transition-all border-none shadow-xl"
+            className="h-11 px-8 rounded-sm font-semibold transition-all"
           >
-            <Link href="/audit">VIEW AUDIT LOGS</Link>
+            <Link href="/audit" className="flex items-center gap-x-2">
+               <Activity className="h-4 w-4" /> View Logs
+            </Link>
           </Button>
         </div>
       </div>
     </div>
   );
 }
-

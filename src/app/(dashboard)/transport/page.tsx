@@ -25,7 +25,16 @@ export default async function TransportPage() {
     .order("created_at", { ascending: false });
 
   if (isStudent && user) {
-    assignmentQuery = assignmentQuery.filter("student.profile_id", "eq", user.id);
+    const { data: studentData } = await supabase
+      .from("students")
+      .select("id")
+      .eq("id", user.id)
+      .single();
+    if (studentData) {
+      assignmentQuery = assignmentQuery.eq("student_id", studentData.id);
+    } else {
+      assignmentQuery = assignmentQuery.eq("student_id", "00000000-0000-0000-0000-000000000000");
+    }
   }
 
   const { data: assignments } = await assignmentQuery;
@@ -35,6 +44,7 @@ export default async function TransportPage() {
       routes={routes || []}
       stops={stops || []}
       assignments={assignments || []}
+      userRole={role}
     />
   );
 }

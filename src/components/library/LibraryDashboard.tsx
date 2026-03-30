@@ -10,8 +10,19 @@ import {
     Package,
     ArrowRightLeft,
     AlertTriangle,
+    Clock,
+    CheckCircle2,
+    XCircle,
+    Download,
+    Activity,
+    Zap,
+    ChevronRight,
+    SearchCode,
+    Barcode,
+    UserPlus,
+    Calendar,
+    Save
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -33,15 +44,12 @@ import {
 } from "@/components/ui/select";
 import { 
     BarChart, Bar, 
-    PieChart, Pie, Cell, 
-    ResponsiveContainer, Tooltip, Legend, 
-    XAxis, YAxis, CartesianGrid 
+    ResponsiveContainer, Tooltip, 
+    XAxis, YAxis, CartesianGrid, Cell
 } from "recharts";
 import { createBook, issueBook, returnBook } from "@/app/actions/library";
-import { createInventoryItem } from "@/app/actions/modules";
 import { useRouter } from "next/navigation";
-
-const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
+import { toast } from "sonner";
 
 interface LibraryDashboardProps {
     books: any[];
@@ -64,124 +72,120 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
 
     // --- Analytics Intelligence Layer ---
     const circulationVelocity = useMemo(() => {
-        const issued = transactions.filter(t => t.status === "issued").length;
-        const available = books.reduce((acc, b) => acc + b.available_copies, 0);
+        const issued = transactions?.filter(t => t.status === "issued").length || 0;
+        const available = books?.reduce((acc, b) => acc + (b.available_copies || 0), 0) || 0;
         return [
-            { name: "Deployed", value: issued, color: "#3b82f6" },
-            { name: "Reserve", value: available, color: "#10b981" }
+            { name: "DEPLOYED", value: issued, color: "var(--primary)" },
+            { name: "RESERVE", value: available, color: "rgba(16,185,129,0.3)" }
         ];
     }, [books, transactions]);
 
-    const catalogSaturation = useMemo(() => {
-        const catMap: Record<string, number> = {};
-        books.forEach(b => {
-            const cat = b.category || "General";
-            catMap[cat] = (catMap[cat] || 0) + b.total_copies;
-        });
-        return Object.entries(catMap)
-            .map(([name, value]) => ({ name, value }))
-            .sort((a, b) => b.value - a.value)
-            .slice(0, 5);
-    }, [books]);
-
     const handleCreateBook = async () => {
+        if (!bookForm.title || !bookForm.author) {
+            toast.error("Title and Author are required nodes.");
+            return;
+        }
         setLoading(true);
         const result = await createBook({ ...bookForm, total_copies: parseInt(bookForm.total_copies) || 1 });
         setLoading(false);
         if (result.success) {
+            toast.success("Catalog Fragment Initialized");
             setIsAddBookOpen(false);
             setBookForm({ title: "", author: "", isbn: "", category: "", total_copies: "1", shelf_location: "" });
             router.refresh();
+        } else {
+            toast.error(result.error || "Initialization Failure");
         }
     };
 
     const handleIssueBook = async () => {
+        if (!issueForm.book_id || !issueForm.student_id) {
+            toast.error("Target and Borrower must be identified.");
+            return;
+        }
         setLoading(true);
         const result = await issueBook(issueForm);
         setLoading(false);
         if (result.success) {
+            toast.success("Asset Deployed Successfully");
             setIsIssueOpen(false);
             setIssueForm({ book_id: "", student_id: "", due_date: "" });
             router.refresh();
+        } else {
+            toast.error(result.error || "Deployment Failure");
         }
     };
 
     const handleReturn = async (txId: string) => {
         setLoading(true);
-        await returnBook(txId);
+        const result = await returnBook(txId);
         setLoading(false);
-        router.refresh();
+        if (result.success) {
+            toast.success("Asset Re-integrated");
+            router.refresh();
+        } else {
+            toast.error(result.error || "Integration Failure");
+        }
     };
 
-    const filteredBooks = books.filter(
+    const filteredBooks = (books || []).filter(
         (b) => (b.title?.toLowerCase() || "").includes(search.toLowerCase()) || (b.author?.toLowerCase() || "").includes(search.toLowerCase())
     );
 
+    const activeLoansCount = transactions?.filter(t => t.status === "issued").length || 0;
+    const overdueCount = transactions?.filter(t => t.status === "issued" && new Date(t.due_date) < new Date()).length || 0;
+
     return (
         <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
-            {/* Background Mesh */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.05),transparent_70%)] pointer-events-none" />
-
+            
+            {/* Header Architecture */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
                 <div className="flex items-center gap-x-8">
-                    <div className="h-20 w-20 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-[0_0_40px_rgba(16,185,129,0.15)] skew-x-[-12deg] group hover:bg-primary hover:text-primary-foreground transition-all duration-700">
-                        <Library className="h-10 w-10 skew-x-[12deg] transition-all duration-700" />
+                    <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-sm group hover:bg-primary hover:text-primary-foreground transition-all duration-300 emerald-glow-sm">
+                        <Library className="h-8 w-8 transition-all duration-300" />
                     </div>
                     <div>
                         <div className="relative">
-                            <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                Library <span className="text-primary italic">& Inventory</span>
+                            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                                Library Management
                             </h2>
-                            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-primary/40 skew-x-[-24deg]" />
                         </div>
-                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.5em] text-foreground/30 mt-4 italic flex items-center gap-2">
-                            <span className="h-1 w-1 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" /> 
-                            Library Management & School Inventory Tracking
+                        <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                            <Activity className="h-4 w-4 text-primary" /> 
+                            Manage library catalog, inventory, and book issues
                         </p>
                     </div>
                 </div>
 
                 {isStaff && (
-                    <div className="flex gap-x-4 skew-x-[-12deg]">
+                    <div className="flex items-center gap-4">
                         <Dialog open={isIssueOpen} onOpenChange={setIsIssueOpen}>
                             <DialogTrigger asChild>
-                                <Button variant="outline" className="h-16 px-10 rounded-none border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary uppercase font-black tracking-[0.2em] text-[11px] transition-all group">
-                                    <span className="not-skew-x flex items-center gap-3">
-                                        <ArrowRightLeft className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" /> ISSUE BOOK
-                                    </span>
+                                <Button variant="outline" className="h-10 px-4 font-medium transition-all gap-2 group">
+                                    <ArrowRightLeft className="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" /> Issue Book
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="p-0 border-none bg-transparent skew-x-[-12deg] max-w-2xl overflow-visible">
-                                <div className="relative glass-panel border-primary/20 p-12 shadow-[0_0_100px_rgba(16,185,129,0.1)] overflow-hidden">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl -mr-16 -mt-16" />
-                                    
-                                    <div className="not-skew-x relative z-10">
-                                        <div className="not-skew-x flex justify-between items-start mb-10">
-                                            <div>
-                                                <DialogTitle className="font-black italic text-4xl uppercase tracking-tighter text-foreground leading-none">
-                                                    Issue <span className="text-primary italic">Book</span>
-                                                </DialogTitle>
-                                                <div className="h-1 w-20 bg-primary/40 mt-4 skew-x-[-24deg]" />
-                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Assign a book to a student profile</p>
-                                            </div>
-                                            <Button variant="ghost" size="icon" onClick={() => setIsIssueOpen(false)} className="text-primary/40 hover:text-primary hover:bg-primary/10 -mt-4 -mr-4 rounded-none">
-                                                <Plus className="h-6 w-6 rotate-45" />
-                                            </Button>
+                            <DialogContent className="p-0 border-none bg-transparent max-w-xl">
+                                <div className="bg-card border border-border p-8 rounded-xl shadow-lg relative overflow-hidden">
+                                    <div className="relative z-10 space-y-8">
+                                        <div className="text-center">
+                                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
+                                                Issue Book
+                                            </DialogTitle>
+                                            <p className="text-sm text-muted-foreground mt-1">Record book borrowing details</p>
                                         </div>
 
-                                        <div className="space-y-8">
+                                        <div className="space-y-6">
                                             <div className="space-y-3">
-                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] flex items-center gap-2 italic">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" /> SELECT BOOK
-                                                </Label>
+                                                <Label className="text-sm font-semibold text-foreground">Select Book</Label>
                                                 <Select value={issueForm.book_id} onValueChange={(v) => setIssueForm({ ...issueForm, book_id: v })}>
-                                                    <SelectTrigger className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 focus:ring-primary/20 font-mono font-black uppercase text-[11px] tracking-widest transition-all">
-                                                        <SelectValue placeholder="Select available book" />
+                                                    <SelectTrigger className="h-11 bg-background border-border text-foreground font-medium rounded-sm focus:ring-1 focus:ring-primary/40">
+                                                        <SelectValue placeholder="Search book..." />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
-                                                        {books.filter(b => b.available_copies > 0).map(b => (
-                                                            <SelectItem key={b.id} value={b.id} className="font-mono font-black uppercase text-[10px] tracking-widest focus:bg-primary focus:text-primary-foreground italic py-3 cursor-pointer">
-                                                                {b.title} [AVAIL: {b.available_copies}]
+                                                    <SelectContent className="bg-background border-border">
+                                                        {books.filter(b => (b.available_copies || 0) > 0).map(b => (
+                                                            <SelectItem key={b.id} value={b.id} className="font-medium text-sm hover:bg-muted focus:bg-muted">
+                                                                {b.title} <span className="text-muted-foreground px-2">[{b.available_copies} Available]</span>
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
@@ -189,103 +193,90 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                                             </div>
 
                                             <div className="space-y-3">
-                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] flex items-center gap-2 italic">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" /> SELECT STUDENT
-                                                </Label>
+                                                <Label className="text-sm font-semibold text-foreground">Select Student</Label>
                                                 <Select value={issueForm.student_id} onValueChange={(v) => setIssueForm({ ...issueForm, student_id: v })}>
-                                                    <SelectTrigger className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 focus:ring-primary/20 font-mono font-black uppercase text-[11px] tracking-widest transition-all">
-                                                        <SelectValue placeholder="Select borrower" />
+                                                    <SelectTrigger className="h-11 bg-background border-border text-foreground font-medium rounded-sm focus:ring-1 focus:ring-primary/40">
+                                                        <SelectValue placeholder="Search student..." />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-card border-primary/20 rounded-none shadow-2xl">
+                                                    <SelectContent className="bg-background border-border">
                                                         {students.map(s => (
-                                                            <SelectItem key={s.id} value={s.id} className="font-mono font-black uppercase text-[10px] tracking-widest focus:bg-primary focus:text-primary-foreground italic py-3 cursor-pointer">
-                                                                {s.profile?.full_name} [ID: {s.admission_number}]
+                                                            <SelectItem key={s.id} value={s.id} className="font-medium text-sm hover:bg-muted focus:bg-muted">
+                                                                {s.profile?.full_name} <span className="text-muted-foreground px-2">#{s.admission_number}</span>
                                                             </SelectItem>
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
                                             </div>
 
-                                            <div className="space-y-3 pb-4">
-                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] flex items-center gap-2 italic">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-primary/40" /> DUE DATE
-                                                </Label>
-                                                <Input type="date" value={issueForm.due_date} onChange={(e) => setIssueForm({ ...issueForm, due_date: e.target.value })} className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all" />
+                                            <div className="space-y-3">
+                                                <Label className="text-sm font-semibold text-foreground">Due Date</Label>
+                                                <div className="relative">
+                                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                                    <Input type="date" value={issueForm.due_date} onChange={(e) => setIssueForm({ ...issueForm, due_date: e.target.value })} className="h-11 bg-background border-border text-foreground font-medium pl-10 rounded-sm" />
+                                                </div>
                                             </div>
 
-                                            <Button onClick={handleIssueBook} disabled={loading} className="w-full h-18 rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-xs border border-primary/20 gap-3">
-                                                {loading ? "PROCESSING..." : "CONFIRM ISSUE"}
+                                            <Button onClick={handleIssueBook} disabled={loading} className="w-full h-12 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground transition-all rounded-sm shadow-sm">
+                                                {loading ? "Processing..." : "Issue Book"}
                                             </Button>
                                         </div>
                                     </div>
-
-                                    {/* Collection Label */}
-                                    <div className="absolute -left-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">DEPLOY</div>
                                 </div>
                             </DialogContent>
                         </Dialog>
 
                         <Dialog open={isAddBookOpen} onOpenChange={setIsAddBookOpen}>
                             <DialogTrigger asChild>
-                                <Button className="h-16 px-10 rounded-none bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] emerald-glow shadow-2xl hover:scale-105 transition-all group">
-                                    <span className="not-skew-x flex items-center gap-3">
-                                        <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> ADD NEW BOOK
-                                    </span>
+                                <Button className="h-10 px-4 font-medium transition-all gap-2 group">
+                                    <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" /> Add Book
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="p-0 border-none bg-transparent skew-x-[-12deg] max-w-2xl overflow-visible">
-                                <div className="relative glass-panel border-primary/20 p-12 shadow-[0_0_100px_rgba(16,185,129,0.1)] overflow-hidden">
-                                    <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 blur-3xl -ml-16 -mt-16" />
-                                    
-                                    <div className="not-skew-x relative z-10">
-                                        <div className="not-skew-x flex justify-between items-start mb-10">
-                                            <div>
-                                                <DialogTitle className="font-black italic text-4xl uppercase tracking-tighter text-foreground leading-none">
-                                                    Add <span className="text-primary italic">New Book</span>
-                                                </DialogTitle>
-                                                <div className="h-1 w-20 bg-primary/40 mt-4 skew-x-[-24deg]" />
-                                                <p className="text-[10px] font-mono font-black text-primary/60 uppercase tracking-[0.4em] mt-6 italic">Add a new book to the library collection</p>
-                                            </div>
-                                            <Button variant="ghost" size="icon" onClick={() => setIsAddBookOpen(false)} className="text-primary/40 hover:text-primary hover:bg-primary/10 -mt-4 -mr-4 rounded-none">
-                                                <Plus className="h-6 w-6 rotate-45" />
-                                            </Button>
+                            <DialogContent className="p-0 border-none bg-transparent max-w-xl">
+                                <div className="bg-card border border-border p-8 rounded-xl shadow-lg relative overflow-hidden">
+                                    <div className="relative z-10 space-y-8">
+                                        <div className="text-center">
+                                            <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
+                                                Add New Book
+                                            </DialogTitle>
+                                            <p className="text-sm text-muted-foreground mt-1">Register a new book to the catalog</p>
                                         </div>
 
-                                        <div className="space-y-8">
-                                            <div className="grid grid-cols-2 gap-8">
+                                        <div className="space-y-6">
+                                            <div className="grid grid-cols-2 gap-6">
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">BOOK TITLE</Label>
-                                                    <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="The Great Gatsby" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-sm font-semibold text-foreground">Book Title</Label>
+                                                    <Input value={bookForm.title} onChange={(e) => setBookForm({ ...bookForm, title: e.target.value })} placeholder="Title..." className="h-11 bg-background border-border text-foreground font-medium rounded-sm" />
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">AUTHOR</Label>
-                                                    <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="F. Scott Fitzgerald" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.2em] italic">Intellect Lead</Label>
+                                                    <Input value={bookForm.author} onChange={(e) => setBookForm({ ...bookForm, author: e.target.value })} placeholder="AUTHOR..." className="h-14 bg-primary/5 border-primary/10 font-mono font-black text-[10px] uppercase rounded-sm" />
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="space-y-3">
+                                                <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.2em] italic">Archive Metadata (ISBN)</Label>
+                                                <div className="relative">
+                                                     <Barcode className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/40" />
+                                                     <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="UNIQUE IDENTIFIER..." className="h-14 bg-primary/5 border-primary/10 font-mono font-black text-[10px] pl-12 rounded-sm" />
                                                 </div>
                                             </div>
 
-                                            <div className="grid grid-cols-3 gap-8">
+                                            <div className="grid grid-cols-2 gap-6">
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">ISBN</Label>
-                                                    <Input value={bookForm.isbn} onChange={(e) => setBookForm({ ...bookForm, isbn: e.target.value })} placeholder="9780141182636" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black text-xs transition-all placeholder:text-foreground/10" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.2em] italic">Classification</Label>
+                                                    <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="GENERAL..." className="h-14 bg-primary/5 border-primary/10 font-mono font-black text-[10px] uppercase rounded-sm" />
                                                 </div>
                                                 <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">CATEGORY</Label>
-                                                    <Input value={bookForm.category} onChange={(e) => setBookForm({ ...bookForm, category: e.target.value })} placeholder="Literature" className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black uppercase text-xs transition-all placeholder:text-foreground/10" />
-                                                </div>
-                                                <div className="space-y-3">
-                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.3em] italic">TOTAL COPIES</Label>
-                                                    <Input type="number" value={bookForm.total_copies} onChange={(e) => setBookForm({ ...bookForm, total_copies: e.target.value })} className="h-14 rounded-none bg-background/50 border-primary/10 hover:border-primary/40 font-mono font-black tabular-nums transition-all" />
+                                                    <Label className="text-[9px] font-mono font-black uppercase text-foreground/40 tracking-[0.2em] italic">Unit Density</Label>
+                                                    <Input type="number" value={bookForm.total_copies} onChange={(e) => setBookForm({ ...bookForm, total_copies: e.target.value })} className="h-14 bg-primary/5 border-primary/10 font-mono font-black text-[10px] rounded-sm" />
                                                 </div>
                                             </div>
 
-                                            <Button onClick={handleCreateBook} disabled={loading} className="w-full h-18 rounded-none bg-primary text-primary-foreground font-black italic uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-95 transition-all text-xs border border-primary/20 gap-3 mt-4">
-                                                {loading ? "SAVING..." : "SAVE BOOK"}
+                                            <Button onClick={handleCreateBook} disabled={loading} className="w-full h-16 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] font-mono text-[11px] rounded-sm emerald-glow transition-all active:scale-95 shadow-2xl mt-4">
+                                                {loading ? "COMMITTING..." : "INTEGRATE TO ARCHIVE"}
                                             </Button>
                                         </div>
                                     </div>
-
-                                    {/* Matrix Label */}
-                                    <div className="absolute -right-12 -bottom-10 opacity-[0.03] font-mono text-[100px] font-black italic text-primary pointer-events-none uppercase">ARCHIVE</div>
                                 </div>
                             </DialogContent>
                         </Dialog>
@@ -293,217 +284,146 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                 )}
             </div>
 
-            {/* --- Analytics Layer: Institutional Bibliographic Intelligence --- */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-2">
-                <div className="md:col-span-12 lg:col-span-7 bg-card/40 backdrop-blur-3xl border border-primary/10 p-10 skew-x-[-6deg] relative overflow-hidden group">
-                    <div className="not-skew-x relative z-10 flex flex-col h-full">
-                        <div className="flex justify-between items-start mb-10">
-                            <div>
-                                <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                                    Circulation <span className="text-primary italic">Velocity</span>
-                                </h3>
-                                <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
-                                    Real-time asset deployment status
-                                </p>
+            {/* Analytics Surface */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-2 relative z-10">
+                {/* Stats Matrix */}
+                <div className="md:col-span-12 lg:col-span-4 flex flex-col gap-6">
+                    <div className="grid grid-cols-2 gap-6 flex-1">
+                        <div className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Total Books</p>
+                            <div className="flex items-baseline gap-3">
+                                <h3 className="text-3xl font-bold tracking-tight text-foreground">{books?.length || 0}</h3>
                             </div>
-                            <ArrowRightLeft className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                            <Book className="h-4 w-4 text-muted-foreground/30 absolute bottom-6 right-6 group-hover:text-primary transition-all duration-300" />
                         </div>
-                        <div className="h-[280px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={circulationVelocity}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
-                                    <XAxis 
-                                        dataKey="name" 
-                                        axisLine={false} 
-                                        tickLine={false} 
-                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
-                                    />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
-                                    <Tooltip 
-                                        cursor={{ fill: "rgba(16,185,129,0.05)" }}
-                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "0", fontSize: "10px", color: "#fff" }}
-                                    />
-                                    <Bar dataKey="value" radius={[2, 2, 0, 0]} barSize={40}>
-                                        {circulationVelocity.map((entry: any, index: number) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
+                        <div className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Books Issued</p>
+                            <h3 className="text-3xl font-bold tracking-tight text-foreground">{activeLoansCount}</h3>
+                            <ArrowRightLeft className="h-4 w-4 text-muted-foreground/30 absolute bottom-6 right-6 group-hover:text-primary transition-all duration-300" />
+                        </div>
+                        <div className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Inventory Items</p>
+                            <h3 className="text-3xl font-bold tracking-tight text-foreground">{inventoryItems?.length || 0}</h3>
+                            <Package className="h-4 w-4 text-muted-foreground/30 absolute bottom-6 right-6 group-hover:text-primary transition-all duration-300" />
+                        </div>
+                        <div className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                            <p className="text-sm font-medium text-muted-foreground mb-2">Overdue Books</p>
+                            <div className="flex items-baseline gap-3">
+                                <h3 className={cn("text-3xl font-bold tracking-tight", overdueCount > 0 ? "text-destructive" : "text-foreground")}>{overdueCount}</h3>
+                            </div>
+                            <AlertTriangle className={cn("h-4 w-4 absolute bottom-6 right-6 transition-all duration-300", overdueCount > 0 ? "text-destructive" : "text-muted-foreground/30 group-hover:text-primary")} />
                         </div>
                     </div>
                 </div>
 
-                <div className="md:col-span-12 lg:col-span-5 bg-card/40 backdrop-blur-3xl border border-primary/10 p-10 skew-x-[-6deg] relative overflow-hidden group">
-                    <div className="not-skew-x relative z-10 text-center mb-8">
-                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                            Catalog <span className="text-primary italic">Saturation</span>
-                        </h3>
-                        <p className="text-[10px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mt-3 italic">Subject Matter Distribution</p>
+                {/* Circulation Analytics */}
+                <div className="md:col-span-12 lg:col-span-8 bg-card border border-border p-8 rounded-xl shadow-sm relative group h-full">
+                    <div className="relative z-10 flex justify-between items-start mb-8">
+                        <div>
+                            <h3 className="text-lg font-bold tracking-tight text-foreground">Circulation Overview</h3>
+                            <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                                <Activity className="h-4 w-4" /> Real-time book circulation
+                            </p>
+                        </div>
                     </div>
-                    <div className="not-skew-x h-[280px]">
+                    <div className="h-[220px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={catalogSaturation}
-                                    innerRadius={70}
-                                    outerRadius={95}
-                                    paddingAngle={8}
-                                    dataKey="value"
-                                >
-                                    {catalogSaturation.map((entry: any, index: number) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
-                                    ))}
-                                </Pie>
+                            <BarChart data={circulationVelocity}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#88888810" vertical={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "rgba(16,185,129,0.4)", fontSize: 9, fontWeight: "900", letterSpacing: "0.2em" }} />
+                                <YAxis hide />
                                 <Tooltip 
-                                    contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "0", fontSize: "10px", color: "#fff" }}
+                                    cursor={{ fill: "rgba(16,185,129,0.03)" }} 
+                                    contentStyle={{ backgroundColor: "#060606", border: "1px solid rgba(16,185,129,0.2)", fontSize: "9px", fontFamily: "monospace", textTransform: "uppercase" }} 
+                                    itemStyle={{ color: "var(--primary)", fontWeight: "bold" }}
                                 />
-                                <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
-                            </PieChart>
+                                <Bar dataKey="value" radius={[2, 2, 0, 0]} barSize={60}>
+                                    {circulationVelocity.map((entry: any, index: number) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
             </div>
 
-            {/* Library Stats Grid */}
-            <div className="grid gap-8 md:grid-cols-4 reveal-2 relative z-10">
-                <div className="group relative transition-all duration-700 hover:-translate-y-2">
-                    <div className="absolute inset-0 bg-primary/10 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
-                        <div className="not-skew-x flex justify-between items-start">
-                            <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-primary/60 mb-2 italic">Total Books</p>
-                                <h3 className="text-4xl font-black text-foreground italic leading-none">{books.length}</h3>
-                            </div>
-                            <Book className="h-8 w-8 text-primary shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse" />
+            {/* Main Tabs Surface */}
+            <Tabs defaultValue="library" className="space-y-10 relative z-10">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <TabsList className="bg-muted border border-border p-1 rounded-lg h-12 w-fit">
+                        <div className="flex gap-1 h-full">
+                            <TabsTrigger value="library" className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-4 text-sm font-medium transition-all gap-2">
+                                <Library className="h-4 w-4" /> Book Catalog
+                            </TabsTrigger>
+                            <TabsTrigger value="transactions" className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-4 text-sm font-medium transition-all gap-2">
+                                <ArrowRightLeft className="h-4 w-4" /> Transactions
+                            </TabsTrigger>
+                            {isStaff && (
+                                <TabsTrigger value="inventory" className="data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm rounded-md px-4 text-sm font-medium transition-all gap-2">
+                                    <Package className="h-4 w-4" /> Inventory
+                                </TabsTrigger>
+                            )}
                         </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-primary group-hover:opacity-10 transition-all duration-700">INDEX</div>
+                    </TabsList>
+
+                    <div className="relative w-full md:w-80 group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        <Input 
+                            placeholder="Search books..." 
+                            value={search} 
+                            onChange={(e) => setSearch(e.target.value)} 
+                            className="h-12 pl-10 bg-background border-border font-medium rounded-lg focus:ring-1 focus:ring-primary/40 transition-all" 
+                        />
                     </div>
                 </div>
 
-                <div className="group relative transition-all duration-700 hover:-translate-y-2">
-                    <div className="absolute inset-0 bg-blue-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="relative glass-panel p-8 border-blue-500/10 group-hover:border-blue-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
-                        <div className="not-skew-x flex justify-between items-start">
-                            <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Issued Books</p>
-                                <h3 className="text-4xl font-black text-blue-500 italic leading-none">{transactions.filter(t => t.status === "issued").length}</h3>
-                            </div>
-                            <ArrowRightLeft className="h-8 w-8 text-blue-500/40 group-hover:text-blue-500 transition-colors" />
-                        </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-blue-500/40 group-hover:opacity-10 transition-all duration-700">HELD</div>
-                    </div>
-                </div>
-
-                <div className="group relative transition-all duration-700 hover:-translate-y-2">
-                    <div className="absolute inset-0 bg-amber-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="relative glass-panel p-8 border-amber-500/10 group-hover:border-amber-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
-                        <div className="not-skew-x flex justify-between items-start">
-                            <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Low Stock</p>
-                                <h3 className="text-4xl font-black text-amber-500 italic leading-none">{inventoryItems.filter(i => i.quantity_in_stock <= (i.min_stock_level || 5)).length}</h3>
-                            </div>
-                            <Package className="h-8 w-8 text-amber-500/40 group-hover:text-amber-500 transition-colors" />
-                        </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-amber-500/40 group-hover:opacity-10 transition-all duration-700">LOW</div>
-                    </div>
-                </div>
-
-                <div className="group relative transition-all duration-700 hover:-translate-y-2">
-                    <div className="absolute inset-0 bg-red-500/5 skew-x-[-12deg] translate-x-3 translate-y-3 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="relative glass-panel p-8 border-red-500/10 group-hover:border-red-500/40 transition-all duration-700 skew-x-[-12deg] rounded-none shadow-2xl overflow-hidden">
-                        <div className="not-skew-x flex justify-between items-start">
-                            <div>
-                                <p className="text-[9px] font-mono font-black uppercase tracking-[0.4em] text-foreground/30 mb-2 italic">Overdue</p>
-                                <h3 className="text-4xl font-black text-red-500 italic leading-none">{transactions.filter(t => t.status === "issued" && new Date(t.due_date) < new Date()).length}</h3>
-                            </div>
-                            <AlertTriangle className="h-8 w-8 text-red-500/40 group-hover:text-red-500 transition-colors" />
-                        </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-5 font-mono text-[40px] font-black italic text-red-500/40 group-hover:opacity-10 transition-all duration-700">OVER</div>
-                    </div>
-                </div>
-            </div>
-
-            <Tabs defaultValue="library" className="space-y-12 relative z-10">
-                <TabsList className="bg-transparent border-none p-0 h-auto w-full justify-start gap-4 skew-x-[-12deg]">
-                    <TabsTrigger value="library" className="h-16 px-10 rounded-none border border-primary/10 bg-card/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] transition-all emerald-glow">
-                        <span className="not-skew-x flex items-center gap-3">
-                            <Library className="h-4 w-4" /> BOOKS
-                        </span>
-                    </TabsTrigger>
-                    <TabsTrigger value="transactions" className="h-16 px-10 rounded-none border border-primary/10 bg-card/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] transition-all">
-                        <span className="not-skew-x flex items-center gap-3">
-                            <ArrowRightLeft className="h-4 w-4" /> {isStaff ? "TRANSACTIONS" : "MY BORROWING"}
-                        </span>
-                    </TabsTrigger>
-                    {isStaff && (
-                        <TabsTrigger value="inventory" className="h-16 px-10 rounded-none border border-primary/10 bg-card/40 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase tracking-[0.2em] text-[11px] transition-all">
-                            <span className="not-skew-x flex items-center gap-3">
-                                <Package className="h-4 w-4" /> INVENTORY
-                            </span>
-                        </TabsTrigger>
-                    )}
-                </TabsList>
-
-                <TabsContent value="library" className="mt-0 space-y-6">
-                    <div className="flex gap-x-4">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-4 top-4 h-4 w-4 text-primary/40" />
-                            <Input placeholder="Search Books..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-12 bg-card/40 border-border rounded-sm h-12 shadow-sm font-black uppercase text-[10px] tracking-widest" />
-                        </div>
-                    </div>
-
-                    <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+                <TabsContent value="library" className="animate-in slide-in-from-bottom-2 mt-0 outline-none">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredBooks.length === 0 ? (
-                            <div className="bg-card/20 backdrop-blur-3xl border border-primary/10 col-span-full p-32 flex flex-col items-center justify-center text-center skew-x-[-12deg]">
-                                <div className="not-skew-x flex flex-col items-center">
-                                    <Book className="h-20 w-20 text-primary/10 mb-8 animate-pulse" />
-                                    <p className="text-foreground/40 font-mono font-black uppercase tracking-[0.5em] text-xs underline decoration-primary/20 underline-offset-8">No Books Found</p>
-                                    <p className="text-[10px] font-mono font-black text-primary/30 uppercase tracking-[0.3em] mt-6 italic">Add new books to populate the library collection.</p>
+                            <div className="col-span-full py-32 text-center bg-card border border-dashed border-border rounded-xl">
+                                <div className="flex flex-col items-center">
+                                    <SearchCode className="h-12 w-12 mb-4 text-muted-foreground/30" />
+                                    <p className="font-semibold text-muted-foreground">No books found matching search.</p>
                                 </div>
                             </div>
                         ) : (
                             filteredBooks.map((book) => (
-                                <div key={book.id} className="group relative skew-x-[-12deg] transition-all duration-700 hover:-translate-y-2 hover:translate-x-2">
-                                    <div className="absolute inset-0 bg-primary/5 -z-10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                                    <div className="relative glass-panel p-8 border-primary/10 group-hover:border-primary/40 transition-all duration-700 rounded-none shadow-2xl overflow-hidden">
-                                        <div className="not-skew-x">
-                                            <div className="flex items-start justify-between mb-10">
-                                                <div className="h-16 w-16 bg-background/50 border border-primary/10 flex items-center justify-center text-primary shadow-inner group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500">
-                                                    <Book className="h-8 w-8" />
-                                                </div>
-                                                <div className={cn(
-                                                    "px-3 py-1 font-mono font-black text-[10px] uppercase tracking-[0.2em] italic border skew-x-[12deg]",
-                                                    book.available_copies > 0 ? "bg-primary/5 text-primary border-primary/20" : "bg-red-500/5 text-red-500 border-red-500/20"
-                                                )}>
-                                                    <span className="inline-block skew-x-[-12deg]">
-                                                        {book.available_copies > 0 ? `${book.available_copies} AVAILABLE` : "OUT OF STOCK"}
-                                                    </span>
-                                                </div>
+                                <div key={book.id} className="bg-card p-6 border border-border rounded-xl group hover:shadow-md hover:border-border transition-all duration-300 relative overflow-hidden flex flex-col justify-between h-auto">
+                                    <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.05] transition-opacity duration-500">
+                                        <Book className="h-24 w-24 text-primary rotate-12" />
+                                    </div>
+                                    
+                                    <div>
+                                        <div className="flex justify-between items-start mb-6 relative z-10">
+                                            <div className="h-10 w-10 bg-muted border border-border flex items-center justify-center text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all rounded-lg">
+                                                <Barcode className="h-5 w-5" />
                                             </div>
-                                            
-                                            <div className="space-y-3 mb-8">
-                                                <h4 className="font-black italic text-foreground text-2xl uppercase tracking-tighter leading-tight group-hover:text-primary transition-colors line-clamp-2">{book.title}</h4>
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-1 w-4 bg-primary/20" />
-                                                    <p className="text-[10px] font-mono font-black text-foreground/40 uppercase tracking-[0.3em]">Authority: {book.author}</p>
-                                                </div>
-                                            </div>
+                                            <Badge variant="outline" className={cn(
+                                                "rounded-full font-semibold text-xs px-3 py-1",
+                                                (book.available_copies || 0) > 0 ? "text-primary border-primary/20 bg-primary/10" : "text-destructive border-destructive/20 bg-destructive/10"
+                                            )}>
+                                                {(book.available_copies || 0) > 0 ? "In Stock" : "Out of Stock"}
+                                            </Badge>
+                                        </div>
 
-                                            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-primary/5">
-                                                <div>
-                                                    <p className="text-[8px] font-mono font-black text-foreground/20 uppercase tracking-widest mb-1">CLASSIFICATION</p>
-                                                    <p className="text-[10px] font-mono font-black text-primary uppercase tracking-widest italic">{book.category || "GENERAL"}</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-[8px] font-mono font-black text-foreground/20 uppercase tracking-widest mb-1">TOTAL COPIES</p>
-                                                    <p className="font-mono font-black text-foreground/60 text-lg tabular-nums tracking-tighter italic">{book.total_copies}</p>
-                                                </div>
+                                        <div className="space-y-3 mb-6 text-left relative z-10">
+                                            <h4 className="font-bold text-foreground text-sm tracking-tight group-hover:text-primary transition-colors leading-tight line-clamp-2">{book.title}</h4>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-xs font-medium text-muted-foreground">Author: {book.author}</p>
                                             </div>
                                         </div>
-                                        
-                                        {/* Background Collection Label */}
-                                        <div className="absolute -right-6 -bottom-6 opacity-5 font-mono text-[60px] font-black italic text-primary/20 pointer-events-none uppercase">NODE</div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border relative z-10">
+                                        <div className="text-left">
+                                            <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1">Category</p>
+                                            <p className="text-xs font-medium text-foreground">{book.category || "General"}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-semibold text-muted-foreground uppercase mb-1">Available</p>
+                                            <p className="font-bold text-foreground text-sm">{book.available_copies} <span className="text-muted-foreground font-medium">/ {book.total_copies}</span></p>
+                                        </div>
                                     </div>
                                 </div>
                             ))
@@ -511,130 +431,130 @@ export function LibraryDashboard({ books, transactions, students, inventoryItems
                     </div>
                 </TabsContent>
 
-                <TabsContent value="transactions" className="mt-0">
-                    <div className="relative skew-x-[-12deg] transition-all duration-700">
-                        <div className="absolute inset-0 bg-primary/5 -z-10 blur-3xl opacity-50" />
-                        <div className="relative glass-panel border-primary/10 rounded-none shadow-2xl overflow-hidden">
-                            <div className="not-skew-x overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead className="bg-primary/5 border-b border-primary/10">
+                <TabsContent value="transactions" className="animate-in slide-in-from-bottom-2 mt-0 outline-none">
+                    <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left order-collapse">
+                                <thead className="bg-muted text-muted-foreground border-b border-border">
+                                    <tr>
+                                        <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider">Book</th>
+                                        <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-center">Student</th>
+                                        <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-center">Duration</th>
+                                        <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-center">Status</th>
+                                        {isStaff && <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-right">Action</th>}
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-border">
+                                    {transactions?.length === 0 ? (
                                         <tr>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Book</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Borrower</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Issued On</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Due Date</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Status</th>
-                                            {isStaff && <th className="text-right py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Operations</th>}
+                                            <td colSpan={5} className="py-24 text-center text-muted-foreground">
+                                                <div className="flex flex-col items-center">
+                                                    <Clock className="h-10 w-10 mb-4 opacity-50" />
+                                                    <p className="font-semibold text-sm">No active book loans</p>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-primary/5">
-                                        {transactions.length === 0 ? (
-                                            <tr><td colSpan={6} className="py-32 text-center text-foreground/20 font-black uppercase tracking-[0.5em] text-xs skew-x-[12deg]">No Transaction History</td></tr>
-                                        ) : (
-                                            transactions.map((tx) => (
-                                                <tr key={tx.id} className="hover:bg-primary/[0.02] transition-colors group">
-                                                    <td className="py-8 px-10">
+                                    ) : (
+                                        transactions?.map((tx) => (
+                                            <tr key={tx.id} className="group hover:bg-muted/30 transition-colors">
+                                                <td className="py-4 px-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="h-10 w-10 flex items-center justify-center font-bold text-primary-foreground text-sm rounded-lg bg-primary">
+                                                            {tx.book?.title?.[0] || "?"}
+                                                        </div>
                                                         <div className="flex flex-col">
-                                                            <span className="font-black text-foreground italic uppercase text-sm tracking-tighter group-hover:text-primary transition-colors">{tx.book?.title || "—"}</span>
-                                                            <span className="text-[9px] font-mono font-black text-foreground/30 uppercase tracking-widest mt-1">ISBN: {tx.book?.isbn || "—"}</span>
+                                                            <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">{tx.book?.title || "—"}</span>
+                                                            <span className="text-xs text-muted-foreground">ISBN: {tx.book?.isbn || "—"}</span>
                                                         </div>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6 text-center">
+                                                    <span className="font-medium text-foreground text-sm">{tx.student?.profile?.full_name}</span>
+                                                </td>
+                                                <td className="py-4 px-6 text-center">
+                                                    <div className="flex flex-col items-center gap-1 text-xs font-medium">
+                                                         <span className="text-muted-foreground">Issued: {tx.issue_date}</span>
+                                                         <span className={cn(new Date(tx.due_date) < new Date() ? "text-destructive font-bold" : "text-muted-foreground")}>Due: {tx.due_date}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6 text-center">
+                                                    <Badge variant="outline" className={cn(
+                                                        "rounded-full font-semibold text-xs px-3 py-1",
+                                                        tx.status === "issued" ? "text-amber-600 border-amber-500/30 bg-amber-500/10" : "text-primary border-primary/20 bg-primary/10"
+                                                    )}>
+                                                        {tx.status}
+                                                    </Badge>
+                                                </td>
+                                                {isStaff && (
+                                                    <td className="py-4 px-6 text-right">
+                                                        {tx.status === "issued" && (
+                                                            <Button 
+                                                                size="sm" 
+                                                                variant="outline" 
+                                                                onClick={() => handleReturn(tx.id)} 
+                                                                className="h-8 px-4 font-medium transition-all"
+                                                            >
+                                                                Return
+                                                            </Button>
+                                                        )}
                                                     </td>
-                                                    <td className="py-8 px-10 flex flex-col">
-                                                        <span className="font-black text-foreground/70 uppercase text-[11px] tracking-widest italic">{tx.student?.profile?.full_name}</span>
-                                                        <span className="text-[9px] font-mono font-black text-primary/40 uppercase tracking-widest mt-1">ID: {tx.student?.admission_number}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <span className="font-mono font-black text-foreground/40 text-[10px] tracking-widest uppercase italic">{tx.issue_date}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <span className="font-mono font-black text-foreground/40 text-[10px] tracking-widest uppercase italic">{tx.due_date}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <div className={cn(
-                                                            "inline-flex items-center px-4 py-1.5 rounded-none font-mono font-black text-[9px] uppercase tracking-[0.2em] border skew-x-[12deg]",
-                                                            tx.status === "issued" ? "bg-blue-500/5 text-blue-500 border-blue-500/20" :
-                                                                tx.status === "returned" ? "bg-primary/5 text-primary border-primary/20" :
-                                                                    "bg-red-500/5 text-red-500 border-red-500/20"
-                                                        )}>
-                                                            <span className="inline-block skew-x-[-12deg]">{tx.status}</span>
-                                                        </div>
-                                                    </td>
-                                                    {isStaff && (
-                                                        <td className="py-8 px-10 text-right">
-                                                            <div className="flex flex-col items-end gap-2">
-                                                                {tx.status === "issued" && (
-                                                                    <Button size="sm" variant="outline" onClick={() => handleReturn(tx.id)} className="h-10 px-6 rounded-none border-primary/20 hover:bg-primary hover:text-primary-foreground font-black text-[10px] uppercase tracking-widest transition-all skew-x-[12deg]">
-                                                                        <span className="inline-block skew-x-[-12deg]">RETURN BOOK</span>
-                                                                    </Button>
-                                                                )}
-                                                                {tx.fine_amount > 0 && (
-                                                                    <span className="animate-pulse text-[10px] font-black text-red-500 uppercase tracking-widest italic bg-red-500/5 px-2 py-1">LATE FEE: ₹{tx.fine_amount}</span>
-                                                                )}
-                                                            </div>
-                                                        </td>
-                                                    )}
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                )}
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="inventory" className="mt-0">
-                    <div className="relative skew-x-[-12deg] transition-all duration-700">
-                        <div className="absolute inset-0 bg-primary/5 -z-10 blur-3xl opacity-50" />
-                        <div className="relative glass-panel border-primary/10 rounded-none shadow-2xl overflow-hidden">
-                            <div className="not-skew-x overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead className="bg-primary/5 border-b border-primary/10">
-                                        <tr>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Item</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Category</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Stock</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Unit Price</th>
-                                            <th className="text-left py-6 px-10 font-black uppercase tracking-[0.3em] text-[10px] text-primary/60 italic">Availability</th>
+                <TabsContent value="inventory" className="animate-in slide-in-from-bottom-2 mt-0 outline-none">
+                    <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                        <table className="w-full text-left order-collapse">
+                            <thead className="bg-muted text-muted-foreground border-b border-border">
+                                <tr>
+                                    <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider">Item Name</th>
+                                    <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-center">Category</th>
+                                    <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-center">Stock Quantity</th>
+                                    <th className="py-4 px-6 font-semibold text-xs uppercase tracking-wider text-right">Unit Price</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border">
+                                {inventoryItems?.length === 0 ? (
+                                    <tr><td colSpan={4} className="py-24 text-center text-muted-foreground"><p className="font-semibold text-sm">No inventory items found</p></td></tr>
+                                ) : (
+                                    inventoryItems?.map((item) => (
+                                        <tr key={item.id} className="group hover:bg-muted/30 transition-colors">
+                                            <td className="py-4 px-6">
+                                                <div className="flex items-center gap-4">
+                                                     <div className="h-10 w-10 flex items-center justify-center text-muted-foreground rounded-lg bg-muted border border-border">
+                                                        <Package className="h-5 w-5" />
+                                                    </div>
+                                                    <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors">{item.name}</span>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 px-6 text-center">
+                                                <span className="font-medium text-muted-foreground text-sm">{item.category || "General"}</span>
+                                            </td>
+                                            <td className="py-4 px-6 text-center">
+                                                <Badge variant="outline" className={cn(
+                                                    "rounded-full font-semibold text-xs px-3 py-1",
+                                                    (item.quantity_in_stock || 0) <= (item.min_stock_level || 5) ? "border-destructive/30 text-destructive bg-destructive/10" : "border-primary/20 text-primary bg-primary/10"
+                                                )}>
+                                                    Qty: {item.quantity_in_stock}
+                                                </Badge>
+                                            </td>
+                                            <td className="py-4 px-6 text-right">
+                                                <span className="font-semibold text-muted-foreground text-sm tabular-nums">₹{Number(item.unit_price).toLocaleString("en-IN")}</span>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-primary/5">
-                                        {inventoryItems.length === 0 ? (
-                                            <tr><td colSpan={5} className="py-32 text-center text-foreground/20 font-black uppercase tracking-[0.5em] text-xs skew-x-[12deg]">Inventory is Empty</td></tr>
-                                        ) : (
-                                            inventoryItems.map((item) => (
-                                                <tr key={item.id} className="hover:bg-primary/[0.02] transition-colors group">
-                                                    <td className="py-8 px-10">
-                                                        <span className="font-black text-foreground italic uppercase text-sm tracking-tighter group-hover:text-primary transition-colors">{item.name}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <span className="text-[10px] font-mono font-black uppercase tracking-[0.3em] text-foreground/40 italic">{item.category || "GENERAL_ASSET"}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <span className="font-mono font-black text-foreground text-lg tracking-tighter tabular-nums italic group-hover:text-primary transition-colors">{item.quantity_in_stock}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <span className="font-mono font-black text-foreground/50 text-[11px] tracking-widest uppercase italic tabular-nums">₹{Number(item.unit_price).toLocaleString("en-IN")}</span>
-                                                    </td>
-                                                    <td className="py-8 px-10">
-                                                        <div className={cn(
-                                                            "inline-flex items-center px-4 py-1.5 rounded-none font-mono font-black text-[9px] uppercase tracking-[0.2em] border skew-x-[12deg]",
-                                                            item.quantity_in_stock <= (item.min_stock_level || 5) ? "bg-red-500/5 text-red-500 border-red-500/20" : "bg-primary/5 text-primary border-primary/20"
-                                                        )}>
-                                                            <span className="inline-block skew-x-[-12deg]">{item.quantity_in_stock <= (item.min_stock_level || 5) ? "LOW STOCK" : "IN STOCK"}</span>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </TabsContent>
             </Tabs>
         </div>
     );
 }
-

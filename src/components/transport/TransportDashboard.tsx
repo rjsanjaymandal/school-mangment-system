@@ -298,10 +298,10 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
 
                 <div className="md:col-span-4 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
                     <div className="mb-8 relative z-10 text-center">
-                        <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground italic group-hover:text-primary transition-all">
-                            Service <span className="text-primary tracking-normal not-italic px-1">/</span> Status
+                        <h3 className="text-xl font-bold tracking-tight text-foreground">
+                            Service Status
                         </h3>
-                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic text-center">Fleet operational health vector</p>
+                        <p className="text-sm text-muted-foreground mt-2 text-center">Current fleet operational health</p>
                     </div>
                     <div className="h-[280px] relative z-10">
                         <ResponsiveContainer width="100%" height="100%">
@@ -327,79 +327,67 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 </div>
             </div>
 
-            {/* --- Control Layer: Logistics Matrix --- */}
-            <div className="bg-muted p-3 rounded-xl border border-border flex flex-col md:flex-row items-center gap-4 reveal-3 shadow-md">
+            {/* --- Control Layer --- */}
+            <div className="bg-card p-3 rounded-lg border border-border flex flex-col md:flex-row items-center gap-4 shadow-sm">
                 <div className="relative flex-1 w-full group">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
-                        placeholder="SEARCH FLEET REGISTRY, PLATES, OR DRIVERS..." 
+                        placeholder="Search fleet registry, plates, or drivers..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="h-14 pl-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary transition-all shadow-inner"
+                        className="pl-9 h-10 w-full bg-background"
                     />
                 </div>
 
                 <div className="flex items-center gap-4 w-full md:w-auto">
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="w-full md:w-[220px] h-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] shadow-inner hover:border-primary transition-all focus:ring-primary">
-                            <div className="flex items-center gap-4">
-                                <ListFilter className="h-4 w-4 text-primary opacity-40" />
-                                <SelectValue placeholder="ROUTE STATUS" />
+                        <SelectTrigger className="w-[180px] h-10">
+                            <div className="flex items-center gap-2">
+                                <ListFilter className="h-4 w-4 text-primary" />
+                                <SelectValue placeholder="Route Status" />
                             </div>
                         </SelectTrigger>
-                        <SelectContent className="glass-panel border-primary/10 rounded-lg">
-                            <SelectItem value="all" className="font-black uppercase text-[10px] tracking-widest p-4">SYSTEM_ALL_STATUS</SelectItem>
-                            <SelectItem value="active" className="font-black uppercase text-[10px] tracking-widest p-4">ACTIVE_NODES</SelectItem>
-                            <SelectItem value="inactive" className="font-black uppercase text-[10px] tracking-widest p-4">OFFLINE_NODES</SelectItem>
-                            <SelectItem value="maintenance" className="font-black uppercase text-[10px] tracking-widest p-4">MAINTENANCE_NODES</SelectItem>
+                        <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Offline</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-4 reveal-4">
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
-                    <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
-                        <Bus className="h-24 w-24 text-primary" />
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                        <p className="text-sm font-medium text-muted-foreground">Active Routes</p>
+                        <Navigation className="h-4 w-4 text-primary opacity-80" />
                     </div>
-                    <div className="relative z-10 flex justify-between items-start mb-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Active Routes</p>
-                        <Navigation className="h-4 w-4 text-primary opacity-40 group-hover:animate-pulse" />
-                    </div>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{routes.length}</h3>
+                    <h3 className="text-3xl font-bold text-foreground">{routes.length}</h3>
                 </div>
 
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
-                    <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
-                        <Users className="h-24 w-24 text-primary" />
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                        <p className="text-sm font-medium text-muted-foreground">Fleet Capacity</p>
+                        <Zap className="h-4 w-4 text-blue-500 opacity-80" />
                     </div>
-                    <div className="relative z-10 flex justify-between items-start mb-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fleet Capacity</p>
-                        <Zap className="h-4 w-4 text-blue-500 opacity-40" />
-                    </div>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{routes.reduce((acc, r) => acc + (r.capacity || 0), 0)}</h3>
+                    <h3 className="text-3xl font-bold text-foreground">{routes.reduce((acc, r) => acc + (r.capacity || 0), 0)}</h3>
                 </div>
 
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
-                    <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
-                        <MapPin className="h-24 w-24 text-primary" />
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                        <p className="text-sm font-medium text-muted-foreground">Service Stops</p>
+                        <MapPin className="h-4 w-4 text-amber-500 opacity-80" />
                     </div>
-                    <div className="relative z-10 flex justify-between items-start mb-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Service Stops</p>
-                        <MapPin className="h-4 w-4 text-amber-500 opacity-40" />
-                    </div>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{stops.length}</h3>
+                    <h3 className="text-3xl font-bold text-foreground">{stops.length}</h3>
                 </div>
 
-                <div className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all group overflow-hidden relative">
-                     <div className="absolute -right-4 -top-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
-                        <ShieldCheck className="h-24 w-24 text-primary" />
+                <div className="bg-card p-6 border border-border rounded-lg shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                        <p className="text-sm font-medium text-muted-foreground">Boarding Students</p>
+                        <ShieldCheck className="h-4 w-4 text-red-500 opacity-80" />
                     </div>
-                    <div className="relative z-10 flex justify-between items-start mb-4">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Boarding Students</p>
-                        <ShieldCheck className="h-4 w-4 text-red-500 opacity-40" />
-                    </div>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter leading-none italic">{assignments.length}</h3>
+                    <h3 className="text-3xl font-bold text-foreground">{assignments.length}</h3>
                 </div>
             </div>
 

@@ -21,7 +21,7 @@ export async function createPayroll(data: {
             deductions: data.deductions || 0,
         });
         if (error) throw error;
-        revalidatePath("/fees");
+        revalidatePath("/payroll");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -36,7 +36,7 @@ export async function processPayroll(payrollId: string) {
             .update({ status: "paid", payment_date: new Date().toISOString() })
             .eq("id", payrollId);
         if (error) throw error;
-        revalidatePath("/fees");
+        revalidatePath("/payroll");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -71,7 +71,7 @@ export async function submitLeaveRequest(data: {
         const supabase = createAdminClient();
         const { error } = await supabase.from("leave_requests").insert(data);
         if (error) throw error;
-        revalidatePath("/fees");
+        revalidatePath("/payroll");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -86,7 +86,7 @@ export async function updateLeaveStatus(id: string, status: "approved" | "reject
             .update({ status, approved_by: approvedBy })
             .eq("id", id);
         if (error) throw error;
-        revalidatePath("/fees");
+        revalidatePath("/payroll");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

@@ -201,12 +201,8 @@ export function ExamsDashboard({
                         <Award className="h-8 w-8 transition-all duration-300" />
                     </div>
                     <div>
-                        <div className="relative">
-                            <h1 className="text-4xl font-bold uppercase tracking-tight text-foreground leading-none">Exam <span className="text-primary italic">Management</span></h1>
-                        </div>
-                        <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 mt-3 flex items-center gap-2">
-                            <span className="h-1 w-1 rounded-full bg-primary" /> Manage School Examinations
-                        </p>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Exam Management</h1>
+                        <p className="text-sm text-muted-foreground mt-2">Manage school examinations</p>
                     </div>
                 </div>
 
@@ -224,16 +220,18 @@ export function ExamsDashboard({
             </div>
 
             <Tabs defaultValue="list" className="w-full">
-                <TabsList className="bg-muted/50 border border-border p-1 rounded-lg h-auto mb-8 flex items-center gap-2">
-                    <TabsTrigger value="list" className="rounded-md px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-[11px] uppercase tracking-wide transition-all italic">
-                        <span className="flex items-center gap-x-2">
-                            <ClipboardCheck className="h-4 w-4" /> Exam List
-                        </span>
+                <TabsList className="bg-muted p-1 rounded-lg h-10 mb-8 flex items-center w-fit">
+                    <TabsTrigger value="list" className="rounded-md px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                        <div className="flex items-center gap-x-2">
+                            <ClipboardCheck className="h-4 w-4" />
+                            <span>Exam List</span>
+                        </div>
                     </TabsTrigger>
-                    <TabsTrigger value="calendar" className="rounded-md px-8 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold text-[11px] uppercase tracking-wide transition-all italic text-foreground/40">
-                        <span className="flex items-center gap-x-2">
-                            <Calendar className="h-4 w-4" /> Exam Calendar
-                        </span>
+                    <TabsTrigger value="calendar" className="rounded-md px-4 py-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                        <div className="flex items-center gap-x-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>Exam Calendar</span>
+                        </div>
                     </TabsTrigger>
                 </TabsList>
 
@@ -246,11 +244,11 @@ export function ExamsDashboard({
                             </div>
                             <div className="relative z-10 h-full flex flex-col">
                                 <div className="mb-8">
-                                    <h3 className="text-xl font-bold italic tracking-tight uppercase leading-none text-foreground group-hover:text-primary transition-colors">
-                                        Performance <span className="text-primary italic">Intelligence</span>
+                                    <h3 className="text-xl font-bold tracking-tight text-foreground">
+                                        Performance Overview
                                     </h3>
-                                    <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic">
-                                        Subject-wise average percentile distribution
+                                    <p className="text-sm text-muted-foreground mt-2">
+                                        Subject-wise average performance
                                     </p>
                                 </div>
                                 <div className="flex-1 h-[280px]">
@@ -277,10 +275,10 @@ export function ExamsDashboard({
 
                         <div className="md:col-span-4 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
                             <div className="mb-8 relative z-10 text-center">
-                                <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground italic group-hover:text-primary transition-all">
-                                    Success <span className="text-primary tracking-normal not-italic px-1">/</span> Vector
+                                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                                    Pass/Fail Ratio
                                 </h3>
-                                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic text-center">Pass-Fail Distribution Profile</p>
+                                <p className="text-sm text-muted-foreground mt-2 text-center">Current exam series</p>
                             </div>
                             <div className="h-[280px] relative z-10">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -306,42 +304,42 @@ export function ExamsDashboard({
                         </div>
                     </div>
 
-                    {/* --- Control Layer: Institutional Matrix --- */}
-                    <div className="bg-muted p-3 rounded-xl border border-border flex flex-col md:flex-row items-center gap-4 reveal-3 shadow-md">
-                        <div className="relative flex-1 group">
-                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    {/* --- Control Layer --- */}
+                    <div className="bg-card p-3 rounded-lg border border-border flex flex-col md:flex-row items-center gap-4 shadow-sm">
+                        <div className="relative flex-1 w-full group">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input 
-                                placeholder="SEARCH EXAM REGISTRY OR SUBJECT NODE..." 
+                                placeholder="Search exams or subjects..." 
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="h-14 pl-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-primary transition-all shadow-inner"
+                                className="pl-9 h-10 w-full bg-background"
                             />
                         </div>
 
                         <div className="flex items-center gap-4 w-full md:w-auto">
                             <Select value={filterClass} onValueChange={setFilterClass}>
-                                <SelectTrigger className="w-full md:w-[220px] h-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] shadow-inner hover:border-primary transition-all focus:ring-primary">
-                                    <div className="flex items-center gap-4">
-                                        <Hash className="h-4 w-4 text-primary opacity-40" />
-                                        <SelectValue placeholder="CLASS MODULE" />
+                                <SelectTrigger className="w-[180px] h-10">
+                                    <div className="flex items-center gap-2">
+                                        <Hash className="h-4 w-4 text-primary" />
+                                        <SelectValue placeholder="Class" />
                                     </div>
                                 </SelectTrigger>
-                                <SelectContent className="glass-panel border-primary/10 rounded-lg">
-                                    <SelectItem value="all" className="font-black uppercase text-[10px] tracking-widest p-4">SYSTEM_ALL_CLASSES</SelectItem>
-                                    {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-black uppercase text-[10px] tracking-widest p-4">{c.name}</SelectItem>)}
+                                <SelectContent>
+                                    <SelectItem value="all">All Classes</SelectItem>
+                                    {classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
 
                             <Select value={filterSubject} onValueChange={setFilterSubject}>
-                                <SelectTrigger className="w-full md:w-[220px] h-14 bg-background border-border rounded-lg font-mono font-black text-[10px] uppercase tracking-[0.2em] shadow-inner hover:border-primary transition-all focus:ring-primary">
-                                    <div className="flex items-center gap-4">
-                                        <BookOpen className="h-4 w-4 text-primary opacity-40 ml-1" />
-                                        <SelectValue placeholder="SUBJECT SECTOR" />
+                                <SelectTrigger className="w-[180px] h-10">
+                                    <div className="flex items-center gap-2">
+                                        <BookOpen className="h-4 w-4 text-primary" />
+                                        <SelectValue placeholder="Subject" />
                                     </div>
                                 </SelectTrigger>
-                                <SelectContent className="glass-panel border-primary/10 rounded-lg">
-                                    <SelectItem value="all" className="font-black uppercase text-[10px] tracking-widest p-4">SYSTEM_ALL_SUBJECTS</SelectItem>
-                                    {subjects.map(s => <SelectItem key={s.id} value={s.id} className="font-black uppercase text-[10px] tracking-widest p-4">{s.name}</SelectItem>)}
+                                <SelectContent>
+                                    <SelectItem value="all">All Subjects</SelectItem>
+                                    {subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -376,14 +374,15 @@ export function ExamsDashboard({
                         <table className="w-full text-left border-collapse">
                             <thead className="bg-muted/50">
                                 <tr>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Class Module</th>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border text-center">Telemetry</th>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Registry Date</th>
-                                    <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border text-center">Evaluation Status</th>
-                                    <th className="px-6 py-4 text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">Module Actions</th>
+                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Exam Name / Subject</th>
+                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Class</th>
+                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Marks / Passing</th>
+                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
+                                    <th className="h-12 px-4 text-center align-middle font-medium text-muted-foreground">Status</th>
+                                    <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-primary/5 font-medium tracking-tight">
+                            <tbody className="divide-y divide-border">
                                 {filteredExams.map((exam) => (
                                     <tr key={exam.id} className="group hover:bg-primary/[0.02] transition-all duration-500">
                                         <td className="px-6 py-6">
@@ -469,14 +468,13 @@ export function ExamsDashboard({
                 </TabsContent>
 
                 <TabsContent value="calendar">
-                    <div className="glass-panel p-8 rounded-sm border border-white/10 overflow-hidden shadow-2xl">
-                        <div className="h-[700px] font-black uppercase tracking-widest italic text-[10px]">
+                    <div className="bg-card border border-border p-6 rounded-xl shadow-sm overflow-hidden">
+                        <div className="h-[700px]">
                             <BigCalendar
                                 localizer={localizer}
                                 events={calendarEvents}
                                 startAccessor="start"
                                 endAccessor="end"
-                                className="premium-calendar"
                                 views={["month", "week", "agenda"]}
                                 view={calendarView}
                                 onView={(v) => setCalendarView(v)}
@@ -489,35 +487,35 @@ export function ExamsDashboard({
             {/* Create Exam Dialog */}
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                 <DialogContent className="bg-card border border-border p-0 overflow-hidden max-w-2xl rounded-xl shadow-2xl">
-                    <div className="p-8 bg-muted/50 border-b border-border relative overflow-hidden">
+                    <div className="p-6 bg-muted border-b border-border relative overflow-hidden">
                         <div className="relative z-10">
                             <DialogTitle asChild>
-                                <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
-                                    Exam <span className="text-primary italic">Details</span>
+                                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                                    Create Exam
                                 </h3>
                             </DialogTitle>
-                            <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 mt-3 flex items-center gap-2">
-                                <span className="h-1 w-1 rounded-full bg-primary" /> Create a new exam
+                            <p className="text-sm text-muted-foreground mt-1">
+                                Schedule a new examination
                             </p>
                         </div>
                     </div>
                     
                     <div className="p-8 space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Exam Name</Label>
+                            <div className="space-y-2">
+                                <Label>Exam Name</Label>
                                 <Input 
-                                    placeholder="E.G. FIRST TERM FINALS" 
-                                    className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] italic placeholder:text-foreground/10 focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all"
+                                    placeholder="e.g. First Term Finals" 
+                                    className="h-10 bg-background"
                                     value={examForm.name} 
                                     onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} 
                                 />
                             </div>
-                            <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Exam Date</Label>
+                            <div className="space-y-2">
+                                <Label>Exam Date</Label>
                                 <Input 
                                     type="date" 
-                                    className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] focus-visible:ring-primary/50 focus-visible:bg-primary/5 skew-x-[-8deg] transition-all [&::-webkit-calendar-picker-indicator]:invert"
+                                    className="h-10 bg-background"
                                     value={examForm.date} 
                                     onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} 
                                 />
@@ -525,63 +523,61 @@ export function ExamsDashboard({
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Class</Label>
+                            <div className="space-y-2">
+                                <Label>Class</Label>
                                 <Select onValueChange={(v) => setExamForm({ ...examForm, class_id: v })}>
-                                    <SelectTrigger className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] italic focus:ring-primary/50 skew-x-[-8deg] transition-all">
+                                    <SelectTrigger className="h-10 bg-background">
                                         <SelectValue placeholder="Select Class" />
                                     </SelectTrigger>
-                                    <SelectContent className="glass-panel border-primary/10 rounded-none">
-                                        {classes.map(c => <SelectItem key={c.id} value={c.id} className="font-black uppercase text-[10px] tracking-widest">{c.name}</SelectItem>)}
+                                    <SelectContent>
+                                        {classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="space-y-4">
-                                <Label className="text-[11px] font-mono font-black uppercase tracking-[0.4em] text-primary italic">Subject</Label>
+                            <div className="space-y-2">
+                                <Label>Subject</Label>
                                 <Select onValueChange={(v) => setExamForm({ ...examForm, subject_id: v })}>
-                                    <SelectTrigger className="h-16 bg-white/[0.03] border-primary/10 rounded-none font-black text-[12px] uppercase tracking-[0.2em] italic focus:ring-primary/50 skew-x-[-8deg] transition-all">
+                                    <SelectTrigger className="h-10 bg-background">
                                         <SelectValue placeholder="Select Subject" />
                                     </SelectTrigger>
-                                    <SelectContent className="glass-panel border-primary/10 rounded-none">
-                                        {subjects.map(s => <SelectItem key={s.id} value={s.id} className="font-black uppercase text-[10px] tracking-widest">{s.name}</SelectItem>)}
+                                    <SelectContent>
+                                        {subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-border pt-8">
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Maximum Marks</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
+                            <div className="space-y-2">
+                                <Label>Maximum Marks</Label>
                                 <Input 
                                     type="number" 
-                                    className="h-12 bg-background border-border rounded-lg font-bold text-lg"
+                                    className="h-10 bg-background"
                                     value={examForm.max_marks} 
                                     onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} 
                                 />
                             </div>
-                            <div className="space-y-3">
-                                <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Passing Marks</Label>
+                            <div className="space-y-2">
+                                <Label>Passing Marks</Label>
                                 <Input 
                                     type="number" 
-                                    className="h-12 bg-background border-border rounded-lg font-bold text-lg text-primary"
+                                    className="h-10 bg-background"
                                     value={examForm.passing_marks} 
                                     onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} 
                                 />
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-end gap-x-6 pt-8 border-t border-border">
+                        <div className="flex items-center justify-end gap-x-4 pt-6">
                             <Button 
-                                variant="ghost"
+                                variant="outline"
                                 onClick={() => setIsCreateOpen(false)}
-                                className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground"
                             >
                                 Cancel
                             </Button>
                             <Button 
                                 onClick={handleCreateExam}
                                 disabled={loading}
-                                className="h-12 px-10 bg-primary text-primary-foreground font-bold rounded-lg shadow-md uppercase tracking-wider text-[11px] hover:scale-105 transition-all"
                             >
                                 {loading ? "Saving..." : "Save Exam"}
                             </Button>
@@ -593,34 +589,34 @@ export function ExamsDashboard({
             {/* Marks Assessment Dialog */}
             <Dialog open={isMarksOpen} onOpenChange={setIsMarksOpen}>
                 <DialogContent className="bg-card border border-border p-0 overflow-hidden max-w-5xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl">
-                    <div className="p-8 bg-muted/50 border-b border-border relative overflow-hidden flex-shrink-0">
+                    <div className="p-6 bg-muted border-b border-border relative overflow-hidden flex-shrink-0">
                         <div className="relative z-10">
                             <DialogTitle asChild>
-                                <h3 className="text-3xl font-bold uppercase tracking-tight text-foreground leading-none">
-                                    Exam <span className="text-primary italic">Results</span>
+                                <h3 className="text-xl font-bold tracking-tight text-foreground">
+                                    Exam Results
                                 </h3>
                             </DialogTitle>
-                            <div className="flex flex-wrap items-center gap-6 mt-4">
-                                <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 italic flex items-center gap-2">
-                                    <span className="h-1 w-1 rounded-full bg-primary" /> Exam: {selectedExam?.name}
+                            <div className="flex flex-wrap items-center gap-6 mt-2">
+                                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                                    <FileText className="h-4 w-4 text-primary" /> Exam: {selectedExam?.name}
                                 </p>
-                                <p className="text-[10px] font-mono font-medium uppercase tracking-widest text-foreground/40 italic flex items-center gap-2 border-l border-border pl-6">
-                                    <span className="h-1 w-1 rounded-full bg-primary/50" /> Max Marks: {selectedExam?.max_marks} Points
+                                <p className="text-sm text-muted-foreground flex items-center gap-2 border-l border-border pl-6">
+                                    <Award className="h-4 w-4 text-primary" /> Max Marks: {selectedExam?.max_marks} Points
                                 </p>
                             </div>
                         </div>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                        <div className="glass-panel p-2 rounded-none border border-primary/10 mb-10 overflow-hidden">
+                    <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                        <div className="border border-border rounded-lg mb-10 overflow-hidden">
                             <table className="w-full text-left border-collapse">
-                                <thead className="bg-primary/10">
+                                <thead className="bg-muted">
                                     <tr>
-                                        <th className="px-10 py-8 text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Student Name</th>
-                                        <th className="px-10 py-8 text-right text-[11px] font-mono font-black uppercase tracking-[0.5em] text-primary italic border-b border-primary/10">Marks Obtained</th>
+                                        <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Student Name</th>
+                                        <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Marks Obtained</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-primary/5">
+                                <tbody className="divide-y divide-border">
                                     {examStudents.length === 0 ? (
                                         <tr><td colSpan={2} className="py-16 text-center text-muted-foreground/30 font-bold uppercase tracking-widest text-xs italic">No student records found</td></tr>
                                     ) : (
@@ -659,20 +655,20 @@ export function ExamsDashboard({
                     </div>
 
                     {/* --- Progress Protocol Footer --- */}
-                    <div className="p-8 border-t border-border bg-muted/30 flex flex-col md:flex-row items-center justify-between gap-6 flex-shrink-0 relative">
+                    <div className="p-6 border-t border-border bg-muted/50 flex flex-col md:flex-row items-center justify-between gap-6 flex-shrink-0 relative">
                         <div className="flex-1 w-full max-w-md">
                             <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                                    <p className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">
-                                        Evaluation Progress: <span className="text-primary italic">{Object.values(marks).filter(v => v !== "").length}</span> / {examStudents.length}
+                                <div className="flex items-center gap-2">
+                                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                                    <p className="text-sm font-medium text-foreground">
+                                        Evaluation Progress: <span className="font-bold text-primary">{Object.values(marks).filter(v => v !== "").length}</span> / {examStudents.length}
                                     </p>
                                 </div>
-                                <span className="text-[10px] font-mono font-bold text-primary/40">
+                                <span className="text-xs text-muted-foreground font-medium">
                                     {Math.round((Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100)}%
                                 </span>
                             </div>
-                            <div className="h-1.5 w-full bg-background border border-border rounded-full overflow-hidden">
+                            <div className="h-2 w-full bg-background rounded-full overflow-hidden">
                                 <div 
                                     className="h-full bg-primary transition-all duration-700 ease-out"
                                     style={{ width: `${(Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100}%` }}

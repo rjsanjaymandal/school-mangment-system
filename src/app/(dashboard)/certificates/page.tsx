@@ -20,7 +20,7 @@ export default async function CertificatesPage() {
     const { data: studentData } = await supabase
       .from("students")
       .select("id")
-      .eq("profile_id", user.id)
+      .eq("id", user.id)
       .single();
     if (studentData) {
       certQuery = certQuery.eq("student_id", studentData.id);

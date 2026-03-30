@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
     Users,
     UserCheck,
@@ -14,15 +15,14 @@ import {
     ShieldAlert,
     MoreHorizontal,
     Key,
-    Search
+    Search,
+    Activity,
+    Shield,
+    Zap,
+    Download,
+    Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -53,153 +53,229 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
 
     const getRoleIcon = (role: string) => {
         switch (role) {
-            case 'admin': return <ShieldCheck className="h-3.5 w-3.5" />;
-            case 'teacher': return <BookOpen className="h-3.5 w-3.5" />;
-            case 'student': return <GraduationCap className="h-3.5 w-3.5" />;
-            case 'parent': return <Baby className="h-3.5 w-3.5" />;
-            default: return <Users className="h-3.5 w-3.5" />;
+            case 'admin': return <ShieldCheck className="h-4 w-4" />;
+            case 'teacher': return <BookOpen className="h-4 w-4" />;
+            case 'student': return <GraduationCap className="h-4 w-4" />;
+            case 'parent': return <Baby className="h-4 w-4" />;
+            default: return <Users className="h-4 w-4" />;
         }
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
-            <div className="flex items-center justify-between border-b border-border pb-8">
-                <div>
-                    <h2 className="text-3xl font-black tracking-tighter text-foreground uppercase">
-                        User Management
-                    </h2>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-2 italic">
-                        Access Control & System Permissions
-                    </p>
+        <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
+            
+            {/* Header Architecture */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
+                <div className="flex items-center gap-x-8">
+                    <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-sm group hover:bg-primary hover:text-primary-foreground transition-all duration-300 emerald-glow-sm">
+                        <Shield className="h-8 w-8 transition-all duration-300" />
+                    </div>
+                    <div>
+                        <div className="relative">
+                            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                                User Directory
+                            </h2>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
+                            <Users className="h-4 w-4 text-primary" /> 
+                            Manage system access and roles
+                        </p>
+                    </div>
                 </div>
-                <div className="flex gap-x-3">
+
+                <div className="flex items-center gap-4">
                     <ProvisionUserModal />
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="border-border bg-card rounded-xl p-6 relative overflow-hidden group shadow-sm">
-                    <Users className="absolute right-[-5px] bottom-[-5px] h-16 w-16 text-primary opacity-5 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 italic">Total Users</p>
-                    <h3 className="text-4xl font-black text-foreground">{users.length}</h3>
-                </Card>
-                <Card className="border-border bg-card rounded-xl p-6 relative overflow-hidden group shadow-sm hover:border-primary/50 transition-all">
-                    <ShieldAlert className="absolute right-[-5px] bottom-[-5px] h-16 w-16 text-primary opacity-5 group-hover:scale-110 transition-transform" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1 italic">Administrators</p>
-                    <h3 className="text-4xl font-black text-foreground tracking-tighter">{users.filter(u => u.role === 'admin').length}</h3>
-                </Card>
-                <Card className="border-border bg-card rounded-xl p-6 relative shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 italic">Teachers</p>
-                    <h3 className="text-4xl font-black text-foreground">{users.filter(u => u.role === 'teacher').length}</h3>
-                </Card>
-                <Card className="border-border bg-card rounded-xl p-6 relative shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1 italic">Parents</p>
-                    <h3 className="text-4xl font-black text-foreground">{users.filter(u => u.role === 'parent').length}</h3>
-                </Card>
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 reveal-2">
+                <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+                    <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <Users className="h-20 w-20 text-primary" />
+                    </div>
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">Total Users</p>
+                    <h3 className="text-4xl font-bold text-foreground leading-none">{users.length.toString().padStart(2, '0')}</h3>
+                    <p className="text-xs font-medium text-emerald-600 mt-4 flex items-center gap-2">
+                       <Users className="h-3.5 w-3.5" /> Active Accounts
+                    </p>
+                </div>
+
+                <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+                    <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <ShieldAlert className="h-20 w-20 text-primary" />
+                    </div>
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">Administrators</p>
+                    <h3 className="text-4xl font-bold text-foreground leading-none">
+                        {users.filter(u => u.role === 'admin').length.toString().padStart(2, '0')}
+                    </h3>
+                    <p className="text-xs font-medium text-emerald-600 mt-4 flex items-center gap-2">
+                       <ShieldCheck className="h-3.5 w-3.5" /> System Admins
+                    </p>
+                </div>
+
+                <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">Teachers</p>
+                    <h3 className="text-4xl font-bold text-foreground leading-none">
+                        {users.filter(u => u.role === 'teacher').length.toString().padStart(2, '0')}
+                    </h3>
+                    <p className="text-xs font-medium text-emerald-600 mt-4 flex items-center gap-2">
+                       <BookOpen className="h-3.5 w-3.5" /> Teaching Staff
+                    </p>
+                </div>
+
+                <div className="border border-border bg-card p-6 rounded-xl shadow-sm relative overflow-hidden group">
+                    <p className="text-sm font-semibold text-muted-foreground mb-2">Parents</p>
+                    <h3 className="text-4xl font-bold text-foreground leading-none">
+                        {users.filter(u => u.role === 'parent').length.toString().padStart(2, '0')}
+                    </h3>
+                    <p className="text-xs font-medium text-emerald-600 mt-4 flex items-center gap-2">
+                       <Baby className="h-3.5 w-3.5" /> Parent Accounts
+                    </p>
+                </div>
             </div>
 
-            <Card className="border-border bg-card rounded-xl overflow-hidden shadow-sm">
-                <div className="p-6 border-b border-border flex items-center justify-between bg-secondary/30">
-                    <h3 className="text-xs font-bold uppercase tracking-widest text-foreground flex items-center gap-x-2 italic">
-                        <Key className="h-3.5 w-3.5 text-primary" />
-                        System Registry
+            {/* Registry Surface */}
+            <div className="space-y-6 reveal-3">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-6 border border-border bg-card/50 rounded-lg">
+                    <h3 className="text-lg font-semibold text-foreground flex items-center gap-x-3">
+                        <Users className="h-5 w-5 text-primary" />
+                        User List
                     </h3>
-                    <div className="flex items-center gap-x-4">
+                    
+                    <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
                         <Select value={roleFilter} onValueChange={setRoleFilter}>
-                            <SelectTrigger className="w-[140px] rounded-lg border-border bg-background h-10 text-[10px] uppercase font-black tracking-widest focus:ring-primary/20">
-                                <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground/40" />
+                            <SelectTrigger className="w-full md:w-[180px] h-11 bg-background border-border text-foreground font-medium rounded-sm focus:ring-1 focus:ring-primary/40 transition-all">
+                                <Filter className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
                                 <SelectValue placeholder="All Roles" />
                             </SelectTrigger>
-                            <SelectContent className="rounded-lg border-border bg-card">
-                                <SelectItem value="all" className="text-[10px] uppercase font-black">All Roles</SelectItem>
-                                <SelectItem value="admin" className="text-[10px] uppercase font-black">Admins</SelectItem>
-                                <SelectItem value="teacher" className="text-[10px] uppercase font-black">Teachers</SelectItem>
-                                <SelectItem value="student" className="text-[10px] uppercase font-black">Students</SelectItem>
-                                <SelectItem value="parent" className="text-[10px] uppercase font-black">Parents</SelectItem>
+                            <SelectContent className="bg-background border-border">
+                                <SelectItem value="all" className="font-medium text-sm">All Roles</SelectItem>
+                                <SelectItem value="admin" className="font-medium text-sm">Admins</SelectItem>
+                                <SelectItem value="teacher" className="font-medium text-sm">Teachers</SelectItem>
+                                <SelectItem value="student" className="font-medium text-sm">Students</SelectItem>
+                                <SelectItem value="parent" className="font-medium text-sm">Parents</SelectItem>
                             </SelectContent>
                         </Select>
-                        <div className="relative w-80">
-                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/50" />
+
+                        <div className="relative flex-1 md:w-80 group">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                             <Input
-                                placeholder="Search by name or email..."
-                                className="pl-10 rounded-lg border-border bg-background h-10 text-[10px] uppercase font-bold tracking-widest placeholder:text-muted-foreground/30 focus-visible:ring-primary/20 transition-all"
+                                placeholder="Search users..."
+                                className="h-11 pl-11 bg-background border-border text-foreground font-medium rounded-sm focus:ring-1 focus:ring-primary/40 transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-secondary/20">
-                            <tr>
-                                <th className="text-left p-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">User Identity</th>
-                                <th className="text-left p-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Authentication</th>
-                                <th className="text-left p-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">System Role</th>
-                                <th className="text-right p-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Operations</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                                {filteredUsers.map((user) => (
-                                    <tr key={user.id} className="group hover:bg-secondary/20 transition-all duration-300">
-                                        <td className="p-5">
-                                            <div className="flex items-center gap-x-4">
-                                                <div className="h-10 w-10 shrink-0 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-black text-xs transition-all uppercase">
-                                                    {user.full_name?.[0] || 'U'}
-                                                </div>
-                                                <div>
-                                                    <p className="font-bold text-foreground uppercase tracking-tight group-hover:text-primary transition-colors italic">
-                                                        {user.full_name}
-                                                    </p>
-                                                    <p className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest mt-1">
-                                                        UID: {user.id.substring(0, 8)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="p-5">
-                                            <span className="text-[10px] font-bold text-primary bg-primary/5 border border-primary/10 px-3 py-1.5 rounded-lg uppercase tracking-widest transition-all">
-                                                {user.email}
-                                            </span>
-                                        </td>
-                                         <td className="p-5">
-                                            <Badge
-                                                className={cn(
-                                                    "text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest italic flex items-center justify-center gap-x-2 w-fit min-w-[100px]",
-                                                    user.role === 'admin'
-                                                        ? "bg-primary text-primary-foreground border-none"
-                                                        : user.role === 'teacher'
-                                                            ? "bg-indigo-500/10 text-indigo-500 border border-indigo-500/20"
-                                                            : user.role === 'student'
-                                                                ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-                                                                : "bg-secondary text-muted-foreground border border-border"
-                                                )}
-                                            >
-                                                {getRoleIcon(user.role)}
-                                                {user.role}
-                                            </Badge>
-                                        </td>
-                                        <td className="p-5 text-right">
-                                            <div className="flex items-center justify-end gap-x-2">
-                                                <ImpersonationButton userId={user.id} userName={user.full_name} />
-                                                <div className="h-4 w-[1px] bg-border mx-1" />
-                                                <ManageAccessModal user={user} />
+
+                <div className="border border-border bg-card/40 rounded-lg overflow-hidden flex flex-col">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-border bg-muted/50">
+                                    <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Name</th>
+                                    <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Email Address</th>
+                                    <th className="py-3 px-6 text-sm font-semibold text-muted-foreground text-center">Role</th>
+                                    <th className="py-4 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-primary/5">
+                                {filteredUsers.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={4} className="py-16 text-center text-muted-foreground">
+                                            <div className="flex flex-col items-center">
+                                                <Users className="h-12 w-12 mb-4 text-muted-foreground/30" />
+                                                <p className="text-sm font-medium">No users found matching your criteria</p>
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
-                            {filteredUsers.length === 0 && (
-                                <tr>
-                                    <td colSpan={5} className="text-center p-12 text-muted-foreground text-sm font-medium">
-                                        No users found matching the search criteria.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                ) : (
+                                    filteredUsers.map((user) => (
+                                        <tr key={user.id} className="group hover:bg-muted/30 transition-colors border-b border-border">
+                                            <td className="py-4 px-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="h-10 w-10 flex items-center justify-center font-bold text-white text-sm rounded-full bg-primary/20 border border-primary/20">
+                                                        {user.full_name?.[0] || 'U'}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors leading-none mb-1">
+                                                            {user.full_name}
+                                                        </span>
+                                                        <span className="text-xs text-muted-foreground font-mono">
+                                                            ID: {user.id.substring(0, 8)}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="text-sm text-muted-foreground border border-border bg-background px-3 py-1.5 rounded-sm shadow-sm font-mono">
+                                                    {user.email}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-6 text-center">
+                                                <Badge
+                                                    className={cn(
+                                                        "text-xs font-medium px-3 py-1 rounded-full flex items-center justify-center gap-x-2 w-fit mx-auto border capitalize",
+                                                        user.role === 'admin'
+                                                            ? "bg-primary text-white border-primary shadow-sm"
+                                                            : user.role === 'teacher'
+                                                                ? "bg-indigo-500/10 text-indigo-500 border-indigo-500/20"
+                                                                : user.role === 'student'
+                                                                    ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                                                    : "bg-muted text-muted-foreground border-border"
+                                                    )}
+                                                >
+                                                    {getRoleIcon(user.role)}
+                                                    {user.role}
+                                                </Badge>
+                                            </td>
+                                            <td className="py-4 px-6 text-right">
+                                                <div className="flex items-center justify-end gap-x-3">
+                                                    <ImpersonationButton userId={user.id} userName={user.full_name} />
+                                                    <div className="h-6 w-[1px] bg-primary/10 mx-2" />
+                                                    <ManageAccessModal user={user} />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </Card>
+            </div>
+            
+            {/* System Status Node */}
+            <div className="p-8 rounded-sm border border-border bg-card/40 backdrop-blur-sm relative overflow-hidden group reveal-3">
+                <div className="absolute inset-0 bg-primary/5 opacity-50" />
+                <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex items-center gap-x-6">
+                        <div className="h-14 w-14 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-full shadow-sm">
+                            <ShieldCheck className="h-7 w-7 transition-transform group-hover:scale-110 duration-500" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-primary mb-1">
+                                System Security
+                            </p>
+                            <h4 className="text-base font-medium text-foreground leading-tight">
+                                User data is continually backed up and synchronized across the platform.
+                            </h4>
+                        </div>
+                    </div>
+                    <Button
+                        asChild
+                        variant="outline"
+                        className="h-11 px-8 rounded-sm font-semibold transition-all"
+                    >
+                        <Link href="/audit">
+                            <Activity className="h-4 w-4 mr-2" />
+                            View Audit Logs
+                        </Link>
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 }
-
