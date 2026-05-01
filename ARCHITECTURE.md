@@ -6,12 +6,13 @@ This document outlines the technical design, data flow, and architectural patter
 
 ## 🏛️ High-Level Technical Stack
 
-- **Framework**: `Next.js 15` (Turbopack, App Router).
-- **Styling**: `Tailwind CSS v4` + **Glassmorphism** and **Elite UI** principles.
-- **Backend/Auth**: `Supabase SSR` (Server-Side Rendering).
-- **Database**: `PostgreSQL` via Supabase.
-- **State Management**: Mixed approach using `React Server Components` for initial data fetching and `React Client Hooks` for interactive UI elements.
-- **Type Safety**: Fully typed with `TypeScript`.
+### Core Technologies
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript 5.x
+- **Styling**: Tailwind CSS v4
+- **Database/Auth**: Supabase SSR
+- **State Management**: React Hooks (Native) + Server actions
+- **Validation**: Zod / React Hook Form
 
 ---
 

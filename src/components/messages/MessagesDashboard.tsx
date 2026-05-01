@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
     MessageSquare, Send, Search, Plus, Inbox, SendHorizonal, Mail, MailOpen, Clock, User,
     MoreVertical, Phone, Video, Info, Paperclip, Smile, ShieldCheck, CheckCheck
@@ -43,7 +43,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
         }
     }, [messages]);
 
-    const loadConversation = async (contactId: string) => {
+    const loadConversation = useCallback(async (contactId: string) => {
         const result = await MessagesService.getConversationMessages(currentUserId, contactId);
         if (result.data) {
             setMessages(result.data);
@@ -53,14 +53,22 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                 await markMessageRead(lastMsg.id);
             }
         }
-    };
+    }, [currentUserId]);
 
     // Load messages when conversation is selected
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => {
+        let active = true;
+
         if (selectedConversation) {
-            loadConversation(selectedConversation.contact.id);
+            const sync = async () => {
+                await loadConversation(selectedConversation.contact.id);
+            };
+            void sync();
         }
+
+        return () => {
+            active = false;
+        };
     }, [selectedConversation, loadConversation]);
 
     const handleSend = async () => {

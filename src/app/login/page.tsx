@@ -72,7 +72,12 @@ export default function LoginPage() {
         router.push("/launcher");
       }
     } catch (e) {
-      setError("An unexpected error occurred.");
+      console.error('Detailed Login Error:', e);
+      if (e instanceof TypeError && e.message === 'Failed to fetch') {
+        setError("Network error: Failed to reach Supabase. Please check your internet connection or Supabase URL.");
+      } else {
+        setError(e instanceof Error ? e.message : "An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
