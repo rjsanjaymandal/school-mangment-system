@@ -5,17 +5,18 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const supabase = await createClient();
   
+  let user = null;
   try {
     const {
-      data: { user },
+      data: { user: authUser },
     } = await supabase.auth.getUser();
-
-    if (user) {
-      redirect("/launcher");
-    }
+    user = authUser;
   } catch (error) {
     console.error("Auth check failed on landing page:", error);
-    // Continue to show role selection if auth check fails
+  }
+
+  if (user) {
+    redirect("/launcher");
   }
 
   return <RoleSelection />;

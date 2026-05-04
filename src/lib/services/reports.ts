@@ -24,11 +24,11 @@ export const ReportsService = {
       const studentsWithGrades = await Promise.all((students || []).map(async (student) => {
         const { data: marks } = await supabase
           .from("marks")
-          .select("marks, total_marks")
+          .select("marks_obtained, max_marks")
           .eq("student_id", student.id);
 
-        const totalMarks = (marks || []).reduce((sum, m) => sum + Number(m.marks), 0);
-        const totalPossible = (marks || []).reduce((sum, m) => sum + Number(m.total_marks), 0);
+        const totalMarks = (marks || []).reduce((sum, m) => sum + Number(m.marks_obtained), 0);
+        const totalPossible = (marks || []).reduce((sum, m) => sum + Number(m.max_marks), 0);
         const gpa = totalPossible > 0 ? (totalMarks / totalPossible * 4).toFixed(2) : "0.00";
 
         return {
@@ -183,11 +183,11 @@ export const ReportsService = {
       const withGrades = await Promise.all((students || []).map(async (student) => {
         const { data: marks } = await supabase
           .from("marks")
-          .select("marks, total_marks")
+          .select("marks_obtained, max_marks")
           .eq("student_id", student.id);
 
-        const totalMarks = (marks || []).reduce((sum, m) => sum + Number(m.marks), 0);
-        const totalPossible = (marks || []).reduce((sum, m) => sum + Number(m.total_marks), 0);
+        const totalMarks = (marks || []).reduce((sum, m) => sum + Number(m.marks_obtained), 0);
+        const totalPossible = (marks || []).reduce((sum, m) => sum + Number(m.max_marks), 0);
         
         return {
           ...student,
@@ -208,16 +208,16 @@ export const ReportsService = {
     try {
       const supabase = createClient();
       
-      let query = supabase.from("marks").select("marks, total_marks");
+      let query = supabase.from("marks").select("marks_obtained, max_marks");
       if (examId) query = query.eq("exam_id", examId);
 
       const { data: marks } = await query;
 
       const results = (marks || []).map(m => ({
-        obtained: Number(m.marks),
-        total: Number(m.total_marks),
-        percentage: Number(m.total_marks) > 0 
-          ? (Number(m.marks) / Number(m.total_marks) * 100) 
+        obtained: Number(m.marks_obtained),
+        total: Number(m.max_marks),
+        percentage: Number(m.max_marks) > 0 
+          ? (Number(m.marks_obtained) / Number(m.max_marks) * 100) 
           : 0
       }));
 
@@ -262,8 +262,8 @@ export const ReportsService = {
       let marksQuery = supabase
         .from("marks")
         .select(`
-          marks,
-          total_marks,
+          marks_obtained,
+          max_marks,
           subject:subjects(name)
         `)
         .eq("student_id", studentId);
@@ -274,11 +274,11 @@ export const ReportsService = {
 
       const results = (marks || []).map((m: any) => ({
         subject: m.subject?.name || 'Unknown',
-        obtained: Number(m.marks),
-        total: Number(m.total_marks),
-        grade: getGrade(Number(m.marks), Number(m.total_marks)),
-        percentage: Number(m.total_marks) > 0 
-          ? (Number(m.marks) / Number(m.total_marks) * 100) 
+        obtained: Number(m.marks_obtained),
+        total: Number(m.max_marks),
+        grade: getGrade(Number(m.marks_obtained), Number(m.max_marks)),
+        percentage: Number(m.max_marks) > 0 
+          ? (Number(m.marks_obtained) / Number(m.max_marks) * 100) 
           : 0
       }));
 

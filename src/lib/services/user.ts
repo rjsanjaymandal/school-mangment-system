@@ -15,7 +15,15 @@ export const UserService = {
       const supabase = createClient();
       const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-      if (authError) throw authError;
+      if (authError) {
+        // If it's an auth-related error (like session missing), return null
+        // so the UI can handle redirection to /login.
+        if (authError.name === 'AuthSessionMissingError' || authError.message?.includes('session missing')) {
+          return null;
+        }
+        throw authError;
+      }
+      
       if (!user) return null;
 
       const { data, error } = await supabase
@@ -30,7 +38,11 @@ export const UserService = {
         email: user.email,
         last_login: user.last_sign_in_at
       };
-    } catch (error) {
+    } catch (error: any) {
+      // Catch common auth errors even if they are thrown by getUser
+      if (error?.name === 'AuthSessionMissingError' || error?.message?.includes('session missing')) {
+        return null;
+      }
       return handleServiceError(error);
     }
   },

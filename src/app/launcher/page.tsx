@@ -32,9 +32,12 @@ export default function LauncherPage() {
         const profile = await UserService.getCurrentProfile();
         if (profile && !("error" in profile)) {
           setUserProfile(profile);
+        } else {
+          router.push("/login");
         }
       } catch (error) {
         console.error("Failed to fetch profile:", error);
+        router.push("/login");
       } finally {
         setIsLoading(false);
       }
