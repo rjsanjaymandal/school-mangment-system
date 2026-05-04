@@ -4,7 +4,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  BrainCircuit,
   Users,
   UserSquare2,
   BookOpen,
@@ -16,18 +15,21 @@ import {
   MessageSquare,
   Bus,
   Library,
-  Zap,
   Package,
   Calendar,
   Award,
-  ShieldAlert,
+  ShieldCheck,
   Heart,
   Shield,
-  ShieldCheck,
   Stethoscope,
   Trophy,
   Globe,
-  Plus
+  Plus,
+  ChevronRight,
+  BarChart3,
+  FileBarChart,
+  UserCheck,
+  History,
 } from "lucide-react";
 
 interface NavItem {
@@ -49,8 +51,8 @@ const navigation: NavGroup[] = [
   {
     group: "Overview",
     items: [
-      { name: "Analytics", href: "/analytics", icon: Zap, roles: ["admin", "teacher"], description: "Insights into school performance and trends" },
-      { name: "Reports", href: "/oracle", icon: BrainCircuit, roles: ["admin"], description: "Advanced statistics for school management" },
+      { name: "Analytics", href: "/analytics", icon: BarChart3, roles: ["admin", "teacher"], description: "Analyze school performance and institutional trends" },
+      { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"], description: "Generate comprehensive academic and operational reports" },
     ],
   },
   {
@@ -60,7 +62,7 @@ const navigation: NavGroup[] = [
       { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles and enrollment records" },
       { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage institutional personnel and payroll" },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance for students and staff" },
-      { name: "Conduct", href: "/conduct", icon: ShieldAlert, description: "Monitor student behavior and disciplinary actions" },
+      { name: "Conduct", href: "/conduct", icon: ShieldCheck, description: "Monitor student behavior and disciplinary actions" },
       { name: "Health", href: "/health", icon: Stethoscope, description: "Track student health records and medical info" },
       { name: "Alumni", href: "/heritage", icon: GraduationCap, roles: ["admin"], description: "Manage records for former students" },
     ],
@@ -93,11 +95,11 @@ const navigation: NavGroup[] = [
     group: "System",
     roles: ["admin"],
     items: [
-      { name: "Users", href: "/users", icon: ShieldCheck, roles: ["admin"], description: "Manage user accounts and system permissions" },
+      { name: "Users", href: "/users", icon: UserCheck, roles: ["admin"], description: "Manage user accounts and system permissions" },
       { name: "Settings", href: "/settings", icon: Settings, description: "Configure school details and system options" },
-      { name: "Logs", href: "/audit", icon: Shield, description: "View system activity and security logs" },
-      { name: "Compliance", href: "/compliance", icon: FileText, description: "Manage school policies and legal documents" },
-      { name: "Gateways", href: "/gateways", icon: Globe, description: "Configure external payment and notification providers" },
+      { name: "Logs", href: "/audit", icon: History, description: "View system activity and historical audit logs" },
+      { name: "Compliance", href: "/compliance", icon: ShieldCheck, description: "Manage school policies and institutional compliance" },
+      { name: "Infrastructure", href: "/gateways", icon: Globe, description: "Configure external services and system gateways" },
     ],
   },
 ];
@@ -137,14 +139,14 @@ export function Launchpad({
   }
 
   return (
-    <div className="space-y-16 pb-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="space-y-16 pb-12 page-fade-in">
       {filteredNavigation.map((group) => (
-        <div key={group.group} className="space-y-8">
-          <div className="flex items-center gap-x-6">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary whitespace-nowrap">
+        <div key={group.group} className="space-y-6">
+          <div className="flex items-center gap-x-6 px-1">
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
               {group.group}
             </h3>
-            <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -152,30 +154,26 @@ export function Launchpad({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative flex flex-col p-8 bg-card border border-border rounded-lg shadow-sm hover:border-primary transition-all duration-200"
+                className="group relative flex flex-col p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl transition-all duration-300 soft-shadow hover:soft-shadow-lg hover:border-blue-500/30 overflow-hidden"
               >
-                 <div className="flex flex-col gap-y-6 relative z-10">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
-                    <item.icon className="h-6 w-6" />
+                <div className="flex flex-col gap-y-6 relative z-10">
+                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all duration-300 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 group-hover:bg-slate-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-slate-900 shadow-sm">
+                    <item.icon className="h-7 w-7" />
                   </div>
-                                    <div className="space-y-2">
-                    <div className="flex items-center gap-x-2">
-                      <span className="font-semibold text-lg text-foreground tracking-tight group-hover:text-primary transition-colors">
-                        {item.name}
-                      </span>
-                    </div>
-                    <p className="text-[12px] text-muted-foreground font-medium leading-relaxed line-clamp-2">
+
+                  <div className="space-y-2">
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white tracking-tight group-hover:text-blue-600 transition-colors">
+                      {item.name}
+                    </h3>
+                    <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed line-clamp-2">
                       {item.description}
                     </p>
                   </div>
                 </div>
 
-                  <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
-                  <div className="flex items-center gap-x-1.5 text-[10px] font-semibold text-muted-foreground group-hover:text-primary transition-colors">
-                    Open Module
-                  </div>
-                  <div className="h-8 w-8 rounded-md bg-secondary border border-border flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200">
-                    <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
+                <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
+                  <div className="flex items-center gap-x-2 text-[11px] font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
+                    Go to Module <ChevronRight className="h-3.5 w-3.5" />
                   </div>
                 </div>
               </Link>
@@ -184,6 +182,8 @@ export function Launchpad({
         </div>
       ))}
     </div>
+
+
   );
 }
 

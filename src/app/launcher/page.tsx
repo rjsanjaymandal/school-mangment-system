@@ -2,7 +2,7 @@
 
 import { Launchpad } from "@/components/shared/Launchpad";
 import { Badge } from "@/components/ui/badge";
-import { Search, LogOut, User as UserIcon, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Search, LogOut, User as UserIcon, Calendar as CalendarIcon, Clock, GraduationCap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UserService } from "@/lib/services/user";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
@@ -79,43 +79,40 @@ export default function LauncherPage() {
   const userRole = userProfile?.role || "student";
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden font-sans">
-      {/* Dynamic Background Elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/3 rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 relative overflow-hidden font-sans">
+      {/* Background Decoration */}
+      <div className="fixed inset-0 pointer-events-none opacity-40 dark:opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-400/10 rounded-full blur-[120px]" />
       </div>
 
-      {/* Top Navigation / Status Header */}
-      <header className="relative z-50 flex items-center justify-between px-8 py-6 reveal-0">
+      {/* Top Navigation */}
+      <header className="relative z-50 flex items-center justify-between px-8 py-6 page-fade-in">
         <div className="flex items-center gap-x-4">
-          <div className="bg-primary text-primary-foreground p-2.5 rounded-sm shadow-xl emerald-glow">
-            <span className="font-black text-xl tracking-tighter">EM</span>
+          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2 rounded-lg">
+            <GraduationCap className="h-5 w-5" />
           </div>
-          <div className="hidden md:flex flex-col">
-            <span className="text-sm font-bold text-foreground leading-tight">Edu Maysan</span>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">School System</span>
+          <div className="flex flex-col">
+            <span className="text-base font-bold text-slate-900 dark:text-white tracking-tight leading-none">
+              Edu Maysan
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-x-6">
-          <div className="hidden lg:flex items-center gap-x-6 text-foreground/90 font-bold text-xs uppercase tracking-widest">
-            <div className="flex items-center gap-x-2 glass-dark px-4 py-2 rounded-sm border border-border bg-card/40">
-              <CalendarIcon className="h-3 w-3 text-primary" />
-              {currentTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-            </div>
-            <div className="flex items-center gap-x-2 glass-dark px-4 py-2 rounded-sm border border-border bg-card/40">
-              <Clock className="h-3 w-3 text-primary" />
-              {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+        <div className="flex items-center gap-x-4">
+          <div className="hidden lg:flex items-center gap-x-3 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
+            <div className="flex items-center gap-x-2 bg-slate-100 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
+              <CalendarIcon className="h-3 w-3" />
+              {currentTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             </div>
           </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-12 w-12 rounded-sm p-0 hover:bg-accent shadow-sm border border-border">
-                <Avatar className="h-10 w-10 rounded-xs">
+              <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                <Avatar className="h-8 w-8 rounded-full">
                   <AvatarImage src="" />
-                  <AvatarFallback className="bg-primary text-primary-foreground font-bold text-xs uppercase">
+                  <AvatarFallback className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase">
                     {userProfile?.first_name?.[0] || 'U'}
                   </AvatarFallback>
                 </Avatar>
@@ -129,9 +126,12 @@ export default function LauncherPage() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="rounded-xs p-3 cursor-pointer group">
-                <UserIcon className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                <span className="font-bold text-foreground">Personal Profile</span>
+              <DropdownMenuItem 
+                onClick={() => router.push("/profile")}
+                className="rounded-lg p-3 cursor-pointer group hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                <UserIcon className="mr-3 h-4 w-4 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
+                <span className="font-bold text-slate-700 dark:text-slate-300">View Profile</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleSignOut} className="rounded-xs p-3 cursor-pointer group text-destructive focus:text-destructive">
@@ -143,32 +143,26 @@ export default function LauncherPage() {
         </div>
       </header>
 
-      {/* Main Command Center Hub */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-10 pb-24">
-        <div className="flex flex-col items-center text-center space-y-6 mb-16 reveal-1">
-          <div className="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-sm bg-primary/10 text-primary border border-primary/20">
-            <Badge variant="outline" className="border-none text-[10px] font-black uppercase tracking-[0.2em] p-0">
-              System Online
-            </Badge>
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+      {/* Main Content Hub */}
+      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-12 pb-24 page-fade-in">
+        <div className="flex flex-col items-center text-center space-y-8 mb-20">
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
+              {getGreeting()}, {userProfile?.first_name}
+            </h1>
+            <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 font-medium max-w-xl mx-auto">
+              Select a module to manage your school activities and records.
+            </p>
           </div>
-          
-          <h1 className="text-6xl md:text-7xl font-black tracking-tightest text-foreground leading-[1.1] text-balance">
-            {getGreeting()}, <span className="text-primary">{userProfile?.first_name}</span>.
-          </h1>
-          <p className="text-lg md:text-xl text-foreground/70 font-medium max-w-2xl text-balance">
-            Command your <span className="text-foreground font-bold underline decoration-primary underline-offset-8">School Ecosystem</span>. Integrated management for the modern institution.
-          </p>
 
-          <div className="relative w-full max-w-2xl group mt-4">
-            <div className="absolute inset-0 bg-primary/5 rounded-sm blur-xl group-focus-within:bg-primary/10 transition-all duration-500" />
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-all duration-300" />
+          <div className="relative w-full max-w-xl mt-4 group">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-600 transition-all duration-300" />
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Query modules, analytics, or People data..." 
-              className="w-full pl-16 pr-8 py-6 rounded-sm bg-card/60 backdrop-blur-xl border border-border shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-card transition-all font-bold text-lg text-foreground placeholder:text-muted-foreground placeholder:font-medium"
+              placeholder="Find a module..." 
+              className="w-full pl-16 pr-8 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 soft-shadow-md focus:outline-none focus:border-slate-400 transition-all font-bold text-base text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-medium"
             />
           </div>
         </div>
@@ -180,9 +174,9 @@ export default function LauncherPage() {
 
       {/* Footer Branding */}
       <footer className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 reveal-3">
-        <div className="border border-border px-6 py-2.5 rounded-md shadow-md bg-card/60 backdrop-blur-xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-foreground flex items-center gap-x-2">
-            Edu Maysan Core <span className="h-1 w-1 rounded-full bg-primary" /> Architecture 2.5.0
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-6 py-2 rounded-full border border-slate-200 dark:border-slate-800 soft-shadow-lg">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 flex items-center gap-x-2">
+            Edu Maysan <span className="h-1 w-1 rounded-full bg-blue-500" /> Professional v4.5
           </p>
         </div>
       </footer>

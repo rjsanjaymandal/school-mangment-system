@@ -140,25 +140,42 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Elite Style Utilities Removed */
+  /* Professional Minimalist Utilities */
+  .soft-shadow {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .soft-shadow-md {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .soft-shadow-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  .card-premium {
+    @apply bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-sm;
+  }
+
+  .minimal-border {
+    @apply border-slate-200 dark:border-slate-800;
+  }
 }
 
-/* Staggered Reveal Animations */
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(20px); }
+/* Standard Page Animations */
+.page-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.reveal-0 { animation: reveal-up 0.5s ease forwards; }
-.reveal-1 { animation: reveal-up 0.5s ease 0.1s forwards; opacity: 0; }
-.reveal-2 { animation: reveal-up 0.5s ease 0.2s forwards; opacity: 0; }
-.reveal-3 { animation: reveal-up 0.5s ease 0.3s forwards; opacity: 0; }
-
-
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -166,7 +183,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-200 rounded-full hover:bg-slate-300;
+  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
 }
 
 .dark ::-webkit-scrollbar-thumb {

@@ -35,9 +35,8 @@ export function Navbar({ user }: { user: User | null }) {
         />
       </div>
       <div className="flex items-center gap-x-4">
-        <Button variant="ghost" size="icon" className="relative group rounded-lg border border-transparent hover:border-border hover:bg-secondary transition-all">
-          <Bell className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="absolute top-2.5 right-2.5 h-2 w-2 bg-primary rounded-full border-2 border-card" />
+        <Button variant="ghost" size="icon" className="relative group rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+          <Bell className="h-4 w-4 text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -63,11 +62,11 @@ export function Navbar({ user }: { user: User | null }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="p-2.5 rounded-md cursor-pointer group">
-              <span className="font-medium text-foreground">View Profile</span>
+             <DropdownMenuItem className="p-2.5 rounded-md cursor-pointer group" onClick={() => router.push("/profile")}>
+              <span className="font-medium text-slate-700 dark:text-slate-300">View Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="p-2.5 rounded-md cursor-pointer group">
-              <span className="font-medium text-foreground">Settings</span>
+            <DropdownMenuItem className="p-2.5 rounded-md cursor-pointer group" onClick={() => router.push("/settings")}>
+              <span className="font-medium text-slate-700 dark:text-slate-300">Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

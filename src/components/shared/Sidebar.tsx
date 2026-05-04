@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
-  BrainCircuit,
   Users,
   UserSquare2,
   BookOpen,
@@ -16,34 +16,36 @@ import {
   MessageSquare,
   Bus,
   Library,
-  Zap,
   Package,
   Calendar,
   IndianRupee,
   Truck,
   Award,
-  ShieldAlert,
+  ShieldCheck,
   Heart,
   Shield,
-  ShieldCheck,
   Stethoscope,
   Trophy,
   Globe,
+  BarChart3,
+  FileBarChart,
+  UserCheck,
+  History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UserService } from "@/lib/services/user";
 
 interface NavItem {
   name: string;
   href: string;
   icon: any;
-  futuristic?: boolean;
-  roles?: string[]; // Allowed roles for this item
+  roles?: string[];
 }
 
 interface NavGroup {
   group: string;
   items: NavItem[];
-  roles?: string[]; // Allowed roles for the entire group
+  roles?: string[];
 }
 
 const navigation: NavGroup[] = [
@@ -54,13 +56,13 @@ const navigation: NavGroup[] = [
       {
         name: "Analytics",
         href: "/analytics",
-        icon: Zap,
+        icon: BarChart3,
         roles: ["admin", "teacher"],
       },
       {
         name: "Reports",
-        href: "/oracle",
-        icon: BrainCircuit,
+        href: "/reports",
+        icon: FileBarChart,
         roles: ["admin"],
       },
     ],
@@ -72,7 +74,7 @@ const navigation: NavGroup[] = [
       { name: "Students", href: "/students", icon: GraduationCap },
       { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"] },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck, roles: ["admin", "teacher", "student"] },
-      { name: "Conduct", href: "/conduct", icon: ShieldAlert },
+      { name: "Conduct", href: "/conduct", icon: UserCheck },
       { name: "Health", href: "/health", icon: Stethoscope },
       {
         name: "Alumni",
@@ -138,19 +140,16 @@ const navigation: NavGroup[] = [
       {
         name: "Users",
         href: "/users",
-        icon: ShieldCheck,
+        icon: UserCheck,
         roles: ["admin"],
       },
       { name: "Settings", href: "/settings", icon: Settings },
-      { name: "Logs", href: "/audit", icon: Shield },
-      { name: "Compliance", href: "/compliance", icon: FileText },
+      { name: "Logs", href: "/audit", icon: History },
+      { name: "Compliance", href: "/compliance", icon: ShieldCheck },
       { name: "Gateways", href: "/gateways", icon: Globe },
     ],
   },
 ];
-
-import { useEffect, useState } from "react";
-import { UserService } from "@/lib/services/user";
 
 export function Sidebar({ initialProfile }: { initialProfile?: any }) {
   const pathname = usePathname();
@@ -189,29 +188,26 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
     .filter((group) => group.items.length > 0);
 
   return (
-    <div className="flex h-full flex-col bg-background border-r border-border text-foreground transition-all duration-300">
-      <div className="p-8 pb-4 flex items-center gap-x-4 reveal-0">
-          <div className="relative bg-primary text-primary-foreground p-2 rounded-lg shadow-sm transition-all duration-300 group-hover/logo:scale-105">
-            <GraduationCap className="h-6 w-6" />
+    <div className="flex h-full flex-col bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-all duration-300">
+      <div className="p-8 pb-4 flex items-center gap-x-3">
+          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2 rounded-lg">
+            <GraduationCap className="h-5 w-5" />
           </div>
         <div className="flex flex-col">
-          <span className="font-bold text-xl tracking-tight text-foreground leading-none">
-            Maysan
-          </span>
-          <span className="text-[10px] font-medium text-muted-foreground mt-1">
-            Management System
+          <span className="font-bold text-lg tracking-tight">
+            Edu Maysan
           </span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-8 space-y-10 scrollbar-hide reveal-1">
+      <div className="flex-1 overflow-y-auto px-5 py-8 space-y-10 scrollbar-hide">
         {filteredNavigation.map((group) => (
           <div key={group.group} className="space-y-4">
             <div className="flex items-center gap-x-3 px-4">
-              <h3 className="text-[10px] font-semibold text-muted-foreground/60 whitespace-nowrap">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
                 {group.group}
               </h3>
-              <div className="h-[1px] w-full bg-border" />
+              <div className="h-[1px] w-full bg-slate-100 dark:bg-slate-800/50" />
             </div>
             <div className="space-y-1.5">
               {group.items.map((item) => (
@@ -219,28 +215,26 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "group relative flex items-center gap-x-3 text-muted-foreground text-[13px] font-medium px-4 py-2.5 rounded-lg transition-all duration-200",
+                    "group relative flex items-center gap-x-3 text-slate-500 dark:text-slate-400 text-[13px] font-bold uppercase tracking-wide px-4 py-2.5 rounded-xl transition-all duration-200",
                     pathname === item.href 
-                      ? "bg-primary/10 text-primary" 
-                      : "hover:bg-secondary/60 hover:text-foreground"
+                      ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900" 
+                      : "hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white"
                   )}
                 >
                    <div
                     className={cn(
-                      "p-1.5 rounded-md transition-all duration-200",
+                      "p-1.5 rounded-lg transition-all duration-200",
                       pathname === item.href
-                        ? "bg-primary text-primary-foreground shadow-sm"
-                        : "bg-secondary text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary",
+                        ? "text-inherit"
+                        : "bg-slate-50 dark:bg-slate-900 text-slate-400 group-hover:text-inherit",
                     )}
                   >
                     <item.icon className="h-4 w-4" />
                   </div>
-                  <span className="relative z-10 transition-colors duration-500">{item.name}</span>
+                  <span className="relative z-10">{item.name}</span>
                   
-                   {/* Status indicators removed */}
-
                    {pathname === item.href && (
-                    <div className="absolute left-0 w-1 h-3/5 bg-primary rounded-r-full" />
+                    <div className="absolute right-2 h-1.5 w-1.5 rounded-full bg-blue-500" />
                   )}
                 </Link>
               ))}
@@ -249,32 +243,28 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         ))}
       </div>
 
-       <div className="p-6 border-t border-border bg-card/20">
-        <div className="relative group cursor-pointer overflow-hidden p-4 rounded-xl bg-secondary/20 border border-border transition-all duration-300 hover:bg-secondary/40">
-          <div className="absolute top-0 right-0 p-1 opacity-20 transition-opacity group-hover:opacity-100">
-             <Zap className="h-3 w-3 text-primary" />
-          </div>
+       <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30">
+        <Link href="/profile" className="relative group cursor-pointer block overflow-hidden p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm">
             <div className="flex items-center gap-x-4 relative z-10">
-            <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg shadow-sm transition-transform duration-300 group-hover:scale-105">
+            <div className="h-10 w-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-bold text-lg shadow-sm transition-transform duration-300 group-hover:scale-105">
               {userProfile?.full_name?.[0] || "U"}
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-semibold tracking-tight truncate text-foreground">
+              <span className="text-sm font-bold tracking-tight truncate text-slate-900 dark:text-white">
                 {userProfile
                   ? userProfile.full_name
                   : "Syncing..."}
               </span>
               <div className="flex items-center gap-x-2">
-                <span className="h-1 w-1 rounded-full bg-primary" />
-                <span className="text-[10px] font-medium text-muted-foreground truncate">
-                    {userRole} Account
+                <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+                    {userRole}
                 </span>
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );
 }
-

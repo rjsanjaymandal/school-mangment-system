@@ -4,17 +4,19 @@ import {
   GraduationCap,
   UserSquare2,
   CreditCard,
-  Activity,
-  Zap,
   Bell,
-  BrainCircuit,
+  BarChart3,
   CalendarDays,
+  FileText,
+  ClipboardCheck,
+  History,
 } from "lucide-react";
 import { PerformancePredictor } from "@/components/ai/PerformancePredictor";
 import { UserService } from "@/lib/services/user";
 import { AuditService } from "@/lib/services/audit";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionRole } from "@/lib/auth-utils";
+import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -120,23 +122,23 @@ export default async function DashboardPage() {
       icon:
         log.action.includes("USER") || log.action.includes("PROFILE")
           ? Users
-          : Zap,
+          : FileText,
     }))
     : [
       {
         title: "Admission Open",
-        desc: "Term 2 portal is active.",
+        desc: "Term 2 enrollment is active.",
         icon: GraduationCap,
       },
       {
-        title: "System Heartbeat",
-        desc: "All nodes operational.",
-        icon: Activity,
+        title: "Daily Attendance",
+        desc: "All classes reported.",
+        icon: ClipboardCheck,
       },
       {
-        title: "Asset Audit",
-        desc: "Lab equipment verified.",
-        icon: Zap,
+        title: "Academic Report",
+        desc: "Monthly performance generated.",
+        icon: FileText,
       },
     ];
 
@@ -147,7 +149,7 @@ export default async function DashboardPage() {
       icon: GraduationCap,
       trend: "+12.5%",
       description: "Enrollment growth",
-      color: "text-blue-500",
+      color: "text-blue-600",
     },
     {
       title: "Faculty Members",
@@ -155,15 +157,15 @@ export default async function DashboardPage() {
       icon: UserSquare2,
       trend: "+2.1%",
       description: "Active staff",
-      color: "text-purple-500",
+      color: "text-slate-600",
     },
     {
       title: "Current Attendance",
       value: realStats.attendanceRate,
-      icon: Activity,
+      icon: ClipboardCheck,
       trend: "+0.8%",
       description: "Daily average",
-      color: "text-green-500",
+      color: "text-emerald-600",
     },
     {
       title: "Monthly Revenue",
@@ -171,75 +173,62 @@ export default async function DashboardPage() {
       icon: CreditCard,
       trend: "+18%",
       description: "Fee collection",
-      color: "text-orange-500",
+      color: "text-slate-900",
     },
   ];
 
   return (
-    <div className="space-y-12 animate-in fade-in transition-all duration-1000">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
+    <div className="space-y-12 page-fade-in">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-x-2 mb-3">
-             <div className="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-semibold uppercase tracking-wider text-primary flex items-center gap-x-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                System Active
+             <div className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                School Management System
              </div>
-             <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">MYS-01</span>
           </div>
-          <h2 className="text-4xl font-bold tracking-tight text-foreground leading-none">
-            Dashboard Overview
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
+            Academic Overview
           </h2>
-          <p className="text-muted-foreground font-medium text-xs mt-3 flex items-center gap-x-2">
-             <BrainCircuit className="h-4 w-4 text-primary" />
-             AI-Powered Analytics & Management
+          <p className="text-slate-500 font-medium text-xs mt-3 flex items-center gap-x-2">
+             Centralized control and insights for your institution.
           </p>
         </div>
         <div className="flex items-center gap-x-3">
-          <button className="p-3 rounded-md bg-secondary border border-border hover:bg-secondary/80 transition-all text-muted-foreground">
+          <button className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-500 shadow-sm">
             <Bell className="h-5 w-5" />
           </button>
-          <Link href="/oracle">
-            <button className="relative group px-6 h-11 bg-primary text-primary-foreground rounded-md transition-all hover:opacity-90 active:scale-95 shadow-sm">
-              <div className="flex items-center gap-x-2 font-semibold text-xs tracking-wide">
-                <Zap className="h-4 w-4" />
-                Launch Oracle
-              </div>
+          <Link href="/reports">
+            <button className="px-6 h-11 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-sm font-bold text-xs tracking-wide">
+                Generate Reports
             </button>
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 reveal-1">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => (
           <div
             key={stat.title}
-            className="bg-card p-6 border border-border rounded-lg shadow-sm hover:border-primary/40 transition-all"
+            className="bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all"
           >
             <div className="flex justify-between items-start mb-4">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                 {stat.title}
               </p>
-              <stat.icon className="h-5 w-5 text-primary opacity-40" />
+              <stat.icon className="h-4 w-4 text-slate-300" />
             </div>
 
             <div className="flex items-end gap-x-2">
-              <h3 className="text-3xl font-bold text-foreground tracking-tight leading-none">
+              <h3 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">
                 {stat.value}
               </h3>
-              <div className="text-[10px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">
-                 {stat.trend}
-              </div>
             </div>
 
-            <div className="mt-6 space-y-1.5">
-               <div className="flex justify-between text-[9px] font-medium text-muted-foreground">
-                  <span>Usage Rate</span>
-                  <span>{stat.trend}</span>
-               </div>
-               <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+            <div className="mt-6">
+               <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-primary transition-all duration-1000" 
-                    style={{ width: '65%' }} 
+                    className={cn("h-full transition-all duration-1000", stat.color.replace('text-', 'bg-'))} 
+                    style={{ width: '70%' }} 
                   />
                </div>
             </div>
@@ -247,17 +236,13 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3 reveal-2">
-        <div className="lg:col-span-1 bg-card p-6 border border-border rounded-lg shadow-sm">
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-1 bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-semibold text-muted-foreground flex items-center gap-x-2 text-[10px] uppercase tracking-wider">
-              <Activity className="h-3.5 w-3.5 text-primary" />
+            <h3 className="font-bold text-slate-400 flex items-center gap-x-2 text-[10px] uppercase tracking-widest">
+              <History className="h-3.5 w-3.5" />
               Recent Activity
             </h3>
-            <div className="flex items-center gap-x-1.5 text-[10px] font-semibold text-primary uppercase tracking-wider">
-               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-               Live
-            </div>
           </div>
           <div className="space-y-3">
             {activityFeed.map((event, i) => (
@@ -284,50 +269,42 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        <div className="lg:col-span-2 bg-card p-6 border border-border rounded-lg shadow-sm">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
            <div className="flex items-center justify-between mb-6">
               <div>
-                 <h3 className="text-xl font-bold text-foreground">Performance Projections</h3>
-                 <p className="text-[10px] font-semibold uppercase tracking-wider text-primary mt-1">AI-Driven Result Prediction</p>
-              </div>
-              <div className="flex gap-x-1">
-                 <div className="h-1.5 w-1.5 rounded-full bg-primary/40" />
-                 <div className="h-1.5 w-1.5 rounded-full bg-primary/60" />
-                 <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Academic Projections</h3>
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">Institutional Data Analysis</p>
               </div>
            </div>
            <PerformancePredictor />
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7 reveal-3">
-        <div className="col-span-4 bg-card p-8 border border-border rounded-lg shadow-sm relative overflow-hidden">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+        <div className="col-span-4 bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-xl font-bold text-foreground">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Attendance Trends
               </h3>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
-                Real-time System Monitoring
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">
+                Historical Data Monitoring
               </p>
             </div>
-            <div className="px-3 py-1 bg-primary/10 text-primary font-bold text-[9px] uppercase tracking-wider rounded-full border border-primary/20">
-               Active
-            </div>
           </div>
-          <div className="h-[280px] flex flex-col items-center justify-center border border-dashed border-border rounded-lg bg-muted/20">
-            <Zap className="h-12 w-12 mb-4 text-muted-foreground opacity-20" />
-            <p className="font-semibold text-[10px] uppercase tracking-widest text-muted-foreground/60">
-              Initializing Analytics Engine...
+          <div className="h-[280px] flex flex-col items-center justify-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50 dark:bg-slate-900/50">
+            <BarChart3 className="h-12 w-12 mb-4 text-slate-200 dark:text-slate-800" />
+            <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-slate-400">
+              Generating Analytics...
             </p>
           </div>
         </div>
 
-        <div className="col-span-3 bg-card p-8 border border-border rounded-lg shadow-sm">
+        <div className="col-span-3 bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
           <div className="mb-8">
-            <h3 className="text-xl font-bold text-foreground">Schedule</h3>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-1">
-              {todayLabel} agenda
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Daily Schedule</h3>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">
+              {todayLabel}
             </p>
           </div>
           <div className="space-y-4">
@@ -363,4 +340,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-
