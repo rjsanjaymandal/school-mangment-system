@@ -40,7 +40,7 @@ export default async function TeachersPage() {
       <PageHeader
         title="Faculty Management"
         description="Academic & Administrative Logistics Engine for Faculty Personnel."
-        icon={Users}
+        icon={<Users className="h-7 w-7" />}
         badge={`${teachers?.length || 0} Faculty Members`}
       >
         <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">

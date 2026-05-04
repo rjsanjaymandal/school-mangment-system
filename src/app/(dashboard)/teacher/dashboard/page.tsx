@@ -25,7 +25,7 @@ export default async function TeacherDashboard() {
       <PageHeader
         title="Educator Workspace"
         description="Academic Performance Monitoring & Classroom Engagement"
-        icon={GraduationCap}
+        icon={<GraduationCap className="h-7 w-7" />}
         badge={activeYearName}
       >
         <Link href="/exams">

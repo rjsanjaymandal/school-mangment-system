@@ -47,7 +47,7 @@ export default async function ClassesPage() {
       <PageHeader
         title="Institutional Architecture"
         description="Manage grade levels, sections, and structural room allocations."
-        icon={Building2}
+        icon={<Building2 className="h-7 w-7" />}
         badge={`${classes?.length || 0} active sections`}
       >
         <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">

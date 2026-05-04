@@ -36,7 +36,7 @@ export default async function ProfilePage() {
             <PageHeader
                 title="Identity Hub"
                 description="Manage your personal profile and institutional credentials."
-                icon={UserCircle2}
+                icon={<UserCircle2 className="h-7 w-7" />}
             >
                 <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
                     <Edit className="h-4 w-4" />

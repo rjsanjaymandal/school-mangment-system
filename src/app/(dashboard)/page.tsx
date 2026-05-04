@@ -10,6 +10,7 @@ import {
   FileText,
   ClipboardCheck,
   History,
+  LayoutDashboard,
 } from "lucide-react";
 import { PerformancePredictor } from "@/components/ai/PerformancePredictor";
 import { UserService } from "@/lib/services/user";
@@ -17,12 +18,14 @@ import { AuditService } from "@/lib/services/audit";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionRole } from "@/lib/auth-utils";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/shared/PageHeader";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const role = await getSessionRole();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Parallelize all independent data fetches
   const [statsData, recentLogs, currentAY] = await Promise.all([
     UserService.getSystemStats(),
     AuditService.getAuditEntries(),
@@ -41,6 +44,7 @@ export default async function DashboardPage() {
     hour12: false,
   }).format(new Date());
 
+  // Student class lookup + timetable fetch in parallel where possible
   let studentClassId: string | null = null;
   if (role === "student" && user?.id && currentAY?.id) {
     const { data: enrollment } = await supabase
@@ -109,10 +113,10 @@ export default async function DashboardPage() {
     statsData && !("error" in statsData)
       ? statsData
       : {
-        studentCount: 1234,
-        teacherCount: 84,
-        attendanceRate: "94.2%",
-        revenue: "₹45.2K",
+        studentCount: 0,
+        teacherCount: 0,
+        attendanceRate: "—",
+        revenue: "₹0",
       };
 
   const activityFeed = Array.isArray(recentLogs)
@@ -147,66 +151,52 @@ export default async function DashboardPage() {
       title: "Total Students",
       value: realStats.studentCount.toString(),
       icon: GraduationCap,
-      trend: "+12.5%",
-      description: "Enrollment growth",
       color: "text-blue-600",
+      bgColor: "bg-blue-600",
     },
     {
       title: "Faculty Members",
       value: realStats.teacherCount.toString(),
       icon: UserSquare2,
-      trend: "+2.1%",
-      description: "Active staff",
       color: "text-slate-600",
+      bgColor: "bg-slate-600",
     },
     {
       title: "Current Attendance",
       value: realStats.attendanceRate,
       icon: ClipboardCheck,
-      trend: "+0.8%",
-      description: "Daily average",
       color: "text-emerald-600",
+      bgColor: "bg-emerald-600",
     },
     {
       title: "Monthly Revenue",
       value: realStats.revenue,
       icon: CreditCard,
-      trend: "+18%",
-      description: "Fee collection",
       color: "text-slate-900",
+      bgColor: "bg-slate-900",
     },
   ];
 
   return (
-    <div className="space-y-12 page-fade-in">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <div className="flex items-center gap-x-2 mb-3">
-             <div className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                School Management System
-             </div>
-          </div>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white leading-none">
-            Academic Overview
-          </h2>
-          <p className="text-slate-500 font-medium text-xs mt-3 flex items-center gap-x-2">
-             Centralized control and insights for your institution.
-          </p>
-        </div>
-        <div className="flex items-center gap-x-3">
-          <button className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-500 shadow-sm">
-            <Bell className="h-5 w-5" />
+    <div className="page-container page-fade-in">
+      <PageHeader
+        title="Academic Overview"
+        description="Centralized control and insights for your institution."
+        icon={<LayoutDashboard className="h-7 w-7" />}
+        badge={currentAY?.name || undefined}
+      >
+        <button className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-500 shadow-sm">
+          <Bell className="h-5 w-5" />
+        </button>
+        <Link href="/reports">
+          <button className="px-6 h-11 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-sm font-bold text-xs tracking-wide">
+              Generate Reports
           </button>
-          <Link href="/reports">
-            <button className="px-6 h-11 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-sm font-bold text-xs tracking-wide">
-                Generate Reports
-            </button>
-          </Link>
-        </div>
-      </div>
+        </Link>
+      </PageHeader>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => (
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 reveal-1">
+        {stats.map((stat) => (
           <div
             key={stat.title}
             className="bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all"
@@ -226,17 +216,17 @@ export default async function DashboardPage() {
 
             <div className="mt-6">
                <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div 
-                    className={cn("h-full transition-all duration-1000", stat.color.replace('text-', 'bg-'))} 
-                    style={{ width: '70%' }} 
-                  />
+                 <div 
+                   className={cn("h-full transition-all duration-1000", stat.bgColor)} 
+                   style={{ width: '70%' }} 
+                 />
                </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-3 reveal-2">
         <div className="lg:col-span-1 bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold text-slate-400 flex items-center gap-x-2 text-[10px] uppercase tracking-widest">
@@ -280,7 +270,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7 reveal-3">
         <div className="col-span-4 bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <div>

@@ -46,3 +46,16 @@ yarn-error.log*
 .claude/
 .gemini/
 brain/
+
+# build logs & debug artifacts
+*.log
+build_log*.txt
+lint_*.log
+tsc_errors*.log
+lint_fix_report.json
+ts_errors.log
+build.log
+build_output.log
+continuous_build_mode.md
+tmp/
+skills-lock.json

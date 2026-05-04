@@ -17,7 +17,7 @@ export default async function SubjectsPage() {
       <PageHeader
         title="Curriculum Registry"
         description="Manage institutional subjects, credit allocations, and academic syllabus details."
-        icon={BookOpen}
+        icon={<BookOpen className="h-7 w-7" />}
         badge={`${subjects?.length || 0} active subjects`}
       >
         <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">

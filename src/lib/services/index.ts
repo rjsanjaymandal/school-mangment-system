@@ -9,7 +9,7 @@ export { GatewayService } from "./gateway";
 export { GradebookService } from "./gradebook";
 export { GuardianService } from "./guardian";
 export { HealthService } from "./health";
-export * as ViewAsService from "./view-as";
+export * as ImpersonationService from "./impersonation";
 export { InstitutionalService } from "./institutional";
 export { InventoryService } from "./inventory";
 export { LibraryService } from "./library";

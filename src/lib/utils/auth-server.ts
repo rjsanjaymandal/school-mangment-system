@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
  */
 export async function getActiveUser() {
   const cookieStore = await cookies();
-  const impersonationId = cookieStore.get("view_as_user_id")?.value;
+  const impersonationId = cookieStore.get("impersonation_user_id")?.value;
 
   if (impersonationId) {
     return impersonationId;

@@ -1,12 +1,10 @@
-
-import { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ReactNode } from "react";
 
 interface PageHeaderProps {
   title: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: ReactNode;
   badge?: string;
   children?: ReactNode;
 }
@@ -14,16 +12,16 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   description,
-  icon: Icon,
+  icon,
   badge,
   children,
 }: PageHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
       <div className="flex items-start gap-x-5">
-        {Icon && (
+        {icon && (
           <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-900 dark:text-white shadow-xl soft-shadow-md">
-            <Icon className="h-7 w-7" />
+            {icon}
           </div>
         )}
         <div className="space-y-1">

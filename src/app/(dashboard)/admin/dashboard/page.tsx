@@ -40,7 +40,7 @@ export default async function AdminDashboard() {
       <PageHeader
         title="Admin Mission Control"
         description="Institutional Governance & Strategic System Management"
-        icon={GraduationCap}
+        icon={<GraduationCap className="h-7 w-7" />}
         badge={activeYearName}
       >
         <Button variant="outline" className="rounded-xl font-bold bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 gap-x-2">
@@ -136,8 +136,6 @@ export default async function AdminDashboard() {
         </Card>
       </div>
     </div>
-  );
-}
   );
 }
 

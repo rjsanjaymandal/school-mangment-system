@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 import { getAuthContext } from "@/lib/auth-context";
-import { ImpersonationBanner } from "@/components/users/ImpersonationBanner";
+import { ImpersonationBanner } from "@/components/shared/ImpersonationBanner";
 
 export default async function RootLayout({
   children,
@@ -34,8 +34,8 @@ export default async function RootLayout({
       <body className={`${geist.variable} font-sans antialiased flex flex-col min-h-screen`}>
         {isImpersonating && (
           <ImpersonationBanner 
-            displayName={effectiveUser?.full_name} 
-            role={effectiveRole}
+            targetName={effectiveUser?.full_name || "Unknown"} 
+            targetRole={effectiveRole || "unknown"}
           />
         )}
         <main className="flex-1 w-full overflow-x-hidden">

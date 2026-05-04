@@ -141,7 +141,7 @@ export default function ReportsPage() {
       <PageHeader
         title="Institutional Reports"
         description="Generate and verify academic credentials for all registered students."
-        icon={FileText}
+        icon={<FileText className="h-7 w-7" />}
       >
         <Button
           variant="outline"

@@ -189,3 +189,36 @@
 .dark ::-webkit-scrollbar-thumb {
   @apply bg-slate-800 hover:bg-slate-700;
 }
+
+/* Page Container Utility */
+.page-container {
+  @apply max-w-6xl mx-auto px-6 py-12 space-y-12;
+}
+
+/* Reveal Animations — staggered entrance */
+.reveal-1 {
+  animation: reveal-up 0.5s ease-out 0.1s both;
+}
+.reveal-2 {
+  animation: reveal-up 0.5s ease-out 0.25s both;
+}
+.reveal-3 {
+  animation: reveal-up 0.5s ease-out 0.4s both;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shimmer animation for skeleton loaders */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

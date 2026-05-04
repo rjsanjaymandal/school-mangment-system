@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
+import { DemographicsPanel } from "@/components/analytics/DemographicsPanel";
 
 export default async function AnalyticsPage() {
   const supabase = await createClient();
@@ -10,7 +11,7 @@ export default async function AnalyticsPage() {
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
   const yearStart = new Date(now.getFullYear(), 0, 1).toISOString().split("T")[0];
 
-  // Parallelize all independent queries
+  // Parallelize ALL independent queries (original + demographics)
   const [
     currentAttendanceRes,
     previousAttendanceRes,
@@ -25,8 +26,13 @@ export default async function AnalyticsPage() {
     paymentsRes,
     totalBooksRes,
     activeLoansRes,
-    conductDataRes
+    conductDataRes,
+    // Demographics queries
+    demographicStudentsRes,
+    classListRes,
+    documentCountsRes,
   ] = await Promise.all([
+    // Original queries
     supabase.from("attendance").select("status, date").gte("date", thirtyDaysAgo.toISOString().split("T")[0]),
     supabase.from("attendance").select("status, date").lt("date", thirtyDaysAgo.toISOString().split("T")[0]).gte("date", sixtyDaysAgo.toISOString().split("T")[0]),
     supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").gte("created_at", thirtyDaysAgo.toISOString()),
@@ -40,9 +46,16 @@ export default async function AnalyticsPage() {
     supabase.from("payments").select("amount_paid, status, payment_date"),
     supabase.from("library_books").select("*", { count: "exact", head: true }),
     supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued"),
-    supabase.from("student_conduct").select("type, points")
+    supabase.from("student_conduct").select("type, points"),
+    // Demographics: students with demographic fields + class name
+    supabase.from("students").select("id, gender, date_of_birth, category, religion, class_id, class:classes(name)"),
+    // All classes for filter dropdown
+    supabase.from("classes").select("id, name").order("name"),
+    // Document counts per student (grouped)
+    supabase.from("student_documents").select("student_id"),
   ]);
 
+  // Original data extraction
   const currentAttendance = currentAttendanceRes.data || [];
   const previousAttendance = previousAttendanceRes.data || [];
   const currentMarks = currentMarksRes.data || [];
@@ -60,6 +73,7 @@ export default async function AnalyticsPage() {
 
   const targetRevenue = parseFloat(settings?.find(s => s.key === "target_revenue")?.value || "5000000");
 
+  // Low attendance calculation
   const studentStats: Record<string, { total: number; present: number }> = {};
   attendanceSummary?.forEach(a => {
     if (!studentStats[a.student_id]) studentStats[a.student_id] = { total: 0, present: 0 };
@@ -81,27 +95,63 @@ export default async function AnalyticsPage() {
     lowAttendanceStudents = profiles || [];
   }
 
+  // Demographics data extraction
+  const demographicStudents = (demographicStudentsRes.data || []).map((s: any) => ({
+    id: s.id,
+    gender: s.gender,
+    date_of_birth: s.date_of_birth,
+    category: s.category || "General",
+    religion: s.religion || "Not Specified",
+    class_id: s.class_id,
+    class: s.class,
+  }));
+
+  const classList = (classListRes.data || []).map((c: any) => ({
+    id: c.id,
+    name: c.name,
+  }));
+
+  // Count documents per student
+  const docRaw = documentCountsRes.data || [];
+  const docCountMap: Record<string, number> = {};
+  docRaw.forEach((d: any) => {
+    docCountMap[d.student_id] = (docCountMap[d.student_id] || 0) + 1;
+  });
+  const documentStats = Object.entries(docCountMap).map(([student_id, doc_count]) => ({
+    student_id,
+    doc_count,
+  }));
+
   return (
-    <AnalyticsDashboard
-      studentCount={studentCount || 0}
-      teacherCount={teacherCount || 0}
-      currentAttendance={currentAttendance || []}
-      previousAttendance={previousAttendance || []}
-      payments={payments || []}
-      currentMarks={currentMarks || []}
-      previousMarks={previousMarks || []}
-      totalBooks={totalBooks || 0}
-      activeLoans={activeLoans || 0}
-      conductData={conductData || []}
-      monthlyAttendance={monthlyAttendance || []}
-      targetRevenue={targetRevenue}
-      alerts={{
-        lowInventory: lowInventory?.map(i => i.name) || [],
-        lowAttendanceCount: lowAttendanceStudentIds.length,
-        lowAttendanceNames: lowAttendanceStudents.map(s => s.full_name)
-      }}
-    />
+    <div className="page-container page-fade-in space-y-16">
+      <AnalyticsDashboard
+        studentCount={studentCount || 0}
+        teacherCount={teacherCount || 0}
+        currentAttendance={currentAttendance || []}
+        previousAttendance={previousAttendance || []}
+        payments={payments || []}
+        currentMarks={currentMarks || []}
+        previousMarks={previousMarks || []}
+        totalBooks={totalBooks || 0}
+        activeLoans={activeLoans || 0}
+        conductData={conductData || []}
+        monthlyAttendance={monthlyAttendance || []}
+        targetRevenue={targetRevenue}
+        alerts={{
+          lowInventory: lowInventory?.map(i => i.name) || [],
+          lowAttendanceCount: lowAttendanceStudentIds.length,
+          lowAttendanceNames: lowAttendanceStudents.map(s => s.full_name)
+        }}
+      />
+
+      {/* Advanced Demographics Section */}
+      <div className="border-t border-slate-200 dark:border-slate-800 pt-12">
+        <DemographicsPanel
+          students={demographicStudents}
+          classes={classList}
+          documentStats={documentStats}
+        />
+      </div>
+    </div>
   );
 }
-
-

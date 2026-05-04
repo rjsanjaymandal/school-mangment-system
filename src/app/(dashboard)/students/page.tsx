@@ -20,7 +20,7 @@ export default async function StudentsPage() {
       <PageHeader
         title="Student Registry"
         description="Comprehensive directory of institutional learners and academic profiles."
-        icon={Users}
+        icon={<Users className="h-7 w-7" />}
         badge={`${students?.length || 0} Records`}
       >
         <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
