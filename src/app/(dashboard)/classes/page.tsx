@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { ClassList } from "@/components/classes/ClassList";
 import { getSessionRole } from "@/lib/auth-utils";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Building2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function ClassesPage() {
   const supabase = await createClient();
@@ -33,36 +33,47 @@ export default async function ClassesPage() {
 
   if (error) {
     console.error("Classes query error details:", JSON.stringify(error, null, 2));
-    return <div className="p-8 text-destructive italic">Error loading institutional sections: {error.message}</div>;
+    return <div className="p-6 text-red-600">Error loading classes: {error.message}</div>;
   }
 
-  // Manually join teacher data since the database foreign key might be missing
   const joinedClasses = classes?.map(cls => {
     const teacher = teachers?.find(t => t.id === cls.teacher_id);
     return { ...cls, teacher };
   }) || [];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
-      <PageHeader
-        title="Institutional Architecture"
-        description="Manage grade levels, sections, and structural room allocations."
-        icon={<Building2 className="h-7 w-7" />}
-        badge={`${classes?.length || 0} active sections`}
-      >
-        <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-purple-50 rounded-md">
+            <Building2 className="h-6 w-6 text-purple-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Classes</h1>
+            <p className="text-sm text-slate-500">{classes?.length || 0} active classes</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
           <Plus className="h-4 w-4" />
-          Create Class
+          Add Class
         </Button>
-      </PageHeader>
+      </div>
 
-      <ClassList
-        initialData={joinedClasses as any}
-        userRole={role}
-        teachers={teachers || []}
-        subjects={subjects || []}
-        currentAcademicYearId={currentAcademicYear?.id}
-      />
+      <ERPCard
+        title="Class Management"
+        description="Manage grade levels and sections"
+        icon={<Building2 className="h-5 w-5" />}
+        color="purple"
+      >
+        <ClassList
+          initialData={joinedClasses as any}
+          userRole={role}
+          teachers={teachers || []}
+          subjects={subjects || []}
+          currentAcademicYearId={currentAcademicYear?.id}
+        />
+      </ERPCard>
     </div>
   );
 }

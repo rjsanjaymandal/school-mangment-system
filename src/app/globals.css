@@ -154,11 +154,38 @@
   }
 
   .card-premium {
-    @apply bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 shadow-sm;
+    @apply bg-white/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 shadow-sm backdrop-blur-sm;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  }
+
+  .card-interactive {
+    @apply bg-white/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 shadow-sm backdrop-blur-sm transition-all duration-300;
+    @apply hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 hover:-translate-y-1 active:scale-[0.98];
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  }
+
+  .glass-panel {
+    @apply bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-2xl;
+  }
+
+  .glass-card {
+    @apply bg-white/40 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 rounded-3xl;
+  }
+
+  .emerald-glow {
+    box-shadow: 0 0 20px -5px oklch(0.72 0.16 165 / 0.3);
+  }
+
+  .blue-glow {
+    box-shadow: 0 0 20px -5px oklch(0.6 0.15 220 / 0.3);
+  }
+
+  .indigo-glow {
+    box-shadow: 0 0 20px -5px oklch(0.5 0.15 260 / 0.3);
   }
 
   .minimal-border {
-    @apply border-slate-200 dark:border-slate-800;
+    @apply border-slate-200/60 dark:border-slate-800/60;
   }
 }
 

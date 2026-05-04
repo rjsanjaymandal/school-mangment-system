@@ -20,7 +20,7 @@ export default async function DashboardLayout({
     return redirect("/login");
   }
 
-  // Handle Impersonation Logic
+  // Handle Shadow Mode Logic
   const cookieStore = await cookies();
   const impersonationId = cookieStore.get("impersonation_user_id")?.value;
   
@@ -43,20 +43,29 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="h-full relative">
-      {impersonationData && (
-        <ImpersonationBanner
-          targetName={impersonationData.name}
-          targetRole={impersonationData.role}
-        />
-      )}
-      <div className="hidden h-full md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40 bg-card">
+    <div className="h-full flex">
+      {/* Fixed Sidebar */}
+      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40">
         <Sidebar initialProfile={activeProfile} />
       </div>
-      <main className="md:pl-64 flex flex-col min-h-screen bg-background">
+      
+      {/* Main Content */}
+      <div className="flex-1 md:pl-64 flex flex-col min-h-screen bg-slate-50">
         <Navbar user={user} />
-        <div className="flex-1 p-8 reveal-1">{children}</div>
-      </main>
+        
+        {/* Shadow Mode Banner */}
+        {impersonationData && (
+          <ImpersonationBanner
+            targetName={impersonationData.name}
+            targetRole={impersonationData.role}
+          />
+        )}
+        
+        {/* Page Content - using p-6 as per ERP standard */}
+        <main className="flex-1 p-6">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

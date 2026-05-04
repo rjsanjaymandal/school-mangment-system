@@ -131,28 +131,30 @@ export function AnalyticsDashboard({
 
     return (
         <div className="space-y-12 page-fade-in">
+        <div className="reveal-1">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+                    <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 dark:text-white uppercase italic">
                         Institutional Analytics
                     </h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-bold tracking-tight mt-1 flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-emerald-500" /> Real-time academic & institutional telemetry
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-2 flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-primary animate-pulse" /> Real-time academic & institutional telemetry
                     </p>
                 </div>
                 <Button 
                     onClick={handleExportCSV} 
                     variant="outline"
-                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold gap-x-2 px-6 shadow-sm"
+                    className="rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-black text-[10px] uppercase tracking-widest gap-x-2 h-12 px-6 shadow-sm hover:shadow-xl transition-all active:scale-95"
                 >
                     <Download className="h-4 w-4" /> Export Report
                 </Button>
             </div>
+        </div>
 
             {/* Top Stats */}
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 reveal-2">
                 {topMetrics.map((m) => (
-                    <Card key={m.title} className="card-premium rounded-[2.5rem] overflow-hidden group transition-all hover:scale-[1.02] duration-300">
+                    <Card key={m.title} className="card-interactive rounded-[2.5rem] overflow-hidden group">
                         <CardContent className="p-8">
                             <div className="flex justify-between items-start mb-4">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{m.title}</p>
@@ -236,9 +238,10 @@ export function AnalyticsDashboard({
                 </Card>
 
                 {/* System Health & Alerts (New Widget) */}
-                <Card className="lg:col-span-1 card-premium rounded-[2.5rem] overflow-hidden flex flex-col">
-                    <CardHeader className="p-8 border-b border-slate-100 dark:border-slate-800 bg-red-500 text-white">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-x-2">
+                <Card className="lg:col-span-1 card-premium rounded-[2.5rem] overflow-hidden flex flex-col reveal-3 border-none">
+                    <CardHeader className="p-8 bg-primary text-white shadow-xl emerald-glow relative overflow-hidden">
+                        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-x-2 relative z-10 italic">
                             <AlertCircle className="h-4 w-4" /> 
                             System Health & Alerts
                         </CardTitle>

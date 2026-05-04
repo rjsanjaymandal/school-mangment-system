@@ -1,0 +1,205 @@
+"use client";
+
+import { useState } from "react";
+import { 
+    ClipboardCheck, Calendar as CalendarIcon, Filter, Save, 
+    CheckCircle2, AlertCircle, Clock
+} from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { 
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { StudentAvatar } from "@/components/students/StudentAvatar";
+import { cn } from "@/lib/utils";
+import { AttendanceService } from "@/lib/services/attendance";
+
+export default function StudentAttendancePage() {
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedClassId, setSelectedClassId] = useState("10-A");
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Mock student list for attendance (should ideally be fetched based on selectedClassId)
+    const students = [
+        { id: "ADM-2026-0001", name: "Ethan Hunt", roll: "22" },
+        { id: "ADM-2026-0002", name: "Sarah Connor", roll: "14" },
+        { id: "ADM-2026-0003", name: "James Bond", roll: "07" },
+        { id: "ADM-2026-0004", name: "Ellen Ripley", roll: "18" },
+        { id: "ADM-2026-0005", name: "Luke Skywalker", roll: "31" },
+    ];
+
+    const [attendance, setAttendance] = useState<Record<string, string>>(
+        Object.fromEntries(students.map(s => [s.id, "present"]))
+    );
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const attendanceData = Object.entries(attendance).map(([student_id, status]) => ({
+                student_id,
+                class_id: selectedClassId,
+                status,
+                date: selectedDate
+            }));
+
+            const res = await AttendanceService.batchMarkAttendance(attendanceData);
+            if (res && "error" in res) {
+                toast.error("Failed to synchronize attendance.");
+            } else {
+                toast.success("Attendance Synchronized", {
+                    description: `Successfully logged for ${students.length} students on ${selectedDate}.`,
+                    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                });
+            }
+        } catch (error) {
+            toast.error("An unexpected error occurred during synchronization.");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    return (
+        <div className="space-y-10">
+            {/* Header + Filters */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal-1">
+                <div className="flex items-center gap-x-6">
+                    <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center emerald-glow">
+                        <ClipboardCheck className="h-7 w-7 text-primary" />
+                    </div>
+                    <div>
+                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
+                            Attendance Terminal
+                        </h3>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">
+                            Daily Compliance Monitor • Digital Logsheet
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-x-4 w-full md:w-auto">
+                    <div className="flex items-center gap-x-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200/60 shadow-sm">
+                        <Input 
+                            type="date" 
+                            className="h-10 border-none bg-transparent font-bold text-xs focus-visible:ring-0 w-36"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                        />
+                        <div className="h-6 w-[1px] bg-slate-100 mx-1" />
+                        <Select 
+                            value={selectedClassId}
+                            onValueChange={setSelectedClassId}
+                        >
+                            <SelectTrigger className="h-10 border-none bg-transparent font-black text-[10px] uppercase tracking-widest focus:ring-0 w-32">
+                                <SelectValue placeholder="Class" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl font-bold">
+                                <SelectItem value="10-A">Grade 10-A</SelectItem>
+                                <SelectItem value="09-B">Grade 09-B</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <Button 
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className="h-14 px-8 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest gap-x-3 shadow-xl active:scale-95 transition-all"
+                    >
+                        <Save className="h-4 w-4" />
+                        {isSaving ? "Syncing..." : "Save Daily Log"}
+                    </Button>
+                </div>
+            </div>
+
+            {/* Attendance Logger Table */}
+            <Card className="card-premium rounded-[3rem] overflow-hidden reveal-2 shadow-2xl border-none">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
+                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-16 text-center">Roll</th>
+                                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Student Profile</th>
+                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Attendance Status</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                            {students.map((s) => (
+                                <tr key={s.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
+                                    <td className="px-8 py-5 text-center">
+                                        <span className="text-sm font-black text-slate-400">{s.roll}</span>
+                                    </td>
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-x-4">
+                                            <StudentAvatar 
+                                                name={s.name} 
+                                                classId="attendance-mock" 
+                                                className="h-11 w-11 text-[10px] shadow-sm opacity-80"
+                                            />
+                                            <div>
+                                                <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight italic">{s.name}</p>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.id}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-5">
+                                        <div className="flex items-center justify-center gap-x-4">
+                                            {[
+                                                { id: "present", label: "P", color: "emerald", icon: CheckCircle2 },
+                                                { id: "late", label: "L", color: "amber", icon: Clock },
+                                                { id: "absent", label: "A", color: "rose", icon: AlertCircle },
+                                            ].map((opt) => (
+                                                <button
+                                                    key={opt.id}
+                                                    onClick={() => setAttendance(prev => ({ ...prev, [s.id]: opt.id }))}
+                                                    className={cn(
+                                                        "flex flex-col items-center gap-y-1 group/btn",
+                                                        attendance[s.id] === opt.id ? "scale-110" : "opacity-40 grayscale hover:opacity-100 hover:grayscale-0"
+                                                    )}
+                                                >
+                                                    <div className={cn(
+                                                        "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-300",
+                                                        attendance[s.id] === opt.id 
+                                                            ? `bg-${opt.color}-500 text-white shadow-lg shadow-${opt.color}-500/20` 
+                                                            : `bg-slate-100 dark:bg-slate-800 text-slate-400`
+                                                    )}>
+                                                        <opt.icon className="h-5 w-5" />
+                                                    </div>
+                                                    <span className={cn(
+                                                        "text-[9px] font-black uppercase tracking-widest",
+                                                        attendance[s.id] === opt.id ? `text-${opt.color}-600` : "text-slate-400"
+                                                    )}>
+                                                        {opt.id}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+
+            <div className="flex items-center justify-center reveal-3">
+                <Card className="p-6 bg-slate-900 dark:bg-slate-800 rounded-[2.5rem] shadow-2xl border-none flex items-center gap-x-8">
+                    <div className="flex items-center gap-x-3">
+                        <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                        <span className="text-white text-[10px] font-black uppercase tracking-widest">Present: {Object.values(attendance).filter(v => v === "present").length}</span>
+                    </div>
+                    <div className="h-4 w-[1px] bg-white/10" />
+                    <div className="flex items-center gap-x-3">
+                        <div className="h-2 w-2 rounded-full bg-amber-500" />
+                        <span className="text-white text-[10px] font-black uppercase tracking-widest">Late: {Object.values(attendance).filter(v => v === "late").length}</span>
+                    </div>
+                    <div className="h-4 w-[1px] bg-white/10" />
+                    <div className="flex items-center gap-x-3">
+                        <div className="h-2 w-2 rounded-full bg-rose-500" />
+                        <span className="text-white text-[10px] font-black uppercase tracking-widest">Absent: {Object.values(attendance).filter(v => v === "absent").length}</span>
+                    </div>
+                </Card>
+            </div>
+        </div>
+    );
+}

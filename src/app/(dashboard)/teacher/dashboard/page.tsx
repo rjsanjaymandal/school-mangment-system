@@ -109,6 +109,4 @@ export default async function TeacherDashboard() {
     </div>
   );
 }
-  );
-}
 

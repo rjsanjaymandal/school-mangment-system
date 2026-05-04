@@ -3,8 +3,8 @@ import { getSessionRole } from "@/lib/auth-utils";
 import { StudentList } from "@/components/students/StudentList";
 import { createClient } from "@/lib/supabase/server";
 import { Users, UserPlus } from "lucide-react";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function StudentsPage() {
   const supabase = await createClient();
@@ -16,25 +16,38 @@ export default async function StudentsPage() {
   ]);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
-      <PageHeader
-        title="Student Registry"
-        description="Comprehensive directory of institutional learners and academic profiles."
-        icon={<Users className="h-7 w-7" />}
-        badge={`${students?.length || 0} Records`}
-      >
-        <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
+    <div className="space-y-6">
+      {/* Page Title with Action */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-emerald-50 rounded-md">
+            <Users className="h-6 w-6 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Students</h1>
+            <p className="text-sm text-slate-500">{students?.length || 0} total records</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
           <UserPlus className="h-4 w-4" />
-          Enroll New
+          Enroll New Student
         </Button>
-      </PageHeader>
+      </div>
 
-      <StudentList 
-        initialData={students || []} 
-        classes={classes || []}
-        currentAcademicYearId={currentAcademicYear?.id}
-        userRole={role} 
-      />
+      {/* Student List Card */}
+      <ERPCard
+        title="Student Directory"
+        description="Manage student records and academic profiles"
+        icon={<Users className="h-5 w-5" />}
+        color="emerald"
+      >
+        <StudentList 
+          initialData={students || []} 
+          classes={classes || []}
+          currentAcademicYearId={currentAcademicYear?.id}
+          userRole={role} 
+        />
+      </ERPCard>
     </div>
   );
 }

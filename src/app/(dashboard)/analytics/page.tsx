@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 import { DemographicsPanel } from "@/components/analytics/DemographicsPanel";
+import { ERPCard } from "@/components/ui/erp-card";
+import { Users, BarChart3, GraduationCap, UserSquare2, Library, BookOpen } from "lucide-react";
 
 export default async function AnalyticsPage() {
   const supabase = await createClient();
@@ -123,34 +125,120 @@ export default async function AnalyticsPage() {
   }));
 
   return (
-    <div className="page-container page-fade-in space-y-16">
-      <AnalyticsDashboard
-        studentCount={studentCount || 0}
-        teacherCount={teacherCount || 0}
-        currentAttendance={currentAttendance || []}
-        previousAttendance={previousAttendance || []}
-        payments={payments || []}
-        currentMarks={currentMarks || []}
-        previousMarks={previousMarks || []}
-        totalBooks={totalBooks || 0}
-        activeLoans={activeLoans || 0}
-        conductData={conductData || []}
-        monthlyAttendance={monthlyAttendance || []}
-        targetRevenue={targetRevenue}
-        alerts={{
-          lowInventory: lowInventory?.map(i => i.name) || [],
-          lowAttendanceCount: lowAttendanceStudentIds.length,
-          lowAttendanceNames: lowAttendanceStudents.map(s => s.full_name)
-        }}
-      />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-blue-50 rounded-md">
+          <BarChart3 className="h-6 w-6 text-blue-600" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Analytics</h1>
+          <p className="text-sm text-slate-500">Dashboard overview and insights</p>
+        </div>
+      </div>
 
-      {/* Advanced Demographics Section */}
-      <div className="border-t border-slate-200 dark:border-slate-800 pt-12">
+      {/* Stats Grid - 4 columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title="Total Students"
+          value={studentCount || 0}
+          icon={GraduationCap}
+          color="emerald"
+        />
+        <StatCard
+          title="Teachers"
+          value={teacherCount || 0}
+          icon={UserSquare2}
+          color="blue"
+        />
+        <StatCard
+          title="Library Books"
+          value={totalBooks || 0}
+          icon={Library}
+          color="purple"
+        />
+        <StatCard
+          title="Active Loans"
+          value={activeLoans || 0}
+          icon={BookOpen}
+          color="amber"
+        />
+      </div>
+
+      {/* Main Dashboard */}
+      <ERPCard
+        title="Analytics Dashboard"
+        description="Key performance indicators and trends"
+        icon={<BarChart3 className="h-5 w-5" />}
+        color="blue"
+      >
+        <AnalyticsDashboard
+          studentCount={studentCount || 0}
+          teacherCount={teacherCount || 0}
+          currentAttendance={currentAttendance || []}
+          previousAttendance={previousAttendance || []}
+          payments={payments || []}
+          currentMarks={currentMarks || []}
+          previousMarks={previousMarks || []}
+          totalBooks={totalBooks || 0}
+          activeLoans={activeLoans || 0}
+          conductData={conductData || []}
+          monthlyAttendance={monthlyAttendance || []}
+          targetRevenue={targetRevenue}
+          alerts={{
+            lowInventory: lowInventory?.map(i => i.name) || [],
+            lowAttendanceCount: lowAttendanceStudentIds.length,
+            lowAttendanceNames: lowAttendanceStudents.map(s => s.full_name)
+          }}
+        />
+      </ERPCard>
+
+      {/* Demographics */}
+      <ERPCard
+        title="Demographics"
+        description="Student distribution and statistics"
+        icon={<Users className="h-5 w-5" />}
+        color="purple"
+      >
         <DemographicsPanel
           students={demographicStudents}
           classes={classList}
           documentStats={documentStats}
         />
+      </ERPCard>
+    </div>
+  );
+}
+
+// Stat Card Component
+function StatCard({ 
+  title, 
+  value, 
+  icon: Icon, 
+  color 
+}: { 
+  title: string; 
+  value: number; 
+  icon: any; 
+  color: string 
+}) {
+  const colorClasses: Record<string, string> = {
+    emerald: "bg-emerald-50 text-emerald-600",
+    blue: "bg-blue-50 text-blue-600",
+    purple: "bg-purple-50 text-purple-600",
+    amber: "bg-amber-50 text-amber-600",
+  };
+  
+  return (
+    <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className={`p-2 rounded-md ${colorClasses[color]}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-xs font-medium text-slate-500 uppercase">{title}</p>
+          <p className="text-2xl font-bold text-slate-900">{value}</p>
+        </div>
       </div>
     </div>
   );

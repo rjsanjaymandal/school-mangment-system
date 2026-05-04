@@ -48,6 +48,7 @@ import { Badge } from "@/components/ui/badge";
 import { ParentForm } from "../parents/ParentForm";
 import { StudentForm } from "./StudentForm";
 import { Card } from "@/components/ui/card";
+import { StudentAvatar } from "./StudentAvatar";
 import { bulkAssignStudentsToClass, deleteStudent, getClassCapacity } from "@/app/actions/students";
 import { toast } from "sonner";
 import { BulkImportModal } from "./BulkImportModal";
@@ -241,9 +242,11 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                                     )}
                                     <TableCell className="py-6 px-10">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-10 w-10 flex items-center justify-center font-bold text-slate-900 dark:text-white text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                                                {student.profile?.full_name?.[0] || 'U'}
-                                            </div>
+                                            <StudentAvatar 
+                                                name={student.profile?.full_name} 
+                                                classId={student.class_id || ""} 
+                                                className="h-11 w-11 text-sm shadow-xl"
+                                            />
                                             <div className="flex flex-col">
                                                 <span className="font-bold text-slate-900 dark:text-white text-base leading-none mb-1 group-hover:text-blue-500 transition-colors">
                                                     {student.profile?.full_name}

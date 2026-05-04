@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { FeesDashboard } from "@/components/fees/FeesDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
-import { IndianRupee, Landmark, TrendingUp } from "lucide-react";
+import { CreditCard, DollarSign } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function FeesPage() {
   const supabase = await createClient();
@@ -96,26 +98,48 @@ export default async function FeesPage() {
   const totalPayroll = (staffPayrolls || []).reduce((sum, p) => sum + Number(p.base_salary) + Number(p.bonuses || 0) - Number(p.deductions || 0), 0);
 
   return (
-    <div className="space-y-12 animate-in fade-in transition-all duration-1000">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
-            <div>
-                <div className="flex items-center gap-x-3 mb-4">
-                    <div className="px-3 py-1 rounded-sm bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 flex items-center gap-x-2">
-                        <Landmark className="h-3 w-3 animate-pulse" />
-                        Treasury Node: Live
-                    </div>
-                    <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest italic text-emerald-500/50">Matrix: Liquidity Matrix</span>
-                </div>
-                <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                    Finance <span className="text-emerald-500 tracking-normal not-italic">/</span> Treasury
-                </h2>
-                <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-                    <IndianRupee className="h-3 w-3 text-emerald-500" />
-                    Institutional Liquidity & Revenue Monitoring
-                </p>
-            </div>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-emerald-50 rounded-md">
+            <CreditCard className="h-6 w-6 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Fees & Finance</h1>
+            <p className="text-sm text-slate-500">Manage payments and transactions</p>
+          </div>
         </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+          <DollarSign className="h-4 w-4" />
+          Collect Payment
+        </Button>
+      </div>
 
+      {/* Stats Grid */}
+      {!isStudent && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
+            <p className="text-xs font-medium text-slate-500 uppercase">Total Revenue</p>
+            <p className="text-2xl font-bold text-emerald-600">₹{totalRevenue.toLocaleString()}</p>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
+            <p className="text-xs font-medium text-slate-500 uppercase">Outstanding</p>
+            <p className="text-2xl font-bold text-amber-600">₹{outstanding.toLocaleString()}</p>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
+            <p className="text-xs font-medium text-slate-500 uppercase">Staff Payroll</p>
+            <p className="text-2xl font-bold text-slate-900">₹{totalPayroll.toLocaleString()}</p>
+          </div>
+        </div>
+      )}
+
+      <ERPCard
+        title="Finance Dashboard"
+        description="Fee management and payment tracking"
+        icon={<CreditCard className="h-5 w-5" />}
+        color="emerald"
+      >
         <FeesDashboard
             fees={fees || []}
             payments={payments || []}
@@ -130,6 +154,7 @@ export default async function FeesPage() {
                 staffPayroll: totalPayroll,
             }}
         />
+      </ERPCard>
     </div>
   );
 }

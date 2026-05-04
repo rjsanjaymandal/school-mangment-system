@@ -8,9 +8,14 @@ import { isAdmin } from "@/lib/auth-utils";
 export async function createStudent(data: {
     full_name: string;
     email: string;
-    admission_number: string;
+    admission_number?: string;
     roll_number?: string;
     class_id?: string;
+    category?: string;
+    religion?: string;
+    mother_tongue?: string;
+    rte_status?: boolean;
+    admission_date?: string;
 }) {
     try {
         if (!(await isAdmin())) {
@@ -57,8 +62,14 @@ export async function createStudent(data: {
 
         // 3. Create Student
         const studentData: any = {
-            id: userId, // One-to-one mapping
-            admission_number: data.admission_number,
+            id: userId,
+            admission_number: data.admission_number || null, // Let trigger handle it if null
+            admission_date: data.admission_date || new Date().toISOString(),
+            category: data.category || 'General',
+            religion: data.religion || 'Not Specified',
+            mother_tongue: data.mother_tongue || 'English',
+            rte_status: data.rte_status || false,
+            status: 'active'
         };
 
         if (data.roll_number) studentData.roll_number = data.roll_number;
@@ -93,6 +104,11 @@ export async function updateStudent(
         admission_number: string;
         roll_number?: string;
         class_id?: string;
+        category?: string;
+        religion?: string;
+        mother_tongue?: string;
+        rte_status?: boolean;
+        status?: 'active' | 'dropped' | 'alumni';
     }
 ) {
     try {
@@ -132,6 +148,11 @@ export async function updateStudent(
         // 3. Update Student
         const studentData: any = {
             admission_number: data.admission_number,
+            category: data.category,
+            religion: data.religion,
+            mother_tongue: data.mother_tongue,
+            rte_status: data.rte_status,
+            status: data.status,
         };
         if (data.roll_number) studentData.roll_number = data.roll_number;
         if (data.class_id) studentData.class_id = data.class_id;

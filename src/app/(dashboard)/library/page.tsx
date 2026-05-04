@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { LibraryDashboard } from "@/components/library/LibraryDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
+import { Library, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function LibraryPage() {
   const supabase = await createClient();
@@ -30,18 +33,15 @@ export default async function LibraryPage() {
       transactions = studentTransactions || [];
       students = [student];
 
-      // Students can still see all books to browse
       const { data: allBooks } = await supabase
         .from("library_books")
         .select("*")
         .order("title");
       books = allBooks || [];
 
-      // Students potentially shouldn't see full inventory management
       inventoryItems = [];
     }
   } else {
-    // Admin/Teacher: All data
     const { data: allBooks } = await supabase
       .from("library_books")
       .select("*")
@@ -69,12 +69,38 @@ export default async function LibraryPage() {
   }
 
   return (
-    <LibraryDashboard
-      books={books || []}
-      transactions={transactions || []}
-      students={students || []}
-      inventoryItems={inventoryItems || []}
-      userRole={role}
-    />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-cyan-50 rounded-md">
+            <Library className="h-6 w-6 text-cyan-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Library</h1>
+            <p className="text-sm text-slate-500">Manage books and borrowings</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+          <Plus className="h-4 w-4" />
+          Add Book
+        </Button>
+      </div>
+
+      <ERPCard
+        title="Library Management"
+        description="Book inventory and transactions"
+        icon={<Library className="h-5 w-5" />}
+        color="blue"
+      >
+        <LibraryDashboard
+          books={books || []}
+          transactions={transactions || []}
+          students={students || []}
+          inventoryItems={inventoryItems || []}
+          userRole={role}
+        />
+      </ERPCard>
+    </div>
   );
 }

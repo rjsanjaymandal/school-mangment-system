@@ -5,8 +5,8 @@ import { TeacherList } from "@/components/teachers/TeacherList";
 import { StaffHRManagement } from "@/components/teachers/StaffHRManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Briefcase, UserPlus } from "lucide-react";
-import { PageHeader } from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function TeachersPage() {
   const supabase = await createClient();
@@ -28,7 +28,6 @@ export default async function TeachersPage() {
       .order("month", { ascending: false })
   ]);
 
-  // Transform teachers for the attendance list
   const staffList = (teachers || []).map((t: any) => ({
     id: t.id,
     full_name: t.profile?.full_name || "Unknown",
@@ -36,60 +35,68 @@ export default async function TeachersPage() {
   }));
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
-      <PageHeader
-        title="Faculty Management"
-        description="Academic & Administrative Logistics Engine for Faculty Personnel."
-        icon={<Users className="h-7 w-7" />}
-        badge={`${teachers?.length || 0} Faculty Members`}
-      >
-        <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-blue-50 rounded-md">
+            <Users className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Teachers</h1>
+            <p className="text-sm text-slate-500">{teachers?.length || 0} faculty members</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
           <UserPlus className="h-4 w-4" />
-          Onboard Staff
+          Add Teacher
         </Button>
-      </PageHeader>
+      </div>
 
-      <Tabs defaultValue="list" className="space-y-8">
-        <TabsList className="bg-slate-100 dark:bg-slate-800/50 p-1 rounded-2xl h-14 border border-slate-200 dark:border-slate-800 w-full md:w-auto">
-          <TabsTrigger
-            value="list"
-            className="rounded-xl px-10 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:text-slate-900 dark:data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 shadow-sm"
-          >
-            <Users className="h-4 w-4" />
-            Teacher Directory
-          </TabsTrigger>
-          {isAdminOrTeacher && (
+      <ERPCard
+        title="Faculty Directory"
+        description="Manage teaching staff and their assignments"
+        icon={<Users className="h-5 w-5" />}
+        color="blue"
+      >
+        <Tabs defaultValue="list" className="space-y-4">
+          <TabsList className="bg-slate-100 p-1 rounded-md h-10 w-full md:w-auto">
             <TabsTrigger
-              value="hr"
-              className="rounded-xl px-10 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:text-slate-900 dark:data-[state=active]:text-white font-bold uppercase tracking-widest text-[10px] transition-all gap-x-3 shadow-sm"
+              value="list"
+              className="rounded-md px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm"
             >
-              <Briefcase className="h-4 w-4" />
-              Staff HR & Logistics
+              <Users className="h-4 w-4 mr-2" />
+              Teachers
             </TabsTrigger>
+            {isAdminOrTeacher && (
+              <TabsTrigger
+                value="hr"
+                className="rounded-md px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              >
+                <Briefcase className="h-4 w-4 mr-2" />
+                HR & Payroll
+              </TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="list">
+            <TeacherList initialData={teachers || []} />
+          </TabsContent>
+
+          {isAdminOrTeacher && (
+            <TabsContent value="hr">
+              <StaffHRManagement 
+                leaveRequests={leaveRequests.data || []} 
+                payrolls={payrolls.data || []} 
+                staff={staffList}
+                staffCount={teachers?.length || 0}
+                userRole={role}
+                currentUserId={user?.id}
+              />
+            </TabsContent>
           )}
-        </TabsList>
-
-        <TabsContent
-          value="list"
-          className="animate-in slide-in-from-bottom-4 duration-700 outline-none"
-        >
-          <TeacherList initialData={teachers || []} />
-        </TabsContent>
-
-        <TabsContent
-          value="hr"
-          className="animate-in slide-in-from-bottom-4 duration-700 outline-none"
-        >
-          <StaffHRManagement 
-            leaveRequests={leaveRequests.data || []} 
-            payrolls={payrolls.data || []} 
-            staff={staffList}
-            staffCount={teachers?.length || 0}
-            userRole={role}
-            currentUserId={user?.id}
-          />
-        </TabsContent>
-      </Tabs>
+        </Tabs>
+      </ERPCard>
     </div>
   );
 }

@@ -17,35 +17,35 @@ export function PageHeader({
   children,
 }: PageHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-      <div className="flex items-start gap-x-5">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div className="flex items-center gap-4">
         {icon && (
-          <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-900 dark:text-white shadow-xl soft-shadow-md">
+          <div className="p-3 bg-emerald-50 rounded-md">
             {icon}
           </div>
         )}
-        <div className="space-y-1">
-          <div className="flex items-center gap-x-3">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-slate-900">
               {title}
             </h1>
             {badge && (
               <Badge
                 variant="outline"
-                className="bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-500 font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full"
+                className="bg-emerald-50 border-emerald-200 text-emerald-700 text-xs font-medium"
               >
                 {badge}
               </Badge>
             )}
           </div>
           {description && (
-            <p className="text-base text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-sm text-slate-500">
               {description}
             </p>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-x-3">
+      <div className="flex items-center gap-3">
         {children}
       </div>
     </div>

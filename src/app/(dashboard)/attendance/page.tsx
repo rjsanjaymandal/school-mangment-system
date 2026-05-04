@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSessionRole } from "@/lib/auth-utils";
 import { AttendanceDashboard } from "@/components/attendance/AttendanceDashboard";
+import { ClipboardCheck } from "lucide-react";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function AttendancePage() {
   const supabase = await createClient();
@@ -14,7 +16,6 @@ export default async function AttendancePage() {
   const isStudent = role === "student";
 
   if (isStudent) {
-    // Fetch only this student's specific data
     const { data: student } = await supabase
       .from("students")
       .select("*, profile:profiles(*), class:classes(*)")
@@ -25,7 +26,6 @@ export default async function AttendancePage() {
       students = [student];
       classes = student.class ? [student.class] : [];
 
-      // Get this student's attendance for today
       const today = new Date().toISOString().split("T")[0];
       const { data: todayAtt } = await supabase
         .from("attendance")
@@ -35,7 +35,6 @@ export default async function AttendancePage() {
       
       todayAttendance = todayAtt || [];
 
-      // Get this student's attendance for the last 7 days
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const { data: weekAtt } = await supabase
@@ -47,7 +46,6 @@ export default async function AttendancePage() {
       weekAttendance = weekAtt || [];
     }
   } else {
-    // Admin/Teacher: Fetch all data
     const { data: allClasses } = await supabase
       .from("classes")
       .select("*")
@@ -77,14 +75,34 @@ export default async function AttendancePage() {
   }
 
   return (
-    <AttendanceDashboard
-      classes={classes || []}
-      students={students || []}
-      todayAttendance={todayAttendance || []}
-      weekAttendance={weekAttendance || []}
-      currentUserId={user?.id || ""}
-      userRole={role}
-      isStudent={isStudent}
-    />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-amber-50 rounded-md">
+          <ClipboardCheck className="h-6 w-6 text-amber-600" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Attendance</h1>
+          <p className="text-sm text-slate-500">Track student and staff attendance</p>
+        </div>
+      </div>
+
+      <ERPCard
+        title="Attendance Management"
+        description="Mark and track attendance records"
+        icon={<ClipboardCheck className="h-5 w-5" />}
+        color="amber"
+      >
+        <AttendanceDashboard
+          classes={classes || []}
+          students={students || []}
+          todayAttendance={todayAttendance || []}
+          weekAttendance={weekAttendance || []}
+          currentUserId={user?.id || ""}
+          userRole={role}
+          isStudent={isStudent}
+        />
+      </ERPCard>
+    </div>
   );
 }

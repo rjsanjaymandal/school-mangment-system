@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { ExamsDashboard } from "@/components/exams/ExamsDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
+import { FileText, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function ExamsPage() {
   const supabase = await createClient();
@@ -31,7 +34,6 @@ export default async function ExamsPage() {
       classes = student.class ? [student.class] : [];
       students = [student];
 
-      // Get subjects for this class's exams
       const subjectIds = [...new Set(exams.map(e => e.subject_id))];
       if (subjectIds.length > 0) {
         const { data: classSubjects } = await supabase
@@ -42,7 +44,6 @@ export default async function ExamsPage() {
       }
     }
   } else {
-    // Admin/Teacher: All data
     const { data: allExams } = await supabase
       .from("exams")
       .select(`
@@ -84,14 +85,40 @@ export default async function ExamsPage() {
     .select("marks_obtained, exam:exams(passing_marks, max_marks, subject:subjects(name))");
 
   return (
-    <ExamsDashboard
-      exams={exams || []}
-      classes={classes || []}
-      subjects={subjects || []}
-      academicYears={academicYears || []}
-      students={students || []}
-      marksSummary={marksSummary || []}
-      userRole={role || "student"}
-    />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-red-50 rounded-md">
+            <FileText className="h-6 w-6 text-red-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Exams</h1>
+            <p className="text-sm text-slate-500">Manage exams and assessments</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+          <Plus className="h-4 w-4" />
+          Create Exam
+        </Button>
+      </div>
+
+      <ERPCard
+        title="Exam Management"
+        description="Schedule and manage examinations"
+        icon={<FileText className="h-5 w-5" />}
+        color="red"
+      >
+        <ExamsDashboard
+          exams={exams || []}
+          classes={classes || []}
+          subjects={subjects || []}
+          academicYears={academicYears || []}
+          students={students || []}
+          marksSummary={marksSummary || []}
+          userRole={role || "student"}
+        />
+      </ERPCard>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   // Performance: Skip linting/type-checking during builds (CI should catch these)
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },

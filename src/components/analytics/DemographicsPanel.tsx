@@ -225,30 +225,30 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
     return (
         <div className="space-y-8">
             {/* Section Header + Filter */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="flex items-center gap-x-4">
-                    <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
-                        <PieChartIcon className="h-6 w-6 text-indigo-500" />
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal-1">
+                <div className="flex items-center gap-x-6">
+                    <div className="h-14 w-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center indigo-glow shadow-inner">
+                        <PieChartIcon className="h-7 w-7 text-indigo-500" />
                     </div>
                     <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+                        <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
                             Advanced Demographics
                         </h3>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">
                             Student population segmentation • {filtered.length} records
                         </p>
                     </div>
                 </div>
 
                 <Select value={selectedClass} onValueChange={setSelectedClass}>
-                    <SelectTrigger className="w-[220px] h-11 rounded-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold text-sm">
+                    <SelectTrigger className="w-[240px] h-12 rounded-2xl border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 font-black text-[10px] uppercase tracking-widest shadow-sm hover:shadow-md transition-all active:scale-95">
                         <Filter className="h-4 w-4 mr-2 text-slate-400" />
                         <SelectValue placeholder="Filter by class" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                        <SelectItem value="all" className="font-bold">All Classes</SelectItem>
+                    <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800">
+                        <SelectItem value="all" className="font-black text-[10px] uppercase tracking-widest">All Classes</SelectItem>
                         {classes.map(c => (
-                            <SelectItem key={c.id} value={c.id} className="font-medium">
+                            <SelectItem key={c.id} value={c.id} className="font-bold text-xs uppercase tracking-wider">
                                 {c.name}
                             </SelectItem>
                         ))}
@@ -257,9 +257,9 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
             </div>
 
             {/* Charts Grid */}
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="grid gap-8 md:grid-cols-2 reveal-2">
                 {/* 1. Gender Distribution */}
-                <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+                <Card className="card-interactive rounded-[3rem] overflow-hidden border-none shadow-2xl">
                     <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
                         <div className="flex items-center gap-x-3">
                             <div className="h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center">
@@ -301,7 +301,7 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                 </Card>
 
                 {/* 2. Caste/Category Breakdown */}
-                <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+                <Card className="card-interactive rounded-[3rem] overflow-hidden border-none shadow-2xl">
                     <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
                         <div className="flex items-center gap-x-3">
                             <div className="h-9 w-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
@@ -335,7 +335,7 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                 </Card>
 
                 {/* 3. Religion Distribution */}
-                <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+                <Card className="card-interactive rounded-[3rem] overflow-hidden border-none shadow-2xl">
                     <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
                         <div className="flex items-center gap-x-3">
                             <div className="h-9 w-9 rounded-xl bg-purple-500/10 flex items-center justify-center">
@@ -369,7 +369,7 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                 </Card>
 
                 {/* 4. Age Groups */}
-                <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+                <Card className="card-interactive rounded-[3rem] overflow-hidden border-none shadow-2xl">
                     <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
                         <div className="flex items-center gap-x-3">
                             <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center">
@@ -404,7 +404,8 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
             </div>
 
             {/* 5. Document Status — Full Width */}
-            <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+            <Card className="card-premium rounded-[3rem] overflow-hidden reveal-3 shadow-2xl relative border-none">
+                <div className="absolute inset-0 bg-gradient-to-tr from-teal-500/5 via-transparent to-transparent pointer-events-none" />
                 <CardHeader className="p-6 pb-2 flex flex-row items-center justify-between">
                     <div className="flex items-center gap-x-3">
                         <div className="h-9 w-9 rounded-xl bg-teal-500/10 flex items-center justify-center">
