@@ -47,7 +47,7 @@ export const AttendanceService = {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("attendance")
-        .upsert(attendanceData, { onConflict: 'student_id,class_id,date' })
+        .upsert(attendanceData, { onConflict: 'student_id,date' })
         .select();
 
       if (error) throw error;

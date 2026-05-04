@@ -120,7 +120,14 @@ export const UserService = {
   /**
    * Updates the current user's profile information.
    */
-  async updateProfile(updates: { first_name?: string; last_name?: string }) {
+  async updateProfile(updates: { 
+    first_name?: string; 
+    last_name?: string; 
+    full_name?: string;
+    avatar_url?: string;
+    phone?: string;
+    address?: string;
+  }) {
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();

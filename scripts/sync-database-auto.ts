@@ -31,6 +31,8 @@ async function syncDatabase() {
       DO $$ BEGIN 
           IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='full_name') THEN ALTER TABLE public.profiles ADD COLUMN full_name TEXT; END IF;
           IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='role') THEN ALTER TABLE public.profiles ADD COLUMN role TEXT; END IF;
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='avatar_url') THEN ALTER TABLE public.profiles ADD COLUMN avatar_url TEXT; END IF;
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='profiles' AND column_name='updated_at') THEN ALTER TABLE public.profiles ADD COLUMN updated_at TIMESTAMPTZ DEFAULT NOW(); END IF;
       END $$;
 
       -- 3. REPAIR ATTENDANCE SCHEMA
@@ -156,18 +158,39 @@ async function syncDatabase() {
       ON CONFLICT DO NOTHING;
 
       -- 3. Add some Timetable Slots for Today if missing
-      INSERT INTO public.timetable_slots (class_id, academic_year_id, day_of_week, subject_id, teacher_id, start_time, end_time, room_number)
-      SELECT 
-          'c1111111-1111-4111-c111-111111111111',
-          (SELECT id FROM public.academic_years WHERE is_current = true),
-          trim(to_char(CURRENT_DATE, 'Day')),
-          sub.id,
-          'f1111111-1111-4111-f111-111111111111',
-          '09:00',
-          '10:00',
-          'R-101'
-      FROM (SELECT id FROM public.subjects WHERE code = 'MATH101') sub
-      ON CONFLICT DO NOTHING;
+      DO $$
+      DECLARE
+          tt_id UUID;
+      BEGIN
+          -- Ensure a timetable exists for Grade 10
+          INSERT INTO public.timetables (class_id, academic_year_id, day_of_week)
+          SELECT 
+              'c1111111-1111-4111-c111-111111111111',
+              (SELECT id FROM public.academic_years WHERE is_current = true),
+              trim(to_char(CURRENT_DATE, 'Day'))
+          ON CONFLICT DO NOTHING
+          RETURNING id INTO tt_id;
+
+          -- If not returned (already exists), fetch it
+          IF tt_id IS NULL THEN
+              SELECT id INTO tt_id FROM public.timetables 
+              WHERE class_id = 'c1111111-1111-4111-c111-111111111111' 
+              AND day_of_week = trim(to_char(CURRENT_DATE, 'Day'));
+          END IF;
+
+          IF tt_id IS NOT NULL THEN
+              INSERT INTO public.timetable_slots (timetable_id, subject_id, teacher_id, start_time, end_time, room_number)
+              SELECT 
+                  tt_id,
+                  sub.id,
+                  'f1111111-1111-4111-f111-111111111111',
+                  '09:00',
+                  '10:00',
+                  'R-101'
+              FROM (SELECT id FROM public.subjects WHERE code = 'MATH101') sub
+              ON CONFLICT DO NOTHING;
+          END IF;
+      END $$;
     `;
     await client.query(dynamicSeedSql);
     console.log("Seeding complete!");
