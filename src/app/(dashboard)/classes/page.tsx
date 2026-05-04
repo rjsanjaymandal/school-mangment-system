@@ -61,8 +61,8 @@ export default async function ClassesPage() {
       </div>
 
       <ERPCard
-        title="Class Management"
-        description="Manage grade levels and sections"
+        title="Classes"
+        description="Manage all classes"
         icon={<Building2 className="h-5 w-5" />}
         color="purple"
       >

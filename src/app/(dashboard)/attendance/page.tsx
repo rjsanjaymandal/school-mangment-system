@@ -88,8 +88,8 @@ export default async function AttendancePage() {
       </div>
 
       <ERPCard
-        title="Attendance Management"
-        description="Mark and track attendance records"
+        title="Daily Attendance"
+        description="Mark present or absent"
         icon={<ClipboardCheck className="h-5 w-5" />}
         color="amber"
       >

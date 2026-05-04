@@ -69,10 +69,10 @@ export default function StudentListPage() {
                     </div>
                     <div>
                         <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
-                            Student Registry
+                            Student List
                         </h3>
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">
-                            Central Intelligence • {allStudents.length} Active Profiles
+                            Active Students • {allStudents.length} Profiles
                         </p>
                     </div>
                 </div>
@@ -81,7 +81,7 @@ export default function StudentListPage() {
                     <div className="relative flex-1 md:w-80">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <Input 
-                            placeholder="Neural Search (Name, ID, Roll)..." 
+                            placeholder="Search Students (Name, ID, Roll)..." 
                             className="pl-12 h-14 rounded-2xl border-slate-200/60 bg-white dark:bg-slate-900 font-bold text-xs shadow-sm focus:ring-primary/20 transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -181,7 +181,7 @@ export default function StudentListPage() {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-48 rounded-2xl p-1.5 shadow-2xl border-slate-200">
-                                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 py-2">Management</DropdownMenuLabel>
+                                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
                                                 <DropdownMenuItem className="rounded-xl gap-x-3 py-2.5 font-bold text-xs cursor-pointer">
                                                     <UserCircle className="h-4 w-4 text-blue-500" /> View Profile
                                                 </DropdownMenuItem>

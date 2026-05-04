@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSessionRole } from "@/lib/auth-utils";
 import { HealthDashboard } from "@/components/health/HealthDashboard";
+import { HeartPulse, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function HealthPage() {
   const supabase = await createClient();
@@ -38,7 +41,6 @@ export default async function HealthPage() {
       students = [student];
     }
   } else {
-    // Admin/Teacher: All data
     const { data: allLogs } = await supabase
       .from("infirmary_logs")
       .select("*, student:students(*, profile:profiles(*)), recorder:profiles!recorded_by(*)")
@@ -60,11 +62,37 @@ export default async function HealthPage() {
   }
 
   return (
-    <HealthDashboard
-      infirmaryLogs={infirmaryLogs || []}
-      healthProfiles={healthProfiles || []}
-      students={students || []}
-      userRole={role}
-    />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-red-50 rounded-md">
+            <HeartPulse className="h-6 w-6 text-red-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Health</h1>
+            <p className="text-sm text-slate-500">Medical records and health profiles</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+          <Plus className="h-4 w-4" />
+          Add Record
+        </Button>
+      </div>
+
+      <ERPCard
+        title="Health Records"
+        description="Track student health"
+        icon={<HeartPulse className="h-5 w-5" />}
+        color="red"
+      >
+        <HealthDashboard
+          infirmaryLogs={infirmaryLogs || []}
+          healthProfiles={healthProfiles || []}
+          students={students || []}
+          userRole={role}
+        />
+      </ERPCard>
+    </div>
   );
 }

@@ -276,11 +276,11 @@ export function AttendanceDashboard({
                     </div>
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                            Attendance Management
+                            Daily Attendance
                         </h2>
                         <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
                             <Activity className="h-4 w-4 text-primary" /> 
-                            {isStudent ? "Individual Attendance Record" : "Daily Student Attendance Dashboard"}
+                            {isStudent ? "Individual Attendance Record" : "Student Attendance Board"}
                         </p>
                     </div>
                 </div>
@@ -351,7 +351,7 @@ export function AttendanceDashboard({
                                 <Calendar className="h-4 w-4 mr-2" /> History
                             </TabsTrigger>
                             <TabsTrigger value="stats" className="px-6 py-2 rounded-sm text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all focus:ring-0">
-                                <BarChart3 className="h-4 w-4 mr-2" /> Analytics
+                                <BarChart3 className="h-4 w-4 mr-2" /> Charts
                             </TabsTrigger>
                         </div>
                     </TabsList>

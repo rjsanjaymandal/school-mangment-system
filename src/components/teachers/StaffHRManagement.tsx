@@ -112,11 +112,11 @@ export function StaffHRManagement({
             </div>
             <div>
                 <h2 className="text-2xl font-bold tracking-tight text-foreground">
-                    Staff & HR Management
+                    Staff Management
                 </h2>
                 <p className="text-sm font-medium text-muted-foreground flex items-center gap-2 mt-1">
                     <Activity className="h-4 w-4" /> 
-                    Manage staff attendance, leaves, and payroll
+                    Manage staff attendance, leaves, and salaries
                 </p>
             </div>
         </div>
@@ -170,7 +170,7 @@ export function StaffHRManagement({
             <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                 <Zap className="h-24 w-24 text-primary" />
             </div>
-            <p className="text-sm font-semibold text-muted-foreground mb-2">Payroll Status</p>
+            <p className="text-sm font-semibold text-muted-foreground mb-2">Salary Status</p>
             <h3 className="text-3xl font-bold text-foreground">
                 {paidCount} <span className="text-muted-foreground text-xl font-medium">/ {payrolls.length || staffCount}</span>
             </h3>
@@ -352,7 +352,7 @@ export function StaffHRManagement({
                 
                 <div className="space-y-2">
                     <h3 className="text-4xl font-bold tracking-tight text-foreground">
-                        Payroll Processing
+                        Salaries
                     </h3>
                     <p className="text-sm font-medium text-muted-foreground">Manage and disburse staff salaries.</p>
                 </div>
@@ -375,7 +375,7 @@ export function StaffHRManagement({
                 </div>
 
                 <Button className="h-12 px-8 font-medium transition-all gap-2">
-                    Process Payroll
+                    Pay Salaries
                     <TrendingUp className="h-4 w-4" />
                 </Button>
             </div>

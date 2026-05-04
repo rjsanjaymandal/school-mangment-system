@@ -181,11 +181,11 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                     </div>
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight text-foreground leading-none">
-                            Transport Management
+                            Transport
                         </h2>
                         <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mt-2 flex items-center gap-2">
                             <span className="h-1.5 w-1.5 rounded-full bg-primary" /> 
-                            Route Control & Fleet Logistics
+                            Manage Bus Routes
                         </p>
                     </div>
                 </div>
@@ -266,10 +266,10 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                         <div className="mb-8 flex justify-between items-start">
                             <div>
                                 <h3 className="text-xl font-bold italic tracking-tight uppercase leading-none text-foreground group-hover:text-primary transition-colors">
-                                    Fleet <span className="text-primary italic">Occupancy</span> Matrix
+                                    Bus <span className="text-primary italic">Usage</span>
                                 </h3>
                                 <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/30 mt-3 italic">
-                                    Real-time utilization percentile per route node
+                                    Current bus occupancy for each route
                                 </p>
                             </div>
                             <Activity className="h-5 w-5 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
@@ -332,7 +332,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 <div className="relative flex-1 w-full group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input 
-                        placeholder="Search fleet registry, plates, or drivers..." 
+                        placeholder="Search routes, plates, or drivers..." 
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-9 h-10 w-full bg-background"
@@ -396,10 +396,10 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 <div className="lg:col-span-4 h-full space-y-6">
                     <div>
                         <h3 className="text-xl font-bold tracking-tight text-foreground">
-                            Fleet Overview
+                            All Routes
                         </h3>
                         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mt-1 flex items-center gap-2">
-                            <Wifi className="h-3 w-3 text-primary" /> Active Routes Registry
+                            <Wifi className="h-3 w-3 text-primary" /> Active Routes
                         </p>
                     </div>
 
@@ -574,7 +574,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <CardTitle className="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                                                Passenger Manifest
+                                                Students on Route
                                             </CardTitle>
                                             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mt-1">Students assigned to this route</p>
                                         </div>
@@ -628,7 +628,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 </div>
                                 <h3 className="text-2xl font-bold text-foreground mb-3 tracking-tight">Select a Route</h3>
                                 <p className="text-[11px] font-semibold max-w-[320px] uppercase tracking-wider leading-relaxed text-muted-foreground/60">
-                                    Please choose a transport route from the registry to manage fleet details and assignments.
+                                    Please choose a transport route from the list to manage details and assignments.
                                 </p>
                             </div>
                         </div>

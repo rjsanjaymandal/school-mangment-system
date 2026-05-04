@@ -2,7 +2,9 @@ import { getSessionRole } from "@/lib/auth-utils";
 import GradebookDashboard from "@/components/gradebook/GradebookDashboard";
 import { createClient } from "@/lib/supabase/server";
 import { getStudentResults } from "@/app/actions/exams";
-import { TrendingUp, Calculator } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function GradebookPage() {
     const role = await getSessionRole();
@@ -30,33 +32,36 @@ export default async function GradebookPage() {
     }
 
     return (
-        <div className="space-y-12 animate-in fade-in transition-all duration-1000">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
-                <div>
-                    <div className="flex items-center gap-x-3 mb-4">
-                        <div className="px-3 py-1 rounded-sm bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-x-2">
-                            <TrendingUp className="h-3 w-3 animate-pulse" />
-                            Academic Analytics Node: Active
-                        </div>
-                        <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">Protocol: GPA-X</span>
+        <div className="space-y-6">
+            {/* Page Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-emerald-50 rounded-md">
+                        <FileText className="h-6 w-6 text-emerald-600" />
                     </div>
-                    <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                        Registry <span className="text-primary tracking-normal not-italic">/</span> Gradebook
-                    </h2>
-                    <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-                        <Calculator className="h-3 w-3 text-primary" />
-                        Institutional Performance & Master Transcript Matrix
-                    </p>
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-900">Gradebook</h1>
+                        <p className="text-sm text-slate-500">Manage grades and academic records</p>
+                    </div>
                 </div>
+                <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+                    <Plus className="h-4 w-4" />
+                    Add Grade
+                </Button>
             </div>
 
-            <div className="reveal-1">
+            <ERPCard
+                title="Grade Management"
+                description="Track student performance and grades"
+                icon={FileText}
+                color="emerald"
+            >
                 <GradebookDashboard 
                     userRole={role} 
                     isStudent={isStudent}
                     initialGrades={initialGrades}
                 />
-            </div>
+            </ERPCard>
         </div>
     );
 }

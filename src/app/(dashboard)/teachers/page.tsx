@@ -44,7 +44,7 @@ export default async function TeachersPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Teachers</h1>
-            <p className="text-sm text-slate-500">{teachers?.length || 0} faculty members</p>
+            <p className="text-sm text-slate-500">{teachers?.length || 0} staff members</p>
           </div>
         </div>
         <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
@@ -54,8 +54,8 @@ export default async function TeachersPage() {
       </div>
 
       <ERPCard
-        title="Faculty Directory"
-        description="Manage teaching staff and their assignments"
+        title="Teacher List"
+        description="Manage teachers"
         icon={<Users className="h-5 w-5" />}
         color="blue"
       >
@@ -74,7 +74,7 @@ export default async function TeachersPage() {
                 className="rounded-md px-4 py-2 text-sm font-medium data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
                 <Briefcase className="h-4 w-4 mr-2" />
-                HR & Payroll
+                Salaries & Leave
               </TabsTrigger>
             )}
           </TabsList>

@@ -106,7 +106,7 @@ export default async function FeesPage() {
             <CreditCard className="h-6 w-6 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Fees & Finance</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Fees</h1>
             <p className="text-sm text-slate-500">Manage payments and transactions</p>
           </div>
         </div>
@@ -135,8 +135,8 @@ export default async function FeesPage() {
       )}
 
       <ERPCard
-        title="Finance Dashboard"
-        description="Fee management and payment tracking"
+        title="Fees"
+        description="Track payments"
         icon={<CreditCard className="h-5 w-5" />}
         color="emerald"
       >

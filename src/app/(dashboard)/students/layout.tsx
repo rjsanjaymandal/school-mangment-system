@@ -1,7 +1,4 @@
 import { Metadata } from "next";
-import { PageHeader } from "@/components/shared/PageHeader";
-import { GraduationCap } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Student Management | Edu Maysan",
@@ -14,13 +11,12 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 space-y-10 page-fade-in">
-      <div className="flex items-center gap-x-2 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 reveal-1">
+    <div className="p-6 space-y-6">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span>Personnel</span>
-        <span className="opacity-30">/</span>
-        <span className="text-primary">Student Management</span>
+        <span>/</span>
+        <span className="text-foreground font-medium">Student Management</span>
       </div>
-      
       {children}
     </div>
   );

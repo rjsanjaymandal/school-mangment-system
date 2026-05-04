@@ -56,11 +56,11 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "Personnel",
+    group: "Staff",
     roles: ["admin", "teacher", "student"],
     items: [
       { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles and enrollment records" },
-      { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage institutional personnel and payroll" },
+      { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage staff and salaries" },
       { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance for students and staff" },
       { name: "Conduct", href: "/conduct", icon: ShieldCheck, description: "Monitor student behavior and disciplinary actions" },
       { name: "Health", href: "/health", icon: Stethoscope, description: "Track student health records and medical info" },

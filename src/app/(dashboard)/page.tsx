@@ -18,7 +18,8 @@ import { AuditService } from "@/lib/services/audit";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionRole } from "@/lib/auth-utils";
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/components/shared/PageHeader";
+import { ERPCard } from "@/components/ui/erp-card";
+import { Card } from "@/components/ui/card";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -155,7 +156,7 @@ export default async function DashboardPage() {
       bgColor: "bg-blue-600",
     },
     {
-      title: "Faculty Members",
+      title: "Staff",
       value: realStats.teacherCount.toString(),
       icon: UserSquare2,
       color: "text-slate-600",
@@ -178,28 +179,38 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="page-container page-fade-in">
-      <PageHeader
-        title="Academic Overview"
-        description="Centralized control and insights for your institution."
-        icon={<LayoutDashboard className="h-7 w-7" />}
-        badge={currentAY?.name || undefined}
-      >
-        <button className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-slate-500 shadow-sm">
-          <Bell className="h-5 w-5" />
-        </button>
-        <Link href="/reports">
-          <button className="px-6 h-11 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-sm font-bold text-xs tracking-wide">
-              Generate Reports
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Dashboard</span>
+            {currentAY?.name && (
+              <>
+                <span>/</span>
+                <span className="text-foreground font-medium">{currentAY.name}</span>
+              </>
+            )}
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800 mt-1">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Manage your school easily</p>
+        </div>
+        <div className="flex gap-2">
+          <button className="p-2 rounded-md border hover:bg-slate-50 transition-all">
+            <Bell className="h-5 w-5 text-slate-500" />
           </button>
-        </Link>
-      </PageHeader>
+          <Link href="/reports">
+            <button className="px-4 h-9 bg-slate-900 text-white rounded-md transition-all hover:opacity-90 font-medium text-sm">
+              Generate Reports
+            </button>
+          </Link>
+        </div>
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 reveal-1">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <div
             key={stat.title}
-            className="bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+            className="bg-white p-4 border rounded-md shadow-sm hover:border-slate-300 transition-all"
           >
             <div className="flex justify-between items-start mb-4">
               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -209,13 +220,13 @@ export default async function DashboardPage() {
             </div>
 
             <div className="flex items-end gap-x-2">
-              <h3 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">
+              <h3 className="text-2xl font-bold text-slate-900">
                 {stat.value}
               </h3>
             </div>
 
             <div className="mt-6">
-               <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+               <div className="h-1 w-full bg-slate-100 bg-slate-100 rounded-full overflow-hidden">
                  <div 
                    className={cn("h-full transition-all duration-1000", stat.bgColor)} 
                    style={{ width: '70%' }} 
@@ -226,59 +237,47 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3 reveal-2">
-        <div className="lg:col-span-1 bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-slate-400 flex items-center gap-x-2 text-[10px] uppercase tracking-widest">
-              <History className="h-3.5 w-3.5" />
-              Recent Activity
-            </h3>
-          </div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <ERPCard title="Recent Activity" className="lg:col-span-1" accentColor="slate" icon={<History className="h-4 w-4" />}>
           <div className="space-y-3">
             {activityFeed.map((event, i) => (
-              <div
-                key={i}
-                className="group/item flex gap-x-4 items-center p-3 rounded-md bg-muted/30 border border-border/50 hover:border-primary/30 hover:bg-muted/50 transition-all cursor-pointer"
-              >
-                <div className="h-10 w-10 rounded-md bg-card border border-border flex items-center justify-center shrink-0 shadow-sm transition-all group-hover/item:border-primary/20">
-                  <event.icon className="h-4 w-4 text-muted-foreground group-hover/item:text-primary" />
+              <div key={i} className="flex gap-3 items-center p-2 rounded-md hover:bg-slate-50 cursor-pointer">
+                <div className="h-8 w-8 rounded bg-slate-100 flex items-center justify-center">
+                  <event.icon className="h-4 w-4 text-slate-500" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground tracking-tight text-xs group-hover/item:text-primary transition-colors">
-                    {event.title}
-                  </p>
-                  <p className="text-muted-foreground font-medium text-[10px] truncate uppercase tracking-wide mt-0.5">{event.desc}</p>
+                  <p className="text-sm font-medium truncate">{event.title}</p>
+                  <p className="text-xs text-slate-500 truncate">{event.desc}</p>
                 </div>
               </div>
             ))}
           </div>
-          <Link href="/reports" className="w-full block">
-            <button className="w-full mt-6 py-3 text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 rounded-md hover:bg-primary/5 transition-all text-center">
-              View Detailed Logs
+          <Link href="/reports">
+            <button className="w-full mt-4 py-2 text-sm text-emerald-600 border border-emerald-200 rounded-md hover:bg-emerald-50">
+              View All Activity
             </button>
           </Link>
-        </div>
+        </ERPCard>
 
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
-           <div className="flex items-center justify-between mb-6">
-              <div>
-                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Academic Projections</h3>
-                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">Institutional Data Analysis</p>
-              </div>
-           </div>
-           <PerformancePredictor />
-        </div>
+        <ERPCard title="Academic Performance" className="lg:col-span-2" accentColor="emerald" icon={<BarChart3 className="h-4 w-4" />}>
+          <PerformancePredictor />
+        </ERPCard>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7 reveal-3">
-        <div className="col-span-4 bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm relative overflow-hidden">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+        <ERPCard title="Attendance Trends" className="col-span-4" accentColor="blue" icon={<BarChart3 className="h-4 w-4" />}>
+          <div className="h-48 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-lg bg-slate-50">
+            <BarChart3 className="h-8 w-8 text-slate-300 mb-2" />
+            <p className="text-sm text-slate-400">Attendance data will appear here</p>
+          </div>
+        </ERPCard>
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              <h3 className="text-xl font-bold text-slate-900 text-slate-900">
                 Attendance Trends
               </h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">
-                Historical Data Monitoring
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">
+                View history
               </p>
             </div>
           </div>
@@ -290,42 +289,23 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="col-span-3 bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Daily Schedule</h3>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">
-              {todayLabel}
-            </p>
-          </div>
-          <div className="space-y-4">
+        <ERPCard title="Daily Schedule" className="col-span-3" accentColor="purple" icon={<CalendarDays className="h-4 w-4" />}>
+          <div className="space-y-3">
             {upcomingSchedule.length > 0 ? upcomingSchedule.map((slot: any) => (
-              <div
-                key={slot.id}
-                className="flex items-center gap-x-4 p-4 rounded-md bg-muted/30 border border-border hover:border-primary/30 hover:bg-muted/50 transition-all cursor-pointer group"
-              >
-                <div className="h-12 w-12 rounded-md bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
-                  <CalendarDays className="h-5 w-5" />
+              <div key={slot.id} className="flex items-center gap-3 p-3 rounded-md hover:bg-slate-50">
+                <div className="h-10 w-10 rounded bg-emerald-100 flex items-center justify-center">
+                  <CalendarDays className="h-4 w-4 text-emerald-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground tracking-tight group-hover:text-primary transition-colors">
-                    {role === "teacher" ? slot.class_name : slot.subject?.name || "Scheduled class"}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mt-1">
-                    {slot.room_name} • {slot.start_time?.slice(0, 5)} - {slot.end_time?.slice(0, 5)}
-                  </p>
+                  <p className="text-sm font-medium">{role === "teacher" ? slot.class_name : slot.subject?.name || "Class"}</p>
+                  <p className="text-xs text-slate-500">{slot.start_time?.slice(0, 5)} - {slot.end_time?.slice(0, 5)}</p>
                 </div>
-                <div className="h-1.5 w-1.5 rounded-full bg-primary/40" />
               </div>
             )) : (
-              <div className="h-[220px] flex flex-col items-center justify-center border border-dashed border-border rounded-lg bg-muted/20">
-                <CalendarDays className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
-                <p className="font-semibold text-[10px] uppercase tracking-widest text-muted-foreground/60">
-                  No upcoming schedule items for today
-                </p>
-              </div>
+              <p className="text-sm text-slate-500 text-center py-8">No classes scheduled</p>
             )}
           </div>
-        </div>
+        </ERPCard>
       </div>
     </div>
   );

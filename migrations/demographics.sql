@@ -67,3 +67,33 @@ DROP POLICY IF EXISTS "Allow all for authenticated" ON public.student_documents;
 CREATE POLICY "Allow all for authenticated"
   ON public.student_documents FOR ALL
   USING (auth.role() = 'authenticated');
+
+-- 5. Storage Bucket for Student Documents
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'student-docs',
+  'student-docs',
+  true,
+  10485760, -- 10MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'application/pdf']
+) ON CONFLICT (id) DO NOTHING;
+
+-- Storage Policy: Allow authenticated users to upload
+CREATE POLICY "Allow authenticated uploads" ON storage.objects
+FOR INSERT TO authenticated
+WITH CHECK (bucket_id = 'student-docs');
+
+-- Storage Policy: Allow authenticated users to read
+CREATE POLICY "Allow authenticated read" ON storage.objects
+FOR SELECT TO authenticated
+USING (bucket_id = 'student-docs');
+
+-- Storage Policy: Allow authenticated users to update/delete
+CREATE POLICY "Allow authenticated update" ON storage.objects
+FOR UPDATE TO authenticated
+USING (bucket_id = 'student-docs')
+WITH CHECK (bucket_id = 'student-docs');
+
+CREATE POLICY "Allow authenticated delete" ON storage.objects
+FOR DELETE TO authenticated
+USING (bucket_id = 'student-docs');

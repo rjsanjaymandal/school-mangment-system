@@ -141,10 +141,10 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     <input {...getInputProps()} />
                     <UploadCloud className="w-16 h-16 text-primary/40 mx-auto mb-6 group-hover:text-primary transition-colors group-hover:scale-110 duration-500" />
                     <h3 className="text-2xl font-black text-foreground uppercase tracking-widest mb-3 italic">
-                        Initialize Faculty Registry Ingress
+                        Import Staff Records
                     </h3>
                     <p className="text-[10px] text-foreground/40 font-black uppercase tracking-[0.2em] mb-8">
-                        Deploy Personnel Data Payload (CSV) via Secure Gate
+                        Upload staff CSV file
                     </p>
                     <div className="flex items-center justify-center gap-3 text-[9px] font-black uppercase tracking-widest text-primary/60 bg-primary/5 px-4 py-2 rounded-full w-fit mx-auto border border-primary/10">
                         <FileType className="w-4 h-4" />
@@ -157,7 +157,7 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                 <div className="text-center">
                     <button onClick={downloadTemplate} className="text-[10px] text-primary hover:text-primary/70 font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto decoration-primary/30 underline underline-offset-4">
                         <Loader2 className="w-3 h-3" />
-                        Faculty Protocol Template (CSV)
+                        Teacher Import Template (CSV)
                     </button>
                 </div>
             )}
@@ -174,7 +174,7 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                                 {file.name}
                             </p>
                             <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1 italic">
-                                Faculty Payload Status: Valid ({(file.size / 1024).toFixed(1)} KB)
+                                File Status: Valid ({(file.size / 1024).toFixed(1)} KB)
                             </p>
                         </div>
                         <Button
@@ -195,7 +195,7 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     {errors.length > 0 && (
                         <div className="bg-destructive/10 text-destructive p-6 rounded-sm text-[10px] space-y-3 border border-destructive/20 backdrop-blur-md">
                             <div className="font-black flex items-center gap-2 uppercase tracking-widest">
-                                <AlertCircle className="w-4 h-4" /> Personnel Validation Error: Blockers Detected
+                                <AlertCircle className="w-4 h-4" /> Check your file for errors
                             </div>
                             <ul className="list-disc list-inside space-y-1.5 max-h-40 overflow-y-auto pl-2 font-black uppercase tracking-tight italic opacity-80">
                                 {errors.map((err, i) => (
@@ -208,13 +208,13 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     {previewData.length > 0 && errors.length === 0 && (
                         <div className="bg-primary/10 text-primary p-6 rounded-sm text-[10px] border border-primary/20 flex items-center gap-3 font-black uppercase tracking-[0.2em] emerald-glow-sm">
                             <CheckCircle2 className="w-6 h-6 animate-pulse" />
-                            Faculty Integrity Verified. Ready to synchronize {previewData.length} Personnel Nodes.
+                            File is ready. Ready to import {previewData.length} staff.
                         </div>
                     )}
 
                     <div className="flex justify-end gap-4 pt-8 border-t border-border/50">
                         <Button variant="ghost" onClick={onCancel} disabled={isProcessing} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground">
-                            Abort Operations
+                            Cancel
                         </Button>
                         <Button
                             onClick={handleImport}
@@ -227,7 +227,7 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                                     Synchronizing...
                                 </>
                             ) : (
-                                "Execute Faculty Ingress"
+                                "Start Import"
                             )}
                         </Button>
                     </div>
@@ -239,21 +239,21 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     <div className="w-20 h-20 bg-primary/10 rounded-sm flex items-center justify-center mx-auto mb-6 border border-primary/20 emerald-glow shadow-2xl">
                         <CheckCircle2 className="w-10 h-10 text-primary" />
                     </div>
-                    <h3 className="text-3xl font-black text-foreground uppercase tracking-widest italic underline decoration-primary/30 underline-offset-8">Faculty Ingress Complete</h3>
+                    <h3 className="text-3xl font-black text-foreground uppercase tracking-widest italic underline decoration-primary/30 underline-offset-8">Import Finished</h3>
                     <div className="flex justify-center gap-12 mt-8">
                         <div className="text-center group">
                             <div className="text-5xl font-black text-primary tracking-tighter group-hover:emerald-glow-sm transition-all">{importResult.successCount}</div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40 mt-2">Personnel Synchronized</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40 mt-2">Staff Imported</div>
                         </div>
                         <div className="text-center group">
                             <div className="text-5xl font-black text-destructive tracking-tighter opacity-80">{importResult.failCount}</div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-destructive/40 mt-2">Integrity Hazards</div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-destructive/40 mt-2">Failed Records</div>
                         </div>
                     </div>
 
                     {importResult.errors.length > 0 && (
                         <div className="mt-10 text-left bg-background/50 backdrop-blur-md rounded-sm p-6 border border-border/50 text-[10px] max-h-48 overflow-y-auto shadow-2xl">
-                            <span className="font-black text-primary uppercase tracking-widest block mb-4 italic">Personnel Protocol Violation Log:</span>
+                            <span className="font-black text-primary uppercase tracking-widest block mb-4 italic">Error Log:</span>
                             <ul className="text-foreground/60 space-y-1.5 font-black uppercase tracking-tight italic pl-2 opacity-80 border-l border-primary/30">
                                 {importResult.errors.map((e, i) => (
                                     <li key={i}>{e}</li>
@@ -263,7 +263,7 @@ export function BulkImportTeacherModal({ onSuccess, onCancel }: BulkImportTeache
                     )}
 
                     <Button onClick={onSuccess} className="w-full mt-10 bg-primary text-primary-foreground rounded-sm font-black uppercase tracking-[0.3em] py-8 h-auto emerald-glow text-xs shadow-2xl hover:scale-[1.01] transition-all">
-                        Terminate Session
+                        Close
                     </Button>
                 </div>
             )}

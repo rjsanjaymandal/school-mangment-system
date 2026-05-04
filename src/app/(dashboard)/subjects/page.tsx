@@ -32,8 +32,8 @@ export default async function SubjectsPage() {
       </div>
 
       <ERPCard
-        title="Subject Management"
-        description="Manage curriculum and subjects"
+        title="Subjects"
+        description="Manage all subjects"
         icon={<BookOpen className="h-5 w-5" />}
         color="blue"
       >

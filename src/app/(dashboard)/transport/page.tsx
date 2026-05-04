@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { TransportDashboard } from "@/components/transport/TransportDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
+import { Bus, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function TransportPage() {
   const supabase = await createClient();
@@ -40,12 +43,38 @@ export default async function TransportPage() {
   const { data: assignments } = await assignmentQuery;
 
   return (
-    <TransportDashboard
-      routes={routes || []}
-      stops={stops || []}
-      assignments={assignments || []}
-      userRole={role}
-    />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-orange-50 rounded-md">
+            <Bus className="h-6 w-6 text-orange-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Transport</h1>
+            <p className="text-sm text-slate-500">Manage routes and transportation</p>
+          </div>
+        </div>
+        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+          <Plus className="h-4 w-4" />
+          Add Route
+        </Button>
+      </div>
+
+      <ERPCard
+        title="Bus Routes"
+        description="Manage routes and students"
+        icon={<Bus className="h-5 w-5" />}
+        color="amber"
+      >
+        <TransportDashboard
+          routes={routes || []}
+          stops={stops || []}
+          assignments={assignments || []}
+          userRole={role}
+        />
+      </ERPCard>
+    </div>
   );
 }
 

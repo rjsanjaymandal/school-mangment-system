@@ -196,11 +196,11 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
             <div className="flex items-center justify-between">
                 <div>
                     <h2 className="text-4xl font-black italic tracking-tighter text-foreground uppercase leading-none">
-                        Registry <span className="text-primary tracking-normal not-italic">/</span> Integrity Hub
+                        Student Conduct
                     </h2>
                     <p className="text-muted-foreground font-black uppercase text-[10px] tracking-[0.3em] mt-4 flex items-center gap-x-3">
                         <Shield className="h-3 w-3 text-primary" />
-                        Institutional Conduct & Behavioral Performance Analytics
+                        Track behavior and performance
                     </p>
                 </div>
                 {isAdminOrTeacher && (
@@ -218,7 +218,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                             </DialogHeader>
                             <div className="space-y-6 pt-6">
                                 <div className="space-y-3">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Student Node</Label>
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Student</Label>
                                     <Select value={form.student_id} onValueChange={(v) => setForm({ ...form, student_id: v })}>
                                         <SelectTrigger className="h-12 rounded-xl bg-secondary/50 border-border font-bold italic">
                                             <SelectValue placeholder="Select student for record" />
@@ -234,7 +234,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                                 </div>
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Operation Type</Label>
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Action</Label>
                                         <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v as "merit" | "demerit" })}>
                                             <SelectTrigger className="h-12 rounded-xl bg-secondary/50 border-border font-bold italic">
                                                 <SelectValue />
@@ -246,7 +246,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                                         </Select>
                                     </div>
                                     <div className="space-y-3">
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Magnitude (Points)</Label>
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">Points</Label>
                                         <Input 
                                             type="number" 
                                             value={form.points} 
@@ -289,7 +289,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                                     />
                                 </div>
                                 <Button onClick={handleAdd} disabled={loading} className="w-full rounded-xl py-8 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] text-[10px] shadow-xl shadow-primary/20">
-                                    {loading ? "PROCESSING..." : "REGISTER INCIDENT"}
+                                    {loading ? "PROCESSING..." : "SAVE RECORD"}
                                 </Button>
                             </div>
                         </DialogContent>
@@ -304,10 +304,10 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                         <div className="mb-8 flex justify-between items-start">
                             <div>
                                 <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                                    Behavioral <span className="text-primary italic">Matrix</span>
+                                    Behavior <span className="text-primary italic">Chart</span>
                                 </h3>
                                 <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
-                                    Temporal Integrity Vector Analysis
+                                    Daily tracking
                                 </p>
                             </div>
                             <Activity className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
@@ -347,7 +347,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                 <div className="md:col-span-4 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
                     <div className="mb-8 relative z-10 text-center">
                         <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                            Sector <span className="text-primary tracking-normal not-italic px-1">/</span> Analysis
+                            Category <span className="text-primary tracking-normal not-italic px-1">/</span> Chart
                         </h3>
                         <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Inherent Category distribution</p>
                     </div>
@@ -375,19 +375,19 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                 <Card className="md:col-span-3 border-border bg-card rounded-2xl p-8 shadow-sm flex items-center justify-between">
                     <div className="flex gap-x-12">
                         <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-primary italic leading-none mb-4">Positive Performance</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary italic leading-none mb-4">Merits</p>
                             <h3 className="text-5xl font-black text-foreground tracking-tighter italic">{totalMerits.toString().padStart(2, '0')}</h3>
                             <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase px-2">Total Merits</Badge>
                         </div>
                         <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-destructive italic leading-none mb-4">Correction Area</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-destructive italic leading-none mb-4">Demerits</p>
                             <h3 className="text-5xl font-black text-foreground tracking-tighter italic">{totalDemerits.toString().padStart(2, '0')}</h3>
                             <Badge className="bg-destructive/10 text-destructive border-none text-[8px] font-black uppercase px-2">Total Demerits</Badge>
                         </div>
                         <div className="space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic leading-none mb-4">Institutional Balance</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic leading-none mb-4">Total Score</p>
                             <h3 className="text-5xl font-black text-foreground tracking-tighter italic">{(totalMerits - totalDemerits).toString().padStart(2, '0')}</h3>
-                            <Badge className="bg-secondary text-muted-foreground border-none text-[8px] font-black uppercase px-2">Net Integrity Score</Badge>
+                            <Badge className="bg-secondary text-muted-foreground border-none text-[8px] font-black uppercase px-2">Points Balance</Badge>
                         </div>
                     </div>
                     
@@ -422,7 +422,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
             {/* Filters Bar */}
             <div className="flex flex-col md:flex-row gap-6 items-end">
                 <div className="flex-1 space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic ml-1">Search Registry</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic ml-1">Search records</Label>
                     <div className="relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input 
@@ -434,7 +434,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                     </div>
                 </div>
                 <div className="w-full md:w-[180px] space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic ml-1 text-right block">Vector Filter</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic ml-1 text-right block">Type</Label>
                     <Select value={typeFilter} onValueChange={setTypeFilter}>
                         <SelectTrigger className="h-12 rounded-xl bg-card border-border font-bold italic">
                             <SelectValue placeholder="All Vectors" />
@@ -447,7 +447,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                     </Select>
                 </div>
                 <div className="w-full md:w-[200px] space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic ml-1 text-right block">Categorisation</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic ml-1 text-right block">Category</Label>
                     <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                         <SelectTrigger className="h-12 rounded-xl bg-card border-border font-bold italic">
                             <SelectValue placeholder="All Categories" />
@@ -468,9 +468,9 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                 <table className="w-full text-sm">
                     <thead className="bg-muted/30 border-b border-border">
                         <tr>
-                            <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Student Node</th>
-                            <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Integration Type</th>
-                            <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Magnitude</th>
+                            <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Student</th>
+                            <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Type</th>
+                            <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Points</th>
                             <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Reporter</th>
                             <th className="text-left py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Category</th>
                             <th className="text-right py-6 px-8 font-black uppercase tracking-[0.25em] text-[9px] text-muted-foreground italic">Protocol</th>
@@ -556,7 +556,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                 <DialogContent className="bg-card border-border rounded-2xl max-w-lg shadow-2xl">
                     <DialogHeader>
                         <DialogTitle className="font-black text-3xl italic tracking-tighter uppercase italic">
-                            Update Ledger Node
+                            Update Record
                         </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-6 pt-6">
@@ -633,7 +633,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
                         <div className="grid grid-cols-2 gap-4">
                             <Button variant="outline" onClick={() => { setIsEditOpen(false); setSelectedRecord(null); }} className="rounded-xl h-14 font-black uppercase tracking-widest text-[10px]">REVERT</Button>
                             <Button onClick={handleEdit} disabled={loading} className="rounded-xl h-14 bg-primary text-primary-foreground font-black uppercase tracking-[0.3em] text-[10px] shadow-xl shadow-primary/20">
-                                {loading ? "UPDATING..." : "COMMIT CHANGES"}
+                                {loading ? "UPDATING..." : "SAVE CHANGES"}
                             </Button>
                         </div>
                     </div>

@@ -2,7 +2,7 @@
 
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 
-export default function GlobalError({
+export default function ErrorPage({
   error,
   reset,
 }: {
@@ -10,10 +10,6 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html>
-      <body>
-        <ErrorBoundary error={error} reset={reset} />
-      </body>
-    </html>
+    <ErrorBoundary error={error} reset={reset} />
   );
 }

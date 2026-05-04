@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { MessagesDashboard } from "@/components/messages/MessagesDashboard";
 import { MessagesService } from "@/lib/services/messages";
 import { redirect } from "next/navigation";
+import { MessageSquare } from "lucide-react";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function MessagesPage() {
   const supabase = await createClient();
@@ -14,10 +16,8 @@ export default async function MessagesPage() {
     redirect("/login");
   }
 
-  // Get modern conversation threads
   const { data: conversations } = await MessagesService.getConversations(user.id);
 
-  // Get all profiles for starting new conversations
   const { data: contacts } = await supabase
     .from("profiles")
     .select("id, full_name, role, avatar_url")
@@ -25,11 +25,31 @@ export default async function MessagesPage() {
     .order("full_name");
 
   return (
-    <MessagesDashboard
-      initialConversations={conversations || []}
-      contacts={contacts || []}
-      currentUserId={user.id}
-    />
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center gap-4">
+        <div className="p-3 bg-blue-50 rounded-md">
+          <MessageSquare className="h-6 w-6 text-blue-600" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Messages</h1>
+          <p className="text-sm text-slate-500">Communication and notifications</p>
+        </div>
+      </div>
+
+      <ERPCard
+        title="Messages"
+        description="View and send messages"
+        icon={MessageSquare}
+        color="blue"
+      >
+        <MessagesDashboard
+          initialConversations={conversations || []}
+          contacts={contacts || []}
+          currentUserId={user.id}
+        />
+      </ERPCard>
+    </div>
   );
 }
 

@@ -70,7 +70,7 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "Personnel",
+    group: "Staff & Students",
     roles: ["admin", "teacher", "student"],
     items: [
       { 
@@ -80,10 +80,20 @@ const navigation: NavGroup[] = [
         subItems: [
           { name: "Enroll New", href: "/students/enroll" },
           { name: "Student List", href: "/students/list" },
+          { name: "Documents", href: "/students/documents" },
           { name: "Attendance", href: "/students/attendance" },
         ]
       },
-      { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"] },
+      { 
+        name: "HR", 
+        href: "/hr", 
+        icon: UserSquare2, 
+        roles: ["admin"],
+        subItems: [
+          { name: "Staff Directory", href: "/hr/directory" },
+          { name: "Add Staff", href: "/hr/add-staff" },
+        ]
+      },
       { name: "Conduct", href: "/conduct", icon: UserCheck },
       { name: "Health", href: "/health", icon: Stethoscope },
     ],
@@ -117,7 +127,7 @@ const navigation: NavGroup[] = [
     ],
   },
   {
-    group: "System",
+    group: "Admin",
     roles: ["admin"],
     items: [
       { name: "Users", href: "/users", icon: UserCheck },
@@ -165,27 +175,24 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
     .filter((group) => group.items.length > 0);
 
   return (
-    <div className="flex h-full flex-col bg-white dark:bg-slate-950 border-r border-slate-200/60 dark:border-slate-800/60 text-slate-900 dark:text-slate-100 transition-all duration-300">
-      <div className="p-8 pb-4 flex items-center gap-x-4">
-          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-2.5 rounded-2xl shadow-xl emerald-glow">
-            <GraduationCap className="h-6 w-6" />
+    <div className="flex h-full flex-col bg-white border-r border-slate-200 text-slate-900">
+      <div className="p-4 flex items-center gap-3 border-b border-slate-100">
+          <div className="bg-emerald-600 text-white p-2 rounded-md">
+            <GraduationCap className="h-5 w-5" />
           </div>
-        <div className="flex flex-col">
-          <span className="font-black text-xl tracking-tighter uppercase italic">
-            Edu Maysan
-          </span>
-          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-primary mt-0.5">Institutional ERP</span>
+        <div>
+          <span className="font-semibold text-base">Edu Maysan</span>
+          <span className="text-xs text-muted-foreground block">School Management</span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-10 space-y-12 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {filteredNavigation.map((group) => (
-          <div key={group.group} className="space-y-6">
-            <div className="flex items-center gap-x-4 px-2">
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] whitespace-nowrap">
-                {group.group}
-              </h3>
-              <div className="h-[1px] w-full bg-slate-100 dark:bg-slate-800/50" />
+          <div key={group.group}>
+            <h3 className="text-xs font-medium text-slate-400 uppercase mb-2 px-2">
+              {group.group}
+            </h3>
+            <div className="space-y-0.5">
             </div>
             <div className="space-y-1">
               {group.items.map((item) => {
@@ -198,41 +205,32 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                     <button
                       onClick={() => hasSubItems && toggleExpand(item.name)}
                       className={cn(
-                        "w-full group relative flex items-center justify-between text-slate-500 dark:text-slate-400 text-[11px] font-black uppercase tracking-widest px-4 py-3 rounded-2xl transition-all duration-300",
+                        "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium",
                         isActive && !hasSubItems
-                          ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl" 
-                          : "hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white"
+                          ? "bg-slate-900 text-white" 
+                          : "text-slate-600 hover:bg-slate-100"
                       )}
                     >
-                      <div className="flex items-center gap-x-4">
-                        <div className={cn(
-                          "p-1.5 rounded-xl transition-all duration-300",
-                          isActive
-                            ? "bg-primary/10 text-primary shadow-sm"
-                            : "bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 group-hover:text-inherit"
-                        )}>
-                          <item.icon className="h-4 w-4" />
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <item.icon className="h-4 w-4" />
                         <span>{item.name}</span>
                       </div>
                       {hasSubItems && (
-                         <div className={cn("transition-transform duration-300", isExpanded ? "rotate-180" : "")}>
-                           <ChevronDown className="h-3 w-3" />
-                         </div>
+                         <ChevronDown className={cn("h-4 w-4", isExpanded ? "rotate-180" : "")} />
                       )}
                     </button>
 
                     {hasSubItems && isExpanded && (
-                      <div className="ml-6 pl-6 border-l border-slate-100 dark:border-slate-800 space-y-1 py-1">
+                      <div className="ml-4 pl-4 border-l border-slate-200 space-y-1 py-1">
                         {item.subItems?.map(sub => (
                           <Link
                             key={sub.href}
                             href={sub.href}
                             className={cn(
-                              "block px-4 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all",
+                              "block px-3 py-1.5 text-sm rounded-md",
                               pathname === sub.href
-                                ? "text-primary bg-primary/5"
-                                : "text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900"
+                                ? "text-emerald-600 bg-emerald-50 font-medium"
+                                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
                             )}
                           >
                             {sub.name}
@@ -248,25 +246,16 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
         ))}
       </div>
 
-      <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-        <Link href="/profile" className="relative group cursor-pointer block overflow-hidden p-4 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:border-primary/30 shadow-sm hover:shadow-xl hover:shadow-primary/5">
-            <div className="flex items-center gap-x-4 relative z-10">
-            <div className="h-12 w-12 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-black text-xl shadow-lg transition-transform duration-500 group-hover:scale-110 emerald-glow">
+      <div className="p-6 border-t border-slate-100 border-slate-200 bg-slate-50/50 bg-slate-50/50">
+        <Link href="/profile" className="flex items-center gap-3 p-3 rounded-md bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
+            <div className="h-10 w-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-medium">
               {userProfile?.full_name?.[0] || "U"}
             </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-black tracking-tighter truncate text-slate-900 dark:text-white uppercase italic">
-                {userProfile ? userProfile.full_name : "Syncing..."}
-              </span>
-              <div className="flex items-center gap-x-2 mt-0.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] truncate">
-                    {userRole}
-                </span>
-              </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{userProfile?.full_name || "Loading..."}</p>
+              <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
             </div>
-          </div>
-        </Link>
+          </Link>
       </div>
     </div>
   );
