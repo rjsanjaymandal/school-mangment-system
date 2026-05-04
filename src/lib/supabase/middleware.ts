@@ -65,7 +65,7 @@ export const updateSession = async (request: NextRequest) => {
     }
 
     // Role-based redirection logic (Ported from hardened middleware)
-    const impersonationId = request.cookies.get("impersonation_user_id")?.value;
+    const viewAsId = request.cookies.get("view_as_user_id")?.value;
     
     if (user && !request.nextUrl.pathname.startsWith('/unauthorized')) {
         const { data: profile } = await supabase
@@ -76,11 +76,11 @@ export const updateSession = async (request: NextRequest) => {
 
         const realRole = profile?.role;
 
-        if (impersonationId) {
+        if (viewAsId) {
             if (realRole !== 'admin') {
                 const response = NextResponse.redirect(new URL('/unauthorized', request.url));
                 supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie.name, cookie.value, cookie));
-                response.cookies.delete("impersonation_user_id");
+                response.cookies.delete("view_as_user_id");
                 return response;
             }
         }

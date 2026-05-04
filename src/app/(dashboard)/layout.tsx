@@ -20,32 +20,27 @@ export default async function DashboardLayout({
     return redirect("/login");
   }
 
-  // Handle Impersonation Banner
+  // Handle Impersonation Logic
   const cookieStore = await cookies();
   const impersonationId = cookieStore.get("impersonation_user_id")?.value;
+  
+  const [targetProfileRes, activeProfileRes] = await Promise.all([
+    impersonationId 
+      ? supabase.from("profiles").select("full_name, role").eq("id", impersonationId).single()
+      : Promise.resolve({ data: null }),
+    supabase.from("profiles").select("*").eq("id", impersonationId || user.id).single()
+  ]);
+
+  const targetProfile = targetProfileRes.data;
+  const activeProfile = activeProfileRes.data;
+
   let impersonationData = null;
-
-  if (impersonationId) {
-    const { data: targetProfile } = await supabase
-      .from("profiles")
-      .select("full_name, role")
-      .eq("id", impersonationId)
-      .single();
-
-    if (targetProfile) {
-      impersonationData = {
-        name: targetProfile.full_name,
-        role: targetProfile.role,
-      };
-    }
+  if (targetProfile) {
+    impersonationData = {
+      name: targetProfile.full_name,
+      role: targetProfile.role,
+    };
   }
-
-  // Fetch active profile for Sidebar/Navbar context
-  const { data: activeProfile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", impersonationId || user.id)
-    .single();
 
   return (
     <div className="h-full relative">

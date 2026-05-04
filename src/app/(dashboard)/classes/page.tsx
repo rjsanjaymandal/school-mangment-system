@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { ClassList } from "@/components/classes/ClassList";
 import { getSessionRole } from "@/lib/auth-utils";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { Building2, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default async function ClassesPage() {
   const supabase = await createClient();
@@ -8,9 +11,7 @@ export default async function ClassesPage() {
 
   const { data: classes, error } = await supabase
     .from("classes")
-    .select(`
-      *
-    `)
+    .select(`*`)
     .order("name", { ascending: true });
 
   const { data: teachers } = await supabase
@@ -32,7 +33,7 @@ export default async function ClassesPage() {
 
   if (error) {
     console.error("Classes query error details:", JSON.stringify(error, null, 2));
-    return <div className="p-8 text-destructive">Error loading classes: {error.message}</div>;
+    return <div className="p-8 text-destructive italic">Error loading institutional sections: {error.message}</div>;
   }
 
   // Manually join teacher data since the database foreign key might be missing
@@ -42,15 +43,18 @@ export default async function ClassesPage() {
   }) || [];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700 pb-12 w-full max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Classes</h2>
-          <p className="text-muted-foreground mt-2">
-            Manage grade levels, sections, and room allocations.
-          </p>
-        </div>
-      </div>
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
+      <PageHeader
+        title="Institutional Architecture"
+        description="Manage grade levels, sections, and structural room allocations."
+        icon={Building2}
+        badge={`${classes?.length || 0} active sections`}
+      >
+        <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
+          <Plus className="h-4 w-4" />
+          Create Class
+        </Button>
+      </PageHeader>
 
       <ClassList
         initialData={joinedClasses as any}

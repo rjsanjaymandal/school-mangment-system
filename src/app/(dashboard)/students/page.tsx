@@ -2,7 +2,9 @@ import { InstitutionalService } from "@/lib/services/institutional";
 import { getSessionRole } from "@/lib/auth-utils";
 import { StudentList } from "@/components/students/StudentList";
 import { createClient } from "@/lib/supabase/server";
-import { Users } from "lucide-react";
+import { Users, UserPlus } from "lucide-react";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/button";
 
 export default async function StudentsPage() {
   const supabase = await createClient();
@@ -14,24 +16,18 @@ export default async function StudentsPage() {
   ]);
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-1000 relative reveal-1">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-primary/10 pb-12 relative z-10">
-        <div>
-          <div className="flex items-center gap-x-3 mb-4">
-            <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-semibold text-primary flex items-center gap-x-2">
-              <Users className="h-3.5 w-3.5" />
-              Active Profiles
-            </div>
-          </div>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Student Management
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Manage student records and directory
-          </p>
-        </div>
-      </div>
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
+      <PageHeader
+        title="Student Registry"
+        description="Comprehensive directory of institutional learners and academic profiles."
+        icon={Users}
+        badge={`${students?.length || 0} Records`}
+      >
+        <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
+          <UserPlus className="h-4 w-4" />
+          Enroll New
+        </Button>
+      </PageHeader>
 
       <StudentList 
         initialData={students || []} 

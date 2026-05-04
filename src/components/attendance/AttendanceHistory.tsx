@@ -75,7 +75,8 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
 
     let active = true;
 
-    readAttendanceHistory(selectedClass, selectedDate).then(({ data, error }) => {
+    const loadHistory = async () => {
+      const { data, error } = await readAttendanceHistory(selectedClass, selectedDate);
       if (!active) return;
 
       if (error) {
@@ -83,7 +84,9 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
       } else {
         setRecords(data ?? []);
       }
-    });
+    };
+
+    loadHistory();
 
     return () => {
       active = false;

@@ -4,12 +4,15 @@ import {
   Users,
   BookOpen,
   ShieldAlert,
+  Settings,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { UserService } from "@/lib/services/user";
 import { Badge } from "@/components/ui/badge";
 import { AdminCharts } from "./AdminCharts";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminDashboard() {
   const [academicYear, statsData] = await Promise.all([
@@ -30,128 +33,88 @@ export default async function AdminDashboard() {
   const activeYearName =
     academicYear && !("error" in academicYear)
       ? academicYear.name
-      : "Academic Year 2023-24";
+      : "Academic Year 2024-25";
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-4xl font-black tracking-tight text-foreground uppercase">
-            Admin Mission Control
-          </h2>
-          <div className="flex items-center gap-x-2 mt-1">
-            <p className="text-muted-foreground font-medium tracking-tight">
-              Institutional Governance & Strategic System Management
-            </p>
-            <Badge
-              variant="outline"
-              className="border-blue-200 text-blue-600 bg-blue-50 font-black text-[10px]"
-            >
-              {activeYearName}
-            </Badge>
-          </div>
-        </div>
-        <div className="h-12 w-12 rounded-2xl bg-card text-white flex items-center justify-center shadow-2xl neon-blue">
-          <GraduationCap className="h-6 w-6" />
-        </div>
-      </div>
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
+      <PageHeader
+        title="Admin Mission Control"
+        description="Institutional Governance & Strategic System Management"
+        icon={GraduationCap}
+        badge={activeYearName}
+      >
+        <Button variant="outline" className="rounded-xl font-bold bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 gap-x-2">
+          <Settings className="h-4 w-4" />
+          Settings
+        </Button>
+      </PageHeader>
 
-      <div className="grid gap-6 md:grid-cols-4">
-        <Card className="border-none glass futuristic-card bg-card text-white p-6">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-blue-400">
-              Parental Network
-            </CardTitle>
-          </CardHeader>
-          <div className="text-3xl font-black">{realStats.parentCount}</div>
-          <p className="text-xs text-blue-300/60 mt-2 font-medium">
-            Verified Guardians
-          </p>
-        </Card>
-
-        <Card className="border-none glass futuristic-card bg-white/40 p-6">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              Global Enrollment
-            </CardTitle>
-          </CardHeader>
-          <div className="text-3xl font-black text-foreground">
-            {realStats.studentCount}
-          </div>
-          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-muted-foreground">
-            <Users className="h-3 w-3" />
-            Verified Identities
-          </div>
-        </Card>
-
-        <Card className="border-none glass futuristic-card bg-white/40 p-6">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              Faculty Pool
-            </CardTitle>
-          </CardHeader>
-          <div className="text-3xl font-black text-foreground">
-            {realStats.teacherCount}
-          </div>
-          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-muted-foreground">
-            <Layout className="h-3 w-3" />
-            Academic Staff
-          </div>
-        </Card>
-
-        <Card className="border-none glass futuristic-card bg-white/40 p-6">
-          <CardHeader className="p-0 mb-4">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              Active Classes
-            </CardTitle>
-          </CardHeader>
-          <div className="text-3xl font-black text-foreground">
-            {realStats.classCount}
-          </div>
-          <div className="flex items-center gap-x-1 mt-2 text-[10px] font-bold text-muted-foreground">
-            <BookOpen className="h-3 w-3" />
-            Live Sections
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-none glass futuristic-card bg-white/40 p-8">
-          <div className="flex items-center gap-x-4 mb-4">
-            <div className="h-10 w-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-              <BookOpen className="h-5 w-5" />
+      <div className="grid gap-8 md:grid-cols-4">
+        {[
+          { label: "Parental Network", value: realStats.parentCount, sub: "Verified Guardians", icon: Users, color: "blue" },
+          { label: "Global Enrollment", value: realStats.studentCount, sub: "Verified Identities", icon: GraduationCap, color: "emerald" },
+          { label: "Faculty Pool", value: realStats.teacherCount, sub: "Academic Staff", icon: Layout, color: "indigo" },
+          { label: "Active Classes", value: realStats.classCount, sub: "Live Sections", icon: BookOpen, color: "slate" },
+        ].map((stat, i) => (
+          <Card key={i} className="card-premium rounded-[2.5rem] p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <div className={`h-12 w-12 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 dark:text-${stat.color}-400 flex items-center justify-center`}>
+                <stat.icon className="h-6 w-6" />
+              </div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                {stat.label}
+              </p>
             </div>
             <div>
-              <h3 className="font-bold text-foreground">Academic Integrity</h3>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-4xl font-bold text-slate-900 dark:text-white leading-none">
+                {stat.value}
+              </p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">
+                {stat.sub}
+              </p>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-2">
+        <Card className="card-premium rounded-[2.5rem] p-10 space-y-8">
+          <div className="flex items-center gap-x-5">
+            <div className="h-14 w-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center shadow-sm">
+              <BookOpen className="h-7 w-7" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Academic Integrity</h3>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                 Curriculum and syllabus sync status
               </p>
             </div>
           </div>
           <div className="space-y-4 pt-2">
-            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-blue-500 w-[85%] rounded-full" />
+            <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-blue-500 w-[85%] rounded-full shadow-[0_0_12px_rgba(59,130,246,0.5)]" />
             </div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-              85% Syllabus Completion
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+              85% Syllabus Completion • Batch 2024
             </p>
           </div>
         </Card>
 
-        <Card className="border-none glass futuristic-card bg-slate-950 p-8 text-white">
-          <div className="flex items-center gap-x-4 mb-4">
-            <div className="h-10 w-10 rounded-xl bg-red-500/20 text-red-500 flex items-center justify-center">
-              <ShieldAlert className="h-5 w-5" />
+        <Card className="card-premium rounded-[2.5rem] p-10 bg-slate-950 dark:bg-slate-900 text-white space-y-8 border-none overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 blur-[100px] pointer-events-none" />
+          <div className="flex items-center gap-x-5">
+            <div className="h-14 w-14 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center shadow-sm">
+              <ShieldAlert className="h-7 w-7" />
             </div>
             <div>
-              <h3 className="font-bold">Security Oversight</h3>
-              <p className="text-xs text-muted-foreground">
+              <h3 className="text-xl font-bold">Security Oversight</h3>
+              <p className="text-sm font-medium text-slate-400">
                 Threat detection & access monitoring
               </p>
             </div>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 mt-4">
-            <p className="text-xs font-medium italic opacity-70 italic">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 relative z-10">
+            <p className="text-sm font-medium italic opacity-80 leading-relaxed">
               "Autonomous kernels are monitoring all gateway entries. No
               breaches detected in the last 24h cycle."
             </p>
@@ -159,15 +122,22 @@ export default async function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Analytics Section using Recharts */}
-      <div className="mt-8">
-        <h3 className="text-xl font-black text-foreground mb-6 uppercase tracking-widest flex items-center gap-x-2">
-          <Layout className="h-5 w-5 text-blue-500" />
-          System Analytics
-        </h3>
-        <AdminCharts />
+      <div className="space-y-8">
+        <div className="flex items-center gap-x-3">
+          <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+            <Layout className="h-4 w-4" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight uppercase">
+            System Analytics
+          </h3>
+        </div>
+        <Card className="card-premium rounded-[2.5rem] p-10 overflow-hidden">
+          <AdminCharts />
+        </Card>
       </div>
     </div>
+  );
+}
   );
 }
 

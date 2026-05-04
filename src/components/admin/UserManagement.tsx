@@ -64,7 +64,8 @@ export function UserManagement() {
   useEffect(() => {
     let active = true;
 
-    UserService.getAllProfiles().then((data) => {
+    const loadUsers = async () => {
+      const data = await UserService.getAllProfiles();
       if (!active) return;
 
       if (data && !("error" in data)) {
@@ -75,7 +76,9 @@ export function UserManagement() {
 
       setLoading(false);
       setIsRefreshing(false);
-    });
+    };
+
+    loadUsers();
 
     return () => {
       active = false;
@@ -110,7 +113,7 @@ export function UserManagement() {
     try {
       await startImpersonation(userId);
     } catch (error: any) {
-      toast.error(error.message || "Failed to start impersonation");
+      toast.error(error.message || "Failed to start shadow session");
       setIsImpersonating(null);
     }
   };

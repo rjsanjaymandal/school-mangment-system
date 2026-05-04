@@ -136,64 +136,45 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
   };
 
   return (
-    <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
+    <div className="space-y-12 page-fade-in">
       
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8 reveal-2 relative z-10">
-        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-            <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Users className="h-20 w-20 text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {[
+          { label: "Total Students", value: initialData.length, icon: Users, color: "blue", sub: "All enrolled students" },
+          { label: "Active Students", value: initialData.filter(s => s.admission_number).length, icon: CheckCircle2, color: "emerald", sub: "With admission numbers" },
+          { label: "Classes", value: classes.length, icon: Filter, color: "indigo", sub: "Total sections" },
+          { label: "Recent Admissions", value: initialData.slice(0, 5).length, icon: Plus, color: "orange", sub: "New enrollments" },
+        ].map((stat, i) => (
+          <Card key={i} className="card-premium rounded-[2.5rem] p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <div className={`h-12 w-12 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 dark:text-${stat.color}-400 flex items-center justify-center`}>
+                <stat.icon className="h-6 w-6" />
+              </div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                {stat.label}
+              </p>
             </div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Total Students</p>
-            <h3 className="text-4xl font-bold text-foreground leading-none">{initialData.length.toString().padStart(2, '0')}</h3>
-            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
-               <Activity className="h-3.5 w-3.5" /> All enrolled students
-            </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-            <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <CheckCircle2 className="h-20 w-20 text-primary" />
+            <div>
+              <p className="text-4xl font-bold text-slate-900 dark:text-white leading-none">
+                {stat.value.toString().padStart(2, '0')}
+              </p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2">
+                {stat.sub}
+              </p>
             </div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Active Students</p>
-            <h3 className="text-4xl font-bold text-foreground leading-none">
-                {initialData.filter(s => s.admission_number).length.toString().padStart(2, '0')}
-            </h3>
-            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
-               <TrendingUp className="h-3.5 w-3.5 text-emerald-500" /> With admission numbers
-            </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-            <p className="text-xs font-medium text-muted-foreground mb-2">Classes</p>
-            <h3 className="text-4xl font-bold text-foreground leading-none">{classes.length.toString().padStart(2, '0')}</h3>
-            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
-               <Filter className="h-3.5 w-3.5 text-blue-500" /> Total sections
-            </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-             <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <ArrowUpRight className="h-20 w-20 text-emerald-500" />
-            </div>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Recent Admissions</p>
-            <h3 className="text-4xl font-bold text-foreground leading-none">
-                 {initialData.slice(0, 5).length.toString().padStart(2, '0')}
-            </h3>
-            <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
-               <Plus className="h-3.5 w-3.5" /> New enrollments
-            </p>
-        </div>
+          </Card>
+        ))}
       </div>
 
       {/* Operations Surface */}
-      <div className="space-y-8 relative z-10 animate-in slide-in-from-bottom-2">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-6 border border-border bg-card/40 backdrop-blur-sm rounded-sm">
-            <div className="relative flex-1 md:w-80 group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+      <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="relative flex-1 w-full md:max-w-md group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
                 <Input
-                    placeholder="Search students..."
-                    className="h-11 pl-12 bg-background border-border text-foreground font-medium rounded-sm focus:ring-1 focus:ring-primary/40 transition-all"
+                    placeholder="Search students by name or ID..."
+                    className="h-14 pl-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-medium rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -205,20 +186,14 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                         <Button
                             onClick={() => setIsBulkImportOpen(true)}
                             variant="outline"
-                            className="h-11 px-6 font-medium transition-all flex items-center gap-2"
+                            className="h-14 px-8 rounded-2xl font-bold transition-all flex items-center gap-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
                         >
-                            <FileUp className="h-4 w-4" /> Batch Import
-                        </Button>
-                        <Button
-                            onClick={onAdd}
-                            className="h-11 px-6 font-medium transition-all flex items-center gap-2"
-                        >
-                            <UserPlus className="h-4 w-4" /> Add Student
+                            <FileUp className="h-4 w-4" /> Import
                         </Button>
                         <Button
                             onClick={() => setIsBulkAssignOpen(true)}
                             variant="outline"
-                            className="h-11 px-6 font-medium transition-all flex items-center gap-2"
+                            className="h-14 px-8 rounded-2xl font-bold transition-all flex items-center gap-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
                             disabled={selectedStudentIds.length === 0}
                         >
                             <Users className="h-4 w-4" /> Bulk Assign ({selectedStudentIds.length})
@@ -228,109 +203,110 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
             </div>
         </div>
 
-        <div className="border border-border bg-card/40 rounded-sm overflow-hidden">
+        <Card className="card-premium rounded-[2.5rem] overflow-hidden">
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
-                        <TableRow className="hover:bg-transparent">
-                            {isAdmin && <TableHead className="py-4 px-6 font-semibold w-12" />}
-                            <TableHead className="py-4 px-6 font-semibold">Student Profile</TableHead>
-                            <TableHead className="py-4 px-6 font-semibold">Class</TableHead>
-                            <TableHead className="py-4 px-6 font-semibold">Status</TableHead>
-                            <TableHead className="py-4 px-6 font-semibold text-right">Actions</TableHead>
+                        <TableRow className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
+                            {isAdmin && <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 w-12" />}
+                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">Student Profile</TableHead>
+                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">Class Node</TableHead>
+                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">Status</TableHead>
+                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="divide-y divide-border">
+                    <TableBody className="divide-y divide-slate-50 dark:divide-slate-800">
                         {filteredData.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={isAdmin ? 5 : 4} className="py-24 text-center">
                                     <div className="flex flex-col items-center">
-                                        <GraduationCap className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
-                                        <p className="text-sm font-medium text-muted-foreground">No students found.</p>
+                                        <GraduationCap className="h-12 w-12 mb-4 text-slate-200 dark:text-slate-800" />
+                                        <p className="text-sm font-medium text-slate-400 italic">No matching student records found.</p>
                                     </div>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             filteredData.map((student) => (
-                                <TableRow key={student.id} className="group hover:bg-muted/50 transition-colors">
+                                <TableRow key={student.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                                     {isAdmin && (
-                                        <TableCell className="py-4 px-6">
+                                        <TableCell className="py-6 px-10">
                                             <input
                                                 type="checkbox"
+                                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20 cursor-pointer"
                                                 checked={selectedStudentIds.includes(student.id)}
                                                 onChange={() => toggleSelection(student.id)}
                                                 aria-label={`Select ${student.profile?.full_name || student.admission_number}`}
                                             />
                                         </TableCell>
                                     )}
-                                    <TableCell className="py-4 px-6">
+                                    <TableCell className="py-6 px-10">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-10 w-10 flex items-center justify-center font-bold text-white text-sm rounded-full bg-primary/20 border border-primary/20">
+                                            <div className="h-10 w-10 flex items-center justify-center font-bold text-slate-900 dark:text-white text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                                 {student.profile?.full_name?.[0] || 'U'}
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors leading-none mb-1">
+                                                <span className="font-bold text-slate-900 dark:text-white text-base leading-none mb-1 group-hover:text-blue-500 transition-colors">
                                                     {student.profile?.full_name}
                                                 </span>
-                                                <span className="text-xs text-muted-foreground font-mono">
-                                                    Adm: {student.admission_number || "N/A"} <span className="mx-1">•</span> Roll: {student.roll_number || "N/A"}
+                                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                                    {student.admission_number || "NO-ID"} <span className="mx-1 opacity-30">•</span> ROLL: {student.roll_number || "NA"}
                                                 </span>
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="py-4 px-6">
-                                        <div className="flex flex-col">
-                                            <span className="font-medium text-sm text-foreground">{student.class?.name || "Unassigned"}</span>
-                                        </div>
+                                    <TableCell className="py-6 px-10">
+                                        <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900 font-bold">
+                                            {student.class?.name || "UNASSIGNED"}
+                                        </Badge>
                                     </TableCell>
-                                    <TableCell className="py-4 px-6">
-                                        <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 font-medium px-3 py-1 rounded-full capitalize">
-                                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse" />
+                                    <TableCell className="py-6 px-10">
+                                        <Badge variant="outline" className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900 font-bold px-3 py-1 rounded-full capitalize">
+                                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
                                             Active
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="py-4 px-6 text-right">
+                                    <TableCell className="py-6 px-10 text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted transition-colors flex items-center justify-center rounded-sm">
-                                                    <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
+                                                <Button variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center rounded-xl">
+                                                    <MoreHorizontal className="h-5 w-5 text-slate-400" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-56 p-2 rounded-sm border border-border shadow-md">
-                                                <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground px-2 py-1.5">Manage Student</DropdownMenuLabel>
-                                                <DropdownMenuItem asChild className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm hover:bg-muted focus:bg-muted transition-colors">
+                                            <DropdownMenuContent align="end" className="w-64 p-3 rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900">
+                                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">Entity Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem asChild className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                                     <Link href={`/students/${student.id}`}>
-                                                        <Eye className="h-4 w-4" /> View Profile
+                                                        <Eye className="h-4 w-4 text-blue-500" /> View Profile
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 {isAdmin && (
                                                     <>
                                                         <DropdownMenuItem
                                                             onClick={() => onEdit(student)}
-                                                            className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm hover:bg-muted focus:bg-muted transition-colors"
+                                                            className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                                         >
-                                                            <Pencil className="h-4 w-4" /> Edit Profile
+                                                            <Pencil className="h-4 w-4 text-indigo-500" /> Edit Credentials
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             onClick={() => onLinkParent(student.id)}
-                                                            className="flex items-center gap-3 px-2 py-2 text-sm cursor-pointer rounded-sm hover:bg-muted focus:bg-muted transition-colors"
+                                                            className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                                         >
-                                                            <UserPlus className="h-4 w-4" /> Link Parent/Guardian
+                                                            <UserPlus className="h-4 w-4 text-emerald-500" /> Link Guardian
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-2" />
                                                         <DropdownMenuItem
                                                             onClick={() => {
-                                                                if (confirm("Delete this student record?")) {
+                                                                if (confirm("Permanently delete this student record? This action cannot be undone.")) {
                                                                     startTransition(async () => {
                                                                         const res = await deleteStudent(student.id);
                                                                         if (res.error) toast.error(res.error);
-                                                                        else toast.success("Student deleted successfully");
+                                                                        else toast.success("Student record purged successfully");
                                                                     });
                                                                 }
                                                             }}
-                                                            className="flex items-center gap-3 px-2 py-2 text-sm text-red-500 cursor-pointer rounded-sm hover:text-red-600 focus:text-red-600 focus:bg-red-50 transition-colors"
+                                                            className="flex items-center gap-3 px-3 py-3 text-sm font-bold text-red-500 cursor-pointer rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                                         >
-                                                            <Trash2 className="h-4 w-4" /> Delete Student
+                                                            <Trash2 className="h-4 w-4" /> Purge Record
                                                         </DropdownMenuItem>
                                                     </>
                                                 )}
@@ -343,7 +319,7 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                     </TableBody>
                 </Table>
             </div>
-        </div>
+        </Card>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -10,7 +10,7 @@ import {
   ClipboardCheck,
   Loader2,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import {
 } from "@/lib/reports/generator";
 import { ReportsService } from "@/lib/services/reports";
 import { useEffect, useState } from "react";
+import { PageHeader } from "@/components/shared/PageHeader";
 
 interface StudentData {
   id: string;
@@ -63,7 +64,6 @@ export default function ReportsPage() {
         }
 
         const totalCerts = certRes.data?.total_issued || 0;
-        const totalRevenue = feesRes.data?.total_collected || 0;
         const feeRate = feesRes.data?.rate || "0";
 
         setStats({
@@ -137,180 +137,156 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-4xl font-black tracking-tight text-foreground">
-            Institutional Reports
-          </h2>
-          <p className="text-muted-foreground font-medium">
-            Generate and verify academic credentials
-          </p>
-        </div>
-        <div className="flex gap-x-3">
-          <Button
-            variant="outline"
-            className="rounded-2xl border-border font-bold gap-x-2 bg-white"
-          >
-            <ClipboardCheck className="h-4 w-4" />
-            Verify Certificate
-          </Button>
-          <Button className="rounded-2xl bg-card text-white font-bold gap-x-2 neon-blue">
-            <Filter className="h-4 w-4" />
-            Bulk Generate
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="border-none glass futuristic-card bg-slate-50/50">
-          <CardContent className="p-6 flex items-center gap-x-4">
-            <div className="h-12 w-12 rounded-2xl bg-blue-500 flex items-center justify-center text-white neon-blue">
-              <Award className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-2xl font-black text-foreground leading-none">
-                {stats.certificatesIssued}
-              </p>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
-                Certificates Issued
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-none glass futuristic-card bg-slate-50/50">
-          <CardContent className="p-6 flex items-center gap-x-4">
-            <div className="h-12 w-12 rounded-2xl bg-purple-500 flex items-center justify-center text-white neon-purple">
-              <FileText className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-2xl font-black text-foreground leading-none">
-                {students.length}
-              </p>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
-                Report Cards Ready
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-none glass futuristic-card bg-slate-50/50">
-          <CardContent className="p-6 flex items-center gap-x-4">
-            <div className="h-12 w-12 rounded-2xl bg-green-500 flex items-center justify-center text-white">
-              <GraduationCap className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-2xl font-black text-foreground leading-none">
-                {stats.completionRate}%
-              </p>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mt-1">
-                Fee Completion Rate
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex gap-x-4 items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search students by name or enrollment ID..."
-            className="pl-9 bg-white border-border rounded-2xl h-12 shadow-sm"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <Button className="h-12 rounded-2xl px-6 bg-slate-100 hover:bg-slate-200 text-foreground/70 font-bold border-none transition-all">
-          Search Neural Library
+    <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 page-fade-in">
+      <PageHeader
+        title="Institutional Reports"
+        description="Generate and verify academic credentials for all registered students."
+        icon={FileText}
+      >
+        <Button
+          variant="outline"
+          className="rounded-xl border-slate-200 dark:border-slate-800 font-bold gap-x-2 bg-white dark:bg-slate-900"
+        >
+          <ClipboardCheck className="h-4 w-4" />
+          Verify
         </Button>
+        <Button className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2">
+          <Filter className="h-4 w-4" />
+          Bulk Action
+        </Button>
+      </PageHeader>
+
+      <div className="grid gap-8 md:grid-cols-3">
+        {[
+          { label: "Certificates Issued", value: stats.certificatesIssued, icon: Award, color: "blue" },
+          { label: "Report Cards Ready", value: students.length, icon: FileText, color: "indigo" },
+          { label: "Fee Completion Rate", value: `${stats.completionRate}%`, icon: GraduationCap, color: "emerald" },
+        ].map((stat, i) => (
+          <Card key={i} className="card-premium rounded-[2.5rem] p-8 space-y-6">
+            <div className="flex items-center gap-x-4">
+              <div className={`h-12 w-12 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 dark:text-${stat.color}-400 flex items-center justify-center`}>
+                <stat.icon className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-slate-900 dark:text-white leading-none">
+                  {stat.value}
+                </p>
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-2">
+                  {stat.label}
+                </p>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
 
-      <div className="bg-white/40 backdrop-blur-md rounded-3xl border border-white/20 overflow-hidden shadow-2xl">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50/50">
-            <tr className="border-b">
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                Student Identity
-              </th>
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                Class Node
-              </th>
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                GPA Rank
-              </th>
-              <th className="text-left py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                Status
-              </th>
-              <th className="text-right py-5 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                Credential Export
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {filteredStudents.map((student) => (
-              <tr
-                key={student.id}
-                className="hover:bg-white/60 transition-colors group"
-              >
-                <td className="py-6 px-8 flex items-center gap-x-4">
-                  <div className="h-10 w-10 rounded-xl bg-card text-white flex items-center justify-center font-bold neon-blue">
-                    {student.profile.full_name[0]}
-                  </div>
-                  <span className="font-bold text-foreground">
-                    {student.profile.full_name}
-                  </span>
-                </td>
-                <td className="py-6 px-8 text-muted-foreground font-medium">
-                  {student.class?.name || "N/A"}
-                </td>
-                <td className="py-6 px-8">
-                  <span className="font-black text-blue-500">
-                    {student.gpa}
-                  </span>
-                </td>
-                <td className="py-6 px-8">
-                  <Badge
-                    variant="outline"
-                    className={
-                      getStatus(student.gpa) === "Honors"
-                        ? "bg-blue-50 text-blue-600 border-blue-100 font-bold"
-                        : "border-border text-muted-foreground font-bold"
-                    }
-                  >
-                    {getStatus(student.gpa).toUpperCase()}
-                  </Badge>
-                </td>
-                <td className="py-6 px-8 text-right">
-                  <div className="flex justify-end gap-x-2">
-                    <Button
-                      onClick={() => handleCertDownload(student.profile.full_name)}
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-xl font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-blue-500 hover:bg-blue-50 transition-all gap-x-2"
-                    >
-                      <Award className="h-3 w-3" />
-                      Cert
-                    </Button>
-                    <Button
-                      onClick={() => handleReportDownload(student)}
-                      variant="ghost"
-                      size="sm"
-                      className="rounded-xl font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-slate-50 transition-all gap-x-2"
-                    >
-                      <Download className="h-3 w-3" />
-                      Report
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {filteredStudents.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            No students found
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Search students by name or enrollment ID..."
+              className="pl-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl h-14 shadow-sm focus:ring-2 focus:ring-blue-500/20 transition-all"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        )}
+          <Button className="h-14 rounded-2xl px-8 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold transition-all border-none">
+            Query Library
+          </Button>
+        </div>
+
+        <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
+                  <th className="text-left py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">
+                    Student Identity
+                  </th>
+                  <th className="text-left py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">
+                    Class Node
+                  </th>
+                  <th className="text-left py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">
+                    GPA Rank
+                  </th>
+                  <th className="text-left py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">
+                    Status
+                  </th>
+                  <th className="text-right py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                {filteredStudents.map((student) => (
+                  <tr
+                    key={student.id}
+                    className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group"
+                  >
+                    <td className="py-6 px-10">
+                      <div className="flex items-center gap-x-4">
+                        <div className="h-10 w-10 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-bold">
+                          {student.profile.full_name[0]}
+                        </div>
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          {student.profile.full_name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-6 px-10 text-slate-500 font-medium">
+                      {student.class?.name || "N/A"}
+                    </td>
+                    <td className="py-6 px-10">
+                      <span className="font-bold text-blue-500">
+                        {student.gpa}
+                      </span>
+                    </td>
+                    <td className="py-6 px-10">
+                      <Badge
+                        variant="outline"
+                        className={
+                          getStatus(student.gpa) === "Honors"
+                            ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900 font-bold"
+                            : "bg-slate-50 dark:bg-slate-800/50 text-slate-500 border-slate-100 dark:border-slate-800 font-bold"
+                        }
+                      >
+                        {getStatus(student.gpa).toUpperCase()}
+                      </Badge>
+                    </td>
+                    <td className="py-6 px-10 text-right">
+                      <div className="flex justify-end gap-x-3">
+                        <Button
+                          onClick={() => handleCertDownload(student.profile.full_name)}
+                          variant="ghost"
+                          size="sm"
+                          className="rounded-xl font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all gap-x-2"
+                        >
+                          <Award className="h-4 w-4" />
+                          Cert
+                        </Button>
+                        <Button
+                          onClick={() => handleReportDownload(student)}
+                          variant="ghost"
+                          size="sm"
+                          className="rounded-xl font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all gap-x-2"
+                        >
+                          <Download className="h-4 w-4" />
+                          Report
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {filteredStudents.length === 0 && (
+              <div className="text-center py-20 text-slate-400 font-medium italic">
+                No matching student records found in the neural library.
+              </div>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );

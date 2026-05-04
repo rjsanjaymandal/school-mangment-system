@@ -3,14 +3,17 @@
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AuditService } from "./audit";
 
-export async function startImpersonation(targetUserId: string) {
+/**
+ * Starts a view-as session for an administrator.
+ */
+export async function startViewAs(targetUserId: string) {
   const supabase = await createClient();
   const { data: { user: admin } } = await supabase.auth.getUser();
 
   if (!admin) throw new Error("Authentication required");
 
+  // Verify admin role
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
@@ -18,26 +21,27 @@ export async function startImpersonation(targetUserId: string) {
     .single();
 
   if (profile?.role !== "admin") {
-    throw new Error("Unauthorized: Only admins can impersonate.");
+    throw new Error("Unauthorized: Only admins can view as other users.");
   }
 
+  // Set HTTP-only cookie
   const cookieStore = await cookies();
-  cookieStore.set("impersonation_user_id", targetUserId, {
+  cookieStore.set("view_as_user_id", targetUserId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 1, // 1 hour
+    maxAge: 60 * 60 * 2, // 2 hours
   });
 
-  await AuditService.logAction({
-    actor_id: admin.id,
-    action: "SHADOW_START",
-    entity_type: "user",
-    entity_id: targetUserId,
-    new_data: { target_id: targetUserId }
+  // Log the view-as event (using existing table)
+  await supabase.from("impersonation_logs").insert({
+    admin_id: admin.id,
+    target_user_id: targetUserId,
+    ip_address: "Client-Side",
   });
 
+  // Fetch target user role for redirection
   const { data: targetProfile } = await supabase
     .from("profiles")
     .select("role")
@@ -45,25 +49,32 @@ export async function startImpersonation(targetUserId: string) {
     .single();
 
   const targetRole = targetProfile?.role || "student";
+
   redirect(`/${targetRole}/dashboard`);
 }
 
-export async function stopImpersonation() {
+/**
+ * Ends the current view-as session.
+ */
+export async function stopViewAs() {
   const supabase = await createClient();
   const cookieStore = await cookies();
   
+  // Get current admin and target user before clearing
   const { data: { user: admin } } = await supabase.auth.getUser();
-  const impersonationId = cookieStore.get("impersonation_user_id")?.value;
+  const targetUserId = cookieStore.get("view_as_user_id")?.value;
   
-  if (admin && impersonationId) {
-    await AuditService.logAction({
-      actor_id: admin.id,
-      action: "SHADOW_STOP",
-      entity_type: "user",
-      entity_id: impersonationId,
+  // Log the stop event
+  if (admin && targetUserId) {
+    await supabase.from("impersonation_logs").insert({
+      admin_id: admin.id,
+      target_user_id: targetUserId,
+      action: "stop",
+      ip_address: "Client-Side",
     });
   }
   
-  cookieStore.delete("impersonation_user_id");
+  cookieStore.delete("view_as_user_id");
+
   redirect("/admin/dashboard");
 }
