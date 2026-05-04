@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
-  // Performance: Skip linting/type-checking during builds (CI should catch these)
-  eslint: { ignoreDuringBuilds: true },
-  typescript: { ignoreBuildErrors: true },
-
+const nextConfig: NextConfig = {
   // Optimize server bundle by externalizing heavy packages
   serverExternalPackages: ["jspdf", "jspdf-autotable", "@react-pdf/renderer"],
 
