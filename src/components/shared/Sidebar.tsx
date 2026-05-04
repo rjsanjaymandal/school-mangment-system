@@ -41,6 +41,7 @@ interface NavItem {
   href: string;
   icon: any;
   roles?: string[];
+  subItems?: { name: string; href: string }[];
 }
 
 interface NavGroup {
