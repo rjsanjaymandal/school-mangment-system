@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ERPCard } from "@/components/ui/erp-card";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+
 
 interface StudentData {
   id: string;
@@ -40,12 +42,34 @@ export default function ReportsPage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/students");
-      const data = await response.json();
-      setStudents(data.students || []);
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("students")
+        .select(`
+          id,
+          admission_number,
+          profile:profiles(full_name, avatar_url),
+          class:classes(name)
+        `);
+
+      if (error) throw error;
+
+      const formattedStudents = (data || []).map((s: any) => ({
+        id: s.id,
+        admission_number: s.admission_number || "N/A",
+        profile: {
+          full_name: s.profile?.full_name || "Unknown",
+          avatar_url: s.profile?.avatar_url
+        },
+        class: s.class,
+        gpa: (Math.random() * (4.0 - 2.5) + 2.5).toFixed(2), // Mock GPA
+        total_marks: Math.floor(Math.random() * 200) + 300 // Mock Marks
+      }));
+
+      setStudents(formattedStudents);
       setStats({
         certificatesIssued: Math.floor(Math.random() * 50) + 10,
-        reportCardsReady: data.students?.length || 0,
+        reportCardsReady: formattedStudents.length,
         completionRate: Math.floor(Math.random() * 30) + 70,
       });
     } catch (error) {

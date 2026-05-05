@@ -31,8 +31,8 @@ export default async function EditStaffPage({ params }: { params: { id: string }
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Edit Staff Profile</h1>
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-1">{staff.first_name} {staff.last_name} • {staff.staff_id}</p>
+                        <h1 className="text-xl font-semibold text-slate-900">Edit Staff Profile</h1>
+                        <p className="text-sm text-slate-500 mt-1">{staff.first_name} {staff.last_name} • {staff.staff_id}</p>
                     </div>
                 </div>
             </div>

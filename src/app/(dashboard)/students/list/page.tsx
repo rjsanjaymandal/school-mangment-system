@@ -78,18 +78,18 @@ export default function StudentListPage() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <Input 
                             placeholder="Search students..." 
-                            className="pl-12 h-14 rounded-2xl border-slate-200/60 bg-white dark:bg-slate-900 font-bold text-xs shadow-sm focus:ring-primary/20 transition-all"
+                            className="pl-10 h-10 rounded-md border-slate-200 bg-white font-medium text-sm"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <Button variant="outline" className="h-14 w-14 rounded-2xl border-slate-200 bg-white dark:bg-slate-900 shadow-sm active:scale-95 transition-all">
-                        <Filter className="h-5 w-5 text-slate-600" />
+                    <Button variant="outline" className="h-10 w-10 rounded-md border-slate-200">
+                        <Filter className="h-4 w-4 text-slate-600" />
                     </Button>
                     <Button 
                         onClick={handleBulkPrint}
                         disabled={selectedIds.length === 0}
-                        className="h-14 px-6 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest gap-x-2 shadow-xl active:scale-95 transition-all"
+                        className="h-10 px-4 rounded-md bg-slate-900 text-white font-medium text-sm gap-2"
                     >
                         <Printer className="h-4 w-4" />
                         Print ({selectedIds.length})
@@ -103,90 +103,90 @@ export default function StudentListPage() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-100">
-                                <th className="px-8 py-6 w-12 text-center">
+                                <th className="px-4 py-3 w-12 text-center">
                                     <input 
                                         type="checkbox" 
-                                        className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/20 cursor-pointer"
+                                        className="h-4 w-4 rounded border-slate-300"
                                         checked={selectedIds.length === filteredStudents.length && filteredStudents.length > 0}
                                         onChange={toggleSelectAll}
                                     />
                                 </th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                    <div className="flex items-center gap-x-2 cursor-pointer hover:text-slate-900">
-                                        Profile <ArrowUpDown className="h-3 w-3" />
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">
+                                    <div className="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+                                        Student <ArrowUpDown className="h-3 w-3" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Class/Section</th>
-                                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Roll No</th>
-                                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Actions</th>
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Class</th>
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Roll</th>
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                        <tbody className="divide-y divide-slate-100">
                             {filteredStudents.map((s, i) => (
                                 <tr key={s.id} className={cn(
-                                    "group hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors",
-                                    selectedIds.includes(s.id) && "bg-primary/5 hover:bg-primary/5"
+                                    "hover:bg-slate-50 transition-colors",
+                                    selectedIds.includes(s.id) && "bg-primary/5"
                                 )}>
-                                    <td className="px-8 py-5 text-center">
+                                    <td className="px-4 py-3 text-center">
                                         <input 
                                             type="checkbox" 
-                                            className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary/20 cursor-pointer"
+                                            className="h-4 w-4 rounded border-slate-300"
                                             checked={selectedIds.includes(s.id)}
                                             onChange={() => toggleSelectOne(s.id)}
                                         />
                                     </td>
-                                    <td className="px-8 py-5">
-                                        <div className="flex items-center gap-x-4">
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center gap-3">
                                             <StudentAvatar 
                                                 name={s.name} 
                                                 classId={s.class} 
-                                                className="h-11 w-11 text-[10px] shadow-lg"
+                                                className="h-9 w-9 text-xs"
                                             />
                                             <div>
-                                                <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight italic">{s.name}</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.id}</p>
+                                                <p className="text-sm font-medium text-slate-900">{s.name}</p>
+                                                <p className="text-xs text-slate-400">{s.id}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-5">
-                                        <Badge variant="outline" className="rounded-lg bg-white dark:bg-slate-900 border-slate-200 font-black text-[10px] py-1 px-3">
+                                    <td className="px-4 py-3">
+                                        <Badge variant="outline" className="rounded-md border-slate-200 text-xs">
                                             {s.class}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-5 font-black text-slate-600 dark:text-slate-400">
+                                    <td className="px-4 py-3 font-medium text-slate-600">
                                         {s.roll}
                                     </td>
-                                    <td className="px-6 py-5">
-                                        <div className="flex items-center gap-x-2">
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center gap-2">
                                             <div className={cn(
-                                                "h-1.5 w-1.5 rounded-full",
+                                                "h-2 w-2 rounded-full",
                                                 s.status === "Active" ? "bg-emerald-500" : "bg-slate-300"
                                             )} />
                                             <span className={cn(
-                                                "text-[10px] font-black uppercase tracking-widest",
-                                                s.status === "Active" ? "text-emerald-600" : "text-slate-400"
+                                                "text-xs font-medium",
+                                                s.status === "Active" ? "text-emerald-600" : "text-slate-500"
                                             )}>{s.status}</span>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-5 text-right">
+                                    <td className="px-4 py-3 text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                                <Button variant="ghost" className="h-8 w-8 p-0 rounded-md hover:bg-slate-100">
                                                     <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-48 rounded-2xl p-1.5 shadow-2xl border-slate-200">
-                                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem className="rounded-xl gap-x-3 py-2.5 font-bold text-xs cursor-pointer">
+                                            <DropdownMenuContent align="end" className="w-48 rounded-md p-1 border-slate-200">
+                                                <DropdownMenuLabel className="text-xs font-medium text-slate-500 px-2 py-1">Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer">
                                                     <UserCircle className="h-4 w-4 text-blue-500" /> View Profile
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="rounded-xl gap-x-3 py-2.5 font-bold text-xs cursor-pointer">
+                                                <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer">
                                                     <Edit3 className="h-4 w-4 text-amber-500" /> Edit Record
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator className="my-1 bg-slate-100" />
-                                                <DropdownMenuItem className="rounded-xl gap-x-3 py-2.5 font-bold text-xs cursor-pointer">
-                                                    <Printer className="h-4 w-4 text-slate-400" /> Print Identity
+                                                <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer">
+                                                    <Printer className="h-4 w-4 text-slate-400" /> Print ID Card
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -197,14 +197,14 @@ export default function StudentListPage() {
                     </table>
                 </div>
                 
-                {/* Pagination Placeholder */}
-                <div className="p-6 border-t border-slate-50 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/30 flex items-center justify-between">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                        Showing 1-{filteredStudents.length} of {allStudents.length} Records
+                {/* Pagination */}
+                <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <p className="text-sm text-slate-500">
+                        Showing {filteredStudents.length} of {allStudents.length} students
                     </p>
-                    <div className="flex gap-x-2">
-                        <Button variant="outline" size="sm" className="rounded-lg font-black text-[9px] uppercase tracking-widest h-8" disabled>Prev</Button>
-                        <Button variant="outline" size="sm" className="rounded-lg font-black text-[9px] uppercase tracking-widest h-8">Next</Button>
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="rounded-md text-xs" disabled>Prev</Button>
+                        <Button variant="outline" size="sm" className="rounded-md text-xs">Next</Button>
                     </div>
                 </div>
             </Card>

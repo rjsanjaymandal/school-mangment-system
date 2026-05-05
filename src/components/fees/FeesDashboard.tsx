@@ -62,6 +62,7 @@ interface FeesDashboardProps {
         outstanding: number;
         staffPayroll: number;
     };
+    dashboardStats?: any;
 }
 
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -75,6 +76,7 @@ export function FeesDashboard({
     leaveRequests,
     isStudent = false,
     stats,
+    dashboardStats,
 }: FeesDashboardProps) {
     const router = useRouter();
     const [search, setSearch] = useState("");
@@ -296,7 +298,14 @@ export function FeesDashboard({
                                     Temporal Revenue Vector Analysis
                                 </p>
                             </div>
-                            <Activity className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                            <div className="flex flex-col items-end gap-2">
+                                <Activity className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
+                                {dashboardStats?.recovery_percentage && (
+                                    <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-black italic">
+                                        {dashboardStats.recovery_percentage}% RECOVERY
+                                    </Badge>
+                                )}
+                            </div>
                         </div>
                         <div className="flex-1 h-[280px]">
                             <ResponsiveContainer width="100%" height="100%">
@@ -325,33 +334,43 @@ export function FeesDashboard({
                     </div>
                 </div>
 
-                <div className="md:col-span-4 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
-                    <div className="mb-8 relative z-10 text-center">
-                        <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
-                            Vector <span className="text-primary tracking-normal not-italic px-1">/</span> Distribution
+                <div className="md:col-span-4 bg-card border border-border p-8 rounded-xl relative overflow-hidden group space-y-6">
+                    <div>
+                        <h3 className="text-xl font-black italic uppercase tracking-tighter text-foreground mb-4">
+                            Recent <span className="text-primary italic">Flow</span>
                         </h3>
-                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Payment Method Profiling</p>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center p-3 bg-secondary/30 rounded-lg border border-border/50">
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground italic">Collected Today</span>
+                                <span className="text-sm font-black text-foreground italic">₹{dashboardStats?.collected_today?.toLocaleString() || "0"}</span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-secondary/30 rounded-lg border border-border/50">
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground italic">This Week</span>
+                                <span className="text-sm font-black text-foreground italic">₹{dashboardStats?.collected_week?.toLocaleString() || "0"}</span>
+                            </div>
+                            <div className="flex justify-between items-center p-3 bg-secondary/30 rounded-lg border border-border/50">
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground italic">This Month</span>
+                                <span className="text-sm font-black text-foreground italic">₹{dashboardStats?.collected_month?.toLocaleString() || "0"}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="h-[280px] relative z-10">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={vectorDistribution}
-                                    innerRadius={70}
-                                    outerRadius={95}
-                                    paddingAngle={8}
-                                    dataKey="value"
-                                >
-                                    {vectorDistribution.map((entry: any, index: number) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
-                                    ))}
-                                </Pie>
-                                <Tooltip 
-                                    contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+
+                    <div className="pt-4 border-t border-border">
+                        <h3 className="text-xl font-black italic uppercase tracking-tighter text-foreground mb-4">
+                            Target <span className="text-primary italic">Gap</span>
+                        </h3>
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-[10px] font-black uppercase italic mb-1">
+                                <span className="text-muted-foreground">Progress</span>
+                                <span className="text-primary">{dashboardStats?.recovery_percentage || 0}%</span>
+                            </div>
+                            <div className="h-2 bg-secondary rounded-full overflow-hidden border border-border">
+                                <div 
+                                    className="h-full bg-primary transition-all duration-1000" 
+                                    style={{ width: `${dashboardStats?.recovery_percentage || 0}%` }}
                                 />
-                                <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 italic">{value}</span>}/>
-                            </PieChart>
-                        </ResponsiveContainer>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -363,14 +382,14 @@ export function FeesDashboard({
                         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary mb-6 italic">Fiscal_Revenue</p>
                         <div className="flex items-baseline gap-x-3">
                             <h3 className="text-5xl font-black italic tracking-tighter text-foreground leading-none">
-                                ₹{stats.totalRevenue.toLocaleString()}
+                                ₹{(dashboardStats?.total_collected || stats.totalRevenue).toLocaleString()}
                             </h3>
                         </div>
                         <div className="mt-8 flex items-center justify-between">
                             <span className="text-[8px] font-black uppercase tracking-widest text-primary italic bg-primary/10 px-2 py-1">Verified Audit</span>
                             <div className="flex items-center gap-x-2 text-primary font-black italic text-xs">
                                 <TrendingUp className="h-4 w-4" />
-                                +12%
+                                {dashboardStats?.recovery_percentage ? `${dashboardStats.recovery_percentage}%` : "+12%"}
                             </div>
                         </div>
                     </div>
@@ -383,7 +402,7 @@ export function FeesDashboard({
                     <div className="not-skew-x relative z-10">
                         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-red-500 mb-6 italic">Deficit_Vector</p>
                         <h3 className="text-5xl font-black italic tracking-tighter text-foreground leading-none">
-                            ₹{stats.outstanding.toLocaleString()}
+                            ₹{(dashboardStats?.total_pending || stats.outstanding).toLocaleString()}
                         </h3>
                         <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/30 mt-6 italic">Unallocated Receivables</p>
                     </div>
@@ -435,6 +454,24 @@ export function FeesDashboard({
                                 <Briefcase className="h-3.5 w-3.5" />
                                 Staff Payroll
                             </TabsTrigger>
+                        )}
+                        {!isStudent && (
+                            <>
+                                <TabsTrigger
+                                    value="family_dues"
+                                    className="rounded-lg px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-widest text-[10px] transition-all gap-x-2"
+                                >
+                                    <Users className="h-3.5 w-3.5" />
+                                    Family Dues
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="class_breakdown"
+                                    className="rounded-lg px-8 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold uppercase tracking-widest text-[10px] transition-all gap-x-2"
+                                >
+                                    <BarChart3 className="h-3.5 w-3.5" />
+                                    Class Breakdown
+                                </TabsTrigger>
+                            </>
                         )}
                     </TabsList>
                 </div>
@@ -549,6 +586,62 @@ export function FeesDashboard({
                         </table>
                     </div>
                 </TabsContent>
+                
+                {!isStudent && (
+                    <>
+                        <TabsContent value="family_dues" className="outline-none">
+                            <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+                                <table className="w-full text-left">
+                                    <thead className="bg-secondary/50">
+                                        <tr>
+                                            <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Parent/Guardian</th>
+                                            <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Phone</th>
+                                            <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Students</th>
+                                            <th className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-primary italic">Total Pending</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border">
+                                        {(dashboardStats?.top_pending_families || []).map((fam: any, idx: number) => (
+                                            <tr key={idx} className="group hover:bg-secondary/20 transition-all duration-300">
+                                                <td className="px-8 py-5 font-bold text-foreground uppercase italic tracking-tight text-xs group-hover:text-primary transition-colors">{fam.parent_name}</td>
+                                                <td className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">{fam.phone}</td>
+                                                <td className="px-8 py-5">
+                                                    <Badge variant="secondary" className="text-[8px] font-black italic">{fam.student_count} STUDENTS</Badge>
+                                                </td>
+                                                <td className="px-8 py-5 text-right font-black text-red-500 italic tracking-tighter">₹{fam.total_pending.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="class_breakdown" className="outline-none">
+                            <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+                                <table className="w-full text-left">
+                                    <thead className="bg-secondary/50">
+                                        <tr>
+                                            <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Class Name</th>
+                                            <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Assigned</th>
+                                            <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-primary italic">Collected</th>
+                                            <th className="px-8 py-5 text-right text-[10px] font-bold uppercase tracking-widest text-primary italic">Pending</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border">
+                                        {(dashboardStats?.class_wise_data || []).map((cls: any, idx: number) => (
+                                            <tr key={idx} className="group hover:bg-secondary/20 transition-all duration-300">
+                                                <td className="px-8 py-5 font-bold text-foreground uppercase italic tracking-tight text-xs group-hover:text-primary transition-colors">{cls.class_name}</td>
+                                                <td className="px-8 py-5 text-[10px] font-bold uppercase italic tracking-tighter text-muted-foreground">₹{cls.assigned.toLocaleString()}</td>
+                                                <td className="px-8 py-5 text-[10px] font-bold uppercase italic tracking-tighter text-emerald-600">₹{cls.collected.toLocaleString()}</td>
+                                                <td className="px-8 py-5 text-right font-black text-red-500 italic tracking-tighter">₹{cls.pending.toLocaleString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </TabsContent>
+                    </>
+                )}
             </Tabs>
         </div>
     );

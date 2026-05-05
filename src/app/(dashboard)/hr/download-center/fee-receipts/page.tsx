@@ -128,7 +128,7 @@ export default function FeeReceiptArchivePage() {
             <ERPCard accentColor="indigo" className="p-6">
                 <div className="flex flex-col md:flex-row gap-4 items-end mb-8">
                     <div className="flex-1 space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Search Receipts</Label>
+                        <Label className="text-sm font-medium text-slate-600">Search Receipts</Label>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <Input 

@@ -213,7 +213,7 @@ export default async function DashboardPage() {
             className="bg-white p-4 border rounded-md shadow-sm hover:border-slate-300 transition-all"
           >
             <div className="flex justify-between items-start mb-4">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="text-xs font-medium text-slate-500 uppercase">
                 {stat.title}
               </p>
               <stat.icon className="h-4 w-4 text-slate-300" />

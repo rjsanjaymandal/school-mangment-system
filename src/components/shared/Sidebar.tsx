@@ -32,6 +32,7 @@ import {
   UserCheck,
   History,
   ChevronDown,
+  Building,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/lib/services/user";
@@ -119,9 +120,25 @@ const navigation: NavGroup[] = [
     ],
   },
   {
+    group: "Finance",
+    items: [
+      { 
+        name: "Fee Collection", 
+        href: "/finance/dashboard", 
+        icon: CreditCard,
+        subItems: [
+          { name: "Fee Dashboard", href: "/finance/dashboard" },
+          { name: "Collect Fees", href: "/finance/collect" },
+          { name: "Fee Structure", href: "/finance/structure" },
+          { name: "Fee Slip Print", href: "/finance/slips" },
+          { name: "Daily Collection", href: "/finance/daily" },
+        ]
+      },
+    ],
+  },
+  {
     group: "Operations",
     items: [
-      { name: "Fees", href: "/fees", icon: CreditCard },
       { name: "Library", href: "/library", icon: Library },
       { name: "Transport", href: "/transport", icon: Bus },
     ],

@@ -128,7 +128,7 @@ export default function CertificateCreatorPage() {
             <ERPCard accentColor="amber" className="p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Search Student</Label>
+                        <Label className="text-sm font-medium text-slate-600">Search Student</Label>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <Input 
@@ -159,7 +159,7 @@ export default function CertificateCreatorPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Certificate Type</Label>
+                        <Label className="text-sm font-medium text-slate-600">Certificate Type</Label>
                         <Select onValueChange={setCertificateType} value={certificateType}>
                             <SelectTrigger className="rounded-xl h-12 border-slate-200">
                                 <SelectValue placeholder="Select Type" />

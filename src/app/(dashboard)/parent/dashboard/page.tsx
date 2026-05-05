@@ -1,27 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
-import { InstitutionalService } from "@/lib/services/institutional";
 import { getSessionRole } from "@/lib/auth-utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  GraduationCap, 
-  Baby, 
-  TrendingUp, 
-  Clock, 
-  IndianRupee, 
-  MessageSquare, 
-  Activity,
-  Calendar,
-  ShieldCheck
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { GraduationCap, Baby, TrendingUp, Clock, IndianRupee, MessageSquare } from "lucide-react";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function ParentDashboard() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
-  // Fetch children linked to this guardian
   const { data: childrenLinks } = await supabase
     .from("guardian_students")
     .select("student_id, student:students(*, grade:grades(name))")
@@ -30,131 +18,96 @@ export default async function ParentDashboard() {
   const children = childrenLinks?.map(link => link.student) || [];
 
   return (
-    <div className="space-y-12 animate-in fade-in transition-all duration-1000">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-0">
-            <div>
-                <div className="flex items-center gap-x-3 mb-4">
-                    <div className="px-3 py-1 rounded-sm bg-purple-500/10 border border-purple-500/20 text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 flex items-center gap-x-2">
-                        <ShieldCheck className="h-3 w-3 animate-pulse" />
-                        Guardian Node: Verified
-                    </div>
-                    <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest italic text-purple-500/50">Matrix: Parental Supervision</span>
-                </div>
-                <h2 className="text-6xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-                    Insight <span className="text-purple-500 tracking-normal not-italic">/</span> Hub
-                </h2>
-                <p className="text-foreground/50 font-black uppercase tracking-[0.25em] text-[10px] mt-4 flex items-center gap-x-3">
-                    <Baby className="h-3 w-3 text-purple-500" />
-                    Real-time Academic & Welfare Telemetry
-                </p>
-            </div>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">Parent Dashboard</h1>
+          <p className="text-sm text-slate-500">Monitor your children's progress</p>
         </div>
+        <Badge variant="outline" className="bg-purple-50 text-purple-600 border-purple-200">
+          Guardian Verified
+        </Badge>
+      </div>
 
-        {children.length === 0 ? (
-            <div className="p-32 text-center space-y-8 glass-card">
-                <div className="h-32 w-32 rounded-sm bg-purple-500/5 border border-purple-500/10 flex items-center justify-center mx-auto text-purple-500/20 skew-x-[-12deg]">
-                    <Baby className="h-16 w-16 not-skew-x" />
-                </div>
-                <div>
-                    <h3 className="text-3xl font-black text-foreground/30 uppercase tracking-[0.2em] italic">No Linking Detected</h3>
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/20 mt-6 max-w-sm mx-auto leading-loose italic">
-                        No student profiles are currently mapped to this guardian node. Please contact the administrative registry.
-                    </p>
-                </div>
-            </div>
-        ) : (
-            <div className="space-y-12">
-                {children.map((child: any) => (
-                    <div key={child.id} className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-                        <div className="flex items-center justify-between border-b border-white/5 pb-8">
-                            <div className="flex items-center gap-x-8">
-                                <div className="h-24 w-24 rounded-sm bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-2xl skew-x-[-12deg] group hover:bg-purple-500 transition-all duration-500">
-                                    <Baby className="h-12 w-12 text-purple-500 group-hover:text-white not-skew-x transition-colors" />
-                                </div>
-                                <div>
-                                    <h4 className="text-4xl font-black text-foreground uppercase italic tracking-tighter leading-none">
-                                        {child.full_name}
-                                    </h4>
-                                    <div className="flex items-center gap-x-4 mt-3">
-                                        <Badge variant="outline" className="bg-purple-500/5 border-purple-500/20 text-purple-500 font-black text-[9px] uppercase tracking-widest px-4 py-1 rounded-none">
-                                            Grade {child.grade?.name}
-                                        </Badge>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/30 italic">ID: {child.admission_number}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <Button className="h-14 px-10 bg-purple-500/5 border border-purple-500/20 hover:bg-purple-500 text-purple-500 hover:text-white font-black rounded-sm transition-all uppercase tracking-[0.3em] text-[9px] skew-x-[-12deg]">
-                                <span className="not-skew-x flex items-center gap-x-3">
-                                    Full Telemetry
-                                    <TrendingUp className="h-4 w-4" />
-                                </span>
-                            </Button>
-                        </div>
-
-                        <div className="grid gap-12 lg:grid-cols-4">
-                            {/* Attendance Pulse */}
-                            <div className="glass-card p-10 space-y-8 group transition-all duration-700 hover:border-purple-500">
-                                <div className="flex justify-between items-center">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 italic">Attendance Pulse</p>
-                                    <Activity className="h-4 w-4 text-purple-500 animate-bounce" />
-                                </div>
-                                <div className="flex items-baseline gap-x-3">
-                                    <h3 className="text-6xl font-black tracking-tighter text-foreground italic leading-none">94<span className="text-purple-500/30 not-italic tracking-normal">%</span></h3>
-                                    <Badge className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-black text-[8px] uppercase tracking-widest">STABLE</Badge>
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                        <div className="h-full bg-purple-500 shadow-[0_0_20px_oklch(var(--purple-500))] transition-all duration-1000" style={{ width: '94%' }} />
-                                    </div>
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 text-right italic">Last Activity: Yesterday</p>
-                                </div>
-                            </div>
-
-                            {/* Academic Vector */}
-                            <div className="glass-card p-10 space-y-8 group transition-all duration-700 hover:border-purple-500">
-                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 italic">Academic Vector</p>
-                                <div className="flex items-baseline gap-x-3">
-                                    <h3 className="text-6xl font-black tracking-tighter text-foreground italic leading-none">3.8<span className="text-purple-500/30 not-italic tracking-normal text-3xl">GPA</span></h3>
-                                    <TrendingUp className="h-6 w-6 text-emerald-500" />
-                                </div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-foreground/30 italic">Rank: Top 5% of Matrix</p>
-                            </div>
-
-                            {/* Financial Ledger */}
-                            <div className="glass-card p-10 space-y-8 group transition-all duration-700 hover:border-purple-500">
-                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 italic">Financial Ledger</p>
-                                <div className="flex items-baseline gap-x-3">
-                                    <h3 className="text-5xl font-black tracking-tighter text-foreground-p italic leading-none tracking-normal">₹12.5k</h3>
-                                    <Badge className="bg-red-500/10 text-red-500 border border-red-500/20 font-black text-[8px] uppercase tracking-widest">PENDING</Badge>
-                                </div>
-                                <Button className="w-full bg-purple-500 text-white font-black rounded-sm h-12 uppercase tracking-[0.3em] text-[8px] skew-x-[-12deg] shadow-[0_0_30px_oklch(var(--purple-500)/0.2)]">
-                                    <span className="not-skew-x">Liquidate Due</span>
-                                </Button>
-                            </div>
-
-                            {/* Communication Port */}
-                            <div className="glass-card p-10 space-y-8 group transition-all duration-700 hover:border-purple-500">
-                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-500 italic">Communication Port</p>
-                                <div className="flex -space-x-3">
-                                    {[1,2,3].map(i => (
-                                        <div key={i} className="h-12 w-12 rounded-sm bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shadow-xl skew-x-[-12deg] hover:z-10 hover:bg-purple-500 transition-all">
-                                            <GraduationCap className="h-5 w-5 text-purple-500 hover:text-white not-skew-x" />
-                                        </div>
-                                    ))}
-                                </div>
-                                <Button variant="outline" className="w-full border-purple-500/20 text-purple-500 font-black rounded-sm h-12 uppercase tracking-[0.3em] text-[8px] skew-x-[-12deg] hover:bg-purple-500/5">
-                                    <span className="not-skew-x flex items-center gap-x-3 justify-center">
-                                        <MessageSquare className="h-3 w-3" />
-                                        Secure Channel
-                                    </span>
-                                </Button>
-                            </div>
-                        </div>
+      {children.length === 0 ? (
+        <div className="text-center py-12">
+          <Baby className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-slate-600">No Children Linked</h3>
+          <p className="text-sm text-slate-400 mt-2">Please contact the school to link your children.</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {children.map((child: any) => (
+            <div key={child.id} className="space-y-4">
+              <div className="flex items-center justify-between bg-white border border-slate-200 rounded-md p-4 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-md bg-purple-50 flex items-center justify-center">
+                    <Baby className="h-8 w-8 text-purple-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900">{child.full_name}</h3>
+                    <div className="flex items-center gap-3 mt-1">
+                      <Badge variant="outline" className="text-xs">Grade {child.grade?.name || "N/A"}</Badge>
+                      <span className="text-xs text-slate-500">ID: {child.admission_number}</span>
                     </div>
-                ))}
+                  </div>
+                </div>
+                <Button variant="outline" className="rounded-md">
+                  View Details
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <ERPCard title="Attendance" description="This month" color="purple">
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-semibold text-slate-900">94%</span>
+                      <Badge className="bg-emerald-50 text-emerald-600 text-xs">Stable</Badge>
+                    </div>
+                    <p className="text-xs text-slate-500">Last: Yesterday</p>
+                  </div>
+                </ERPCard>
+
+                <ERPCard title="Academic" description="Current GPA" color="purple">
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-semibold text-slate-900">3.8</span>
+                      <span className="text-lg text-slate-500">GPA</span>
+                      <TrendingUp className="h-4 w-4 text-emerald-500" />
+                    </div>
+                    <p className="text-xs text-slate-500">Top 5%</p>
+                  </div>
+                </ERPCard>
+
+                <ERPCard title="Fees" description="Pending" color="purple">
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-semibold text-slate-900">₹12,500</span>
+                    </div>
+                    <Button size="sm" className="w-full bg-purple-600 hover:bg-purple-700 rounded-md">
+                      Pay Now
+                    </Button>
+                  </div>
+                </ERPCard>
+
+                <ERPCard title="Messages" description="From school" color="purple">
+                  <div className="space-y-2">
+                    <div className="flex -space-x-2">
+                      <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center border-2 border-white">
+                        <GraduationCap className="h-4 w-4 text-purple-500" />
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full rounded-md">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Contact
+                    </Button>
+                  </div>
+                </ERPCard>
+              </div>
             </div>
-        )}
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-

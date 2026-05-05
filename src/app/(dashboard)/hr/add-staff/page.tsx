@@ -23,8 +23,8 @@ export default async function AddStaffPage() {
                         <UserPlus className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Register Staff</h1>
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-1">HR Management System</p>
+                        <h1 className="text-xl font-semibold text-slate-900">Register Staff</h1>
+                        <p className="text-sm text-slate-500 mt-1">Add new staff member</p>
                     </div>
                 </div>
             </div>

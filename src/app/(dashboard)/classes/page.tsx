@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import { ClassList } from "@/components/classes/ClassList";
 import { getSessionRole } from "@/lib/auth-utils";

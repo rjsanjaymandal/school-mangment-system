@@ -66,14 +66,20 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
     startTransition(async () => {
       try {
         if (initialData?.id) {
-          const res = await updateStudent(initialData.id, values);
+          const nameParts = values.full_name.trim().split(" ");
+          const first_name = nameParts[0] || "";
+          const last_name = nameParts.slice(1).join(" ") || "";
+          const res = await updateStudent(initialData.id, { ...values, first_name, last_name });
           if (res.error) {
             toast.error(res.error);
             return;
           }
           toast.success("Student updated successfully");
         } else {
-          const res = await createStudent(values);
+          const nameParts = values.full_name.trim().split(" ");
+          const first_name = nameParts[0] || "";
+          const last_name = nameParts.slice(1).join(" ") || "";
+          const res = await createStudent({ ...values, first_name, last_name });
           if (res.error) {
             toast.error(res.error);
             return;

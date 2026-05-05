@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { FeesDashboard } from "@/components/fees/FeesDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
+import { getFeeDashboardStats } from "@/app/actions/fees";
 import { CreditCard, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ERPCard } from "@/components/ui/erp-card";
@@ -17,6 +18,9 @@ export default async function FeesPage() {
   let staffPayrolls: any[] = [];
   let leaveRequests: any[] = [];
   const isStudent = role === "student";
+
+  const statsResponse = await getFeeDashboardStats("2026-27");
+  const dashboardStats = statsResponse.success ? statsResponse.data : null;
 
   if (isStudent) {
     const { data: student } = await supabase
@@ -153,6 +157,7 @@ export default async function FeesPage() {
                 outstanding: outstanding,
                 staffPayroll: totalPayroll,
             }}
+            dashboardStats={dashboardStats}
         />
       </ERPCard>
     </div>

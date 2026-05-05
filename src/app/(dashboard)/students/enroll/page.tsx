@@ -94,21 +94,21 @@ export default function StudentEnrollmentPage() {
                 <ERPCard title="Admission Details" accentColor="emerald" icon={<Info className="h-4 w-4" />}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admission Date</Label>
+                            <Label className="text-sm font-medium text-slate-600">Admission Date</Label>
                             <Input 
                                 type="date" 
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold" 
+                                className="h-12 rounded-md bg-white border-slate-200 font-medium" 
                                 value={formData.admission_date}
                                 onChange={(e) => setFormData(p => ({ ...p, admission_date: e.target.value }))}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admission Type</Label>
+                            <Label className="text-sm font-medium text-slate-600">Admission Type</Label>
                             <Select 
                                 value={formData.admission_type}
                                 onValueChange={(v) => setFormData(p => ({ ...p, admission_type: v }))}
                             >
-                                <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold">
+                                <SelectTrigger className="h-12 rounded-md bg-white border-slate-200 font-medium">
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl font-bold">
@@ -119,12 +119,12 @@ export default function StudentEnrollmentPage() {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Assigned Class</Label>
+                            <Label className="text-sm font-medium text-slate-600">Assigned Class</Label>
                             <Select 
                                 value={formData.class_id}
                                 onValueChange={(v) => setFormData(p => ({ ...p, class_id: v }))}
                             >
-                                <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold">
+                                <SelectTrigger className="h-12 rounded-md bg-white border-slate-200 font-medium">
                                     <SelectValue placeholder="Select class" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl font-bold">
@@ -173,10 +173,10 @@ export default function StudentEnrollmentPage() {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Date of Birth</Label>
+                            <Label className="text-sm font-medium text-slate-600">Date of Birth</Label>
                             <Input 
                                 type="date" 
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold" 
+                                className="h-12 rounded-md bg-white border-slate-200 font-medium" 
                                 value={formData.date_of_birth}
                                 onChange={(e) => setFormData(p => ({ ...p, date_of_birth: e.target.value }))}
                             />
@@ -189,12 +189,12 @@ export default function StudentEnrollmentPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Category / Caste</Label>
+                            <Label className="text-sm font-medium text-slate-600">Category / Caste</Label>
                             <Select 
                                 value={formData.category}
                                 onValueChange={(v) => setFormData(p => ({ ...p, category: v }))}
                             >
-                                <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold">
+                                <SelectTrigger className="h-12 rounded-md bg-white border-slate-200 font-medium">
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl font-bold">
@@ -207,12 +207,12 @@ export default function StudentEnrollmentPage() {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Religion</Label>
+                            <Label className="text-sm font-medium text-slate-600">Religion</Label>
                             <Select 
                                 value={formData.religion}
                                 onValueChange={(v) => setFormData(p => ({ ...p, religion: v }))}
                             >
-                                <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold">
+                                <SelectTrigger className="h-12 rounded-md bg-white border-slate-200 font-medium">
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl font-bold">
@@ -225,20 +225,20 @@ export default function StudentEnrollmentPage() {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mother Tongue</Label>
+                            <Label className="text-sm font-medium text-slate-600">Mother Tongue</Label>
                             <Input 
                                 value={formData.mother_tongue}
                                 onChange={(e) => setFormData(p => ({ ...p, mother_tongue: e.target.value }))}
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold" 
+                                className="h-12 rounded-md bg-white border-slate-200 font-medium" 
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">RTE Status</Label>
+                            <Label className="text-sm font-medium text-slate-600">RTE Status</Label>
                             <Select 
                                 value={formData.rte_status}
                                 onValueChange={(v) => setFormData(p => ({ ...p, rte_status: v }))}
                             >
-                                <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold">
+                                <SelectTrigger className="h-12 rounded-md bg-white border-slate-200 font-medium">
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl font-bold">
@@ -255,29 +255,29 @@ export default function StudentEnrollmentPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Primary Mobile</Label>
+                            <Label className="text-sm font-medium text-slate-600">Primary Mobile</Label>
                             <Input 
                                 placeholder="+91 00000 00000" 
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold"
+                                className="h-12 rounded-md bg-white border-slate-200 font-medium"
                                 value={formData.phone}
                                 onChange={(e) => setFormData(p => ({ ...p, phone: e.target.value }))}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Email Address (Optional)</Label>
+                            <Label className="text-sm font-medium text-slate-600">Email Address (Optional)</Label>
                             <Input 
                                 type="email" 
                                 placeholder="student@example.com" 
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold"
+                                className="h-12 rounded-md bg-white border-slate-200 font-medium"
                                 value={formData.email}
                                 onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
                             />
                         </div>
                         <div className="md:col-span-2 space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Permanent Address</Label>
+                            <Label className="text-sm font-medium text-slate-600">Permanent Address</Label>
                             <Input 
                                 placeholder="Flat/House No, Street, City, State, PIN" 
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold"
+                                className="h-12 rounded-md bg-white border-slate-200 font-medium"
                                 value={formData.address}
                                 onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))}
                             />

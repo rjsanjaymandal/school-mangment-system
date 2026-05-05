@@ -125,14 +125,14 @@ export default async function AnalyticsPage() {
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Page Header */}
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-blue-50 rounded-md">
-          <BarChart3 className="h-6 w-6 text-blue-600" />
+        <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
+          <BarChart3 className="h-5 w-5 text-emerald-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Analytics</h1>
+          <h1 className="text-xl font-semibold text-slate-900">Analytics</h1>
           <p className="text-sm text-slate-500">Dashboard overview and insights</p>
         </div>
       </div>
@@ -170,7 +170,7 @@ export default async function AnalyticsPage() {
         title="Analytics Dashboard"
         description="Key performance indicators and trends"
         icon={<BarChart3 className="h-5 w-5" />}
-        color="blue"
+        color="emerald"
       >
         <AnalyticsDashboard
           studentCount={studentCount || 0}
@@ -222,7 +222,14 @@ function StatCard({
   icon: any; 
   color: string 
 }) {
-  const colorClasses: Record<string, string> = {
+  const borderColorClasses: Record<string, string> = {
+    emerald: "border-l-emerald-500",
+    blue: "border-l-blue-500",
+    purple: "border-l-purple-500",
+    amber: "border-l-amber-500",
+  };
+
+  const iconColorClasses: Record<string, string> = {
     emerald: "bg-emerald-50 text-emerald-600",
     blue: "bg-blue-50 text-blue-600",
     purple: "bg-purple-50 text-purple-600",
@@ -230,14 +237,14 @@ function StatCard({
   };
   
   return (
-    <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
+    <div className={`bg-white border border-slate-200 rounded-md p-4 shadow-sm border-l-4 ${borderColorClasses[color]}`}>
       <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-md ${colorClasses[color]}`}>
+        <div className={`p-2 rounded-md ${iconColorClasses[color]}`}>
           <Icon className="h-5 w-5" />
         </div>
         <div>
           <p className="text-xs font-medium text-slate-500 uppercase">{title}</p>
-          <p className="text-2xl font-bold text-slate-900">{value}</p>
+          <p className="text-xl font-semibold text-slate-900">{value.toLocaleString()}</p>
         </div>
       </div>
     </div>

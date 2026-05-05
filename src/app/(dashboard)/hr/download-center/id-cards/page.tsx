@@ -108,8 +108,8 @@ export default function IDCardGeneratorPage() {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight italic">Identity Card Generator</h1>
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-1">High-Fidelity CR80 Card Production</p>
+                        <h1 className="text-xl font-semibold text-slate-900">Identity Card Generator</h1>
+                        <p className="text-sm text-slate-500 mt-1">Generate CR80 sized ID cards</p>
                     </div>
                 </div>
             </div>
@@ -117,7 +117,7 @@ export default function IDCardGeneratorPage() {
             <ERPCard accentColor="emerald" className="p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Card Type</Label>
+                        <Label className="text-sm font-medium text-slate-600">Card Type</Label>
                         <Select onValueChange={(v: any) => setTargetType(v)} value={targetType}>
                             <SelectTrigger className="rounded-xl h-12 border-slate-200">
                                 <SelectValue placeholder="Select Type" />
@@ -130,7 +130,7 @@ export default function IDCardGeneratorPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Filter / Group</Label>
+                        <Label className="text-sm font-medium text-slate-600">Filter / Group</Label>
                         <Select onValueChange={setSelectedClass} value={selectedClass}>
                             <SelectTrigger className="rounded-xl h-12 border-slate-200">
                                 <SelectValue placeholder="Select Group" />

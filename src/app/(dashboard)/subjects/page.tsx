@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import { SubjectList } from "@/components/subjects/SubjectList";
 import { BookOpen, Plus } from "lucide-react";

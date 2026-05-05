@@ -138,8 +138,8 @@ export default function AdmitCardGeneratorPage() {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight italic">Admit Card Generator</h1>
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-1">Bulk Exam Hall Ticket Production</p>
+                        <h1 className="text-xl font-semibold text-slate-900">Admit Card Generator</h1>
+                        <p className="text-sm text-slate-500 mt-1">Generate exam hall tickets</p>
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@ export default function AdmitCardGeneratorPage() {
             <ERPCard accentColor="blue" className="p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Target Class</Label>
+                        <Label className="text-sm font-medium text-slate-600">Target Class</Label>
                         <Select onValueChange={setSelectedClass} value={selectedClass}>
                             <SelectTrigger className="rounded-xl h-12 border-slate-200">
                                 <SelectValue placeholder="Select Class" />
@@ -159,7 +159,7 @@ export default function AdmitCardGeneratorPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Exam Session</Label>
+                        <Label className="text-sm font-medium text-slate-600">Exam Session</Label>
                         <Select onValueChange={setSelectedExam} value={selectedExam}>
                             <SelectTrigger className="rounded-xl h-12 border-slate-200">
                                 <SelectValue placeholder="Select Exam" />

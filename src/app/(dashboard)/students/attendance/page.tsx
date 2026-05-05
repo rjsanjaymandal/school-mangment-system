@@ -98,7 +98,7 @@ export default function StudentAttendancePage() {
                     <Button 
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="h-14 px-8 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest gap-x-3 shadow-xl active:scale-95 transition-all"
+                        className="h-12 px-6 rounded-md bg-emerald-600 text-white font-medium text-sm gap-2 shadow-sm hover:bg-emerald-700"
                     >
                         <Save className="h-4 w-4" />
                         {isSaving ? "Syncing..." : "Save Daily Log"}
@@ -110,28 +110,28 @@ export default function StudentAttendancePage() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-16 text-center">Roll</th>
-                                <th className="px-6 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Student Profile</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Attendance Status</th>
+                            <tr className="bg-slate-50 border-b border-slate-100">
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase w-16 text-center">Roll</th>
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Student</th>
+                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase text-center">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                        <tbody className="divide-y divide-slate-100">
                             {students.map((s) => (
-                                <tr key={s.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors">
-                                    <td className="px-8 py-5 text-center">
-                                        <span className="text-sm font-black text-slate-400">{s.roll}</span>
+                                <tr key={s.id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-4 py-3 text-center">
+                                        <span className="text-sm font-medium text-slate-500">{s.roll}</span>
                                     </td>
-                                    <td className="px-6 py-5">
-                                        <div className="flex items-center gap-x-4">
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center gap-3">
                                             <StudentAvatar 
                                                 name={s.name} 
                                                 classId="attendance-mock" 
-                                                className="h-11 w-11 text-[10px] shadow-sm opacity-80"
+                                                className="h-9 w-9 text-xs"
                                             />
                                             <div>
-                                                <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight italic">{s.name}</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{s.id}</p>
+                                                <p className="text-sm font-medium text-slate-900">{s.name}</p>
+                                                <p className="text-xs text-slate-400">{s.id}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -154,7 +154,7 @@ export default function StudentAttendancePage() {
                                                         "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-300",
                                                         attendance[s.id] === opt.id 
                                                             ? `bg-${opt.color}-500 text-white shadow-lg shadow-${opt.color}-500/20` 
-                                                            : `bg-slate-100 dark:bg-slate-800 text-slate-400`
+                                                            : `bg-slate-100 text-slate-400`
                                                     )}>
                                                         <opt.icon className="h-5 w-5" />
                                                     </div>
@@ -175,7 +175,7 @@ export default function StudentAttendancePage() {
                 </div>
             </ERPCard>
 
-            <div className="flex items-center justify-center reveal-3">
+            <div className="flex items-center justify-center">
                 <ERPCard accentColor="slate">
                     <div className="flex items-center gap-x-3">
                         <div className="h-2 w-2 rounded-full bg-emerald-500" />

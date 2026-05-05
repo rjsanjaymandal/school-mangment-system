@@ -70,14 +70,14 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                     <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
                         <Avatar className="h-40 w-40 border-8 border-white bg-slate-border-slate-900 shadow-2xl">
                             <AvatarImage src={staff.photo_url} className="object-cover" />
-                            <AvatarFallback className="bg-emerald-100 text-emerald-700 text-4xl font-black">
+                            <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl font-semibold">
                                 {staff.first_name[0]}{staff.last_name?.[0]}
                             </AvatarFallback>
                         </Avatar>
                         
                         <div className="flex-1 space-y-4">
                             <div className="flex flex-wrap items-center gap-3">
-                                <h1 className="text-4xl font-black text-slate-900 text-white tracking-tighter italic">
+                                <h1 className="text-2xl font-semibold text-slate-900">
                                     {staff.first_name} {staff.last_name}
                                 </h1>
                                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100 py-1 px-3 rounded-full text-[10px] font-black uppercase tracking-widest">

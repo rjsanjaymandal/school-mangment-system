@@ -71,7 +71,7 @@ export default function LauncherPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
-              <SkeletonLoader key={i} className="h-40 rounded-[2rem]" />
+              <SkeletonLoader key={i} className="h-40 rounded-lg" />
             ))}
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function LauncherPage() {
         </div>
 
         <div className="flex items-center gap-x-4">
-          <div className="hidden lg:flex items-center gap-x-3 text-slate-500 font-bold text-[10px] uppercase tracking-widest">
+          <div className="hidden lg:flex items-center gap-2 text-slate-500 text-xs font-medium uppercase">
             <div className="flex items-center gap-x-2 bg-slate-100 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
               <CalendarIcon className="h-3 w-3" />
               {currentTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

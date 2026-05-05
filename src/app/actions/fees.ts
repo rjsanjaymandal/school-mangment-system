@@ -146,3 +146,20 @@ export async function getFeeCollectionSummary() {
         return { success: false, error: error.message, data: null };
     }
 }
+
+export async function getFeeDashboardStats(academicYear: string = "2026-27") {
+    try {
+        const supabase = createAdminClient();
+        const { data, error } = await supabase.rpc("get_fee_dashboard_stats", {
+            p_academic_year: academicYear
+        });
+
+        if (error) throw error;
+        
+        // The RPC returns a single row with multiple columns
+        return { success: true, data: data?.[0] || null };
+    } catch (error: any) {
+        console.error("Error fetching fee dashboard stats:", error);
+        return { success: false, error: error.message, data: null };
+    }
+}

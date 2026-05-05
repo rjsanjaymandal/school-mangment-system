@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { User } from "@supabase/supabase-js";
 import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { LiveCollectionPill } from "@/components/finance/LiveCollectionPill";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,6 +55,7 @@ export function Navbar({ user }: NavbarProps) {
 
       {/* Right: Search + Notifications + User */}
       <div className="flex items-center gap-4">
+        <LiveCollectionPill />
         <div className="relative hidden md:block">
           <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <Input
