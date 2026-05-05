@@ -2,12 +2,9 @@ import { redirect } from "next/navigation";
 import { getAuthContext } from "@/lib/auth-context";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
-import { ImpersonationBanner } from "@/components/shared/ImpersonationBanner";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 import { GlobalErrorHandler } from "@/components/error/GlobalErrorHandler";
-import { Toaster } from "@/components/ui/sonner";
 
 function LoadingFallback() {
   return (
@@ -46,11 +43,8 @@ export default async function DashboardLayout({
   } : null;
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
-        <ReactQueryProvider>
-          <GlobalErrorHandler>
-            <div className="h-full flex">
+    <GlobalErrorHandler>
+      <div className="h-full flex">
               {/* Persistent Sidebar - Never re-renders on navigation */}
               <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50">
                 <Sidebar 
@@ -64,14 +58,6 @@ export default async function DashboardLayout({
                 {/* Persistent Navbar */}
                 <Navbar user={realUser} userRole={effectiveRole} />
                 
-                {/* Impersonation Banner */}
-                {impersonationData && (
-                  <ImpersonationBanner
-                    targetName={impersonationData.name}
-                    targetRole={impersonationData.role}
-                  />
-                )}
-                
                 {/* Page Content with Suspense for streaming */}
                 <Suspense fallback={<LoadingFallback />}>
                   <main className="flex-1 p-4 md:p-6">
@@ -79,11 +65,7 @@ export default async function DashboardLayout({
                   </main>
                 </Suspense>
               </div>
-            </div>
-            <Toaster position="bottom-right" />
-          </GlobalErrorHandler>
-        </ReactQueryProvider>
-      </body>
-    </html>
+      </div>
+    </GlobalErrorHandler>
   );
 }
