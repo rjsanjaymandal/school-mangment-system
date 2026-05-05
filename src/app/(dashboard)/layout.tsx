@@ -3,18 +3,38 @@ import { getAuthContext } from "@/lib/auth-context";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
 import { ImpersonationBanner } from "@/components/shared/ImpersonationBanner";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
+import { GlobalErrorHandler } from "@/components/error/GlobalErrorHandler";
+import { Toaster } from "@/components/ui/sonner";
+
+function LoadingFallback() {
+  return (
+    <div className="flex-1 p-6 space-y-6 animate-pulse">
+      <Skeleton className="h-8 w-48 bg-slate-200" />
+      <div className="space-y-4">
+        <Skeleton className="h-32 w-full bg-slate-100" />
+        <Skeleton className="h-32 w-full bg-slate-100" />
+        <Skeleton className="h-32 w-full bg-slate-100" />
+      </div>
+    </div>
+  );
+}
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const authContext = await getAuthContext();
+  
   const { 
     realUser, 
     effectiveUser, 
     effectiveRole, 
     isImpersonating 
-  } = await getAuthContext();
+  } = authContext;
 
   if (!realUser) {
     return redirect("/login");
@@ -26,30 +46,44 @@ export default async function DashboardLayout({
   } : null;
 
   return (
-    <div className="h-full flex">
-      {/* Fixed Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40">
-        <Sidebar initialProfile={effectiveUser} />
-      </div>
-      
-      {/* Main Content */}
-      <div className="flex-1 md:pl-64 flex flex-col min-h-screen bg-slate-50">
-        <Navbar user={realUser} />
-        
-        {/* Shadow Mode Banner */}
-        {impersonationData && (
-          <ImpersonationBanner
-            targetName={impersonationData.name}
-            targetRole={impersonationData.role}
-          />
-        )}
-        
-        {/* Page Content - using p-6 as per ERP standard */}
-        <main className="flex-1 p-6">
-          {children}
-        </main>
-      </div>
-    </div>
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased">
+        <ReactQueryProvider>
+          <GlobalErrorHandler>
+            <div className="h-full flex">
+              {/* Persistent Sidebar - Never re-renders on navigation */}
+              <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50">
+                <Sidebar 
+                  initialProfile={effectiveUser} 
+                  userRole={effectiveRole}
+                />
+              </aside>
+              
+              {/* Main Content Area */}
+              <div className="flex-1 md:pl-64 flex flex-col min-h-screen bg-slate-50">
+                {/* Persistent Navbar */}
+                <Navbar user={realUser} userRole={effectiveRole} />
+                
+                {/* Impersonation Banner */}
+                {impersonationData && (
+                  <ImpersonationBanner
+                    targetName={impersonationData.name}
+                    targetRole={impersonationData.role}
+                  />
+                )}
+                
+                {/* Page Content with Suspense for streaming */}
+                <Suspense fallback={<LoadingFallback />}>
+                  <main className="flex-1 p-4 md:p-6">
+                    {children}
+                  </main>
+                </Suspense>
+              </div>
+            </div>
+            <Toaster position="bottom-right" />
+          </GlobalErrorHandler>
+        </ReactQueryProvider>
+      </body>
+    </html>
   );
 }
-

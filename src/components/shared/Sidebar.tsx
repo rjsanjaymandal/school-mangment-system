@@ -23,6 +23,8 @@ import {
   UserCheck,
   History,
   ChevronDown,
+  Shield,
+  Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/lib/services/user";
@@ -79,6 +81,7 @@ const navigation: NavGroup[] = [
         subItems: [
           { name: "Staff Directory", href: "/hr/directory" },
           { name: "Add Staff", href: "/hr/add-staff" },
+          { name: "Role & Permissions", href: "/hr/roles" },
           { name: "Download Center", href: "/hr/download-center" },
         ]
       },
@@ -122,6 +125,18 @@ const navigation: NavGroup[] = [
           { name: "Daily Report", href: "/finance/daily" },
         ]
       },
+      { 
+        name: "Accounts & Payroll", 
+        href: "/finance/process-salary", 
+        icon: Wallet,
+        roles: ["admin", "principal"],
+        subItems: [
+          { name: "Process Salary", href: "/finance/process-salary" },
+          { name: "Day Book", href: "/finance/day-book" },
+          { name: "Salary Settings", href: "/finance/salary-settings" },
+          { name: "Reports", href: "/finance/reports" },
+        ]
+      },
     ],
   },
   {
@@ -150,15 +165,17 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Users", href: "/users", icon: UserCheck },
       { name: "Settings", href: "/settings", icon: Settings },
+      { name: "Enterprise", href: "/settings/enterprise", icon: Shield, roles: ["admin"] },
       { name: "Audit Logs", href: "/audit", icon: History },
     ],
   },
 ];
 
-export function Sidebar({ initialProfile }: { initialProfile?: any }) {
+export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; userRole?: string }) {
   const pathname = usePathname();
   const [userProfile, setUserProfile] = useState<any>(initialProfile || null);
   const [expandedItems, setExpandedItems] = useState<string[]>(["Students"]);
+  const currentRole = userRole || userProfile?.role || "student";
 
   const toggleExpand = (name: string) => {
     setExpandedItems(prev => 
@@ -180,14 +197,14 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
   }, [initialProfile]);
 
   const resolvedProfile = initialProfile ?? userProfile;
-  const userRole = resolvedProfile?.role || "student";
+  const roleToUse = currentRole || resolvedProfile?.role || "student";
 
   const filteredNavigation = navigation
-    .filter((group) => !group.roles || group.roles.includes(userRole))
+    .filter((group) => !group.roles || group.roles.includes(roleToUse))
     .map((group) => ({
       ...group,
       items: group.items.filter(
-        (item) => !item.roles || item.roles.includes(userRole),
+        (item) => !item.roles || item.roles.includes(roleToUse),
       ),
     }))
     .filter((group) => group.items.length > 0);

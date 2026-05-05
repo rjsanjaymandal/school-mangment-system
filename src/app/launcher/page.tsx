@@ -1,9 +1,9 @@
 "use client";
 
-import { Launchpad } from "@/components/shared/Launchpad";
+import { Suspense, lazy } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Search, LogOut, User as UserIcon, Calendar as CalendarIcon, Clock, GraduationCap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { UserService } from "@/lib/services/user";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+// Lazy load Launchpad for faster initial render
+const Launchpad = lazy(() => import("@/components/shared/Launchpad").then(m => ({ default: m.Launchpad })));
 
 export default function LauncherPage() {
   const router = useRouter();

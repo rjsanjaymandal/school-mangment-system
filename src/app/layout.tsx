@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 
 import { getAuthContext } from "@/lib/auth-context";
 import { ImpersonationBanner } from "@/components/shared/ImpersonationBanner";
+import { AIAssistant } from "@/components/ai";
 
 export default async function RootLayout({
   children,
@@ -44,9 +45,9 @@ export default async function RootLayout({
             {children}
           </main>
           <Toaster />
+          <AIAssistant />
         </ReactQueryProvider>
       </body>
     </html>
   );
 }
-

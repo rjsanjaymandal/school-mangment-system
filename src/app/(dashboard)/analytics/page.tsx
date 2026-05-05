@@ -1,6 +1,9 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 import { DemographicsPanel } from "@/components/analytics/DemographicsPanel";
+import { PredictiveAnalytics } from "@/components/analytics/PredictiveAnalytics";
 import { ERPCard } from "@/components/ui/erp-card";
 import { Users, BarChart3, GraduationCap, UserSquare2, Library, BookOpen } from "lucide-react";
 
@@ -205,6 +208,16 @@ export default async function AnalyticsPage() {
           classes={classList}
           documentStats={documentStats}
         />
+      </ERPCard>
+
+      {/* Predictive Analytics */}
+      <ERPCard
+        title="AI Insights & Predictions"
+        description="Machine learning powered analytics and anomaly detection"
+        icon={<BarChart3 className="h-5 w-5" />}
+        color="amber"
+      >
+        <PredictiveAnalytics />
       </ERPCard>
     </div>
   );

@@ -1,11 +1,4 @@
 import { createClient } from "@/lib/supabase/server";
-import type { 
-  Student, Class, Subject, Staff, Department, Designation,
-  Attendance, Exam, Marks, FeeStructure, Payment,
-  LibraryBook, LibraryTransaction, TransportRoute, TransportAssignment,
-  StudentDocument, Announcement, Message, Grade, StudentConduct,
-  HealthRecord, InventoryItem, Activity, Profile
-} from "@/types";
 
 async function getSupabase() {
   return createClient();
@@ -38,7 +31,7 @@ export const students = {
     return data as any;
   },
 
-  async create(student: Partial<Student>) {
+  async create(student: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("students")
@@ -47,10 +40,10 @@ export const students = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Student;
+    return data;
   },
 
-  async update(id: string, student: Partial<Student>) {
+  async update(id: string, student: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("students")
@@ -60,7 +53,7 @@ export const students = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Student;
+    return data;
   },
 
   async delete(id: string) {
@@ -79,7 +72,7 @@ export const classes = {
       .order("name", { ascending: true });
     
     if (error) throw new Error(error.message);
-    return data as Class[];
+    return data;
   },
 
   async get(id: string) {
@@ -91,10 +84,10 @@ export const classes = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Class;
+    return data;
   },
 
-  async create(classData: Partial<Class>) {
+  async create(classData: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("classes")
@@ -103,10 +96,10 @@ export const classes = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Class;
+    return data;
   },
 
-  async update(id: string, classData: Partial<Class>) {
+  async update(id: string, classData: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("classes")
@@ -116,7 +109,7 @@ export const classes = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Class;
+    return data;
   },
 
   async delete(id: string) {
@@ -141,7 +134,7 @@ export const subjects = {
     return data as any[];
   },
 
-  async create(subject: Partial<Subject>) {
+  async create(subject: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("subjects")
@@ -150,10 +143,10 @@ export const subjects = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Subject;
+    return data;
   },
 
-  async update(id: string, subject: Partial<Subject>) {
+  async update(id: string, subject: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("subjects")
@@ -163,7 +156,7 @@ export const subjects = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Subject;
+    return data;
   },
 
   async delete(id: string) {
@@ -197,7 +190,7 @@ export const staff = {
     return data as any;
   },
 
-  async create(staffData: Partial<Staff>) {
+  async create(staffData: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("staff")
@@ -206,10 +199,10 @@ export const staff = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Staff;
+    return data;
   },
 
-  async update(id: string, staffData: Partial<Staff>) {
+  async update(id: string, staffData: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("staff")
@@ -219,7 +212,7 @@ export const staff = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Staff;
+    return data;
   }
 };
 
@@ -277,7 +270,7 @@ export const exams = {
     return data as any;
   },
 
-  async create(exam: Partial<Exam>) {
+  async create(exam: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("exams")
@@ -286,7 +279,7 @@ export const exams = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Exam;
+    return data;
   }
 };
 
@@ -302,7 +295,7 @@ export const marks = {
     return data as any[];
   },
 
-  async upsert(records: Partial<Marks>[]) {
+  async upsert(records: any[]) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("marks")
@@ -329,7 +322,7 @@ export const fees = {
     return data as any[];
   },
 
-  async create(fee: Partial<FeeStructure>) {
+  async create(fee: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("fee_structures")
@@ -338,7 +331,7 @@ export const fees = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as FeeStructure;
+    return data;
   }
 };
 
@@ -357,7 +350,7 @@ export const payments = {
     return data as any[];
   },
 
-  async create(payment: Partial<Payment>) {
+  async create(payment: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("payments")
@@ -366,7 +359,7 @@ export const payments = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Payment;
+    return data;
   }
 };
 
@@ -379,7 +372,7 @@ export const library = {
       .order("title", { ascending: true });
     
     if (error) throw new Error(error.message);
-    return data as LibraryBook[];
+    return data;
   },
 
   async transactions(studentId?: string) {
@@ -407,10 +400,10 @@ export const documents = {
       .order("uploaded_at", { ascending: false });
     
     if (error) throw new Error(error.message);
-    return data as StudentDocument[];
+    return data;
   },
 
-  async create(doc: Partial<StudentDocument>) {
+  async create(doc: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("student_documents")
@@ -419,7 +412,7 @@ export const documents = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as StudentDocument;
+    return data;
   },
 
   async delete(id: string) {
@@ -438,10 +431,10 @@ export const departments = {
       .order("name", { ascending: true });
     
     if (error) throw new Error(error.message);
-    return data as Department[];
+    return data;
   },
 
-  async create(dept: Partial<Department>) {
+  async create(dept: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("departments")
@@ -450,7 +443,7 @@ export const departments = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Department;
+    return data;
   }
 };
 
@@ -466,7 +459,7 @@ export const designations = {
     return data as any[];
   },
 
-  async create(desig: Partial<Designation>) {
+  async create(desig: any) {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("designations")
@@ -475,7 +468,7 @@ export const designations = {
       .single();
     
     if (error) throw new Error(error.message);
-    return data as Designation;
+    return data;
   }
 };
 

@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
 import { User } from "@supabase/supabase-js";
-import { Bell, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Bell } from "lucide-react";
 import { LiveCollectionPill } from "@/components/finance/LiveCollectionPill";
+import { GlobalSearch } from "@/components/search/GlobalSearch";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,11 +22,13 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 interface NavbarProps {
   user: User | null;
+  userRole?: string | null;
 }
 
-export function Navbar({ user }: NavbarProps) {
+export function Navbar({ user, userRole }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const role = userRole || "student";
   
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -35,7 +37,6 @@ export function Navbar({ user }: NavbarProps) {
     router.refresh();
   };
 
-  // Generate breadcrumbs from pathname
   const pathSegments = pathname.split("/").filter(Boolean);
   const breadcrumbs = pathSegments.map((segment, index) => {
     const href = "/" + pathSegments.slice(0, index + 1).join("/");
@@ -48,21 +49,13 @@ export function Navbar({ user }: NavbarProps) {
 
   return (
     <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 sticky top-0 z-30">
-      {/* Left: Breadcrumb */}
       <div className="flex-1">
         <Breadcrumb items={breadcrumbs} />
       </div>
 
-      {/* Right: Search + Notifications + User */}
       <div className="flex items-center gap-4">
         <LiveCollectionPill />
-        <div className="relative hidden md:block">
-          <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <Input
-            placeholder="Search..."
-            className="h-9 pl-9 pr-4 bg-slate-50 border-slate-200 rounded-md text-sm w-64"
-          />
-        </div>
+        <GlobalSearch />
         
         <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-md">
           <Bell className="h-4 w-4 text-slate-500" />
@@ -108,4 +101,3 @@ export function Navbar({ user }: NavbarProps) {
     </header>
   );
 }
-

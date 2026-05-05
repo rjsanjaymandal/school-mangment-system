@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import { FeesDashboard } from "@/components/fees/FeesDashboard";
 import { getSessionRole } from "@/lib/auth-utils";

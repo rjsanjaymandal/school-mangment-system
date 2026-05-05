@@ -1,8 +1,9 @@
+export const revalidate = 30;
+export const dynamic = 'force-static';
+
 import { createClient } from "@/lib/supabase/server";
 import { TimetableDashboard } from "@/components/timetable/TimetableDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
-
-export const dynamic = 'force-dynamic';
 
 export default async function TimetablePage() {
   const supabase = await createClient();

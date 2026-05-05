@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { InstitutionalService } from "@/lib/services/institutional";
 import { getSessionRole } from "@/lib/auth-utils";
 import { StudentList } from "@/components/students/StudentList";

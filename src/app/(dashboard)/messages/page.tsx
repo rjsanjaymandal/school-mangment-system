@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import { MessagesDashboard } from "@/components/messages/MessagesDashboard";
 import { MessagesService } from "@/lib/services/messages";

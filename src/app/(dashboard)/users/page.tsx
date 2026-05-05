@@ -1,3 +1,6 @@
+export const revalidate = 30;
+export const dynamic = 'force-static';
+
 import { createClient } from "@/lib/supabase/server";
 import UsersDashboardClient from "@/components/users/UsersDashboardClient";
 import { isAdmin } from "@/lib/auth-utils";

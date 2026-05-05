@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import SettingsDashboardClient from "@/components/settings/SettingsDashboardClient";
 import { getSettings } from "@/app/actions/settings";

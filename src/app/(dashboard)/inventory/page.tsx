@@ -1,3 +1,5 @@
+export const revalidate = 30;
+
 import { createClient } from "@/lib/supabase/server";
 import InventoryDashboardClient from "@/components/inventory/InventoryDashboardClient";
 import { getSessionRole } from "@/lib/auth-utils";

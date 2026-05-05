@@ -57,33 +57,41 @@ export default function StudentDocumentsPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // 1. Fetch Students using React Query
-  const { data: students = [], isLoading: loadingStudents } = useQuery({
+  const { data: students = [], isLoading: loadingStudents, error: studentsError } = useQuery({
     queryKey: ['students-list'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("students")
-        .select(`
-          id,
-          admission_number,
-          profile:profiles(full_name, first_name, last_name),
-          class:classes(name)
-        `)
-        .order("admission_number", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("students")
+          .select(`
+            id,
+            admission_number,
+            profile:profiles(full_name, first_name, last_name),
+            class:classes(name)
+          `)
+          .order("admission_number", { ascending: true })
+          .limit(200);
 
-      if (error) {
-        console.error("Error fetching students:", error);
-        throw error;
+        if (error) {
+          console.error("Supabase error fetching students:", error.message, error.details);
+          throw new Error(error.message || "Failed to fetch students");
+        }
+
+        return (data || []).map((s: any) => ({
+          id: s.id,
+          admission_number: s.admission_number,
+          full_name: s.profile?.first_name 
+            ? `${s.profile.first_name} ${s.profile.last_name || ''}`.trim() 
+            : (s.profile?.full_name || "Unknown"),
+          class_name: s.class?.name || "N/A",
+        }));
+      } catch (err: any) {
+        console.error("Error fetching students:", err?.message || err);
+        throw err;
       }
-
-      return (data || []).map((s: any) => ({
-        id: s.id,
-        admission_number: s.admission_number,
-        full_name: s.profile?.first_name 
-          ? `${s.profile.first_name} ${s.profile.last_name || ''}`.trim() 
-          : (s.profile?.full_name || "Unknown"),
-        class_name: s.class?.name || "N/A",
-      }));
-    }
+    },
+    staleTime: 60 * 1000,
+    retry: 2,
   });
 
   // 2. Fetch Documents for Selected Student
@@ -248,6 +256,19 @@ export default function StudentDocumentsPage() {
                 {loadingStudents ? (
                   <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
                     <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+                  </div>
+                ) : studentsError ? (
+                  <div className="text-center py-8 text-red-500">
+                    <p className="font-medium">Error loading students</p>
+                    <p className="text-sm mt-1">{studentsError.message}</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-3"
+                      onClick={() => queryClient.invalidateQueries({ queryKey: ['students-list'] })}
+                    >
+                      Retry
+                    </Button>
                   </div>
                 ) : filteredStudents.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
