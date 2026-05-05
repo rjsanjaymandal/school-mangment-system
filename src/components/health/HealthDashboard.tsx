@@ -5,7 +5,7 @@ import { Activity, AlertTriangle, CheckCircle, Heart, Plus, User } from "lucide-
 import { Area, AreaChart, CartesianGrid, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { createInfirmaryLog, updateInfirmaryStatus, upsertHealthProfile } from "@/app/actions/health";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -119,105 +119,250 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between gap-4">
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">Medical Infrastructure</h2>
-                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">Health profiles and infirmary operations</p>
+                    <h2 className="text-xl font-semibold text-slate-900">Health Dashboard</h2>
+                    <p className="text-sm text-slate-500">Medical records and health profiles</p>
                 </div>
-                {isAdminOrTeacher && <div className="flex flex-wrap gap-3">
-                    <Badge variant="outline" className="rounded-sm px-4 py-1.5 border-destructive/20 text-destructive bg-destructive/5 gap-x-2 font-black uppercase text-[10px] tracking-widest"><AlertTriangle className="h-3 w-3" /> {activeVisits.length} Active Visits</Badge>
-                    <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-                        <DialogTrigger asChild><Button variant="outline" onClick={resetProfileForm}>Manage Profile</Button></DialogTrigger>
-                        <DialogContent className="max-w-2xl">
-                            <DialogHeader><DialogTitle>Health Profile</DialogTitle></DialogHeader>
-                            <div className="grid gap-4">
-                                <div className="space-y-2">
-                                    <Label>Student</Label>
-                                    <Select value={profileForm.student_id} onValueChange={handleOpenProfile}>
-                                        <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                                        <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.profile?.full_name || student.admission_number}</SelectItem>)}</SelectContent>
-                                    </Select>
+                {isAdminOrTeacher && (
+                    <div className="flex flex-wrap gap-3">
+                        <Badge variant="outline" className="px-3 py-1.5 border-red-200 text-red-600 bg-red-50 gap-x-2">
+                            <AlertTriangle className="h-3 w-3" /> {activeVisits.length} Active Visits
+                        </Badge>
+                        <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+                            <DialogTrigger asChild><Button variant="outline" onClick={resetProfileForm} className="rounded-md">Manage Profile</Button></DialogTrigger>
+                            <DialogContent className="max-w-2xl">
+                                <DialogHeader><DialogTitle>Health Profile</DialogTitle></DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="space-y-2">
+                                        <Label>Student</Label>
+                                        <Select value={profileForm.student_id} onValueChange={handleOpenProfile}>
+                                            <SelectTrigger className="rounded-md"><SelectValue placeholder="Select student" /></SelectTrigger>
+                                            <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.profile?.full_name || student.admission_number}</SelectItem>)}</SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2"><Label>Blood Group</Label><Input value={profileForm.blood_group} onChange={(e) => setProfileForm({ ...profileForm, blood_group: e.target.value })} className="rounded-md" /></div>
+                                        <div className="space-y-2"><Label>Insurance Number</Label><Input value={profileForm.insurance_number} onChange={(e) => setProfileForm({ ...profileForm, insurance_number: e.target.value })} className="rounded-md" /></div>
+                                    </div>
+                                    <div className="grid md:grid-cols-3 gap-4">
+                                        <div className="space-y-2"><Label>Allergies</Label><Textarea value={profileForm.allergies} onChange={(e) => setProfileForm({ ...profileForm, allergies: e.target.value })} className="rounded-md" /></div>
+                                        <div className="space-y-2"><Label>Chronic Conditions</Label><Textarea value={profileForm.chronic_conditions} onChange={(e) => setProfileForm({ ...profileForm, chronic_conditions: e.target.value })} className="rounded-md" /></div>
+                                        <div className="space-y-2"><Label>Medications</Label><Textarea value={profileForm.medications} onChange={(e) => setProfileForm({ ...profileForm, medications: e.target.value })} className="rounded-md" /></div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2"><Label>Emergency Contact</Label><Input value={profileForm.emergency_contact_name} onChange={(e) => setProfileForm({ ...profileForm, emergency_contact_name: e.target.value })} className="rounded-md" /></div>
+                                        <div className="space-y-2"><Label>Emergency Phone</Label><Input value={profileForm.emergency_contact_phone} onChange={(e) => setProfileForm({ ...profileForm, emergency_contact_phone: e.target.value })} className="rounded-md" /></div>
+                                    </div>
+                                    <Button onClick={handleSaveProfile} disabled={loading} className="rounded-md bg-emerald-600 hover:bg-emerald-700">{loading ? "Saving..." : "Save Profile"}</Button>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2"><Label>Blood Group</Label><Input value={profileForm.blood_group} onChange={(e) => setProfileForm({ ...profileForm, blood_group: e.target.value })} /></div>
-                                    <div className="space-y-2"><Label>Insurance Number</Label><Input value={profileForm.insurance_number} onChange={(e) => setProfileForm({ ...profileForm, insurance_number: e.target.value })} /></div>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog open={isLogOpen} onOpenChange={setIsLogOpen}>
+                            <DialogTrigger asChild><Button className="rounded-md bg-emerald-600 hover:bg-emerald-700"><Plus className="h-4 w-4 mr-2" /> Record Visit</Button></DialogTrigger>
+                            <DialogContent className="max-w-xl">
+                                <DialogHeader><DialogTitle>Infirmary Visit</DialogTitle></DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="space-y-2">
+                                        <Label>Student</Label>
+                                        <Select value={logForm.student_id} onValueChange={(value) => setLogForm({ ...logForm, student_id: value })}>
+                                            <SelectTrigger className="rounded-md"><SelectValue placeholder="Select student" /></SelectTrigger>
+                                            <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.profile?.full_name || student.admission_number}</SelectItem>)}</SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2"><Label>Reason</Label><Input value={logForm.visit_reason} onChange={(e) => setLogForm({ ...logForm, visit_reason: e.target.value })} className="rounded-md" /></div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2"><Label>Symptoms</Label><Textarea value={logForm.symptoms} onChange={(e) => setLogForm({ ...logForm, symptoms: e.target.value })} className="rounded-md" /></div>
+                                        <div className="space-y-2"><Label>Temperature (deg F)</Label><Input type="number" step="0.1" value={logForm.temperature} onChange={(e) => setLogForm({ ...logForm, temperature: e.target.value })} className="rounded-md" /></div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2"><Label>Treatment</Label><Textarea value={logForm.treatment_provided} onChange={(e) => setLogForm({ ...logForm, treatment_provided: e.target.value })} className="rounded-md" /></div>
+                                        <div className="space-y-2"><Label>Medication</Label><Textarea value={logForm.medication_given} onChange={(e) => setLogForm({ ...logForm, medication_given: e.target.value })} className="rounded-md" /></div>
+                                    </div>
+                                    <Button onClick={handleCreateLog} disabled={loading} className="rounded-md bg-emerald-600 hover:bg-emerald-700">{loading ? "Recording..." : "Record Visit"}</Button>
                                 </div>
-                                <div className="grid md:grid-cols-3 gap-4">
-                                    <div className="space-y-2"><Label>Allergies</Label><Textarea value={profileForm.allergies} onChange={(e) => setProfileForm({ ...profileForm, allergies: e.target.value })} /></div>
-                                    <div className="space-y-2"><Label>Chronic Conditions</Label><Textarea value={profileForm.chronic_conditions} onChange={(e) => setProfileForm({ ...profileForm, chronic_conditions: e.target.value })} /></div>
-                                    <div className="space-y-2"><Label>Medications</Label><Textarea value={profileForm.medications} onChange={(e) => setProfileForm({ ...profileForm, medications: e.target.value })} /></div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2"><Label>Emergency Contact</Label><Input value={profileForm.emergency_contact_name} onChange={(e) => setProfileForm({ ...profileForm, emergency_contact_name: e.target.value })} /></div>
-                                    <div className="space-y-2"><Label>Emergency Phone</Label><Input value={profileForm.emergency_contact_phone} onChange={(e) => setProfileForm({ ...profileForm, emergency_contact_phone: e.target.value })} /></div>
-                                </div>
-                                <Button onClick={handleSaveProfile} disabled={loading}>{loading ? "Saving..." : "Save Profile"}</Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                    <Dialog open={isLogOpen} onOpenChange={setIsLogOpen}>
-                        <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" /> Record Visit</Button></DialogTrigger>
-                        <DialogContent className="max-w-xl">
-                            <DialogHeader><DialogTitle>Infirmary Visit</DialogTitle></DialogHeader>
-                            <div className="grid gap-4">
-                                <div className="space-y-2">
-                                    <Label>Student</Label>
-                                    <Select value={logForm.student_id} onValueChange={(value) => setLogForm({ ...logForm, student_id: value })}>
-                                        <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                                        <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.profile?.full_name || student.admission_number}</SelectItem>)}</SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2"><Label>Reason</Label><Input value={logForm.visit_reason} onChange={(e) => setLogForm({ ...logForm, visit_reason: e.target.value })} /></div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2"><Label>Symptoms</Label><Textarea value={logForm.symptoms} onChange={(e) => setLogForm({ ...logForm, symptoms: e.target.value })} /></div>
-                                    <div className="space-y-2"><Label>Temperature (deg F)</Label><Input type="number" step="0.1" value={logForm.temperature} onChange={(e) => setLogForm({ ...logForm, temperature: e.target.value })} /></div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2"><Label>Treatment</Label><Textarea value={logForm.treatment_provided} onChange={(e) => setLogForm({ ...logForm, treatment_provided: e.target.value })} /></div>
-                                    <div className="space-y-2"><Label>Medication</Label><Textarea value={logForm.medication_given} onChange={(e) => setLogForm({ ...logForm, medication_given: e.target.value })} /></div>
-                                </div>
-                                <Button onClick={handleCreateLog} disabled={loading}>{loading ? "Recording..." : "Record Visit"}</Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>}
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                )}
             </div>
 
-            <div className="grid md:grid-cols-12 gap-8">
-                <Card className="md:col-span-7 p-8 border border-border"><div className="mb-6 flex items-center justify-between"><div><h3 className="text-xl font-bold">Incident Telemetry</h3><p className="text-xs text-muted-foreground">Monthly infirmary visits</p></div><Activity className="h-5 w-5 text-primary" /></div><div className="h-[260px]"><ResponsiveContainer width="100%" height="100%"><AreaChart data={telemetry}><defs><linearGradient id="health-visits" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} /><stop offset="95%" stopColor="#ef4444" stopOpacity={0} /></linearGradient></defs><CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} /><XAxis dataKey="name" axisLine={false} tickLine={false} /><YAxis axisLine={false} tickLine={false} /><Tooltip /><Area type="monotone" dataKey="visits" stroke="#ef4444" fill="url(#health-visits)" strokeWidth={3} /></AreaChart></ResponsiveContainer></div></Card>
-                <Card className="md:col-span-5 p-8 border border-border"><div className="mb-6"><h3 className="text-xl font-bold">Ailment Profile</h3><p className="text-xs text-muted-foreground">Most common visit reasons</p></div><div className="h-[260px]"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={ailmentData} dataKey="value" innerRadius={60} outerRadius={90}>{ailmentData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}</Pie><Tooltip /><Legend verticalAlign="bottom" height={36} /></PieChart></ResponsiveContainer></div></Card>
+            {/* Stats */}
+            <div className="grid gap-4 md:grid-cols-3">
+                <Card className="border-l-4 border-l-emerald-500 shadow-sm">
+                    <CardContent className="pt-6">
+                        <p className="text-sm text-slate-500">Total Visits</p>
+                        <h3 className="text-2xl font-bold mt-1">{infirmaryLogs.length}</h3>
+                    </CardContent>
+                </Card>
+                <Card className="border-l-4 border-l-red-500 shadow-sm">
+                    <CardContent className="pt-6">
+                        <p className="text-sm text-slate-500">Under Observation</p>
+                        <h3 className="text-2xl font-bold mt-1 text-red-600">{activeVisits.length}</h3>
+                    </CardContent>
+                </Card>
+                <Card className="border-l-4 border-l-blue-500 shadow-sm">
+                    <CardContent className="pt-6">
+                        <p className="text-sm text-slate-500">Health Profiles</p>
+                        <h3 className="text-2xl font-bold mt-1">{healthProfiles.length}</h3>
+                    </CardContent>
+                </Card>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Total Visits</p><h3 className="text-4xl font-bold mt-2">{infirmaryLogs.length}</h3></Card>
-                <Card className="p-6 border border-destructive/20 bg-destructive/5"><p className="text-xs text-destructive">Under Observation</p><h3 className="text-4xl font-bold mt-2">{activeVisits.length}</h3></Card>
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Health Profiles</p><h3 className="text-4xl font-bold mt-2">{healthProfiles.length}</h3></Card>
+            {/* Charts */}
+            <div className="grid md:grid-cols-12 gap-6">
+                <Card className="md:col-span-7 border-l-4 border-l-emerald-500 shadow-sm">
+                    <CardHeader className="pb-2 border-b bg-slate-50/50">
+                        <CardTitle className="text-base flex items-center gap-2">
+                            <Activity className="h-4 w-4 text-emerald-600" />
+                            Monthly Visits
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-[260px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={telemetry}>
+                                    <defs>
+                                        <linearGradient id="health-visits" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                                    <YAxis axisLine={false} tickLine={false} />
+                                    <Tooltip />
+                                    <Area type="monotone" dataKey="visits" stroke="#ef4444" fill="url(#health-visits)" strokeWidth={2} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card className="md:col-span-5 border-l-4 border-l-amber-500 shadow-sm">
+                    <CardHeader className="pb-2 border-b bg-slate-50/50">
+                        <CardTitle className="text-base">Ailment Profile</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-[260px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie data={ailmentData} dataKey="value" innerRadius={60} outerRadius={90}>
+                                        {ailmentData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend verticalAlign="bottom" height={36} />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
 
-            <Card className="overflow-hidden border border-border">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-muted"><tr><th className="p-4 text-left">Student</th><th className="p-4 text-left">Reason</th><th className="p-4 text-left">Temperature</th><th className="p-4 text-left">Status</th><th className="p-4 text-right">Actions</th></tr></thead>
-                        <tbody className="divide-y divide-border">
-                            {infirmaryLogs.length === 0 ? <tr><td colSpan={5} className="p-10 text-center text-muted-foreground">No infirmary visits recorded yet.</td></tr> : infirmaryLogs.map((log) => <tr key={log.id}><td className="p-4"><div className="font-medium">{log.student?.profile?.first_name} {log.student?.profile?.last_name}</div><div className="text-xs text-muted-foreground">{log.student?.admission_number}</div></td><td className="p-4">{log.visit_reason}</td><td className="p-4">{log.temperature ? `${log.temperature} deg F` : "-"}</td><td className="p-4"><Badge variant="outline" className={cn(log.status === "under_observation" ? "border-destructive/20 text-destructive bg-destructive/5" : log.status === "discharged" ? "border-primary/20 text-primary bg-primary/5" : "border-amber-500/20 text-amber-600 bg-amber-500/5")}>{log.status?.replace("_", " ")}</Badge></td><td className="p-4 text-right">{isAdminOrTeacher && log.status === "under_observation" && <div className="flex justify-end gap-2"><Button variant="ghost" size="sm" onClick={() => handleStatusChange(log.id, "referral")}>Referral</Button><Button variant="ghost" size="sm" onClick={() => handleStatusChange(log.id, "discharged")}><CheckCircle className="h-4 w-4 mr-1" /> Discharge</Button></div>}</td></tr>)}
-                        </tbody>
-                    </table>
-                </div>
+            {/* Logs Table */}
+            <Card className="border-l-4 border-l-emerald-500 shadow-sm">
+                <CardHeader className="border-b bg-slate-50/50">
+                    <CardTitle className="text-base">Infirmary Logs</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="bg-slate-50 border-b">
+                                <tr>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Student</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Reason</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Temperature</th>
+                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Status</th>
+                                    <th className="px-4 py-3 text-right text-sm font-medium text-slate-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {infirmaryLogs.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="p-10 text-center text-slate-500">No infirmary visits recorded yet.</td>
+                                    </tr>
+                                ) : (
+                                    infirmaryLogs.map((log) => (
+                                        <tr key={log.id} className="hover:bg-slate-50">
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center">
+                                                        <User className="h-4 w-4 text-slate-500" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium">{log.student?.profile?.first_name} {log.student?.profile?.last_name}</p>
+                                                        <p className="text-xs text-slate-500">{log.student?.admission_number}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3 text-slate-600">{log.visit_reason}</td>
+                                            <td className="px-4 py-3 text-slate-600">{log.temperature ? `${log.temperature}°F` : "-"}</td>
+                                            <td className="px-4 py-3">
+                                                <Badge variant="outline" className={cn(
+                                                    log.status === "under_observation" ? "border-red-200 text-red-600 bg-red-50" :
+                                                    log.status === "discharged" ? "border-emerald-200 text-emerald-600 bg-emerald-50" :
+                                                    "border-amber-200 text-amber-600 bg-amber-50"
+                                                )}>
+                                                    {log.status?.replace("_", " ")}
+                                                </Badge>
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                {isAdminOrTeacher && log.status === "under_observation" && (
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(log.id, "referral")} className="h-8">Referral</Button>
+                                                        <Button variant="ghost" size="sm" onClick={() => handleStatusChange(log.id, "discharged")} className="h-8">
+                                                            <CheckCircle className="h-4 w-4 mr-1" /> Discharge
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </CardContent>
             </Card>
 
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <div><h3 className="text-xl font-bold">Health Profiles</h3><p className="text-xs text-muted-foreground">Allergy, medication, and emergency contact details</p></div>
-                    {isAdminOrTeacher && <Button variant="outline" onClick={() => setIsProfileOpen(true)}><Plus className="h-4 w-4 mr-2" /> Add / Update Profile</Button>}
-                </div>
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                    {students.map((student) => {
-                        const profile = profileLookup[student.id];
-                        return <Card key={student.id} className="p-5 border border-border"><div className="flex items-start justify-between gap-3"><div className="flex items-center gap-3"><div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary"><User className="h-5 w-5" /></div><div><p className="font-medium">{student.profile?.full_name || student.admission_number}</p><p className="text-xs text-muted-foreground">{student.admission_number}</p></div></div>{isAdminOrTeacher && <Button variant="ghost" size="sm" onClick={() => handleOpenProfile(student.id)}>{profile ? "Edit" : "Create"}</Button>}</div><div className="mt-4 space-y-2 text-sm"><p><span className="text-muted-foreground">Blood group:</span> {profile?.blood_group || "Not recorded"}</p><p><span className="text-muted-foreground">Allergies:</span> {profile?.allergies?.join(", ") || "None recorded"}</p><p><span className="text-muted-foreground">Medications:</span> {profile?.medications?.join(", ") || "None recorded"}</p><p><span className="text-muted-foreground">Emergency:</span> {profile?.emergency_contact_name ? `${profile.emergency_contact_name} • ${profile.emergency_contact_phone || "No phone"}` : "Not recorded"}</p></div></Card>;
-                    })}
-                </div>
-            </div>
+            {/* Health Profiles */}
+            <Card className="border-l-4 border-l-emerald-500 shadow-sm">
+                <CardHeader className="border-b bg-slate-50/50">
+                    <div className="flex items-center justify-between">
+                        <CardTitle className="text-base">Health Profiles</CardTitle>
+                        {isAdminOrTeacher && <Button variant="outline" size="sm" onClick={() => setIsProfileOpen(true)} className="rounded-md"><Plus className="h-4 w-4 mr-2" /> Add Profile</Button>}
+                    </div>
+                </CardHeader>
+                <CardContent className="pt-4">
+                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                        {students.slice(0, 9).map((student) => {
+                            const profile = profileLookup[student.id];
+                            return (
+                                <Card key={student.id} className="p-4 border border-slate-200">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                                <User className="h-5 w-5" />
+                                            </div>
+                                            <div>
+                                                <p className="font-medium">{student.profile?.full_name || student.admission_number}</p>
+                                                <p className="text-xs text-slate-500">{student.admission_number}</p>
+                                            </div>
+                                        </div>
+                                        {isAdminOrTeacher && <Button variant="ghost" size="sm" onClick={() => handleOpenProfile(student.id)} className="h-8">{profile ? "Edit" : "Create"}</Button>}
+                                    </div>
+                                    <div className="mt-4 space-y-2 text-sm">
+                                        <p><span className="text-slate-500">Blood group:</span> {profile?.blood_group || "Not recorded"}</p>
+                                        <p><span className="text-slate-500">Allergies:</span> {profile?.allergies?.join(", ") || "None recorded"}</p>
+                                        <p><span className="text-slate-500">Emergency:</span> {profile?.emergency_contact_name ? `${profile.emergency_contact_name} • ${profile.emergency_contact_phone || "No phone"}` : "Not recorded"}</p>
+                                    </div>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { FeesDashboard } from "@/components/fees/FeesDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
 import { getFeeDashboardStats } from "@/app/actions/fees";
-import { CreditCard, DollarSign } from "lucide-react";
+import { CreditCard, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ERPCard } from "@/components/ui/erp-card";
 
@@ -115,7 +115,7 @@ export default async function FeesPage() {
           </div>
         </div>
         <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
-          <DollarSign className="h-4 w-4" />
+          <IndianRupee className="h-4 w-4" />
           Collect Payment
         </Button>
       </div>

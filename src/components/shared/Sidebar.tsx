@@ -11,28 +11,18 @@ import {
   GraduationCap,
   ClipboardCheck,
   FileText,
-  CreditCard,
   Settings,
-  MessageSquare,
   Bus,
   Library,
-  Package,
   Calendar,
   IndianRupee,
-  Truck,
   Award,
-  ShieldCheck,
-  Heart,
-  Shield,
   Stethoscope,
-  Trophy,
-  Globe,
   BarChart3,
   FileBarChart,
   UserCheck,
   History,
   ChevronDown,
-  Building,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/lib/services/user";
@@ -53,25 +43,13 @@ interface NavGroup {
 
 const navigation: NavGroup[] = [
   {
-    group: "Overview",
+    group: "Main",
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
-      {
-        name: "Analytics",
-        href: "/analytics",
-        icon: BarChart3,
-        roles: ["admin", "teacher"],
-      },
-      {
-        name: "Reports",
-        href: "/reports",
-        icon: FileBarChart,
-        roles: ["admin"],
-      },
     ],
   },
   {
-    group: "Staff & Students",
+    group: "Students",
     roles: ["admin", "teacher", "student"],
     items: [
       { 
@@ -79,24 +57,32 @@ const navigation: NavGroup[] = [
         href: "/students", 
         icon: GraduationCap,
         subItems: [
+          { name: "All Students", href: "/students/list" },
           { name: "Enroll New", href: "/students/enroll" },
-          { name: "Student List", href: "/students/list" },
-          { name: "Documents", href: "/students/documents" },
           { name: "Attendance", href: "/students/attendance" },
+          { name: "Documents", href: "/students/documents" },
         ]
       },
+      { name: "Conduct", href: "/conduct", icon: UserCheck },
+      { name: "Health", href: "/health", icon: Stethoscope },
+    ],
+  },
+  {
+    group: "Staff",
+    roles: ["admin", "teacher"],
+    items: [
       { 
-        name: "HR", 
+        name: "HR & Staff", 
         href: "/hr", 
         icon: UserSquare2, 
         roles: ["admin"],
         subItems: [
           { name: "Staff Directory", href: "/hr/directory" },
           { name: "Add Staff", href: "/hr/add-staff" },
+          { name: "Download Center", href: "/hr/download-center" },
         ]
       },
-      { name: "Conduct", href: "/conduct", icon: UserCheck },
-      { name: "Health", href: "/health", icon: Stethoscope },
+      { name: "Teacher Dashboard", href: "/teacher/dashboard", icon: Users, roles: ["teacher"] },
     ],
   },
   {
@@ -115,7 +101,9 @@ const navigation: NavGroup[] = [
         icon: BookOpen,
         roles: ["admin", "teacher"],
       },
-      { name: "Gradebook", href: "/gradebook", icon: FileText },
+      { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"] },
+      { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck },
+      { name: "Timetable", href: "/timetable", icon: Calendar },
       { name: "Certificates", href: "/certificates", icon: Award },
     ],
   },
@@ -125,31 +113,44 @@ const navigation: NavGroup[] = [
       { 
         name: "Fee Collection", 
         href: "/finance/dashboard", 
-        icon: CreditCard,
+        icon: IndianRupee,
         subItems: [
-          { name: "Fee Dashboard", href: "/finance/dashboard" },
+          { name: "Dashboard", href: "/finance/dashboard" },
           { name: "Collect Fees", href: "/finance/collect" },
           { name: "Fee Structure", href: "/finance/structure" },
-          { name: "Fee Slip Print", href: "/finance/slips" },
-          { name: "Daily Collection", href: "/finance/daily" },
+          { name: "Print Slip", href: "/finance/slips" },
+          { name: "Daily Report", href: "/finance/daily" },
         ]
       },
     ],
   },
   {
-    group: "Operations",
+    group: "Library",
     items: [
       { name: "Library", href: "/library", icon: Library },
+    ],
+  },
+  {
+    group: "Transport",
+    items: [
       { name: "Transport", href: "/transport", icon: Bus },
     ],
   },
   {
-    group: "Admin",
+    group: "Reports",
+    roles: ["admin", "teacher"],
+    items: [
+      { name: "Analytics", href: "/analytics", icon: BarChart3 },
+      { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"] },
+    ],
+  },
+  {
+    group: "System",
     roles: ["admin"],
     items: [
       { name: "Users", href: "/users", icon: UserCheck },
       { name: "Settings", href: "/settings", icon: Settings },
-      { name: "Logs", href: "/audit", icon: History },
+      { name: "Audit Logs", href: "/audit", icon: History },
     ],
   },
 ];
