@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { cache } from "react";
 import { handleServiceError } from "../error-handler";
 import { AuditService } from "./audit";
 
@@ -10,7 +11,7 @@ export const UserService = {
   /**
    * Fetches the current user's profile and joined role data.
    */
-  async getCurrentProfile() {
+  getCurrentProfile: cache(async () => {
     try {
       const supabase = createClient();
       const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -45,7 +46,7 @@ export const UserService = {
       }
       return handleServiceError(error);
     }
-  },
+  }),
 
   /**
    * Manually syncs the current role to auth metadata if needed (fallback).
@@ -185,7 +186,7 @@ export const UserService = {
   /**
    * Fetches system-wide statistics for the Dashboard.
    */
-  async getSystemStats() {
+  getSystemStats: cache(async () => {
     try {
       const supabase = createClient();
 
@@ -212,5 +213,5 @@ export const UserService = {
     } catch (error) {
       return handleServiceError(error);
     }
-  }
+  })
 };

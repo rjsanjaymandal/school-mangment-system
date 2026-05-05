@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/client";
+import { cache } from "react";
 import { auditLogSchema } from "../validations";
 import { handleServiceError } from "../error-handler";
 
@@ -30,7 +31,7 @@ export const AuditService = {
     }
   },
 
-  async getAuditEntries(entityType?: string, entityId?: string) {
+  getAuditEntries: cache(async (entityType?: string, entityId?: string) => {
     try {
       const supabase = createClient();
       let query = supabase
@@ -50,5 +51,5 @@ export const AuditService = {
     } catch (error) {
       return handleServiceError(error);
     }
-  }
+  })
 };
