@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS public.student_documents (
   student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
   doc_type TEXT NOT NULL CHECK (doc_type IN (
     'birth_certificate', 'aadhar_card', 'transfer_certificate',
-    'mark_sheet', 'caste_certificate', 'photo', 'address_proof'
+    'previous_marksheet', 'caste_certificate', 'student_photo', 
+    'father_photo', 'mother_photo', 'address_proof'
   )),
   file_url TEXT,
   is_verified BOOLEAN DEFAULT false,
@@ -79,21 +80,29 @@ VALUES (
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Storage Policy: Allow authenticated users to upload
-CREATE POLICY "Allow authenticated uploads" ON storage.objects
+DROP POLICY IF EXISTS "Allow authenticated uploads" ON storage.objects;
+DROP POLICY IF EXISTS "student_docs_upload" ON storage.objects;
+CREATE POLICY "student_docs_upload" ON storage.objects
 FOR INSERT TO authenticated
 WITH CHECK (bucket_id = 'student-docs');
 
 -- Storage Policy: Allow authenticated users to read
-CREATE POLICY "Allow authenticated read" ON storage.objects
+DROP POLICY IF EXISTS "Allow authenticated read" ON storage.objects;
+DROP POLICY IF EXISTS "student_docs_read" ON storage.objects;
+CREATE POLICY "student_docs_read" ON storage.objects
 FOR SELECT TO authenticated
 USING (bucket_id = 'student-docs');
 
 -- Storage Policy: Allow authenticated users to update/delete
-CREATE POLICY "Allow authenticated update" ON storage.objects
+DROP POLICY IF EXISTS "Allow authenticated update" ON storage.objects;
+DROP POLICY IF EXISTS "student_docs_update" ON storage.objects;
+CREATE POLICY "student_docs_update" ON storage.objects
 FOR UPDATE TO authenticated
 USING (bucket_id = 'student-docs')
 WITH CHECK (bucket_id = 'student-docs');
 
-CREATE POLICY "Allow authenticated delete" ON storage.objects
+DROP POLICY IF EXISTS "Allow authenticated delete" ON storage.objects;
+DROP POLICY IF EXISTS "student_docs_delete" ON storage.objects;
+CREATE POLICY "student_docs_delete" ON storage.objects
 FOR DELETE TO authenticated
 USING (bucket_id = 'student-docs');

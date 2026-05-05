@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
@@ -66,41 +67,29 @@ export default function StudentEnrollmentPage() {
     };
 
     return (
-        <div className="space-y-10">
-            <div className="flex items-center justify-between reveal-1">
-                <div className="flex items-center gap-x-6">
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center emerald-glow">
-                        <UserPlus className="h-7 w-7 text-primary" />
+        <div className="p-6 space-y-6">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-md bg-emerald-50 flex items-center justify-center">
+                        <UserPlus className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
-                            Enroll New Student
-                        </h3>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">
-                            Institutional Admission Intake • Academic Year 2026-27
-                        </p>
+                        <h1 className="text-2xl font-bold text-slate-900">Enroll New Student</h1>
+                        <p className="text-sm text-slate-500">Academic Year 2026-27</p>
                     </div>
                 </div>
                 <Button 
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="h-14 px-8 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest gap-x-3 shadow-2xl active:scale-95 transition-all"
+                    className="bg-emerald-600 hover:bg-emerald-700 rounded-md"
                 >
-                    <Save className="h-4 w-4" />
-                    {isSubmitting ? "Processing..." : "Confirm Enrollment"}
+                    <Save className="h-4 w-4 mr-2" />
+                    {isSubmitting ? "Saving..." : "Save Student"}
                 </Button>
             </div>
 
-            <form onSubmit={handleSubmit} className="grid gap-8 reveal-2">
-                {/* 1. Admission Details */}
-                <Card className="card-premium rounded-[2.5rem] p-10 border-l-4 border-l-primary relative overflow-hidden">
-                    <div className="flex items-center gap-x-4 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                            <Info className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-                        </div>
-                        <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Admission Type & Logistics</h4>
-                    </div>
-                    
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <ERPCard title="Admission Details" accentColor="emerald" icon={<Info className="h-4 w-4" />}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="space-y-2">
                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Admission Date</Label>
@@ -144,37 +133,29 @@ export default function StudentEnrollmentPage() {
                             </Select>
                         </div>
                     </div>
-                </Card>
+                </ERPCard>
 
                 {/* 2. General Details */}
-                <Card className="card-premium rounded-[2.5rem] p-10 border-l-4 border-l-primary/50">
-                    <div className="flex items-center gap-x-4 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                            <Users className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-                        </div>
-                        <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">General Information</h4>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <div className="md:col-span-2 space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Full Name (Legal)</Label>
+                <ERPCard title="General Information" accentColor="blue" icon={<Users className="h-4 w-4" />}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label>Full Name</Label>
                             <Input 
-                                placeholder="e.g. Aryan Sharma" 
-                                className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold"
+                                placeholder="Enter full name" 
                                 value={formData.full_name}
                                 onChange={(e) => setFormData(p => ({ ...p, full_name: e.target.value }))}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Gender</Label>
+                            <Label>Gender</Label>
                             <Select 
                                 value={formData.gender}
                                 onValueChange={(v) => setFormData(p => ({ ...p, gender: v }))}
                             >
-                                <SelectTrigger className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900/50 border-slate-200/60 font-bold">
+                                <SelectTrigger>
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
-                                <SelectContent className="rounded-xl font-bold">
+                                <SelectContent>
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">Female</SelectItem>
                                     <SelectItem value="other">Other</SelectItem>
@@ -191,16 +172,10 @@ export default function StudentEnrollmentPage() {
                             />
                         </div>
                     </div>
-                </Card>
+                </ERPCard>
 
                 {/* 3. Demographic Details */}
-                <Card className="card-premium rounded-[2.5rem] p-10 border-l-4 border-l-primary/30">
-                    <div className="flex items-center gap-x-4 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                            <FileText className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-                        </div>
-                        <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Demographic Segmentation</h4>
-                    </div>
+                <ERPCard title="Demographic Segmentation" accentColor="slate" icon={<FileText className="h-4 w-4" />}>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="space-y-2">
@@ -263,16 +238,10 @@ export default function StudentEnrollmentPage() {
                             </Select>
                         </div>
                     </div>
-                </Card>
+                </ERPCard>
 
                 {/* 4. Contact Details */}
-                <Card className="card-premium rounded-[2.5rem] p-10 border-l-4 border-l-primary/10">
-                    <div className="flex items-center gap-x-4 mb-8">
-                        <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                            <Contact className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-                        </div>
-                        <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Contact & Residency</h4>
-                    </div>
+                <ERPCard title="Contact & Residency" accentColor="slate" icon={<Contact className="h-4 w-4" />}>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-2">
@@ -304,7 +273,7 @@ export default function StudentEnrollmentPage() {
                             />
                         </div>
                     </div>
-                </Card>
+                </ERPCard>
             </form>
         </div>
     );

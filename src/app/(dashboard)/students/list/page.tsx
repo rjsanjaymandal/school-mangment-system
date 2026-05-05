@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -60,28 +61,23 @@ export default function StudentListPage() {
     };
 
     return (
-        <div className="space-y-10">
-            {/* Header + Actions */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal-1">
-                <div className="flex items-center gap-x-6">
-                    <div className="h-14 w-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center indigo-glow">
-                        <Users className="h-7 w-7 text-indigo-500" />
+        <div className="p-6 space-y-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-md bg-indigo-50 flex items-center justify-center">
+                        <Users className="h-6 w-6 text-indigo-600" />
                     </div>
                     <div>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
-                            Student List
-                        </h3>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">
-                            Active Students • {allStudents.length} Profiles
-                        </p>
+                        <h1 className="text-2xl font-bold text-slate-900">Student List</h1>
+                        <p className="text-sm text-slate-500">{allStudents.length} active students</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-x-4 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-80">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <Input 
-                            placeholder="Search Students (Name, ID, Roll)..." 
+                            placeholder="Search students..." 
                             className="pl-12 h-14 rounded-2xl border-slate-200/60 bg-white dark:bg-slate-900 font-bold text-xs shadow-sm focus:ring-primary/20 transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -102,11 +98,11 @@ export default function StudentListPage() {
             </div>
 
             {/* Dense Data Table */}
-            <Card className="card-premium rounded-[3rem] overflow-hidden reveal-2 shadow-2xl border-none">
+            <Card className="rounded-md overflow-hidden border">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
+                            <tr className="bg-slate-50 border-b border-slate-100">
                                 <th className="px-8 py-6 w-12 text-center">
                                     <input 
                                         type="checkbox" 

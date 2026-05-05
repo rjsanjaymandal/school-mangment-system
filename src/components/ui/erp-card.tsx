@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type AccentColor = "emerald" | "blue" | "amber" | "red" | "purple" | "slate";
+type AccentColor = "emerald" | "blue" | "amber" | "red" | "purple" | "slate" | "indigo";
 
 interface ERPCardProps {
   title?: string;
@@ -21,6 +21,7 @@ const colorClasses: Record<AccentColor, string> = {
   red: "border-l-red-500",
   purple: "border-l-purple-500",
   slate: "border-l-slate-400",
+  indigo: "border-l-indigo-500",
 };
 
 const iconBgClasses: Record<AccentColor, string> = {
@@ -30,6 +31,7 @@ const iconBgClasses: Record<AccentColor, string> = {
   red: "bg-red-50",
   purple: "bg-purple-50",
   slate: "bg-slate-100",
+  indigo: "bg-indigo-50",
 };
 
 const iconColorClasses: Record<AccentColor, string> = {
@@ -39,6 +41,7 @@ const iconColorClasses: Record<AccentColor, string> = {
   red: "text-red-600",
   purple: "text-purple-600",
   slate: "text-slate-600",
+  indigo: "text-indigo-600",
 };
 
 export function ERPCard({

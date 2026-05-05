@@ -149,6 +149,7 @@ CREATE POLICY "Staff read limited" ON public.staff FOR SELECT
     );
 
 DROP POLICY IF EXISTS "Staff full access" ON public.staff;
+DROP POLICY IF EXISTS "Staff insert access" ON public.staff;
 CREATE POLICY "Staff insert access" ON public.staff FOR INSERT 
     WITH CHECK (
         EXISTS (
@@ -158,6 +159,7 @@ CREATE POLICY "Staff insert access" ON public.staff FOR INSERT
         )
     );
 
+DROP POLICY IF EXISTS "Staff update access" ON public.staff;
 CREATE POLICY "Staff update access" ON public.staff FOR UPDATE
     USING (
         EXISTS (
@@ -174,6 +176,7 @@ CREATE POLICY "Staff update access" ON public.staff FOR UPDATE
         )
     );
 
+DROP POLICY IF EXISTS "Staff delete access" ON public.staff;
 CREATE POLICY "Staff delete access" ON public.staff FOR DELETE
     USING (
         EXISTS (
@@ -211,19 +214,23 @@ VALUES (
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Storage Policies
+DROP POLICY IF EXISTS "Allow authenticated read staff photos" ON storage.objects;
 CREATE POLICY "Allow authenticated read staff photos" ON storage.objects
 FOR SELECT TO authenticated
 USING (bucket_id = 'staff-photos');
 
+DROP POLICY IF EXISTS "Allow authenticated upload staff photos" ON storage.objects;
 CREATE POLICY "Allow authenticated upload staff photos" ON storage.objects
 FOR INSERT TO authenticated
 WITH CHECK (bucket_id = 'staff-photos');
 
+DROP POLICY IF EXISTS "Allow authenticated update staff photos" ON storage.objects;
 CREATE POLICY "Allow authenticated update staff photos" ON storage.objects
 FOR UPDATE TO authenticated
 USING (bucket_id = 'staff-photos')
 WITH CHECK (bucket_id = 'staff-photos');
 
+DROP POLICY IF EXISTS "Allow authenticated delete staff photos" ON storage.objects;
 CREATE POLICY "Allow authenticated delete staff photos" ON storage.objects
 FOR DELETE TO authenticated
 USING (bucket_id = 'staff-photos');

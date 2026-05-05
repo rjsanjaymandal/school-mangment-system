@@ -1,26 +1,20 @@
+"use client";
+
 export default function Loading() {
   return (
-    <div className="page-container page-fade-in">
-      {/* Stats row skeleton */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-40 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/60 dark:via-slate-800/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" style={{ animationDelay: `${i * 0.15}s` }} />
-          </div>
+    <div className="p-6 space-y-6">
+      <div className="animate-pulse">
+        <div className="h-8 bg-slate-200 rounded w-64 mb-2"></div>
+        <div className="h-4 bg-slate-100 rounded w-48"></div>
+      </div>
+      <div className="grid gap-4 md:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-28 bg-slate-100 rounded-md"></div>
         ))}
       </div>
-
-      {/* Chart area skeleton */}
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="h-[400px] rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/40 dark:via-slate-800/20 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]" />
-        </div>
-        <div className="h-[400px] rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/40 dark:via-slate-800/20 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]" style={{ animationDelay: '0.3s' }} />
-        </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="h-64 bg-slate-100 rounded-md"></div>
+        <div className="h-64 bg-slate-100 rounded-md"></div>
       </div>
     </div>
   );

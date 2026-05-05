@@ -76,7 +76,7 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
     const [photoPreview, setPhotoPreview] = useState<string | null>(initialData?.photo_url || null);
 
     const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: initialData ? {
             ...initialData,
             monthly_salary: Number(initialData.monthly_salary),

@@ -12,7 +12,6 @@ import {
   History,
   LayoutDashboard,
 } from "lucide-react";
-import { PerformancePredictor } from "@/components/ai/PerformancePredictor";
 import { UserService } from "@/lib/services/user";
 import { AuditService } from "@/lib/services/audit";
 import { createClient } from "@/lib/supabase/server";
@@ -20,6 +19,7 @@ import { getSessionRole } from "@/lib/auth-utils";
 import { cn } from "@/lib/utils";
 import { ERPCard } from "@/components/ui/erp-card";
 import { Card } from "@/components/ui/card";
+import { PerformancePredictor } from "@/components/shared/DynamicWrapper";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -281,9 +281,9 @@ export default async function DashboardPage() {
               </p>
             </div>
           </div>
-          <div className="h-[280px] flex flex-col items-center justify-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50 dark:bg-slate-900/50">
-            <BarChart3 className="h-12 w-12 mb-4 text-slate-200 dark:text-slate-800" />
-            <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-slate-400">
+          <div className="h-48 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-lg bg-slate-50">
+            <BarChart3 className="h-8 w-8 text-slate-300 mb-2" />
+            <p className="text-sm text-slate-400">
               Generating Analytics...
             </p>
           </div>

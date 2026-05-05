@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ERPCard } from "@/components/ui/erp-card";
 import { 
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
 } from "@/components/ui/select";
@@ -62,41 +63,34 @@ export default function StudentAttendancePage() {
     };
 
     return (
-        <div className="space-y-10">
-            {/* Header + Filters */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 reveal-1">
-                <div className="flex items-center gap-x-6">
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center emerald-glow">
-                        <ClipboardCheck className="h-7 w-7 text-primary" />
+        <div className="p-6 space-y-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-md bg-emerald-50 flex items-center justify-center">
+                        <ClipboardCheck className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase italic">
-                            Attendance Terminal
-                        </h3>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">
-                            Daily Compliance Monitor • Digital Logsheet
-                        </p>
+                        <h1 className="text-2xl font-bold text-slate-900">Attendance</h1>
+                        <p className="text-sm text-slate-500">Daily compliance monitor</p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-x-4 w-full md:w-auto">
-                    <div className="flex items-center gap-x-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200/60 shadow-sm">
-                        <Input 
-                            type="date" 
-                            className="h-10 border-none bg-transparent font-bold text-xs focus-visible:ring-0 w-36"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                        />
-                        <div className="h-6 w-[1px] bg-slate-100 mx-1" />
-                        <Select 
-                            value={selectedClassId}
-                            onValueChange={setSelectedClassId}
-                        >
-                            <SelectTrigger className="h-10 border-none bg-transparent font-black text-[10px] uppercase tracking-widest focus:ring-0 w-32">
-                                <SelectValue placeholder="Class" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl font-bold">
-                                <SelectItem value="10-A">Grade 10-A</SelectItem>
+                <div className="flex items-center gap-3">
+                    <Input 
+                        type="date" 
+                        className="w-40"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                    />
+                    <Select 
+                        value={selectedClassId}
+                        onValueChange={setSelectedClassId}
+                    >
+                        <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Select Class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="10-A">Grade 10-A</SelectItem>
                                 <SelectItem value="09-B">Grade 09-B</SelectItem>
                             </SelectContent>
                         </Select>
@@ -110,10 +104,9 @@ export default function StudentAttendancePage() {
                         {isSaving ? "Syncing..." : "Save Daily Log"}
                     </Button>
                 </div>
-            </div>
 
             {/* Attendance Logger Table */}
-            <Card className="card-premium rounded-[3rem] overflow-hidden reveal-2 shadow-2xl border-none">
+            <ERPCard accentColor="emerald">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -180,10 +173,10 @@ export default function StudentAttendancePage() {
                         </tbody>
                     </table>
                 </div>
-            </Card>
+            </ERPCard>
 
             <div className="flex items-center justify-center reveal-3">
-                <Card className="p-6 bg-slate-900 dark:bg-slate-800 rounded-[2.5rem] shadow-2xl border-none flex items-center gap-x-8">
+                <ERPCard accentColor="slate">
                     <div className="flex items-center gap-x-3">
                         <div className="h-2 w-2 rounded-full bg-emerald-500" />
                         <span className="text-white text-[10px] font-black uppercase tracking-widest">Present: {Object.values(attendance).filter(v => v === "present").length}</span>
@@ -198,7 +191,7 @@ export default function StudentAttendancePage() {
                         <div className="h-2 w-2 rounded-full bg-rose-500" />
                         <span className="text-white text-[10px] font-black uppercase tracking-widest">Absent: {Object.values(attendance).filter(v => v === "absent").length}</span>
                     </div>
-                </Card>
+                </ERPCard>
             </div>
         </div>
     );

@@ -1,16 +1,14 @@
-import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
-
 export default function Loading() {
   return (
-    <div className="page-container page-fade-in">
-      <div className="flex items-start gap-x-5 mb-10">
-        <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+    <div className="p-6 space-y-6">
+      <div className="flex items-center gap-4">
+        <div className="h-12 w-12 rounded-md bg-slate-200 animate-pulse" />
         <div className="space-y-2">
-          <div className="h-8 w-52 bg-slate-100 dark:bg-slate-800 rounded-xl" />
-          <div className="h-4 w-80 bg-slate-50 dark:bg-slate-900 rounded-lg" />
+          <div className="h-6 w-48 bg-slate-200 rounded" />
+          <div className="h-4 w-64 bg-slate-100 rounded" />
         </div>
       </div>
-      <SkeletonLoader count={5} />
+      <div className="h-96 bg-slate-100 rounded-md" />
     </div>
   );
 }

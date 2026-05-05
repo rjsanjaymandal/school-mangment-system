@@ -30,27 +30,27 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
         notFound();
     }
 
-    const sectionHeaderClass = "text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2";
-    const infoLabelClass = "text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1";
-    const infoValueClass = "text-sm font-bold text-slate-900 dark:text-white";
+    const sectionHeaderClass = "text-sm font-semibold text-slate-600 mb-4 flex items-center gap-2";
+    const infoLabelClass = "text-xs text-slate-500 mb-1";
+    const infoValueClass = "text-sm font-medium text-slate-900";
 
     return (
-        <div className="space-y-8 max-w-6xl mx-auto pb-20">
+        <div className="p-6 space-y-6">
             {/* Header / Navigation */}
             <div className="flex items-center justify-between">
                 <Link href="/hr/directory">
-                    <Button variant="ghost" className="gap-2 text-slate-500 hover:text-slate-900 transition-colors rounded-xl">
+                    <Button variant="ghost" className="gap-2 text-slate-500 hover:text-slate-900 rounded-md">
                         <ArrowLeft className="h-4 w-4" />
-                        Back to Directory
+                        Back
                     </Button>
                 </Link>
-                <div className="flex items-center gap-3">
-                    <Button variant="outline" className="gap-2 rounded-xl border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" className="gap-2 rounded-md border-slate-200">
                         <IdCard className="h-4 w-4" />
                         Print ID Card
                     </Button>
                     <Link href={`/hr/staff/${params.id}/edit`}>
-                        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 font-bold shadow-sm">
+                        <Button className="bg-emerald-600 hover:bg-emerald-700 rounded-md gap-2">
                             <Edit className="h-4 w-4" />
                             Edit Profile
                         </Button>
@@ -59,12 +59,12 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
             </div>
 
             {/* Profile Overview Card */}
-            <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden relative">
-                <div className="h-32 bg-gradient-to-r from-emerald-500 to-emerald-700 dark:from-emerald-900 dark:to-emerald-950 opacity-10 absolute top-0 left-0 right-0" />
+            <div className="bg-white rounded-md border border-slate-200 border-slate-800 shadow-sm overflow-hidden relative">
+                <div className="h-32 bg-gradient-to-r from-emerald-500 to-emerald-700 from-emerald-900 to-emerald-950 opacity-10 absolute top-0 left-0 right-0" />
                 
                 <div className="p-8 md:p-12 relative z-10">
                     <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-                        <Avatar className="h-40 w-40 border-8 border-white dark:border-slate-900 shadow-2xl">
+                        <Avatar className="h-40 w-40 border-8 border-white bg-slate-border-slate-900 shadow-2xl">
                             <AvatarImage src={staff.photo_url} className="object-cover" />
                             <AvatarFallback className="bg-emerald-100 text-emerald-700 text-4xl font-black">
                                 {staff.first_name[0]}{staff.last_name?.[0]}
@@ -73,7 +73,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         
                         <div className="flex-1 space-y-4">
                             <div className="flex flex-wrap items-center gap-3">
-                                <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter italic">
+                                <h1 className="text-4xl font-black text-slate-900 text-white tracking-tighter italic">
                                     {staff.first_name} {staff.last_name}
                                 </h1>
                                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-100 py-1 px-3 rounded-full text-[10px] font-black uppercase tracking-widest">
@@ -98,7 +98,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         </div>
                         
                         {isAdmin && (
-                            <div className="bg-slate-50 dark:bg-slate-950/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-800">
+                            <div className="bg-slate-50 bg-slate-950/50 p-6 rounded-3xl border border-slate-100 border-slate-800">
                                 <div className={infoLabelClass}>Monthly Salary</div>
                                 <div className="text-2xl font-black text-emerald-600 flex items-center gap-2">
                                     ₹{staff.monthly_salary?.toLocaleString()}
@@ -115,7 +115,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                 
                 {/* Column 1: Personal & Education */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm">
                         <h3 className={sectionHeaderClass}><User className="h-3 w-3" /> Personal Records</h3>
                         <div className="grid grid-cols-1 gap-6">
                             <div>
@@ -143,7 +143,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm">
                         <h3 className={sectionHeaderClass}><Languages className="h-3 w-3" /> Language & Identity</h3>
                         <div className="grid grid-cols-1 gap-6">
                             <div>
@@ -164,11 +164,11 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
 
                 {/* Column 2: Contact & Employment */}
                 <div className="space-y-8">
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm">
                         <h3 className={sectionHeaderClass}><Phone className="h-3 w-3" /> Contact Details</h3>
                         <div className="grid grid-cols-1 gap-6">
                             <div className="flex items-center gap-4">
-                                <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                                <div className="h-10 w-10 rounded-full bg-blue-50 bg-slate-bg-blue-900/20 flex items-center justify-center">
                                     <Phone className="h-4 w-4 text-blue-600" />
                                 </div>
                                 <div>
@@ -177,7 +177,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                                <div className="h-10 w-10 rounded-full bg-emerald-50 bg-slate-bg-emerald-900/20 flex items-center justify-center">
                                     <Mail className="h-4 w-4 text-emerald-600" />
                                 </div>
                                 <div>
@@ -186,12 +186,12 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                                 </div>
                             </div>
                             <div className="flex items-start gap-4 pt-2">
-                                <div className="h-10 w-10 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center shrink-0">
+                                <div className="h-10 w-10 rounded-full bg-amber-50 bg-slate-bg-amber-900/20 flex items-center justify-center shrink-0">
                                     <MapPin className="h-4 w-4 text-amber-600" />
                                 </div>
                                 <div>
                                     <div className={infoLabelClass}>Address</div>
-                                    <div className="text-xs font-bold leading-relaxed text-slate-700 dark:text-slate-300">
+                                    <div className="text-xs font-bold leading-relaxed text-slate-700 text-slate-300">
                                         {staff.address}<br/>
                                         {staff.city}, {staff.state} - {staff.pincode}
                                     </div>
@@ -200,7 +200,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm">
                         <h3 className={sectionHeaderClass}><Calendar className="h-3 w-3" /> Employment Info</h3>
                         <div className="grid grid-cols-1 gap-6">
                             <div>
@@ -224,7 +224,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                 {/* Column 3: Professional & Compliance */}
                 <div className="space-y-8">
                     {/* ID Card Preview */}
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden relative">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm overflow-hidden relative">
                         <h3 className={sectionHeaderClass}><IdCard className="h-3 w-3" /> ID Card Preview</h3>
                         
                         <div className="relative w-full aspect-[1/1.58] bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden mx-auto max-w-[240px]">
@@ -290,11 +290,11 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm">
                         <h3 className={sectionHeaderClass}><Award className="h-3 w-3" /> Qualifications</h3>
-                        <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-800/50">
-                            <div className="text-indigo-900 dark:text-indigo-400 font-black text-sm mb-2">Primary Qualification</div>
-                            <div className="text-lg font-bold text-slate-900 dark:text-white leading-tight">
+                        <div className="p-4 rounded-2xl bg-indigo-50 bg-slate-bg-indigo-900/10 border border-indigo-100 bg-slate-border-indigo-800/50">
+                            <div className="text-indigo-900 text-indigo-400 font-black text-sm mb-2">Primary Qualification</div>
+                            <div className="text-lg font-bold text-slate-900 text-white leading-tight">
                                 {staff.highest_qualification}
                             </div>
                         </div>
@@ -310,7 +310,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <div className="bg-white p-8 rounded-md border border-slate-200 border-slate-800 shadow-sm">
                         <h3 className={sectionHeaderClass}><ShieldCheck className="h-3 w-3" /> Banking & Tax</h3>
                         <div className="grid grid-cols-1 gap-6">
                             <div>

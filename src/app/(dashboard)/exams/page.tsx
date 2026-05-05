@@ -84,9 +84,8 @@ export default async function ExamsPage() {
     .from("marks")
     .select("marks_obtained, exam:exams(passing_marks, max_marks, subject:subjects(name))");
 
-  return (
-    <div className="space-y-6">
-      {/* Page Header */}
+return (
+    <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-red-50 rounded-md">

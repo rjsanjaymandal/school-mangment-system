@@ -64,13 +64,13 @@ export default function StudentDocumentsPage() {
       .select(`
         id,
         admission_number,
-        full_name,
-        class:name
+        profile:profiles(full_name),
+        class:classes(name)
       `)
       .order("admission_number", { ascending: true });
 
     if (error) {
-      console.error("Error fetching students:", error);
+      console.error("Error fetching students:", error.message || error);
       setLoading(false);
       return;
     }
@@ -78,7 +78,7 @@ export default function StudentDocumentsPage() {
     const studentsWithDocs = (data || []).map((s: any) => ({
       id: s.id,
       admission_number: s.admission_number,
-      full_name: s.full_name,
+      full_name: s.profile?.full_name || "Unknown",
       class_name: s.class?.name || "N/A",
       documents: [],
     }));
@@ -94,7 +94,7 @@ export default function StudentDocumentsPage() {
       .eq("student_id", studentId);
 
     if (error) {
-      console.error("Error fetching documents:", error);
+      console.error("Error fetching documents:", error.message || error);
       return [];
     }
 
@@ -112,9 +112,9 @@ export default function StudentDocumentsPage() {
 
   const filteredStudents = students.filter(
     (s) =>
-      s.admission_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.class_name.toLowerCase().includes(searchQuery.toLowerCase())
+      (s.admission_number?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+      (s.full_name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+      (s.class_name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
   const getDocumentStatus = (docType: string) => {
@@ -135,7 +135,7 @@ export default function StudentDocumentsPage() {
         .upload(filePath, file);
 
       if (uploadError) {
-        console.error("Upload error:", uploadError);
+        console.error("Upload error:", uploadError.message || uploadError);
         alert("Failed to upload file");
         setUploading(null);
         return;
@@ -160,7 +160,7 @@ export default function StudentDocumentsPage() {
         });
 
       if (dbError) {
-        console.error("Database error:", dbError);
+        console.error("Database error:", dbError.message || dbError);
         alert("Failed to save document reference");
         setUploading(null);
         return;
@@ -190,7 +190,7 @@ export default function StudentDocumentsPage() {
       .match({ student_id: selectedStudent.id, doc_type: docType });
 
     if (error) {
-      console.error("Error deleting:", error);
+      console.error("Error deleting:", error.message || error);
       alert("Failed to delete document");
       return;
     }

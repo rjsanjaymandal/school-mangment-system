@@ -272,3 +272,93 @@ export async function getDesignations() {
     if (error) return { error: error.message };
     return { data };
 }
+
+export async function getAdmitCardData(classId: string, examId: string) {
+    const supabase = await createClient();
+    
+    // 1. Fetch Exam Details
+    const { data: exam, error: examError } = await supabase
+        .from("exams")
+        .select(`
+            *,
+            subject:subjects(name, code),
+            academic_year:academic_years(name)
+        `)
+        .eq("id", examId)
+        .single();
+
+    if (examError) return { error: examError.message };
+
+    // 2. Fetch Students in Class
+    const { data: students, error: studentError } = await supabase
+        .from("students")
+        .select(`
+            id, 
+            admission_number, 
+            full_name,
+            class:classes(name)
+        `)
+        .eq("class_id", classId)
+        .order("full_name");
+
+    if (studentError) return { error: studentError.message };
+
+    // 3. Fetch School Settings for Branding
+    const { data: settings } = await supabase
+        .from("school_settings")
+        .select("key, value");
+
+    const schoolSettings = settings?.reduce((acc: any, curr) => {
+        acc[curr.key] = curr.value;
+        return acc;
+    }, {});
+
+    return { 
+        data: {
+            exam,
+            students,
+            schoolSettings
+        }
+    };
+}
+export async function getIDCardData(type: 'student' | 'staff', targetId: string) {
+    const supabase = await createClient();
+    
+    let data;
+    if (type === 'student') {
+        const { data: students, error } = await supabase
+            .from("students")
+            .select(`
+                id, admission_number, full_name, 
+                class:classes(name),
+                photo_url
+            `)
+            .eq(targetId === 'all' ? 'status' : 'id', targetId === 'all' ? 'active' : targetId);
+        data = students;
+        if (error) return { error: error.message };
+    } else {
+        const { data: staff, error } = await supabase
+            .from("staff")
+            .select(`
+                id, staff_id, first_name, last_name, 
+                department:departments(name),
+                designation:designations(name),
+                photo_url
+            `)
+            .eq(targetId === 'all' ? 'status' : 'id', targetId === 'all' ? 'active' : targetId);
+        data = staff;
+        if (error) return { error: error.message };
+    }
+
+    // School Settings
+    const { data: settings } = await supabase
+        .from("school_settings")
+        .select("key, value");
+
+    const schoolSettings = settings?.reduce((acc: any, curr) => {
+        acc[curr.key] = curr.value;
+        return acc;
+    }, {});
+
+    return { data: { members: data, schoolSettings } };
+}
