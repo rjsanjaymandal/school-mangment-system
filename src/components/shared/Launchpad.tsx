@@ -10,7 +10,6 @@ import {
   GraduationCap,
   ClipboardCheck,
   FileText,
-  CreditCard,
   Settings,
   MessageSquare,
   Bus,
@@ -20,23 +19,20 @@ import {
   Award,
   ShieldCheck,
   Heart,
-  Shield,
   Stethoscope,
   Trophy,
   Globe,
-  Plus,
-  ChevronRight,
   BarChart3,
   FileBarChart,
   UserCheck,
   History,
+  IndianRupee,
 } from "lucide-react";
 
 interface NavItem {
   name: string;
   href: string;
   icon: any;
-  futuristic?: boolean;
   roles?: string[];
   description?: string;
 }
@@ -49,57 +45,67 @@ interface NavGroup {
 
 const navigation: NavGroup[] = [
   {
-    group: "Overview",
+    group: "Dashboard",
     items: [
-      { name: "Analytics", href: "/analytics", icon: BarChart3, roles: ["admin", "teacher"], description: "Analyze school performance and institutional trends" },
-      { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"], description: "Generate comprehensive academic and operational reports" },
+      { name: "Home", href: "/", icon: LayoutDashboard, description: "Main dashboard" },
+    ],
+  },
+  {
+    group: "Students",
+    items: [
+      { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles" },
+      { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance" },
+      { name: "Conduct", href: "/conduct", icon: ShieldCheck, description: "Student behavior records" },
+      { name: "Health", href: "/health", icon: Stethoscope, description: "Health profiles & medical" },
     ],
   },
   {
     group: "Staff",
-    roles: ["admin", "teacher", "student"],
     items: [
-      { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles and enrollment records" },
-      { name: "Staff", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Manage staff and salaries" },
-      { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance for students and staff" },
-      { name: "Conduct", href: "/conduct", icon: ShieldCheck, description: "Monitor student behavior and disciplinary actions" },
-      { name: "Health", href: "/health", icon: Stethoscope, description: "Track student health records and medical info" },
-      { name: "Alumni", href: "/heritage", icon: GraduationCap, roles: ["admin"], description: "Manage records for former students" },
+      { name: "Teachers", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Staff directory" },
+      { name: "HR", href: "/hr", icon: Users, roles: ["admin"], description: "Human resources" },
     ],
   },
   {
     group: "Academics",
-    roles: ["admin", "teacher", "student"],
     items: [
-      { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"], description: "Manage class sections and student groups" },
-      { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"], description: "Manage curriculum and course materials" },
-      { name: "Grades", href: "/gradebook", icon: FileText, description: "Track student marks and academic performance" },
-      { name: "Exams", href: "/exams", icon: ClipboardCheck, description: "Manage exam schedules and result processing" },
-      { name: "Timetable", href: "/timetable", icon: Calendar, description: "Manage school schedules and class timings" },
-      { name: "Certificates", href: "/certificates", icon: Award, description: "Generate and issue student certificates" },
-      { name: "Activities", href: "/activities", icon: Trophy, roles: ["admin", "teacher"], description: "Manage extracurricular events and activities" },
+      { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"], description: "Class sections" },
+      { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"], description: "Curriculum" },
+      { name: "Exams", href: "/exams", icon: FileText, description: "Exam schedules" },
+      { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck, description: "Student marks" },
+      { name: "Timetable", href: "/timetable", icon: Calendar, description: "School schedule" },
+      { name: "Certificates", href: "/certificates", icon: Award, description: "Generate certificates" },
+    ],
+  },
+  {
+    group: "Finance",
+    items: [
+      { name: "Fee Collection", href: "/finance/dashboard", icon: IndianRupee, description: "Manage fees & payments" },
     ],
   },
   {
     group: "Operations",
     items: [
-      { name: "Fees", href: "/fees", icon: CreditCard, description: "Manage fee collection and payment records" },
-      { name: "Library", href: "/library", icon: Library, description: "Manage books, issues, and returns" },
-      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Manage school inventory and assets" },
-      { name: "Transport", href: "/transport", icon: Bus, description: "Manage school bus routes and transport detail" },
-      { name: "Messages", href: "/messages", icon: MessageSquare, description: "Send announcements and internal messages" },
-      { name: "Guardians", href: "/guardian", icon: Heart, roles: ["admin", "teacher"], description: "Communicate with parents and guardians" },
+      { name: "Library", href: "/library", icon: Library, description: "Books & issues" },
+      { name: "Transport", href: "/transport", icon: Bus, description: "Bus routes" },
+      { name: "Messages", href: "/messages", icon: MessageSquare, description: "Announcements" },
+    ],
+  },
+  {
+    group: "Reports",
+    roles: ["admin", "teacher"],
+    items: [
+      { name: "Analytics", href: "/analytics", icon: BarChart3, description: "Performance analytics" },
+      { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"], description: "Generate reports" },
     ],
   },
   {
     group: "System",
     roles: ["admin"],
     items: [
-      { name: "Users", href: "/users", icon: UserCheck, roles: ["admin"], description: "Manage user accounts and system permissions" },
-      { name: "Settings", href: "/settings", icon: Settings, description: "Configure school details and system options" },
-      { name: "Logs", href: "/audit", icon: History, description: "View system activity and historical audit logs" },
-      { name: "Compliance", href: "/compliance", icon: ShieldCheck, description: "Manage school policies and institutional compliance" },
-      { name: "Infrastructure", href: "/gateways", icon: Globe, description: "Configure external services and system gateways" },
+      { name: "Users", href: "/users", icon: UserCheck, description: "User accounts" },
+      { name: "Settings", href: "/settings", icon: Settings, description: "School configuration" },
+      { name: "Audit Logs", href: "/audit", icon: History, description: "System activity" },
     ],
   },
 ];
@@ -126,54 +132,46 @@ export function Launchpad({
 
   if (filteredNavigation.length === 0 && searchQuery) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <div className="bg-slate-100 dark:bg-card p-6 rounded-sm border border-border">
-          <LayoutDashboard className="h-10 w-10 text-muted-foreground" />
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="bg-slate-100 p-6 rounded-md border border-slate-200 mb-4">
+          <LayoutDashboard className="h-10 w-10 text-slate-400" />
         </div>
-        <div className="space-y-1">
-          <h3 className="text-xl font-bold text-foreground dark:text-white">No modules found</h3>
-          <p className="text-muted-foreground">Try searching for a different keyword or module name.</p>
-        </div>
+        <h3 className="text-lg font-semibold text-slate-900">No modules found</h3>
+        <p className="text-sm text-slate-500">Try a different search term</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-16 pb-12 page-fade-in">
+    <div className="space-y-8 pb-12">
       {filteredNavigation.map((group) => (
-        <div key={group.group} className="space-y-6">
-          <div className="flex items-center gap-x-6 px-1">
-            <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+        <div key={group.group} className="space-y-4">
+          <div className="flex items-center gap-3">
+            <h3 className="text-sm font-medium text-slate-500 uppercase">
               {group.group}
             </h3>
-            <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
+            <div className="h-px flex-1 bg-slate-200" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {group.items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="group relative flex flex-col p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl transition-all duration-300 soft-shadow hover:soft-shadow-lg hover:border-blue-500/30 overflow-hidden"
+                className="group flex flex-col p-4 bg-white border border-slate-200 rounded-md hover:border-emerald-500 hover:shadow-sm transition-all"
               >
-                <div className="flex flex-col gap-y-6 relative z-10">
-                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl transition-all duration-300 bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 group-hover:bg-slate-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-slate-900 shadow-sm">
-                    <item.icon className="h-7 w-7" />
+                <div className="flex flex-col gap-3">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-md bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
+                    <item.icon className="h-5 w-5" />
                   </div>
 
-                  <div className="space-y-2">
-                    <h3 className="font-bold text-lg text-slate-900 dark:text-white tracking-tight group-hover:text-blue-600 transition-colors">
+                  <div className="space-y-1">
+                    <h3 className="font-medium text-slate-900 text-sm">
                       {item.name}
                     </h3>
-                    <p className="text-[13px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed line-clamp-2">
+                    <p className="text-xs text-slate-500 line-clamp-2">
                       {item.description}
                     </p>
-                  </div>
-                </div>
-
-                <div className="mt-8 flex items-center justify-between pointer-events-none relative z-10">
-                  <div className="flex items-center gap-x-2 text-[11px] font-bold text-slate-400 group-hover:text-blue-600 transition-colors">
-                    Go to Module <ChevronRight className="h-3.5 w-3.5" />
                   </div>
                 </div>
               </Link>
@@ -182,8 +180,5 @@ export function Launchpad({
         </div>
       ))}
     </div>
-
-
   );
 }
-

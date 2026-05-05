@@ -105,7 +105,7 @@ export function TeacherList({ initialData }: TeacherListProps) {
           </Button>
           <Button
             onClick={onAdd}
-            className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2 px-6"
+            className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2"
           >
             <Plus className="h-4 w-4" />
             Add Faculty
@@ -113,68 +113,68 @@ export function TeacherList({ initialData }: TeacherListProps) {
         </div>
       </div>
 
-      <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+      <Card className="border-l-4 border-l-emerald-500 shadow-sm">
         <Table>
           <TableHeader>
-            <TableRow className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
-              <th className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-left">Employee ID</th>
-              <th className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-left">Teacher Name</th>
-              <th className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-left">Specialization</th>
-              <th className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-left">Status</th>
-              <th className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-right">Actions</th>
+            <TableRow className="bg-slate-50 border-b">
+              <th className="py-3 px-4 text-left text-sm font-medium text-slate-600">Employee ID</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-slate-600">Teacher Name</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-slate-600">Specialization</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-slate-600">Status</th>
+              <th className="py-3 px-4 text-right text-sm font-medium text-slate-600">Actions</th>
             </TableRow>
           </TableHeader>
-          <TableBody className="divide-y divide-slate-50 dark:divide-slate-800">
+          <TableBody className="divide-y divide-slate-100">
             {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="py-20 text-center text-slate-400 font-medium italic"
+                  className="py-12 text-center text-slate-500"
                 >
-                  No faculty records found.
+                  No teachers found.
                 </TableCell>
               </TableRow>
             ) : (
               data.map((teacher) => (
                 <TableRow
                   key={teacher.id}
-                  className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors"
+                  className="hover:bg-slate-50 transition-colors"
                 >
-                  <td className="py-6 px-10 font-bold text-slate-900 dark:text-white font-mono text-xs">
+                  <td className="py-3 px-4 font-mono text-sm text-slate-600">
                     {teacher.employee_id}
                   </td>
-                  <td className="py-6 px-10">
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 flex items-center justify-center font-bold text-slate-900 dark:text-white text-sm rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-medium">
                         {teacher.profile?.full_name?.[0] || 'T'}
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-bold text-slate-900 dark:text-white text-base leading-none mb-1 group-hover:text-blue-500 transition-colors">
+                        <span className="font-medium text-slate-900">
                           {teacher.profile?.full_name}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                          {teacher.profile?.email || "NO-EMAIL"}
+                        <span className="text-xs text-slate-500">
+                          {teacher.profile?.email || "No email"}
                         </span>
                       </div>
                     </div>
                   </td>
-                  <td className="py-6 px-10">
-                    <div className="flex flex-wrap gap-2">
+                  <td className="py-3 px-4">
+                    <div className="flex flex-wrap gap-1">
                       {teacher.specialization?.map((spec) => (
-                        <Badge key={spec} variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900 font-bold text-[9px] px-2 py-0.5 rounded-lg uppercase">
+                        <Badge key={spec} variant="outline" className="bg-blue-50 text-blue-600 border-blue-100 text-xs">
                           {spec}
                         </Badge>
                       ))}
                     </div>
                   </td>
-                  <td className="py-6 px-10">
+                  <td className="py-3 px-4">
                     <Badge
                       variant="outline"
                       className={cn(
-                        "font-bold text-[9px] px-3 py-1 rounded-full uppercase tracking-wider",
+                        "text-xs",
                         teacher.status === "active"
-                          ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900"
-                          : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-100 dark:border-red-900"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : "bg-red-50 text-red-600 border-red-100"
                       )}
                     >
                       <div className={cn("h-1.5 w-1.5 rounded-full mr-2", teacher.status === "active" ? "bg-emerald-500" : "bg-red-500")} />
@@ -184,29 +184,29 @@ export function TeacherList({ initialData }: TeacherListProps) {
                   <td className="py-6 px-10 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center rounded-xl">
-                          <MoreHorizontal className="h-5 w-5 text-slate-400" />
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-md">
+                          <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-64 p-3 rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900">
-                        <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">Entity Actions</DropdownMenuLabel>
-                        <DropdownMenuItem asChild className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      <DropdownMenuContent align="end" className="w-48 rounded-md">
+                        <DropdownMenuLabel className="text-xs font-medium text-slate-500">Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild className="flex items-center gap-2 cursor-pointer rounded-md">
                           <Link href={`/teachers/${teacher.id}`}>
-                            <Eye className="h-4 w-4 text-blue-500" /> View Profile
+                            <Eye className="h-4 w-4" /> View
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => onEdit(teacher)}
-                          className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                          className="flex items-center gap-2 cursor-pointer rounded-md"
                         >
-                          <Pencil className="h-4 w-4 text-indigo-500" /> Edit Credentials
+                          <Pencil className="h-4 w-4" /> Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-2" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => onDeleteClick(teacher.id)}
-                          className="flex items-center gap-3 px-3 py-3 text-sm font-bold text-red-500 cursor-pointer rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          className="flex items-center gap-2 cursor-pointer text-red-600 rounded-md"
                         >
-                          <Trash2 className="h-4 w-4" /> Purge Record
+                          <Trash2 className="h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -219,14 +219,14 @@ export function TeacherList({ initialData }: TeacherListProps) {
       </Card>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-background border-slate-200 dark:border-slate-800 shadow-2xl rounded-[2.5rem]">
-          <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden rounded-md">
+          <div className="p-6 border-b bg-slate-50">
             <DialogHeader>
-              <DialogTitle className="font-bold text-2xl text-slate-900 dark:text-white tracking-tight">
-                {editingTeacher ? "Edit Faculty Profile" : "Add New Faculty"}
+              <DialogTitle className="text-lg font-semibold">
+                {editingTeacher ? "Edit Teacher" : "Add New Teacher"}
               </DialogTitle>
-              <DialogDescription className="text-slate-500 dark:text-slate-400 mt-1 font-medium">
-                Configure faculty credentials and institutional access details.
+              <DialogDescription className="text-sm text-slate-500">
+                Configure teacher details
               </DialogDescription>
             </DialogHeader>
           </div>
@@ -240,28 +240,28 @@ export function TeacherList({ initialData }: TeacherListProps) {
       </Dialog>
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent className="rounded-[2.5rem] border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl p-10">
+        <AlertDialogContent className="rounded-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-bold text-2xl text-red-500 tracking-tight">Purge Faculty Record?</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-500 dark:text-slate-400 font-medium">
-              This action will permanently remove the faculty record and all associated data from the institutional neural library.
+            <AlertDialogTitle className="text-lg font-semibold">Delete Teacher?</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-slate-500">
+              This action will permanently remove the teacher record.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8 gap-4">
-            <AlertDialogCancel className="rounded-xl font-bold border-slate-200 dark:border-slate-800">Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="mt-4 gap-3">
+            <AlertDialogCancel className="rounded-md">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={onDeleteConfirm}
-              className="bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold px-8"
+              className="bg-red-500 hover:bg-red-600 text-white rounded-md"
             >
-              {isPending ? "Purging..." : "Confirm Purge"}
+              {isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       <Dialog open={isBulkImportOpen} onOpenChange={setIsBulkImportOpen}>
-        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden bg-background border-slate-200 dark:border-slate-800 shadow-2xl rounded-[2.5rem]">
-           <div className="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-md">
+           <div className="p-6 border-b bg-slate-50">
              <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-white">Batch Import Faculty</DialogTitle>
              <DialogDescription className="text-slate-500 dark:text-slate-400 mt-1 font-medium">Upload a valid CSV file to import multiple faculty members simultaneously.</DialogDescription>
            </div>

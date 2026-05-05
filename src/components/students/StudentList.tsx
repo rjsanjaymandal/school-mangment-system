@@ -137,30 +137,30 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
   };
 
   return (
-    <div className="space-y-12 page-fade-in">
+    <div className="space-y-6">
       
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Students", value: initialData.length, icon: Users, color: "blue", sub: "All enrolled students" },
-          { label: "Active Students", value: initialData.filter(s => s.admission_number).length, icon: CheckCircle2, color: "emerald", sub: "With admission numbers" },
-          { label: "Classes", value: classes.length, icon: Filter, color: "indigo", sub: "Total sections" },
-          { label: "Recent Admissions", value: initialData.slice(0, 5).length, icon: Plus, color: "orange", sub: "New enrollments" },
+          { label: "Total Students", value: initialData.length, icon: Users, color: "bg-blue-100 text-blue-600", sub: "All enrolled students" },
+          { label: "Active Students", value: initialData.filter(s => s.admission_number).length, icon: CheckCircle2, color: "bg-emerald-100 text-emerald-600", sub: "With admission numbers" },
+          { label: "Classes", value: classes.length, icon: Filter, color: "bg-indigo-100 text-indigo-600", sub: "Total sections" },
+          { label: "Recent Admissions", value: initialData.slice(0, 5).length, icon: Plus, color: "bg-orange-100 text-orange-600", sub: "New enrollments" },
         ].map((stat, i) => (
-          <Card key={i} className="card-premium rounded-[2.5rem] p-8 space-y-6">
+          <Card key={i} className="border-l-4 border-l-emerald-500 shadow-sm p-4">
             <div className="flex items-center justify-between">
-              <div className={`h-12 w-12 rounded-2xl bg-${stat.color}-500/10 text-${stat.color}-600 dark:text-${stat.color}-400 flex items-center justify-center`}>
-                <stat.icon className="h-6 w-6" />
+              <div className={`h-10 w-10 rounded-md ${stat.color} flex items-center justify-center`}>
+                <stat.icon className="h-5 w-5" />
               </div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="text-xs font-medium text-slate-500">
                 {stat.label}
               </p>
             </div>
-            <div>
-              <p className="text-4xl font-bold text-slate-900 dark:text-white leading-none">
-                {stat.value.toString().padStart(2, '0')}
+            <div className="mt-3">
+              <p className="text-2xl font-bold text-slate-900">
+                {stat.value}
               </p>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2">
+              <p className="text-xs text-slate-500 mt-1">
                 {stat.sub}
               </p>
             </div>
@@ -169,137 +169,136 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
       </div>
 
       {/* Operations Surface */}
-      <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="relative flex-1 w-full md:max-w-md group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="relative flex-1 w-full md:max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                     placeholder="Search students by name or ID..."
-                    className="h-14 pl-12 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-medium rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-all shadow-sm"
+                    className="h-10 pl-10 rounded-md"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             
-            <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+            <div className="flex flex-wrap items-center gap-3">
                 {isAdmin && (
                      <>
                         <Button
                             onClick={() => setIsBulkImportOpen(true)}
                             variant="outline"
-                            className="h-14 px-8 rounded-2xl font-bold transition-all flex items-center gap-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                            className="rounded-md"
                         >
-                            <FileUp className="h-4 w-4" /> Import
+                            <FileUp className="h-4 w-4 mr-2" /> Import
                         </Button>
                         <Button
                             onClick={() => setIsBulkAssignOpen(true)}
                             variant="outline"
-                            className="h-14 px-8 rounded-2xl font-bold transition-all flex items-center gap-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
+                            className="rounded-md"
                             disabled={selectedStudentIds.length === 0}
                         >
-                            <Users className="h-4 w-4" /> Bulk Assign ({selectedStudentIds.length})
+                            <Users className="h-4 w-4 mr-2" /> Bulk Assign ({selectedStudentIds.length})
                         </Button>
                     </>
                 )}
             </div>
         </div>
 
-        <Card className="card-premium rounded-[2.5rem] overflow-hidden">
+        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800">
-                            {isAdmin && <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 w-12" />}
-                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">Student Profile</TableHead>
-                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">Class Node</TableHead>
-                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400">Status</TableHead>
-                            <TableHead className="py-5 px-10 font-bold uppercase tracking-widest text-[10px] text-slate-400 text-right">Actions</TableHead>
+                        <TableRow className="bg-slate-50 border-b">
+                            {isAdmin && <TableHead className="w-12" />}
+                            <TableHead className="text-sm font-medium text-slate-600">Student</TableHead>
+                            <TableHead className="text-sm font-medium text-slate-600">Class</TableHead>
+                            <TableHead className="text-sm font-medium text-slate-600">Status</TableHead>
+                            <TableHead className="text-right text-sm font-medium text-slate-600">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="divide-y divide-slate-50 dark:divide-slate-800">
+                    <TableBody className="divide-y divide-slate-100">
                         {filteredData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={isAdmin ? 5 : 4} className="py-24 text-center">
+                                <TableCell colSpan={isAdmin ? 5 : 4} className="py-12 text-center">
                                     <div className="flex flex-col items-center">
-                                        <GraduationCap className="h-12 w-12 mb-4 text-slate-200 dark:text-slate-800" />
-                                        <p className="text-sm font-medium text-slate-400 italic">No matching student records found.</p>
+                                        <GraduationCap className="h-10 w-10 mb-3 text-slate-300" />
+                                        <p className="text-sm text-slate-500">No students found</p>
                                     </div>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             filteredData.map((student) => (
-                                <TableRow key={student.id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                                <TableRow key={student.id} className="hover:bg-slate-50 transition-colors">
                                     {isAdmin && (
-                                        <TableCell className="py-6 px-10">
+                                        <TableCell className="py-3 px-4">
                                             <input
                                                 type="checkbox"
-                                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/20 cursor-pointer"
+                                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                                 checked={selectedStudentIds.includes(student.id)}
                                                 onChange={() => toggleSelection(student.id)}
                                                 aria-label={`Select ${student.profile?.full_name || student.admission_number}`}
                                             />
                                         </TableCell>
                                     )}
-                                    <TableCell className="py-6 px-10">
-                                        <div className="flex items-center gap-4">
+                                    <TableCell className="py-3 px-4">
+                                        <div className="flex items-center gap-3">
                                             <StudentAvatar 
                                                 name={student.profile?.full_name} 
                                                 classId={student.class_id || ""} 
-                                                className="h-11 w-11 text-sm shadow-xl"
+                                                className="h-10 w-10 text-sm"
                                             />
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-slate-900 dark:text-white text-base leading-none mb-1 group-hover:text-blue-500 transition-colors">
+                                                <span className="font-medium text-slate-900">
                                                     {student.profile?.full_name}
                                                 </span>
-                                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                                                    {student.admission_number || "NO-ID"} <span className="mx-1 opacity-30">•</span> ROLL: {student.roll_number || "NA"}
+                                                <span className="text-xs text-slate-500">
+                                                    {student.admission_number || "No ID"} • Roll: {student.roll_number || "NA"}
                                                 </span>
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="py-6 px-10">
-                                        <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900 font-bold">
-                                            {student.class?.name || "UNASSIGNED"}
+                                    <TableCell className="py-3 px-4">
+                                        <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100">
+                                            {student.class?.name || "Unassigned"}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="py-6 px-10">
-                                        <Badge variant="outline" className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900 font-bold px-3 py-1 rounded-full capitalize">
-                                            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-2" />
+                                    <TableCell className="py-3 px-4">
+                                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-100">
                                             Active
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="py-6 px-10 text-right">
+                                    <TableCell className="py-3 px-4 text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center rounded-xl">
-                                                    <MoreHorizontal className="h-5 w-5 text-slate-400" />
+                                                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-md">
+                                                    <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-64 p-3 rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900">
-                                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">Entity Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem asChild className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                            <DropdownMenuContent align="end" className="w-48 rounded-md">
+                                                <DropdownMenuLabel className="text-xs font-medium text-slate-500">Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem asChild className="flex items-center gap-2 cursor-pointer rounded-md">
                                                     <Link href={`/students/${student.id}`}>
-                                                        <Eye className="h-4 w-4 text-blue-500" /> View Profile
+                                                        <Eye className="h-4 w-4" /> View
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 {isAdmin && (
                                                     <>
                                                         <DropdownMenuItem
                                                             onClick={() => onEdit(student)}
-                                                            className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                                            className="flex items-center gap-2 cursor-pointer rounded-md"
                                                         >
-                                                            <Pencil className="h-4 w-4 text-indigo-500" /> Edit Credentials
+                                                            <Pencil className="h-4 w-4" /> Edit
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             onClick={() => onLinkParent(student.id)}
-                                                            className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                                            className="flex items-center gap-2 cursor-pointer rounded-md"
                                                         >
-                                                            <UserPlus className="h-4 w-4 text-emerald-500" /> Link Guardian
+                                                            <UserPlus className="h-4 w-4" /> Link Guardian
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-2" />
+                                                        <DropdownMenuSeparator />
                                                         <DropdownMenuItem
                                                             onClick={() => {
-                                                                if (confirm("Permanently delete this student record? This action cannot be undone.")) {
+                                                                if (confirm("Delete this student?")) {
                                                                     startTransition(async () => {
                                                                         const res = await deleteStudent(student.id);
                                                                         if (res.error) toast.error(res.error);

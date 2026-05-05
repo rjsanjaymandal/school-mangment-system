@@ -47,10 +47,10 @@ export function SubjectList({ initialData }: SubjectListProps) {
   };
 
   const onDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to permanently delete this curriculum node?")) return;
+    if (!confirm("Are you sure you want to delete this subject?")) return;
     const res = await deleteSubject(id);
     if (res.success) {
-      toast.success("Curriculum node purged successfully");
+      toast.success("Subject deleted");
       router.refresh();
       setData(data.filter((s) => s.id !== id));
     } else {
@@ -59,80 +59,79 @@ export function SubjectList({ initialData }: SubjectListProps) {
   };
 
   return (
-    <div className="space-y-12 page-fade-in">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Curriculum Modules</h3>
+        <h3 className="text-lg font-semibold text-slate-900">Subjects</h3>
         <Button 
           onClick={onAdd} 
-          className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold gap-x-2 px-6"
+          className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2"
         >
           <Plus className="h-4 w-4" /> Add Subject
         </Button>
       </div>
 
-       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {data.length === 0 ? (
-          <Card className="col-span-full h-80 flex flex-col items-center justify-center card-premium rounded-[2.5rem]">
-            <BookOpen className="h-16 w-16 text-slate-200 dark:text-slate-800 mb-6" />
-            <p className="text-sm font-medium text-slate-400 italic">No academic subjects registered in the registry.</p>
+          <Card className="col-span-full h-40 flex flex-col items-center justify-center border border-slate-200">
+            <BookOpen className="h-10 w-10 text-slate-300 mb-3" />
+            <p className="text-sm text-slate-500">No subjects found</p>
           </Card>
         ) : (
-          data.map((subject, i) => (
-             <Card
+          data.map((subject) => (
+            <Card
               key={subject.id}
-              className="card-premium rounded-[2.5rem] p-8 space-y-8 group hover:shadow-2xl transition-all duration-500"
+              className="border-l-4 border-l-emerald-500 shadow-sm p-4"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]" />
-                  <span className="font-bold text-[10px] text-slate-400 tracking-widest uppercase">
-                    {subject.code || "NO-CODE"}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-blue-500" />
+                  <span className="text-xs font-medium text-slate-500 uppercase">
+                    {subject.code || "N/A"}
                   </span>
                 </div>
                 
-                 <DropdownMenu>
+                <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-10 w-10 p-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center justify-center rounded-xl">
-                      <MoreHorizontal className="h-5 w-5 text-slate-400" />
+                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-md">
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64 p-3 rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl bg-white dark:bg-slate-900">
-                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">Entity Actions</DropdownMenuLabel>
+                  <DropdownMenuContent align="end" className="w-40 rounded-md">
+                    <DropdownMenuLabel className="text-xs font-medium text-slate-500">Actions</DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={() => onEdit(subject)}
-                      className="flex items-center gap-3 px-3 py-3 text-sm font-bold cursor-pointer rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      className="flex items-center gap-2 cursor-pointer rounded-md"
                     >
-                      <Pencil className="h-4 w-4 text-indigo-500" /> Edit Subject
+                      <Pencil className="h-4 w-4" /> Edit
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-2" />
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => onDelete(subject.id)}
-                      className="flex items-center gap-3 px-3 py-3 text-sm font-bold text-red-500 cursor-pointer rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      className="flex items-center gap-2 cursor-pointer text-red-600 rounded-md"
                     >
-                      <Trash2 className="h-4 w-4" /> Purge Subject
+                      <Trash2 className="h-4 w-4" /> Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
 
-              <div className="space-y-3">
-                <h4 className="font-bold text-slate-900 dark:text-white text-2xl tracking-tight leading-tight group-hover:text-blue-500 transition-colors">
+              <div className="space-y-2 mb-3">
+                <h4 className="font-medium text-slate-900 text-lg">
                   {subject.name}
                 </h4>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed line-clamp-3">
-                  {subject.description || "Foundational academic subject defining a core segment of the institutional curriculum."}
+                <p className="text-sm text-slate-500 line-clamp-2">
+                  {subject.description || "No description"}
                 </p>
               </div>
 
-              <div className="flex items-center gap-6 pt-4 border-t border-slate-50 dark:border-slate-800">
+              <div className="flex items-center gap-4 pt-3 border-t border-slate-100">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Weight</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white tabular-nums">{subject.credits || 0}<span className="text-[10px] text-slate-400 ml-1">Credits</span></p>
+                  <p className="text-xs text-slate-500">Credits</p>
+                  <p className="text-lg font-semibold text-slate-900">{subject.credits || 0}</p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
-                  <Badge variant="outline" className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900 font-bold px-3 py-1 rounded-full uppercase tracking-widest text-[9px]">
-                    Operational
+                <div className="ml-auto">
+                  <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-100">
+                    Active
                   </Badge>
                 </div>
               </div>
@@ -141,20 +140,20 @@ export function SubjectList({ initialData }: SubjectListProps) {
         )}
       </div>
 
-       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden bg-background border-slate-200 dark:border-slate-800 shadow-2xl rounded-[2.5rem]">
-          <div className="p-10 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden rounded-md">
+          <div className="p-6 border-b bg-slate-50">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                {editingSubject ? "Modify Curriculum" : "New Curriculum Node"}
+              <DialogTitle className="text-lg font-semibold">
+                {editingSubject ? "Edit Subject" : "Add New Subject"}
               </DialogTitle>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">
-                Define core academic modules and credit weightage for the institutional syllabus.
-              </p>
+              <DialogDescription className="text-sm text-slate-500">
+                Create or update a subject
+              </DialogDescription>
             </DialogHeader>
           </div>
           
-           <div className="p-4">
+          <div className="p-4">
             <SubjectForm
               initialData={editingSubject}
               onSuccess={() => setIsOpen(false)}

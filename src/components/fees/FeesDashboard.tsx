@@ -48,6 +48,7 @@ import { createFee, recordPayment } from "@/app/actions/fees";
 import { createPayroll, processPayroll, submitLeaveRequest, updateLeaveStatus } from "@/app/actions/payroll";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useRealtimeSync } from "@/hooks/use-realtime-sync";
 
 interface FeesDashboardProps {
     fees: any[];
@@ -83,6 +84,9 @@ export function FeesDashboard({
     const [isAddFeeOpen, setIsAddFeeOpen] = useState(false);
     const [isPaymentOpen, setIsPaymentOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    // Enable live updates for fee-related tables
+    useRealtimeSync(["payments", "fee_structures", "fee_assignments"]);
 
     const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"];
 
