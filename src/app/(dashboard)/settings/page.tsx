@@ -43,7 +43,7 @@ export default async function SettingsPage() {
       <ERPCard
         title="System Settings"
         description="School configuration and preferences"
-        icon={SettingsIcon}
+        icon={<SettingsIcon className="h-5 w-5" />}
         color="slate"
       >
         <SettingsDashboardClient

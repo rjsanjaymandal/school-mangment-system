@@ -204,6 +204,8 @@ To ensure performance:
 - minimize client-side state
 - optimize database queries
 - use pagination for large tables
+- **Database Indexing**: Ensure critical query paths (e.g., `student_id` in `student_documents`) are indexed to maintain search speed as data grows.
+- **Client-Side Data Fetching**: Use TanStack Query (React Query) for complex client-side data fetching. This provides instant caching, background refetching, and reduces redundant database calls.
 
 ---
 

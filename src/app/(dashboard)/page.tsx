@@ -271,23 +271,6 @@ export default async function DashboardPage() {
             <p className="text-sm text-slate-400">Attendance data will appear here</p>
           </div>
         </ERPCard>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-xl font-bold text-slate-900 text-slate-900">
-                Attendance Trends
-              </h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">
-                View history
-              </p>
-            </div>
-          </div>
-          <div className="h-48 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-lg bg-slate-50">
-            <BarChart3 className="h-8 w-8 text-slate-300 mb-2" />
-            <p className="text-sm text-slate-400">
-              Generating Analytics...
-            </p>
-          </div>
-        </div>
 
         <ERPCard title="Daily Schedule" className="col-span-3" accentColor="purple" icon={<CalendarDays className="h-4 w-4" />}>
           <div className="space-y-3">

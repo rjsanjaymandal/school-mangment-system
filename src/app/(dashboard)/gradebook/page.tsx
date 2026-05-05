@@ -53,7 +53,7 @@ export default async function GradebookPage() {
             <ERPCard
                 title="Grade Management"
                 description="Track student performance and grades"
-                icon={FileText}
+                icon={<FileText className="h-5 w-5" />}
                 color="emerald"
             >
                 <GradebookDashboard 

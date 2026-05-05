@@ -20,7 +20,8 @@ import { createStudent } from "@/app/actions/students";
 export default function StudentEnrollmentPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
-        full_name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         admission_date: new Date().toISOString().split('T')[0],
         admission_type: "new",
@@ -41,7 +42,8 @@ export default function StudentEnrollmentPage() {
         
         try {
             const res = await createStudent({
-                full_name: formData.full_name,
+                first_name: formData.first_name,
+                last_name: formData.last_name,
                 email: formData.email,
                 class_id: formData.class_id,
                 category: formData.category,
@@ -139,11 +141,19 @@ export default function StudentEnrollmentPage() {
                 <ERPCard title="General Information" accentColor="blue" icon={<Users className="h-4 w-4" />}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>Full Name</Label>
+                            <Label>First Name</Label>
                             <Input 
-                                placeholder="Enter full name" 
-                                value={formData.full_name}
-                                onChange={(e) => setFormData(p => ({ ...p, full_name: e.target.value }))}
+                                placeholder="Enter first name" 
+                                value={formData.first_name}
+                                onChange={(e) => setFormData(p => ({ ...p, first_name: e.target.value }))}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Last Name</Label>
+                            <Input 
+                                placeholder="Enter last name" 
+                                value={formData.last_name}
+                                onChange={(e) => setFormData(p => ({ ...p, last_name: e.target.value }))}
                             />
                         </div>
                         <div className="space-y-2">

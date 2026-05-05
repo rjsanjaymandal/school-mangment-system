@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ERPCard } from "@/components/ui/erp-card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -17,9 +17,12 @@ import {
   User,
   Loader2,
   Trash2,
-  Eye
+  Eye,
+  PenTool
 } from "lucide-react";
 import Image from "next/image";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { List } from "react-window";
 
 interface Student {
   id: string;
@@ -35,111 +38,92 @@ interface StudentDocument {
   uploaded_at: string | null;
 }
 
-interface StudentWithDocs extends Student {
-  documents: StudentDocument[];
-}
-
 const DOC_TYPES = [
+  { key: "aadhaar_card", label: "Aadhaar Card", icon: FileText },
   { key: "birth_certificate", label: "Birth Certificate", icon: FileText },
   { key: "previous_marksheet", label: "Previous Marksheet", icon: FileText },
-  { key: "transfer_certificate", label: "Transfer Certificate (TC)", icon: FileText },
+  { key: "transfer_certificate", label: "Transfer Certificate", icon: FileText },
   { key: "student_photo", label: "Student Photo", icon: ImageIcon },
-  { key: "father_photo", label: "Father Photo", icon: User },
-  { key: "mother_photo", label: "Mother Photo", icon: User },
+  { key: "signature", label: "Signature", icon: PenTool },
 ];
 
 export default function StudentDocumentsPage() {
   const supabase = createClient();
-  const [students, setStudents] = useState<StudentWithDocs[]>([]);
+  const queryClient = useQueryClient();
+  
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStudent, setSelectedStudent] = useState<StudentWithDocs | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [uploading, setUploading] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const fetchStudents = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("students")
-      .select(`
-        id,
-        admission_number,
-        profile:profiles(full_name),
-        class:classes(name)
-      `)
-      .order("admission_number", { ascending: true });
+  // 1. Fetch Students using React Query
+  const { data: students = [], isLoading: loadingStudents } = useQuery({
+    queryKey: ['students-list'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("students")
+        .select(`
+          id,
+          admission_number,
+          profile:profiles(full_name, first_name, last_name),
+          class:classes(name)
+        `)
+        .order("admission_number", { ascending: true });
 
-    if (error) {
-      console.error("Error fetching students:", error.message || error);
-      setLoading(false);
-      return;
+      if (error) {
+        console.error("Error fetching students:", error);
+        throw error;
+      }
+
+      return (data || []).map((s: any) => ({
+        id: s.id,
+        admission_number: s.admission_number,
+        full_name: s.profile?.first_name 
+          ? `${s.profile.first_name} ${s.profile.last_name || ''}`.trim() 
+          : (s.profile?.full_name || "Unknown"),
+        class_name: s.class?.name || "N/A",
+      }));
     }
+  });
 
-    const studentsWithDocs = (data || []).map((s: any) => ({
-      id: s.id,
-      admission_number: s.admission_number,
-      full_name: s.profile?.full_name || "Unknown",
-      class_name: s.class?.name || "N/A",
-      documents: [],
-    }));
-
-    setStudents(studentsWithDocs);
-    setLoading(false);
-  }, [supabase]);
-
-  const fetchStudentDocuments = useCallback(async (studentId: string) => {
-    const { data, error } = await supabase
-      .from("student_documents")
-      .select("*")
-      .eq("student_id", studentId);
-
-    if (error) {
-      console.error("Error fetching documents:", error.message || error);
-      return [];
-    }
-
-    return data || [];
-  }, [supabase]);
-
-  useEffect(() => {
-    fetchStudents();
-  }, [fetchStudents]);
-
-  const handleSelectStudent = async (student: StudentWithDocs) => {
-    const docs = await fetchStudentDocuments(student.id);
-    setSelectedStudent({ ...student, documents: docs });
-  };
+  // 2. Fetch Documents for Selected Student
+  const { data: documents = [], isLoading: loadingDocuments } = useQuery({
+    queryKey: ['student-documents', selectedStudent?.id],
+    queryFn: async () => {
+      if (!selectedStudent) return [];
+      const { data, error } = await supabase
+        .from("student_documents")
+        .select("*")
+        .eq("student_id", selectedStudent.id);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!selectedStudent?.id, // Only run when a student is selected
+  });
 
   const filteredStudents = students.filter(
-    (s) =>
+    (s: Student) =>
       (s.admission_number?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
       (s.full_name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
       (s.class_name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
 
   const getDocumentStatus = (docType: string) => {
-    if (!selectedStudent) return null;
-    return selectedStudent.documents.find((d) => d.doc_type === docType);
+    return documents.find((d: StudentDocument) => d.doc_type === docType);
   };
 
   const handleFileUpload = async (docType: string, file: File) => {
     if (!selectedStudent) return;
-
     setUploading(docType);
     
     try {
       const filePath = `${selectedStudent.id}/${docType}/${Date.now()}_${file.name}`;
-      
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("student-docs")
         .upload(filePath, file);
 
-      if (uploadError) {
-        console.error("Upload error:", uploadError.message || uploadError);
-        alert("Failed to upload file");
-        setUploading(null);
-        return;
-      }
+      if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage
         .from("student-docs")
@@ -159,16 +143,10 @@ export default function StudentDocumentsPage() {
           onConflict: 'student_id,doc_type'
         });
 
-      if (dbError) {
-        console.error("Database error:", dbError.message || dbError);
-        alert("Failed to save document reference");
-        setUploading(null);
-        return;
-      }
+      if (dbError) throw dbError;
 
-      const updatedDocs = await fetchStudentDocuments(selectedStudent.id);
-      setSelectedStudent({ ...selectedStudent, documents: updatedDocs });
-      
+      // Invalidate query to refetch instantly
+      queryClient.invalidateQueries({ queryKey: ['student-documents', selectedStudent.id] });
       alert("Document uploaded successfully!");
     } catch (error) {
       console.error("Error uploading:", error);
@@ -180,7 +158,6 @@ export default function StudentDocumentsPage() {
 
   const handleDeleteDocument = async (docType: string) => {
     if (!selectedStudent) return;
-    
     const confirmDelete = window.confirm("Are you sure you want to delete this document?");
     if (!confirmDelete) return;
 
@@ -190,13 +167,12 @@ export default function StudentDocumentsPage() {
       .match({ student_id: selectedStudent.id, doc_type: docType });
 
     if (error) {
-      console.error("Error deleting:", error.message || error);
+      console.error("Error deleting:", error);
       alert("Failed to delete document");
       return;
     }
 
-    const updatedDocs = await fetchStudentDocuments(selectedStudent.id);
-    setSelectedStudent({ ...selectedStudent, documents: updatedDocs });
+    queryClient.invalidateQueries({ queryKey: ['student-documents', selectedStudent.id] });
   };
 
   const handleVerifyDocument = async (docType: string, verified: boolean) => {
@@ -212,8 +188,30 @@ export default function StudentDocumentsPage() {
       return;
     }
 
-    const updatedDocs = await fetchStudentDocuments(selectedStudent.id);
-    setSelectedStudent({ ...selectedStudent, documents: updatedDocs });
+    queryClient.invalidateQueries({ queryKey: ['student-documents', selectedStudent.id] });
+  };
+
+  // Virtualized Row Component
+  const StudentRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
+    const student = filteredStudents[index];
+    const isSelected = selectedStudent?.id === student.id;
+    return (
+      <div 
+        style={style} 
+        onClick={() => setSelectedStudent(student)}
+        className={`flex flex-col justify-center px-4 cursor-pointer border-b border-dashed hover:bg-emerald-50 transition-colors ${
+          isSelected ? "bg-emerald-50" : ""
+        }`}
+      >
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <p className="text-sm font-semibold text-slate-800">{student.full_name}</p>
+            <p className="text-xs font-mono text-muted-foreground">{student.admission_number}</p>
+          </div>
+          <p className="text-xs text-muted-foreground bg-slate-100 px-2 py-1 rounded-md">{student.class_name}</p>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -229,13 +227,13 @@ export default function StudentDocumentsPage() {
       <h1 className="text-2xl font-bold text-slate-800">Documents Manager</h1>
 
       <div className="flex gap-6 h-[calc(100vh-180px)]">
-        {/* Left Panel - Student Selection */}
+        {/* Left Panel - Student Selection (Virtualized) */}
         <div className="w-[40%] flex flex-col">
           <ERPCard className="flex-1 flex flex-col" accentColor="emerald">
             <CardHeader className="pb-3 border-b">
               <CardTitle className="text-lg">Select Student</CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col p-4">
+            <CardContent className="flex-1 flex flex-col p-4 relative">
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -246,40 +244,23 @@ export default function StudentDocumentsPage() {
                 />
               </div>
 
-              <div className="flex-1 overflow-auto">
-                {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <div className="flex-1 overflow-hidden relative">
+                {loadingStudents ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+                    <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
                   </div>
                 ) : filteredStudents.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     No students found
                   </div>
                 ) : (
-                  <table className="w-full">
-                    <thead className="sticky top-0 bg-white border-b">
-                      <tr>
-                        <th className="text-left text-xs font-medium text-muted-foreground pb-2">Adm No.</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground pb-2">Name</th>
-                        <th className="text-left text-xs font-medium text-muted-foreground pb-2">Class</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredStudents.map((student) => (
-                        <tr
-                          key={student.id}
-                          onClick={() => handleSelectStudent(student)}
-                          className={`cursor-pointer border-b border-dashed hover:bg-emerald-50 transition-colors ${
-                            selectedStudent?.id === student.id ? "bg-emerald-50" : ""
-                          }`}
-                        >
-                          <td className="py-2 text-sm font-mono">{student.admission_number}</td>
-                          <td className="py-2 text-sm">{student.full_name}</td>
-                          <td className="py-2 text-sm text-muted-foreground">{student.class_name}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <List
+                    style={{ height: 500, width: "100%" }}
+                    rowCount={filteredStudents.length}
+                    rowHeight={70}
+                    rowComponent={StudentRow}
+                    rowProps={{} as any}
+                  />
                 )}
               </div>
             </CardContent>
@@ -308,11 +289,25 @@ export default function StudentDocumentsPage() {
                     <User className="h-12 w-12 mb-4 opacity-50" />
                     <p>Select a student from the left to manage their documents</p>
                   </div>
+                ) : loadingDocuments ? (
+                  // Pulse Skeleton Loader
+                  <div className="grid grid-cols-2 gap-4">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                      <div key={i} className="border-2 border-slate-100 rounded-lg p-4 animate-pulse">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="h-5 w-5 bg-slate-200 rounded-full" />
+                          <div className="h-4 w-32 bg-slate-200 rounded-md" />
+                        </div>
+                        <div className="h-20 bg-slate-100 rounded-md w-full mb-3" />
+                        <div className="h-4 w-20 bg-slate-200 rounded-md mx-auto" />
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
                     {DOC_TYPES.map((doc) => {
                       const docStatus = getDocumentStatus(doc.key);
-                      const isImage = doc.key.includes("photo");
+                      const isImage = doc.key.includes("photo") || doc.key.includes("signature");
                       const isUploading = uploading === doc.key;
 
                       return (
@@ -405,7 +400,7 @@ export default function StudentDocumentsPage() {
                                   />
                                 </label>
                               )}
-                              <p className="text-xs text-center text-muted-foreground">Not Uploaded Yet</p>
+                              <p className="text-xs text-center text-muted-foreground font-semibold">Missing</p>
                             </div>
                           )}
                         </div>

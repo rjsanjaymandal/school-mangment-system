@@ -202,23 +202,39 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
 
                 return (
                   <div key={item.name} className="space-y-1">
-                    <button
-                      onClick={() => hasSubItems && toggleExpand(item.name)}
-                      className={cn(
-                        "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium",
-                        isActive && !hasSubItems
-                          ? "bg-slate-900 text-white" 
-                          : "text-slate-600 hover:bg-slate-100"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.name}</span>
-                      </div>
-                      {hasSubItems && (
-                         <ChevronDown className={cn("h-4 w-4", isExpanded ? "rotate-180" : "")} />
-                      )}
-                    </button>
+                    {hasSubItems ? (
+                      <button
+                        onClick={() => toggleExpand(item.name)}
+                        className={cn(
+                          "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium",
+                          isActive && !hasSubItems
+                            ? "bg-slate-900 text-white" 
+                            : "text-slate-600 hover:bg-slate-100"
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.name}</span>
+                        </div>
+                        <ChevronDown className={cn("h-4 w-4", isExpanded ? "rotate-180" : "")} />
+                      </button>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        prefetch={true}
+                        className={cn(
+                          "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium",
+                          isActive
+                            ? "bg-slate-900 text-white" 
+                            : "text-slate-600 hover:bg-slate-100"
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.name}</span>
+                        </div>
+                      </Link>
+                    )}
 
                     {hasSubItems && isExpanded && (
                       <div className="ml-4 pl-4 border-l border-slate-200 space-y-1 py-1">
@@ -226,6 +242,7 @@ export function Sidebar({ initialProfile }: { initialProfile?: any }) {
                           <Link
                             key={sub.href}
                             href={sub.href}
+                            prefetch={true}
                             className={cn(
                               "block px-3 py-1.5 text-sm rounded-md",
                               pathname === sub.href

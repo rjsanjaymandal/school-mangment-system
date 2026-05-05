@@ -43,7 +43,7 @@ export default async function TransportPage() {
   const { data: assignments } = await assignmentQuery;
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">

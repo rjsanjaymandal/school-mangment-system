@@ -52,8 +52,8 @@ export default function AdmitCardGeneratorPage() {
         const result = await getAdmitCardData(selectedClass, selectedExam);
         setLoading(false);
 
-        if (result.error) {
-            toast.error(result.error);
+        if (result.error || !result.data) {
+            toast.error(result.error || "Failed to generate admit cards");
         } else {
             setAdmitCards(result.data);
             setPreviewMode(true);
@@ -211,7 +211,7 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
                 </div>
                 <div className="flex-1">
                     <h3 className="text-lg font-black uppercase tracking-tighter italic leading-none">{settings?.school_name || "Edu Maysan Academy"}</h3>
-                    <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Official Examination Hall Ticket • {exam.academic_year?.name || '2026-27'}</p>
+                    <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Official Examination Hall Ticket • {(Array.isArray(exam.academic_year) ? exam.academic_year[0] : exam.academic_year)?.name || '2026-27'}</p>
                 </div>
             </div>
 
@@ -232,7 +232,7 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
                 </div>
                 <div className="flex justify-between border-b border-slate-100 pb-1">
                     <span className="text-[10px] font-black uppercase text-slate-400">Class & Section</span>
-                    <span className="text-xs font-bold">{student.class?.name}</span>
+                    <span className="text-xs font-bold">{(Array.isArray(student.class) ? student.class[0] : student.class)?.name}</span>
                 </div>
             </div>
 

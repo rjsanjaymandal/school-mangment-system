@@ -14,26 +14,26 @@ function Loader() {
 }
 
 export const AnalyticsDashboard = dynamic(
-  () => import("@/components/analytics/AnalyticsDashboard"),
+  () => import("@/components/analytics/AnalyticsDashboard").then(mod => mod.AnalyticsDashboard),
   { loading: Loader, ssr: false }
 );
 
 export const PerformancePredictor = dynamic(
-  () => import("@/components/ai/PerformancePredictor"),
+  () => import("@/components/ai/PerformancePredictor").then(mod => mod.PerformancePredictor),
   { loading: Loader, ssr: false }
 );
 
 export const AdminCharts = dynamic(
-  () => import("@/app/(dashboard)/admin/dashboard/AdminCharts"),
+  () => import("@/app/(dashboard)/admin/dashboard/AdminCharts").then(mod => mod.AdminCharts),
   { loading: Loader, ssr: false }
 );
 
 export const TransportDashboard = dynamic(
-  () => import("@/components/transport/TransportDashboard"),
+  () => import("@/components/transport/TransportDashboard").then(mod => mod.TransportDashboard),
   { loading: Loader, ssr: false }
 );
 
 export const AttendanceDashboard = dynamic(
-  () => import("@/components/attendance/AttendanceDashboard"),
+  () => import("@/components/attendance/AttendanceDashboard").then(mod => mod.AttendanceDashboard),
   { loading: Loader, ssr: false }
 );

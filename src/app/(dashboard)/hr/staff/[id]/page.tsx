@@ -30,6 +30,10 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
         notFound();
     }
 
+    // Handle potential array returns from joins
+    const department = Array.isArray(staff.department) ? staff.department[0] : staff.department;
+    const designation = Array.isArray(staff.designation) ? staff.designation[0] : staff.designation;
+
     const sectionHeaderClass = "text-sm font-semibold text-slate-600 mb-4 flex items-center gap-2";
     const infoLabelClass = "text-xs text-slate-500 mb-1";
     const infoValueClass = "text-sm font-medium text-slate-900";
@@ -88,11 +92,11 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                                 </div>
                                 <div className="flex items-center gap-2 text-slate-500">
                                     <Briefcase className="h-4 w-4" />
-                                    <span className="text-sm font-bold">{staff.designation?.name}</span>
+                                    <span className="text-sm font-bold">{designation?.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-slate-500">
                                     <Award className="h-4 w-4" />
-                                    <span className="text-sm font-bold">{staff.department?.name}</span>
+                                    <span className="text-sm font-bold">{department?.name}</span>
                                 </div>
                             </div>
                         </div>
@@ -253,7 +257,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                                         {staff.first_name} {staff.last_name}
                                     </div>
                                     <div className="text-[8px] font-bold text-emerald-600 uppercase mt-1">
-                                        {staff.designation?.name}
+                                        {designation?.name}
                                     </div>
                                 </div>
 
@@ -266,7 +270,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span className="text-[6px] font-black text-slate-400 uppercase">Dept:</span>
-                                        <span className="text-[7px] font-bold text-slate-900">{staff.department?.name}</span>
+                                        <span className="text-[7px] font-bold text-slate-900">{department?.name}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span className="text-[6px] font-black text-slate-400 uppercase">DOJ:</span>

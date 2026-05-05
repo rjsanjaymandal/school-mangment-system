@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "./supabase/server";
 import { cookies } from "next/headers";
 
@@ -6,7 +7,7 @@ import { cookies } from "next/headers";
  * The Single Source of Truth for identity in Edu Maysan ERP.
  * Handles both the real authenticated user and admin 'View As' mode.
  */
-export async function getAuthContext() {
+export const getAuthContext = cache(async function getAuthContext() {
   const supabase = await createClient();
   const { data: { user: realUser } } = await supabase.auth.getUser();
   const cookieStore = await cookies();
@@ -59,4 +60,4 @@ export async function getAuthContext() {
     effectiveRole, 
     isImpersonating 
   };
-}
+});

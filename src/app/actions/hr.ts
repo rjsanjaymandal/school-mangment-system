@@ -196,9 +196,9 @@ export async function getStaff(filters?: { department_id?: string; staff_type?: 
         .select(`
             id, staff_id, first_name, last_name, gender, highest_qualification, 
             mobile, email, staff_type, department_id, designation_id, photo_url,
+            monthly_salary, bank_account, ifsc_code, pan_number, aadhar_number,
             department:departments(name),
             designation:designations(name)
-            ${adminCheck ? ', monthly_salary, bank_account, ifsc_code, pan_number, aadhar_number' : ''}
         `)
         .order("created_at", { ascending: false });
 
@@ -229,10 +229,9 @@ export async function getStaffById(id: string) {
             regional_language_proficiency, mobile, email, address, city, state, pincode, 
             date_of_joining, staff_type, department_id, designation_id, photo_url, 
             aadhar_number, pan_number, bank_account, ifsc_code, status, is_login_enabled,
-            "father's_name", mother_name,
+            "father's_name", mother_name, monthly_salary,
             department:departments(name),
             designation:designations(name)
-            ${adminCheck ? ', monthly_salary' : ''}
         `)
         .eq("id", id)
         .single();

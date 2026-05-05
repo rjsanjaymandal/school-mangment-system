@@ -40,7 +40,7 @@ export default async function ProcurementHub() {
       <ERPCard
         title="Inventory Management"
         description="Track and manage school supplies"
-        icon={Package}
+        icon={<Package className="h-5 w-5" />}
         color="amber"
       >
         <InventoryDashboardClient initialInventory={inventoryItems || []} userRole={role} />

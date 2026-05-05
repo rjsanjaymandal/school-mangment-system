@@ -46,12 +46,13 @@ export default function IDCardGeneratorPage() {
         const result = await getIDCardData(targetType, selectedClass);
         setLoading(false);
 
-        if (result.error) {
-            toast.error(result.error);
+        if (result.error || !result.data) {
+            toast.error(result.error || "Failed to generate ID cards");
         } else {
             setIdCards(result.data);
             setPreviewMode(true);
-            toast.success("ID Cards generated for " + result.data.members.length + " members");
+            const count = result.data.members?.length ?? 0;
+            toast.success("ID Cards generated for " + count + " members");
         }
     };
 
@@ -163,8 +164,11 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
     const isStudent = type === 'student';
     const name = isStudent ? member.full_name : `${member.first_name} ${member.last_name}`;
     const subId = isStudent ? member.admission_number : member.staff_id;
-    const dept = isStudent ? member.class?.name : member.department?.name;
-    const role = isStudent ? "Student" : member.designation?.name;
+    const deptData = isStudent ? member.class : member.department;
+    const designationData = isStudent ? null : member.designation;
+    
+    const dept = (Array.isArray(deptData) ? deptData[0] : deptData)?.name;
+    const role = isStudent ? "Student" : (Array.isArray(designationData) ? designationData[0] : designationData)?.name;
 
     return (
         <div className="w-[240px] aspect-[1/1.58] bg-white rounded-2xl border-2 border-slate-900 shadow-xl overflow-hidden flex flex-col print-area mx-auto bg-gradient-to-b from-white to-slate-50">

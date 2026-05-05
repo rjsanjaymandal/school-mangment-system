@@ -1,6 +1,7 @@
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 import { Metadata } from "next";
 
@@ -31,17 +32,19 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geist.variable} font-sans antialiased flex flex-col min-h-screen`}>
+      <body className={`${geist.variable} font-sans antialiased flex flex-col min-h-screen`} suppressHydrationWarning>
         {isImpersonating && (
           <ImpersonationBanner 
             targetName={effectiveUser?.full_name || "Unknown"} 
             targetRole={effectiveRole || "unknown"}
           />
         )}
-        <main className="flex-1 w-full overflow-x-hidden">
-          {children}
-        </main>
-        <Toaster />
+        <ReactQueryProvider>
+          <main className="flex-1 w-full overflow-x-hidden">
+            {children}
+          </main>
+          <Toaster />
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -40,7 +40,7 @@ export default async function MessagesPage() {
       <ERPCard
         title="Messages"
         description="View and send messages"
-        icon={MessageSquare}
+        icon={<MessageSquare className="h-5 w-5" />}
         color="blue"
       >
         <MessagesDashboard
