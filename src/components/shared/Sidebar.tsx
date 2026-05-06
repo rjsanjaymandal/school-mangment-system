@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/lib/services/user";
+import { createClient } from "@/lib/supabase/client";
 
 interface NavItem {
   name: string;
@@ -187,7 +188,8 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
     if (initialProfile) return;
     let active = true;
     const fetchProfile = async () => {
-      const profile = await UserService.getCurrentProfile();
+      const supabase = createClient();
+      const profile = await UserService.getCurrentProfile(supabase);
       if (active && profile && !("error" in profile)) {
         setUserProfile(profile);
       }

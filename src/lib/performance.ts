@@ -59,7 +59,7 @@ export const isBrowser = typeof window !== "undefined";
 // Lazy load utility for heavy components
 export function lazyLoad<T>(importFn: () => Promise<{ default: T }>) {
   return async () => {
-    const module = await importFn();
-    return { default: module.default };
+    const mod = await importFn();
+    return { default: mod.default };
   };
 }

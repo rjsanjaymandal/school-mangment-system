@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { UserService } from "@/lib/services/user";
 import { startImpersonation } from "@/lib/services/impersonation";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import {
   Table,
@@ -51,7 +52,8 @@ export function UserManagement() {
 
   const fetchUsers = async () => {
     setIsRefreshing(true);
-    const data = await UserService.getAllProfiles();
+    const supabase = createClient();
+    const data = await UserService.getAllProfiles(supabase);
     if (data && !("error" in data)) {
       setUsers(data);
     } else {
@@ -65,7 +67,8 @@ export function UserManagement() {
     let active = true;
 
     const loadUsers = async () => {
-      const data = await UserService.getAllProfiles();
+      const supabase = createClient();
+      const data = await UserService.getAllProfiles(supabase);
       if (!active) return;
 
       if (data && !("error" in data)) {
@@ -86,7 +89,8 @@ export function UserManagement() {
   }, []);
 
   const handleRoleUpdate = async (userId: string, newRole: any) => {
-    const res = await UserService.updateProfileRole(userId, newRole);
+    const supabase = createClient();
+    const res = await UserService.updateProfileRole(supabase, userId, newRole);
     if (res && !("error" in res)) {
       toast.success(`Role updated to ${newRole}`);
       setUsers(
@@ -98,7 +102,8 @@ export function UserManagement() {
   };
 
   const handleDeactivate = async (userId: string) => {
-    const res = await UserService.deactivateUser(userId);
+    const supabase = createClient();
+    const res = await UserService.deactivateUser(supabase, userId);
     if (res && !("error" in res)) {
       toast.success("User access deactivated");
     } else {

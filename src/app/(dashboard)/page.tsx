@@ -28,8 +28,8 @@ export default async function DashboardPage() {
 
   // Parallelize all independent data fetches
   const [statsData, recentLogs, currentAY] = await Promise.all([
-    UserService.getSystemStats(),
-    AuditService.getAuditEntries(),
+    UserService.getSystemStats(supabase),
+    AuditService.getAuditEntries(supabase),
     supabase
       .from("academic_years")
       .select("id, name")

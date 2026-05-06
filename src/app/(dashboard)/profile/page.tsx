@@ -23,7 +23,7 @@ export default async function ProfilePage() {
         redirect("/login");
     }
 
-    const profile = await UserService.getCurrentProfile();
+    const profile = await UserService.getCurrentProfile(supabase);
     const role = profile && !("error" in profile) ? profile.role : "student";
     const fullName = profile && !("error" in profile) ? profile.full_name : "User Profile";
 

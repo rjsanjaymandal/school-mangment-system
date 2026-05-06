@@ -1,7 +1,6 @@
-import { createClient } from "@/lib/supabase/client";
-import { cache } from "react";
 import { handleServiceError } from "../error-handler";
 import { AuditService } from "./audit";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * User Service
@@ -11,9 +10,8 @@ export const UserService = {
   /**
    * Fetches the current user's profile and joined role data.
    */
-  getCurrentProfile: cache(async () => {
+  getCurrentProfile: async (supabase: SupabaseClient) => {
     try {
-      const supabase = createClient();
       const { data: { user }, error: authError } = await supabase.auth.getUser();
 
       if (authError) {
@@ -44,17 +42,15 @@ export const UserService = {
       if (error?.name === 'AuthSessionMissingError' || error?.message?.includes('session missing')) {
         return null;
       }
-      return handleServiceError(error);
     }
-  }),
+  },
 
   /**
    * Manually syncs the current role to auth metadata if needed (fallback).
    */
-  async syncRoleMetadata() {
+  async syncRoleMetadata(supabase: SupabaseClient) {
     try {
-      const supabase = createClient();
-      const profile = await this.getCurrentProfile();
+      const profile = await this.getCurrentProfile(supabase);
       if (!profile || 'error' in profile) return;
 
       // Note: Updating auth.users metadata usually requires service_role or trigger
@@ -69,9 +65,8 @@ export const UserService = {
   /**
    * Admin only: Fetches all profiles in the system.
    */
-  async getAllProfiles() {
+  async getAllProfiles(supabase: SupabaseClient) {
     try {
-      const supabase = createClient();
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -87,9 +82,8 @@ export const UserService = {
   /**
    * Admin only: Updates a user's role and triggers metadata sync.
    */
-  async updateProfileRole(userId: string, role: 'admin' | 'teacher' | 'student' | 'parent') {
+  async updateProfileRole(supabase: SupabaseClient, userId: string, role: 'admin' | 'teacher' | 'student' | 'parent') {
     try {
-      const supabase = createClient();
 
       // Get current user for audit log
       const { data: { user: actor } } = await supabase.auth.getUser();
@@ -104,7 +98,7 @@ export const UserService = {
       if (error) throw error;
 
       // Log action
-      await AuditService.logAction({
+      await AuditService.logAction(supabase, {
         actor_id: actor?.id,
         action: "UPDATE_ROLE",
         entity_type: "profile",
@@ -121,7 +115,7 @@ export const UserService = {
   /**
    * Updates the current user's profile information.
    */
-  async updateProfile(updates: { 
+  async updateProfile(supabase: SupabaseClient, updates: { 
     first_name?: string; 
     last_name?: string; 
     full_name?: string;
@@ -130,7 +124,6 @@ export const UserService = {
     address?: string;
   }) {
     try {
-      const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
@@ -151,9 +144,8 @@ export const UserService = {
   /**
    * Admin only: Deactivates a user's access.
    */
-  async deactivateUser(userId: string) {
+  async deactivateUser(supabase: SupabaseClient, userId: string) {
     try {
-      const supabase = createClient();
 
       // Get current user for audit log
       const { data: { user: actor } } = await supabase.auth.getUser();
@@ -170,7 +162,7 @@ export const UserService = {
       if (error) throw error;
 
       // Log action
-      await AuditService.logAction({
+      await AuditService.logAction(supabase, {
         actor_id: actor?.id,
         action: "DEACTIVATE_USER",
         entity_type: "profile",
@@ -186,9 +178,8 @@ export const UserService = {
   /**
    * Fetches system-wide statistics for the Dashboard.
    */
-  getSystemStats: cache(async () => {
+  getSystemStats: async (supabase: SupabaseClient) => {
     try {
-      const supabase = createClient();
 
       const [
         { count: studentCount },
@@ -213,5 +204,5 @@ export const UserService = {
     } catch (error) {
       return handleServiceError(error);
     }
-  })
+  }
 };

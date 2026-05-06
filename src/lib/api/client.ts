@@ -1,6 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
-async function getSupabase() {
+function getSupabase() {
   return createClient();
 }
 

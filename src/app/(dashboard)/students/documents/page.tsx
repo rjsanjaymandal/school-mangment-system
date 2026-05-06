@@ -56,34 +56,46 @@ export default function StudentDocumentsPage() {
   const [uploading, setUploading] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // 1. Fetch Students using React Query
   const { data: students = [], isLoading: loadingStudents, error: studentsError } = useQuery({
     queryKey: ['students-list'],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
           .from("students")
-          .select(`
-            id,
-            admission_number,
-            profile:profiles(full_name, first_name, last_name),
-            class:classes(name)
-          `)
+          .select("id, admission_number")
           .order("admission_number", { ascending: true })
           .limit(200);
 
         if (error) {
-          console.error("Supabase error fetching students:", error.message, error.details);
-          throw new Error(error.message || "Failed to fetch students");
+          console.error("Supabase error:", error);
+          throw new Error(error.message);
         }
+
+        if (!data || data.length === 0) return [];
+
+        const studentIds = data.map(s => s.id);
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, first_name, last_name")
+          .in("id", studentIds);
+          
+        const { data: studentClasses } = await supabase.from("students").select("id, class_id").in("id", studentIds);
+        const classIds = [...new Set(studentClasses?.map(s => s.class_id).filter(Boolean) || [])];
+        const { data: classes } = await supabase.from("classes").select("id, name").in("id", classIds);
+
+        const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+        const classMap = new Map(classes?.map(c => [c.id, c.name]) || []);
+        const studentClassMap = new Map(studentClasses?.map(s => [s.id, s.class_id]) || []);
 
         return (data || []).map((s: any) => ({
           id: s.id,
           admission_number: s.admission_number,
-          full_name: s.profile?.first_name 
-            ? `${s.profile.first_name} ${s.profile.last_name || ''}`.trim() 
-            : (s.profile?.full_name || "Unknown"),
-          class_name: s.class?.name || "N/A",
+          full_name: (() => {
+            const p = profileMap.get(s.id);
+            if (!p) return "Unknown";
+            return `${p.first_name || ''} ${p.last_name || ''}`.trim() || "Unknown";
+          })(),
+          class_name: classMap.get(studentClassMap.get(s.id)) || "N/A",
         }));
       } catch (err: any) {
         console.error("Error fetching students:", err?.message || err);
@@ -94,66 +106,39 @@ export default function StudentDocumentsPage() {
     retry: 2,
   });
 
-  // 2. Fetch Documents for Selected Student
   const { data: documents = [], isLoading: loadingDocuments } = useQuery({
     queryKey: ['student-documents', selectedStudent?.id],
     queryFn: async () => {
       if (!selectedStudent) return [];
-      const { data, error } = await supabase
-        .from("student_documents")
-        .select("*")
-        .eq("student_id", selectedStudent.id);
-      
+      const { data, error } = await supabase.from("student_documents").select("*").eq("student_id", selectedStudent.id);
       if (error) throw error;
       return data || [];
     },
-    enabled: !!selectedStudent?.id, // Only run when a student is selected
+    enabled: !!selectedStudent?.id,
   });
 
-  const filteredStudents = students.filter(
-    (s: Student) =>
-      (s.admission_number?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-      (s.full_name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-      (s.class_name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
+  const filteredStudents = students.filter((s: Student) =>
+    (s.admission_number?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+    (s.full_name?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+    (s.class_name?.toLowerCase() || "").includes(searchQuery.toLowerCase())
   );
-
-  const getDocumentStatus = (docType: string) => {
-    return documents.find((d: StudentDocument) => d.doc_type === docType);
-  };
 
   const handleFileUpload = async (docType: string, file: File) => {
     if (!selectedStudent) return;
     setUploading(docType);
-    
     try {
       const filePath = `${selectedStudent.id}/${docType}/${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("student-docs")
-        .upload(filePath, file);
-
+      const { data: uploadData, error: uploadError } = await supabase.storage.from("student-docs").upload(filePath, file);
       if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("student-docs")
-        .getPublicUrl(filePath);
-
-      const fileUrl = urlData.publicUrl;
-
-      const { error: dbError } = await supabase
-        .from("student_documents")
-        .upsert({
-          student_id: selectedStudent.id,
-          doc_type: docType,
-          file_url: fileUrl,
-          is_verified: false,
-          uploaded_at: new Date().toISOString(),
-        }, {
-          onConflict: 'student_id,doc_type'
-        });
-
+      const { data: urlData } = supabase.storage.from("student-docs").getPublicUrl(filePath);
+      const { error: dbError } = await supabase.from("student_documents").upsert({
+        student_id: selectedStudent.id,
+        doc_type: docType,
+        file_url: urlData.publicUrl,
+        is_verified: false,
+        uploaded_at: new Date().toISOString(),
+      }, { onConflict: 'student_id,doc_type' });
       if (dbError) throw dbError;
-
-      // Invalidate query to refetch instantly
       queryClient.invalidateQueries({ queryKey: ['student-documents', selectedStudent.id] });
       alert("Document uploaded successfully!");
     } catch (error) {
@@ -164,53 +149,20 @@ export default function StudentDocumentsPage() {
     }
   };
 
-  const handleDeleteDocument = async (docType: string) => {
-    if (!selectedStudent) return;
-    const confirmDelete = window.confirm("Are you sure you want to delete this document?");
-    if (!confirmDelete) return;
-
-    const { error } = await supabase
-      .from("student_documents")
-      .delete()
-      .match({ student_id: selectedStudent.id, doc_type: docType });
-
-    if (error) {
-      console.error("Error deleting:", error);
-      alert("Failed to delete document");
-      return;
-    }
-
-    queryClient.invalidateQueries({ queryKey: ['student-documents', selectedStudent.id] });
-  };
-
   const handleVerifyDocument = async (docType: string, verified: boolean) => {
     if (!selectedStudent) return;
-
-    const { error } = await supabase
-      .from("student_documents")
-      .update({ is_verified: verified })
-      .match({ student_id: selectedStudent.id, doc_type: docType });
-
-    if (error) {
-      console.error("Error verifying:", error);
-      return;
-    }
-
+    const { error } = await supabase.from("student_documents").update({ is_verified: verified }).match({ student_id: selectedStudent.id, doc_type: docType });
+    if (error) { console.error("Error verifying:", error); return; }
     queryClient.invalidateQueries({ queryKey: ['student-documents', selectedStudent.id] });
   };
 
-  // Virtualized Row Component
-  const StudentRow = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const student = filteredStudents[index];
-    const isSelected = selectedStudent?.id === student.id;
+  interface StudentRowProps { index: number; style: React.CSSProperties; data: { students: Student[]; selectedStudentId: string | undefined; onSelect: (student: Student) => void; }; }
+  const StudentRow = ({ index, style, students, selectedStudentId, onSelect }: any) => {
+    const student = students[index];
+    if (!student) return null;
+    const isSelected = selectedStudentId === student.id;
     return (
-      <div 
-        style={style} 
-        onClick={() => setSelectedStudent(student)}
-        className={`flex flex-col justify-center px-4 cursor-pointer border-b border-dashed hover:bg-emerald-50 transition-colors ${
-          isSelected ? "bg-emerald-50" : ""
-        }`}
-      >
+      <div style={style} onClick={() => onSelect(student)} className={`flex flex-col justify-center px-4 cursor-pointer border-b border-dashed hover:bg-emerald-50 transition-colors ${isSelected ? "bg-emerald-50" : ""}`}>
         <div className="flex justify-between items-center w-full">
           <div>
             <p className="text-sm font-semibold text-slate-800">{student.full_name}</p>
@@ -231,11 +183,8 @@ export default function StudentDocumentsPage() {
         <span>/</span>
         <span className="text-foreground font-medium">Documents Manager</span>
       </div>
-
       <h1 className="text-2xl font-bold text-slate-800">Documents Manager</h1>
-
       <div className="flex gap-6 h-[calc(100vh-180px)]">
-        {/* Left Panel - Student Selection (Virtualized) */}
         <div className="w-[40%] flex flex-col">
           <ERPCard className="flex-1 flex flex-col" accentColor="emerald">
             <CardHeader className="pb-3 border-b">
@@ -244,51 +193,38 @@ export default function StudentDocumentsPage() {
             <CardContent className="flex-1 flex flex-col p-4 relative">
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by Adm No., Name, or Class..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
-                />
+                <Input placeholder="Search by Adm No., Name, or Class..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
               </div>
-
               <div className="flex-1 overflow-hidden relative">
                 {loadingStudents ? (
                   <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
                     <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
                   </div>
                 ) : studentsError ? (
-                  <div className="text-center py-8 text-red-500">
-                    <p className="font-medium">Error loading students</p>
-                    <p className="text-sm mt-1">{studentsError.message}</p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="mt-3"
-                      onClick={() => queryClient.invalidateQueries({ queryKey: ['students-list'] })}
-                    >
-                      Retry
-                    </Button>
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+                    <p className="text-red-500">Error: {studentsError.message}</p>
                   </div>
                 ) : filteredStudents.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    No students found
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+                    <p className="text-muted-foreground">No students found</p>
                   </div>
                 ) : (
                   <List
-                    style={{ height: 500, width: "100%" }}
+                    style={{ height: 400, width: "100%" }}
                     rowCount={filteredStudents.length}
                     rowHeight={70}
                     rowComponent={StudentRow}
-                    rowProps={{} as any}
+                    rowProps={{
+                      students: filteredStudents,
+                      selectedStudentId: selectedStudent?.id,
+                      onSelect: setSelectedStudent
+                    }}
                   />
                 )}
               </div>
             </CardContent>
           </ERPCard>
         </div>
-
-        {/* Right Panel - Manage Documents */}
         <div className="w-[60%]">
           <div className="sticky top-0">
             <ERPCard accentColor="emerald" className="min-h-[600px]">
@@ -297,165 +233,57 @@ export default function StudentDocumentsPage() {
                   <FileText className="h-5 w-5 text-emerald-600" />
                   Manage Documents
                 </CardTitle>
-                {selectedStudent && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Student: <span className="font-medium text-foreground">{selectedStudent.full_name}</span> 
-                    ({selectedStudent.admission_number})
-                  </p>
-                )}
+                {selectedStudent && <p className="text-sm text-muted-foreground mt-1">Student: <span className="font-medium text-foreground">{selectedStudent.full_name}</span> ({selectedStudent.admission_number})</p>}
               </CardHeader>
               <CardContent className="p-4">
-                {!selectedStudent ? (
-                  <div className="flex flex-col items-center justify-center h-[400px] text-muted-foreground">
-                    <User className="h-12 w-12 mb-4 opacity-50" />
-                    <p>Select a student from the left to manage their documents</p>
-                  </div>
-                ) : loadingDocuments ? (
-                  // Pulse Skeleton Loader
-                  <div className="grid grid-cols-2 gap-4">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <div key={i} className="border-2 border-slate-100 rounded-lg p-4 animate-pulse">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="h-5 w-5 bg-slate-200 rounded-full" />
-                          <div className="h-4 w-32 bg-slate-200 rounded-md" />
-                        </div>
-                        <div className="h-20 bg-slate-100 rounded-md w-full mb-3" />
-                        <div className="h-4 w-20 bg-slate-200 rounded-md mx-auto" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-4">
+                {selectedStudent ? (
+                  <div className="grid gap-4">
                     {DOC_TYPES.map((doc) => {
-                      const docStatus = getDocumentStatus(doc.key);
-                      const isImage = doc.key.includes("photo") || doc.key.includes("signature");
-                      const isUploading = uploading === doc.key;
-
+                      const docData = documents.find((d: StudentDocument) => d.doc_type === doc.key);
+                      const Icon = doc.icon;
                       return (
-                        <div
-                          key={doc.key}
-                          className={`border-2 border-dashed rounded-lg p-4 ${
-                            docStatus?.file_url ? "border-emerald-200 bg-emerald-50/30" : "border-slate-200"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 mb-3">
-                            <doc.icon className="h-5 w-5 text-emerald-600" />
-                            <span className="font-medium text-sm">{doc.label}</span>
+                        <div key={doc.key} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-5 w-5 text-muted-foreground" />
+                            <span className="font-medium">{doc.label}</span>
+                            {docData?.is_verified && <Badge variant="secondary" className="bg-emerald-100 text-emerald-700">Verified</Badge>}
                           </div>
-
-                          {docStatus?.file_url ? (
-                            <div className="space-y-3">
-                              {isImage && (
-                                <div className="relative h-24 w-full rounded-md overflow-hidden bg-slate-100">
-                                  <Image
-                                    src={docStatus.file_url}
-                                    alt={doc.label}
-                                    fill
-                                    className="object-cover"
-                                  />
-                                  <button
-                                    onClick={() => setPreviewUrl(docStatus.file_url)}
-                                    className="absolute top-1 right-1 bg-white/80 p-1 rounded-md hover:bg-white"
-                                  >
-                                    <Eye className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              )}
-                              
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  {docStatus.is_verified ? (
-                                    <Badge variant="default" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-                                      <CheckCircle className="h-3 w-3 mr-1" />
-                                      Verified
-                                    </Badge>
-                                  ) : (
-                                    <Badge variant="secondary" className="bg-amber-100 text-amber-700 hover:bg-amber-100">
-                                      <XCircle className="h-3 w-3 mr-1" />
-                                      Pending
-                                    </Badge>
-                                  )}
-                                </div>
-                                
-                                <div className="flex gap-1">
-                                  {!docStatus.is_verified && (
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-7 text-xs border-emerald-500 text-emerald-600 hover:bg-emerald-50"
-                                      onClick={() => handleVerifyDocument(doc.key, true)}
-                                    >
-                                      Verify
-                                    </Button>
-                                  )}
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-7 text-xs text-red-500 hover:bg-red-50 hover:text-red-600"
-                                    onClick={() => handleDeleteDocument(doc.key)}
-                                  >
-                                    <Trash2 className="h-3 w-3" />
+                          <div className="flex items-center gap-2">
+                            {docData?.file_url ? (
+                              <>
+                                <Button variant="ghost" size="sm" onClick={() => setPreviewUrl(docData.file_url)}><Eye className="h-4 w-4" /></Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleVerifyDocument(doc.key, !docData.is_verified)}>
+                                  {docData.is_verified ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                                </Button>
+                              </>
+                            ) : (
+                              <div className="relative">
+                                <Input type="file" className="hidden" id={`upload-${doc.key}`} onChange={(e) => e.target.files?.[0] && handleFileUpload(doc.key, e.target.files[0])} accept=".pdf,.jpg,.jpeg,.png" />
+                                <label htmlFor={`upload-${doc.key}`}>
+                                  <Button variant="outline" size="sm" asChild disabled={uploading === doc.key}>
+                                    <span><Upload className="h-4 w-4 mr-1" /> Upload</span>
                                   </Button>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="space-y-3">
-                              {isUploading ? (
-                                <div className="flex items-center justify-center h-20 bg-slate-50 rounded-md">
-                                  <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
-                                  <span className="ml-2 text-sm text-muted-foreground">Uploading...</span>
-                                </div>
-                              ) : (
-                                <label className="flex flex-col items-center justify-center h-20 bg-slate-50 rounded-md cursor-pointer hover:bg-slate-100 transition-colors">
-                                  <Upload className="h-5 w-5 text-muted-foreground mb-1" />
-                                  <span className="text-xs text-muted-foreground">Choose File</span>
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    accept={isImage ? "image/*" : ".pdf,.jpg,.jpeg,.png"}
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) handleFileUpload(doc.key, file);
-                                    }}
-                                  />
                                 </label>
-                              )}
-                              <p className="text-xs text-center text-muted-foreground font-semibold">Missing</p>
-                            </div>
-                          )}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
                   </div>
+                ) : (
+                  <div className="text-center py-12 text-muted-foreground">Select a student to manage their documents</div>
                 )}
               </CardContent>
             </ERPCard>
           </div>
         </div>
       </div>
-
-      {/* Preview Modal */}
       {previewUrl && (
-        <div 
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setPreviewUrl(null)}
-        >
-          <div className="bg-white rounded-lg p-4 max-w-2xl max-h-[80vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-medium">Document Preview</h3>
-              <Button variant="ghost" size="sm" onClick={() => setPreviewUrl(null)}>
-                <XCircle className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="relative w-full h-[60vh]">
-              <Image
-                src={previewUrl}
-                alt="Preview"
-                fill
-                className="object-contain"
-              />
-            </div>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setPreviewUrl(null)}>
+          <div className="bg-white p-4 rounded-lg max-w-2xl w-full">
+            <div className="flex justify-end"><Button variant="ghost" onClick={() => setPreviewUrl(null)}><XCircle className="h-4 w-4" /></Button></div>
+            <Image src={previewUrl} alt="Preview" width={800} height={600} className="w-full h-auto" />
           </div>
         </div>
       )}

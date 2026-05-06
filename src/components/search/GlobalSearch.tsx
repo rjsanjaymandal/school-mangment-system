@@ -38,7 +38,6 @@ export function GlobalSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isAIProcessing, setIsAIProcessing] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -56,19 +55,15 @@ export function GlobalSearch() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    if (query.length > 1) {
-      const filtered = MOCK_RESULTS.filter(
+  // Derived state for search results to avoid setState in effect
+  const filteredResults = query.length > 1 
+    ? MOCK_RESULTS.filter(
         r => r.title.toLowerCase().includes(query.toLowerCase()) || 
              r.subtitle.toLowerCase().includes(query.toLowerCase())
-      );
-      setResults(filtered);
-      setShowSuggestions(true);
-    } else {
-      setResults([]);
-      setShowSuggestions(false);
-    }
-  }, [query]);
+      )
+    : [];
+
+  const showSuggestions = query.length > 1 && !isAIProcessing;
 
   const handleAISearch = (suggestion: string) => {
     setQuery(suggestion);
@@ -87,7 +82,7 @@ export function GlobalSearch() {
       } else {
         setResults(MOCK_RESULTS);
       }
-      setShowSuggestions(false);
+      // suggestions will be hidden by isAIProcessing
     }, 1000);
   };
 
@@ -154,9 +149,9 @@ export function GlobalSearch() {
                 </div>
               ) : (
                 <div className="max-h-80 overflow-y-auto">
-                  {results.length > 0 ? (
+                  {(results.length > 0 || filteredResults.length > 0) ? (
                     <div className="p-2">
-                      {results.map(result => (
+                      {(results.length > 0 ? results : filteredResults).map(result => (
                         <Link
                           key={result.id}
                           href={result.href}

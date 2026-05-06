@@ -11,11 +11,13 @@ import { UserService } from "@/lib/services/user";
 import { Badge } from "@/components/ui/badge";
 import { AdminCharts } from "./AdminCharts";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminDashboard() {
+  const supabase = await createClient();
   const [academicYear, statsData] = await Promise.all([
-    InstitutionalService.getCurrentAcademicYear().catch((e: any) => ({ error: e.message })),
-    UserService.getSystemStats().catch((e: any) => ({ error: e.message })),
+    InstitutionalService.getCurrentAcademicYear(supabase).catch((e: any) => ({ error: e.message })),
+    UserService.getSystemStats(supabase).catch((e: any) => ({ error: e.message })),
   ]);
 
   const realStats =

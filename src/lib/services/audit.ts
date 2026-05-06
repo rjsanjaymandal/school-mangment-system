@@ -1,14 +1,13 @@
-import { createClient } from "@/lib/supabase/client";
-import { cache } from "react";
 import { auditLogSchema } from "../validations";
 import { handleServiceError } from "../error-handler";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Audit Service
  * Provides immutable institutional logging for compliance and security auditing.
  */
 export const AuditService = {
-  async logAction(log: {
+  async logAction(supabase: SupabaseClient, log: {
     actor_id?: string;
     action: string;
     entity_type: string;
@@ -16,7 +15,6 @@ export const AuditService = {
     old_data?: any;
     new_data?: any;
   }) {
-    const supabase = createClient();
     
     // Validate log data
     const validated = auditLogSchema.parse(log);
@@ -31,9 +29,8 @@ export const AuditService = {
     }
   },
 
-  getAuditEntries: cache(async (entityType?: string, entityId?: string) => {
+  getAuditEntries: async (supabase: SupabaseClient, entityType?: string, entityId?: string) => {
     try {
-      const supabase = createClient();
       let query = supabase
         .from("audit_logs")
         .select(`
@@ -51,5 +48,5 @@ export const AuditService = {
     } catch (error) {
       return handleServiceError(error);
     }
-  })
+  }
 };

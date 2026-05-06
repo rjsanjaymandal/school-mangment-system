@@ -32,7 +32,8 @@ export default function LauncherPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const profile = await UserService.getCurrentProfile();
+        const supabase = createClient();
+        const profile = await UserService.getCurrentProfile(supabase);
         if (profile && !("error" in profile)) {
           setUserProfile(profile);
         } else {

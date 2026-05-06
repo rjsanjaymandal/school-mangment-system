@@ -222,24 +222,24 @@ export function usePerformanceMetrics() {
     if (typeof window === "undefined") return;
 
     const observer = new PerformanceObserver((list) => {
-      const newMetrics = { ...metrics };
-      
-      for (const entry of list.getEntries()) {
-        if (entry.entryType === "first-contentful-paint") {
-          newMetrics.fcp = entry.startTime;
+      setMetrics((prev) => {
+        const next = { ...prev };
+        for (const entry of list.getEntries()) {
+          if (entry.entryType === "first-contentful-paint") {
+            next.fcp = entry.startTime;
+          }
+          if (entry.entryType === "largest-contentful-paint") {
+            next.lcp = entry.startTime;
+          }
+          if (entry.entryType === "first-input") {
+            next.fid = (entry as any).processingStart - entry.startTime;
+          }
+          if (entry.entryType === "layout-shift") {
+            next.cls += (entry as any).value;
+          }
         }
-        if (entry.entryType === "largest-contentful-paint") {
-          newMetrics.lcp = entry.startTime;
-        }
-        if (entry.entryType === "first-input") {
-          newMetrics.fid = (entry as any).processingStart - entry.startTime;
-        }
-        if (entry.entryType === "layout-shift") {
-          newMetrics.cls += (entry as any).value;
-        }
-      }
-      
-      setMetrics(newMetrics);
+        return next;
+      });
     });
 
     observer.observe({ 

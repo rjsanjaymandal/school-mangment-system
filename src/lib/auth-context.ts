@@ -1,15 +1,21 @@
 import { cache } from "react";
-import { createClient } from "./supabase/server";
-import { cookies } from "next/headers";
+import { createClient as createBrowserClient } from "./supabase/client";
+import { createClient as createServerClient } from "./supabase/server";
+
+async function getClient() {
+  if (typeof window !== "undefined") {
+    return createBrowserClient();
+  }
+  return createServerClient();
+}
 
 /**
  * Optimized getAuthContext - Uses React cache to prevent duplicate calls
  * within the same request and returns cached role for instant sidebar rendering
  */
 export const getAuthContext = cache(async function getAuthContext() {
-  const supabase = await createClient();
+  const supabase = await getClient();
   
-  // Fast auth check
   const { data: { user: realUser }, error } = await supabase.auth.getUser();
   
   if (error || !realUser) {
@@ -23,10 +29,14 @@ export const getAuthContext = cache(async function getAuthContext() {
     };
   }
 
-  const cookieStore = await cookies();
-  const impersonationId = cookieStore.get("impersonation_user_id")?.value;
+  let impersonationId: string | undefined;
+  if (typeof window === "undefined") {
+    const { cookies } = await import("next/headers");
+    impersonationId = (await cookies()).get("impersonation_user_id")?.value;
+  } else {
+    impersonationId = undefined;
+  }
 
-  // Quick profile fetch - single query
   const { data: realProfile } = await supabase
     .from("profiles")
     .select("id, full_name, role, avatar_url, email, phone")
@@ -35,7 +45,6 @@ export const getAuthContext = cache(async function getAuthContext() {
 
   const realRole = realProfile?.role || "student";
   
-  // If not admin, no need to check impersonation
   if (realRole !== "admin" || !impersonationId) {
     return { 
       realUser, 
@@ -47,7 +56,6 @@ export const getAuthContext = cache(async function getAuthContext() {
     };
   }
 
-  // Only check impersonation if admin
   const { data: impersonationProfile } = await supabase
     .from("profiles")
     .select("id, full_name, role, avatar_url, email, phone")

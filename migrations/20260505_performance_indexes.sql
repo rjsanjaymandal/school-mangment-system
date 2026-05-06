@@ -1,4 +1,4 @@
--- Performance Optimization Indexes
+    -- Performance Optimization Indexes
 -- Run this in Supabase SQL Editor
 
 -- 1. Class Enrollments

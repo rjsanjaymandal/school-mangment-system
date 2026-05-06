@@ -30,7 +30,7 @@ export async function startImpersonation(targetUserId: string) {
     maxAge: 60 * 60 * 1, // 1 hour
   });
 
-  await AuditService.logAction({
+  await AuditService.logAction(supabase, {
     actor_id: admin.id,
     action: "SHADOW_START",
     entity_type: "user",
@@ -56,7 +56,7 @@ export async function stopImpersonation() {
   const impersonationId = cookieStore.get("impersonation_user_id")?.value;
   
   if (admin && impersonationId) {
-    await AuditService.logAction({
+    await AuditService.logAction(supabase, {
       actor_id: admin.id,
       action: "SHADOW_STOP",
       entity_type: "user",

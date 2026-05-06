@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/client";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { createClient as defaultClient } from "@/lib/supabase/client";
 import { profileSchema, academicYearSchema, classSchema } from "../validations";
 import { handleServiceError } from "../error-handler";
 import { z } from "zod";
@@ -9,9 +10,9 @@ import { z } from "zod";
  */
 export const InstitutionalService = {
   // --- Profile Operations ---
-  async getProfile(userId: string) {
+  async getProfile(userId: string, clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -26,9 +27,9 @@ export const InstitutionalService = {
   },
 
   // --- Academic Operations ---
-  async getCurrentAcademicYear() {
+  async getCurrentAcademicYear(clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("academic_years")
         .select("*")
@@ -43,9 +44,9 @@ export const InstitutionalService = {
     }
   },
 
-  async getClasses(academicYearId: string) {
+  async getClasses(academicYearId: string, clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("classes")
         .select("*")
@@ -59,9 +60,9 @@ export const InstitutionalService = {
   },
 
   // --- Finance Operations ---
-  async getFeeStatus(studentId: string) {
+  async getFeeStatus(studentId: string, clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("fee_payments")
         .select("*")
@@ -74,9 +75,9 @@ export const InstitutionalService = {
     }
   },
 
-  async getStudents() {
+  async getStudents(clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("students")
         .select(`
@@ -93,9 +94,9 @@ export const InstitutionalService = {
     }
   },
 
-  async getStudentById(id: string) {
+  async getStudentById(id: string, clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("students")
         .select(`
@@ -113,9 +114,9 @@ export const InstitutionalService = {
     }
   },
 
-  async getTeachers() {
+  async getTeachers(clientOverride?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = clientOverride || defaultClient();
       const { data, error } = await supabase
         .from("teachers")
         .select(`
@@ -132,8 +133,8 @@ export const InstitutionalService = {
   },
 
   // --- Real-time Hooks (Setup) ---
-  setupRealtimeMessages(userId: string, callback: (payload: any) => void) {
-    const supabase = createClient();
+  setupRealtimeMessages(userId: string, callback: (payload: any) => void, clientOverride?: SupabaseClient) {
+    const supabase = clientOverride || defaultClient();
     return supabase
       .channel(`user-messages-${userId}`)
       .on(
