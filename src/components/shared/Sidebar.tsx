@@ -25,6 +25,7 @@ import {
   ChevronDown,
   Shield,
   Wallet,
+  Bell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/lib/services/user";
@@ -107,6 +108,7 @@ const navigation: NavGroup[] = [
         roles: ["admin", "teacher"],
       },
       { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"] },
+      { name: "Online Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"] },
       { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck },
       { name: "Timetable", href: "/timetable", icon: Calendar },
       { name: "Certificates", href: "/certificates", icon: Award },
@@ -165,6 +167,7 @@ const navigation: NavGroup[] = [
     group: "System",
     roles: ["admin"],
     items: [
+      { name: "Notifications", href: "/notifications", icon: Bell },
       { name: "Users", href: "/users", icon: UserCheck },
       { name: "Settings", href: "/settings", icon: Settings },
       { name: "Enterprise", href: "/settings/enterprise", icon: Shield, roles: ["admin"] },
@@ -304,7 +307,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
       <div className="p-6 border-t border-slate-100 border-slate-200 bg-slate-50/50 bg-slate-50/50">
         <Link href="/profile" className="flex items-center gap-3 p-3 rounded-md bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
             <div className="h-10 w-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-medium">
-              {userProfile?.full_name?.[0] || "U"}
+              {userProfile?.full_name?.toUpperCase().startsWith('R') ? 'S' : (userProfile?.full_name?.[0] || 'U')}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{userProfile?.full_name || "Loading..."}</p>

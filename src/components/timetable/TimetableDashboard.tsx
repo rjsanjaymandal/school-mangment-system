@@ -49,6 +49,7 @@ import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot } from "@
 import { generateOptimizedSchedule, getTeacherLoad, checkScheduleConflicts, getTodayProxies, markStaffAttendance } from "@/app/actions/timetable-autonomous";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_SLOTS = ["07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
@@ -71,7 +72,22 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
         return WEEKDAYS.includes(detectedDay) ? detectedDay : "Monday";
     }, []);
     const [selectedDay, setSelectedDay] = useState(today);
-    const [selectedClass, setSelectedClass] = useState(classes[0]?.id || "");
+    const [selectedClass, setSelectedClass] = useState("");
+    
+    // Persistence for selected class
+    useEffect(() => {
+        const saved = localStorage.getItem("timetable_selected_class");
+        if (saved) {
+            setSelectedClass(saved);
+        } else if (classes.length > 0) {
+            setSelectedClass(classes[0].id);
+        }
+    }, [classes]);
+
+    const handleClassChange = (val: string) => {
+        setSelectedClass(val);
+        localStorage.setItem("timetable_selected_class", val);
+    };
     const [selectedTeacher, setSelectedTeacher] = useState("");
     const [viewMode, setViewMode] = useState<"class" | "teacher">("class");
     
@@ -462,6 +478,16 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             <span className="text-[10px] font-black uppercase tracking-widest text-primary">
                                 {classes.find((c: any) => c.id === selectedClass)?.teacher?.profile?.full_name || "Not Assigned"}
                             </span>
+                            {hasConflicts && (
+                                <Badge variant="destructive" className="ml-4 animate-pulse text-[10px] h-5">
+                                    <AlertTriangle className="h-3 w-3 mr-1" /> {conflictCount} Conflicts Detected
+                                </Badge>
+                            )}
+                            {todayProxies.length > 0 && (
+                                <Badge variant="secondary" className="ml-2 bg-amber-500/10 text-amber-500 border-amber-500/20 text-[10px] h-5">
+                                    <Zap className="h-3 w-3 mr-1" /> {todayProxies.length} Proxies Today
+                                </Badge>
+                            )}
                         </div>
                     )}
                     <p className="text-muted-foreground mt-4 text-sm max-w-md">
@@ -494,7 +520,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
 
                     {viewMode === "class" ? (
                         <div className="relative group">
-                            <Select value={selectedClass} onValueChange={setSelectedClass}>
+                            <Select value={selectedClass} onValueChange={handleClassChange}>
                                 <SelectTrigger className="w-[240px] h-12 bg-background border-border font-medium">
                                     <SelectValue placeholder="Select Class" />
                                 </SelectTrigger>
@@ -606,11 +632,32 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                                     <SelectValue placeholder="Select Teacher" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {teachers.map((t: any) => (
-                                                        <SelectItem key={t.id} value={t.id}>
-                                                            {t.profile?.full_name}
-                                                        </SelectItem>
-                                                    ))}
+                                                    {teachers.map((t: any) => {
+                                                        const subject = subjects.find(sub => sub.id === slotForm.subject_id);
+                                                        const isExpert = subject?.expertise?.required_tags?.some((tag: string) => 
+                                                            t.expertise_tags?.includes(tag)
+                                                        );
+                                                        const teacherLoad = teacherLoadData.find(ld => ld.teacher_id === t.id);
+                                                        const isOverloaded = teacherLoad?.is_overloaded;
+
+                                                        return (
+                                                            <SelectItem key={t.id} value={t.id}>
+                                                                <div className="flex items-center justify-between w-[300px]">
+                                                                    <span className={cn(
+                                                                        isExpert && "text-emerald-600 font-bold",
+                                                                        isOverloaded && "text-rose-600"
+                                                                    )}>
+                                                                        {t.profile?.full_name}
+                                                                        {isExpert && " (Expert)"}
+                                                                        {isOverloaded && " (Overloaded)"}
+                                                                    </span>
+                                                                    <span className="text-[10px] opacity-50">
+                                                                        {teacherLoad?.daily_hours || 0}/{t.max_daily_hours || 6}h
+                                                                    </span>
+                                                                </div>
+                                                            </SelectItem>
+                                                        );
+                                                    })}
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -720,36 +767,39 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             </Button>
                         )}
                     </div>
-                    <div className="h-[240px] w-full mt-4">
+                    <div className="h-[240px] w-full mt-4 overflow-y-auto pr-2 scrollbar-thin">
                         {teacherLoadData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={teacherLoadData.slice(0, 6)}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
-                                    <XAxis 
-                                        dataKey="teacher_name" 
-                                        axisLine={false} 
-                                        tickLine={false} 
-                                        tick={{ fill: "#88888860", fontSize: 9, fontWeight: "bold" }}
-                                        interval={0}
-                                        tickFormatter={(val) => val.split(' ')[0]}
-                                    />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 9 }} />
-                                    <Tooltip 
-                                        cursor={{ fill: "#ffffff05" }} 
-                                        contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))" }}
-                                    />
-                                    <Legend 
-                                        wrapperStyle={{ fontSize: '10px', paddingTop: '10px' }}
-                                        iconSize={8}
-                                    />
-                                    <Bar name="Scheduled" dataKey="daily_hours" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={25} />
-                                    <Bar name="Max Cap" dataKey="max_daily_hours" fill="hsl(var(--muted))" radius={[4, 4, 0, 0]} barSize={25} />
-                                </BarChart>
-                            </ResponsiveContainer>
+                            <div className="space-y-4">
+                                {teacherLoadData.slice(0, 8).map((t: any) => (
+                                    <div key={t.teacher_id} className="space-y-1.5">
+                                        <div className="flex justify-between items-end">
+                                            <span className="text-[10px] font-bold uppercase tracking-tight truncate max-w-[150px]">
+                                                {t.teacher_name}
+                                            </span>
+                                            <span className={cn(
+                                                "text-[9px] font-black",
+                                                t.is_overloaded ? "text-rose-500" : "text-muted-foreground"
+                                            )}>
+                                                {t.daily_hours} / {t.max_daily_hours} HR
+                                            </span>
+                                        </div>
+                                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                            <div 
+                                                className={cn(
+                                                    "h-full transition-all duration-1000",
+                                                    t.is_overloaded ? "bg-rose-500" : 
+                                                    t.utilization_pct > 80 ? "bg-amber-500" : "bg-primary"
+                                                )}
+                                                style={{ width: `${Math.min(100, t.utilization_pct)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground text-sm h-full flex flex-col justify-center items-center">
-                                <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                                <p>No teaching staff loaded</p>
+                                <Loader2 className="h-8 w-8 mx-auto mb-2 animate-spin opacity-20" />
+                                <p>Calculating staff loads...</p>
                             </div>
                         )}
                     </div>

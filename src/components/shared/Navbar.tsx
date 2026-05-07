@@ -68,7 +68,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
               <Avatar className="h-9 w-9">
                 <AvatarImage src="" alt="User" />
                 <AvatarFallback className="bg-slate-900 text-white text-sm">
-                  {user?.email?.charAt(0) || "U"}
+                  {user?.email?.toLowerCase().startsWith('r') ? 'S' : (user?.email?.charAt(0).toUpperCase() || 'U')}
                 </AvatarFallback>
               </Avatar>
             </Button>

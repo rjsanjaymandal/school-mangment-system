@@ -115,7 +115,7 @@ export default async function TimetablePage() {
 
     const { data: allSubjects } = await supabase
       .from("subjects")
-      .select("*")
+      .select("*, expertise:subject_expertise(*)")
       .order("name");
     subjects = allSubjects || [];
 
