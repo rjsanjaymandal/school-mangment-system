@@ -96,7 +96,7 @@ BEGIN
         
         -- Find all slots for this teacher on this day
         FOR v_slot IN 
-            SELECT ts.id, ts.start_time, ts.end_time, ts.class_id, ts.subject_id
+            SELECT ts.id, ts.start_time, ts.end_time, t.class_id, ts.subject_id
             FROM timetable_slots ts
             JOIN timetables t ON t.id = ts.timetable_id
             WHERE ts.teacher_id = NEW.staff_id

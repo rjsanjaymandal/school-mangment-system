@@ -83,6 +83,7 @@ const navigation: NavGroup[] = [
           { name: "Staff Directory", href: "/hr/directory" },
           { name: "Add Staff", href: "/hr/add-staff" },
           { name: "Role & Permissions", href: "/hr/roles" },
+          { name: "Staff Attendance", href: "/hr/attendance" },
           { name: "Download Center", href: "/hr/download-center" },
         ]
       },
