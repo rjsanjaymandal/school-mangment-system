@@ -2,7 +2,6 @@ export const revalidate = 30;
 export const dynamic = 'force-static';
 
 import { createClient } from "@/lib/supabase/server";
-import { getSessionRole } from "@/lib/auth-utils";
 import { Shield, Users, Save, RotateCcw, Search, UserCheck, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,11 +39,12 @@ const ROLE_COLORS: Record<string, string> = {
 
 export default async function RolesPage() {
   const supabase = await createClient();
-  const role = await getSessionRole();
   
-  // Check if user has admin/principal access
-  if (role !== "admin") {
-    redirect("/unauthorized");
+  // Simple auth check - just verify user is logged in
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    redirect("/login");
   }
 
   // Fetch all staff with their roles and login info

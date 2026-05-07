@@ -9,6 +9,7 @@ import {
     CheckCircle2,
     Zap,
     AlertCircle,
+    AlertTriangle,
     User,
     Activity,
     BookMarked,
@@ -16,6 +17,8 @@ import {
     Trash2,
     Edit,
     Printer,
+    ArrowRightCircle,
+    Loader2,
 } from "lucide-react";
 import { 
     BarChart, Bar, 
@@ -43,6 +46,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot } from "@/app/actions/timetable";
+import { generateOptimizedSchedule, getTeacherLoad, checkScheduleConflicts, getTodayProxies, markStaffAttendance } from "@/app/actions/timetable-autonomous";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -75,6 +79,12 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
     const [isEditSlotOpen, setIsEditSlotOpen] = useState(false);
     const [editingSlot, setEditingSlot] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [generatingSchedule, setGeneratingSchedule] = useState(false);
+    const [teacherLoadData, setTeacherLoadData] = useState<any[]>([]);
+    const [hasConflicts, setHasConflicts] = useState(false);
+    const [conflictCount, setConflictCount] = useState(0);
+    const [todayProxies, setTodayProxies] = useState<any[]>([]);
+    const [showAttendanceDialog, setShowAttendanceDialog] = useState(false);
 
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const selectedTeacherId = selectedTeacher || teachers[0]?.id || "";
@@ -92,7 +102,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
             .sort((a, b) => b.value - a.value).slice(0, 5);
     }, [timetables, selectedClass]);
 
-    const teacherLoadData = useMemo(() => {
+    const teacherLoadPieData = useMemo(() => {
         const teaMap: Record<string, number> = {};
         timetables.forEach(t => {
             t.slots?.forEach((s: any) => {
@@ -308,6 +318,55 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
         });
     }, [timetables, currentAY, selectedClass, selectedDay, viewMode]);
 
+    // Fetch Teacher Load, Conflicts, and Proxies
+    useEffect(() => {
+        async function fetchAutonomousData() {
+            if (!currentAY?.id) return;
+            
+            const [loadResult, conflictResult, proxyResult] = await Promise.all([
+                getTeacherLoad(currentAY.id),
+                checkScheduleConflicts(currentAY.id),
+                getTodayProxies()
+            ]);
+
+            if (loadResult.success) {
+                setTeacherLoadData(loadResult.data || []);
+            }
+            
+            if (conflictResult.success) {
+                setHasConflicts(conflictResult.hasConflicts || false);
+                setConflictCount(conflictResult.data?.length || 0);
+            }
+            
+            if (proxyResult.success) {
+                setTodayProxies(proxyResult.data || []);
+            }
+        }
+        
+        if (isAdminOrTeacher) {
+            fetchAutonomousData();
+        }
+    }, [currentAY?.id, isAdminOrTeacher, timetables]);
+
+    const handleGenerateOptimizedSchedule = async () => {
+        if (!currentAY?.id) {
+            toast.error("No active academic year");
+            return;
+        }
+        
+        setGeneratingSchedule(true);
+        const result = await generateOptimizedSchedule(currentAY.id, selectedClass || undefined);
+        setGeneratingSchedule(false);
+        
+        if (result.success) {
+            const filledCount = result.data?.filter((d: any) => d.was_filled).length || 0;
+            toast.success(`Optimized schedule generated! ${filledCount} slots filled.`);
+            router.refresh();
+        } else {
+            toast.error(result.error || "Failed to generate schedule");
+        }
+    };
+
     // Filter timetable slots based on view mode (Class vs Teacher)
     const activeSlots = useMemo(() => {
         // Aggregate all slots across all timetables for this criteria on this day
@@ -471,6 +530,18 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                     </Button>
 
                     {isAdminOrTeacher && viewMode === "class" && (
+                        <Button 
+                            variant="secondary" 
+                            onClick={handleGenerateOptimizedSchedule} 
+                            disabled={generatingSchedule}
+                            className="h-12 px-6 flex items-center gap-x-2 shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white border-none transition-all hover:scale-105 active:scale-95"
+                        >
+                            {generatingSchedule ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+                            Generate Optimized Schedule
+                        </Button>
+                    )}
+
+                    {isAdminOrTeacher && viewMode === "class" && (
                         <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
                             <DialogTrigger asChild>
                                 <Button className="h-12 px-8 flex items-center gap-x-2 shadow-sm">
@@ -629,32 +700,58 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                 </div>
 
                 <div className="md:col-span-5 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
-                    <div className="mb-8 relative z-10 text-center">
-                        <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground">
-                            Teacher <span className="text-primary font-light px-1">/</span> Load
-                        </h3>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-3">Global Staff Load Profile</p>
+                    <div className="mb-4 relative z-10 flex justify-between items-start">
+                        <div>
+                            <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground">
+                                Teacher <span className="text-primary font-light px-1">/</span> Load
+                            </h3>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-3">Hours Scheduled / Max Hours</p>
+                        </div>
+                        {isAdminOrTeacher && (
+                            <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={handleGenerateOptimizedSchedule}
+                                disabled={generatingSchedule}
+                                className="text-[10px] h-8"
+                            >
+                                {generatingSchedule ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Zap className="h-3 w-3 mr-1" />}
+                                Auto-Schedule
+                            </Button>
+                        )}
                     </div>
-                    <div className="h-[280px] relative z-10">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={teacherLoadData}
-                                    innerRadius={70}
-                                    outerRadius={95}
-                                    paddingAngle={8}
-                                    dataKey="value"
-                                >
-                                    {teacherLoadData.map((entry: any, index: number) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
-                                    ))}
-                                </Pie>
-                                <Tooltip 
-                                    contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
-                                />
-                                <Legend verticalAlign="bottom" height={36}/>
-                            </PieChart>
-                        </ResponsiveContainer>
+                    <div className="h-[240px] w-full mt-4">
+                        {teacherLoadData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={teacherLoadData.slice(0, 6)}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <XAxis 
+                                        dataKey="teacher_name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fill: "#88888860", fontSize: 9, fontWeight: "bold" }}
+                                        interval={0}
+                                        tickFormatter={(val) => val.split(' ')[0]}
+                                    />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 9 }} />
+                                    <Tooltip 
+                                        cursor={{ fill: "#ffffff05" }} 
+                                        contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))" }}
+                                    />
+                                    <Legend 
+                                        wrapperStyle={{ fontSize: '10px', paddingTop: '10px' }}
+                                        iconSize={8}
+                                    />
+                                    <Bar name="Scheduled" dataKey="daily_hours" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={25} />
+                                    <Bar name="Max Cap" dataKey="max_daily_hours" fill="hsl(var(--muted))" radius={[4, 4, 0, 0]} barSize={25} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground text-sm h-full flex flex-col justify-center items-center">
+                                <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                                <p>No teaching staff loaded</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -725,9 +822,14 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                                 className="group relative bg-card border border-border p-5 rounded-xl space-y-4 shadow-sm hover:shadow-md transition-all"
                                             >
                                                 <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-x-2">
+                                                    <div className="flex items-center gap-x-2 flex-wrap">
                                                         <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                                                         <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{s.start_time?.slice(0, 5)} - {s.end_time?.slice(0, 5)}</span>
+                                                        {s.is_proxy && (
+                                                            <Badge variant="secondary" className="text-[8px] h-5 bg-amber-100 text-amber-700 border-amber-200">
+                                                                Proxy Assigned {s.teacher?.profile?.full_name ? `(${s.teacher.profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)})` : ""}
+                                                            </Badge>
+                                                        )}
                                                     </div>
                                                     {isAdminOrTeacher && (
                                                         <div className="flex items-center gap-x-1">
@@ -755,9 +857,17 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                                     <h4 className="font-bold text-foreground text-sm uppercase tracking-tight group-hover:text-primary transition-colors leading-tight">
                                                         {s.subject?.name || "No Subject"}
                                                     </h4>
-                                                    <p className="text-[10px] text-muted-foreground font-semibold flex items-center gap-x-2 uppercase">
+                                                    <p className={`text-[10px] font-semibold flex items-center gap-x-2 uppercase ${s.is_proxy ? 'text-amber-600' : 'text-muted-foreground'}`}>
                                                         {viewMode === "class" ? s.teacher?.profile?.full_name : s.class_name}
+                                                        {s.is_proxy && s.original_teacher_id && (
+                                                            <span className="text-[9px] normal-case">(Original: {s.original_teacher?.profile?.full_name || s.original_teacher?.first_name || "Unknown"})</span>
+                                                        )}
                                                     </p>
+                                                    {s.is_proxy && s.proxy_reason && (
+                                                        <p className="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
+                                                            {s.proxy_reason}
+                                                        </p>
+                                                    )}
                                                     {s.room_number && (
                                                         <p className="text-[9px] text-primary/70 font-bold uppercase tracking-widest border-t border-border pt-1 mt-1 flex items-center gap-x-1">
                                                             <MapPin className="h-2.5 w-2.5" /> Room {s.room_number}
@@ -850,29 +960,36 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                         )}
                     </div>
 
-                    <div className="grid gap-10 md:grid-cols-2">
+                    <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
                         <div className="bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden">
                             <div className="flex items-center justify-between relative z-10">
                                 <div className="space-y-3">
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Schedule Status</p>
                                     <div className="flex items-center gap-x-4">
-                                        <h4 className="text-5xl font-bold text-foreground leading-none">
-                                            {validationIssues.length === 0 ? "Healthy" : "Review"}
+                                        <h4 className="text-4xl font-bold text-foreground leading-none">
+                                            {!hasConflicts && validationIssues.length === 0 ? "Healthy" : "Conflict Detected"}
                                         </h4>
                                         <div className={`px-2 py-1 rounded-md font-bold text-[10px] uppercase ${
-                                            validationIssues.length === 0
+                                            !hasConflicts && validationIssues.length === 0
                                                 ? "bg-primary/10 border border-primary/20 text-primary"
-                                                : "bg-amber-500/10 border border-amber-500/20 text-amber-600"
+                                                : "bg-rose-500/10 border border-rose-500/20 text-rose-600"
                                         }`}>
-                                            {validationIssues.length === 0 ? "No Conflicts" : `${validationIssues.length} Issue${validationIssues.length > 1 ? "s" : ""}`}
+                                            {!hasConflicts && validationIssues.length === 0 ? "All Clear" : `${conflictCount + validationIssues.length} Issue${conflictCount + validationIssues.length > 1 ? "s" : ""}`}
                                         </div>
                                     </div>
                                 </div>
+                                {!hasConflicts && validationIssues.length === 0 ? (
+                                    <CheckCircle2 className="h-8 w-8 text-primary opacity-30" />
+                                ) : (
+                                    <AlertTriangle className="h-8 w-8 text-rose-500 opacity-30" />
+                                )}
                             </div>
                             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
-                                {validationIssues.length === 0
-                                    ? "Schedule validation complete. No time-slot overlaps or resource conflicts detected."
-                                    : validationIssues[0]}
+                                {!hasConflicts && validationIssues.length === 0
+                                    ? "No teacher overlaps or resource conflicts detected."
+                                    : hasConflicts 
+                                        ? `Teacher conflict detected: ${conflictCount} overlap(s)` 
+                                        : validationIssues[0]}
                             </p>
                         </div>
                         
@@ -882,10 +999,36 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Total Slots</p>
                                     <h4 className="text-5xl font-bold text-foreground leading-none">{totalSlots}</h4>
                                 </div>
+                                <Activity className="h-8 w-8 text-primary opacity-20" />
                             </div>
                             <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
                                 Total scheduled periods across the current academic week.
                             </p>
+                        </div>
+
+                        {/* Today's Proxies */}
+                        <div className="bg-card border border-amber-500/30 p-8 rounded-xl shadow-sm relative overflow-hidden">
+                            <div className="flex items-center justify-between relative z-10">
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Today's Proxies</p>
+                                    <h4 className="text-5xl font-bold text-foreground leading-none">{todayProxies.length}</h4>
+                                </div>
+                                <ArrowRightCircle className="h-8 w-8 text-amber-500 opacity-30" />
+                            </div>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
+                                {todayProxies.length === 0 
+                                    ? "No auto-substitutions for today."
+                                    : `${todayProxies.length} substitution(s) assigned automatically.`}
+                            </p>
+                            {todayProxies.length > 0 && (
+                                <div className="mt-2 space-y-1 max-h-20 overflow-y-auto">
+                                    {todayProxies.slice(0, 2).map((proxy: any, idx: number) => (
+                                        <p key={idx} className="text-[9px] text-amber-600 truncate">
+                                            {proxy.original_teacher} → {proxy.proxy_teacher} ({proxy.class_name})
+                                        </p>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -55,7 +55,7 @@ export default async function TimetablePage() {
         .select(`
           *,
           class:classes(*),
-          slots:timetable_slots(*, subject:subjects(*), teacher:teachers(*, profile:profiles(*)))
+          slots:timetable_slots(*, subject:subjects(*), teacher:staff(*, profile:profiles(*)))
         `)
         .eq("class_id", activeClassId)
         .eq("academic_year_id", currentAY?.id || "00000000-0000-0000-0000-000000000000")
@@ -85,7 +85,7 @@ export default async function TimetablePage() {
 
       if (teacherIds.size > 0) {
         const { data: classTeachers } = await supabase
-          .from("teachers")
+          .from("staff")
           .select("*, profile:profiles(*)")
           .in("id", Array.from(teacherIds));
         teachers = classTeachers || [];
@@ -97,7 +97,11 @@ export default async function TimetablePage() {
       .select(`
         *,
         class:classes(*),
-        slots:timetable_slots(*, subject:subjects(*), teacher:teachers(*, profile:profiles(*)))
+        slots:timetable_slots(*, 
+          subject:subjects(*), 
+          teacher:staff(*, profile:profiles(*)),
+          original_teacher:staff!timetable_slots_original_teacher_id_fkey(*, profile:profiles(*))
+        )
       `)
       .eq("academic_year_id", currentAY?.id || "00000000-0000-0000-0000-000000000000")
       .order("day_of_week");
@@ -116,9 +120,22 @@ export default async function TimetablePage() {
     subjects = allSubjects || [];
 
     const { data: allTeachers } = await supabase
-      .from("teachers")
-      .select("*, profile:profiles(*)")
-      .eq("status", "active");
+      .from("staff")
+      .select(`
+        id,
+        staff_id,
+        staff_type,
+        first_name,
+        last_name,
+        status,
+        expertise_tags,
+        proficiency_level,
+        max_daily_hours,
+        max_weekly_hours,
+        profile:profiles(*)
+      `)
+      .eq("status", "active")
+      .eq("staff_type", "teaching");
     teachers = allTeachers || [];
   }
 

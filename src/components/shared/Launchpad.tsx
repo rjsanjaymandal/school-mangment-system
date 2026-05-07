@@ -132,44 +132,46 @@ export function Launchpad({
 
   if (filteredNavigation.length === 0 && searchQuery) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="bg-slate-100 p-6 rounded-md border border-slate-200 mb-4">
-          <LayoutDashboard className="h-10 w-10 text-slate-400" />
+      <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-300">
+        <div className="bg-slate-100 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-6 shadow-sm">
+          <LayoutDashboard className="h-12 w-12 text-slate-400 dark:text-slate-500" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-900">No modules found</h3>
-        <p className="text-sm text-slate-500">Try a different search term</p>
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No modules found</h3>
+        <p className="text-base text-slate-500 dark:text-slate-400 max-w-sm">We couldn't find any modules matching "{searchQuery}". Try a different search term.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-12 pb-12">
       {filteredNavigation.map((group) => (
-        <div key={group.group} className="space-y-4">
-          <div className="flex items-center gap-3">
-            <h3 className="text-sm font-medium text-slate-500 uppercase">
+        <div key={group.group} className="space-y-6 animate-in slide-in-from-bottom-4 fade-in duration-700 fill-mode-both" style={{ animationDelay: `${filteredNavigation.indexOf(group) * 100}ms` }}>
+          <div className="flex items-center gap-4">
+            <h3 className="text-sm font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase bg-white dark:bg-slate-900 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm">
               {group.group}
             </h3>
-            <div className="h-px flex-1 bg-slate-200" />
+            <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent" />
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             {group.items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex flex-col p-4 bg-white border border-slate-200 rounded-md hover:border-emerald-500 hover:shadow-sm transition-all"
+                className="group flex flex-col p-5 bg-white dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 rounded-2xl hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(16,185,129,0.05)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
               >
-                <div className="flex flex-col gap-3">
-                  <div className="w-10 h-10 flex items-center justify-center rounded-md bg-slate-100 text-slate-600 group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
-                    <item.icon className="h-5 w-5" />
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 dark:to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="flex flex-col gap-4 relative z-10">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 group-hover:ring-emerald-500">
+                    <item.icon className="h-6 w-6 stroke-[1.5]" />
                   </div>
 
-                  <div className="space-y-1">
-                    <h3 className="font-medium text-slate-900 text-sm">
+                  <div className="space-y-1.5">
+                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {item.name}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
                       {item.description}
                     </p>
                   </div>

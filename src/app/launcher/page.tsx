@@ -88,9 +88,10 @@ export default function LauncherPage() {
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 relative overflow-hidden font-sans">
       {/* Background Decoration */}
-      <div className="fixed inset-0 pointer-events-none opacity-40 dark:opacity-20">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-400/10 rounded-full blur-[120px]" />
+      <div className="fixed inset-0 pointer-events-none opacity-60 dark:opacity-30 overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/20 dark:bg-blue-500/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-in fade-in duration-1000" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/20 dark:bg-emerald-500/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-in fade-in duration-1000 delay-500" />
+        <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-in fade-in duration-1000 delay-1000" />
       </div>
 
       {/* Top Navigation */}
@@ -153,23 +154,24 @@ export default function LauncherPage() {
       {/* Main Content Hub */}
       <main className="relative z-10 max-w-5xl mx-auto px-6 pt-12 pb-24 page-fade-in">
         <div className="flex flex-col items-center text-center space-y-8 mb-20">
-          <div className="space-y-4">
+          <div className="space-y-4 animate-in slide-in-from-bottom-4 fade-in duration-700">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white leading-tight">
-              {getGreeting()}, {userProfile?.first_name}
+              {getGreeting()}, <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-emerald-400">{userProfile?.first_name}</span>
             </h1>
             <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 font-medium max-w-xl mx-auto">
               Select a module to manage your school activities and records.
             </p>
           </div>
 
-          <div className="relative w-full max-w-xl mt-4 group">
-            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-slate-600 transition-all duration-300" />
+          <div className="relative w-full max-w-2xl mt-4 group animate-in slide-in-from-bottom-8 fade-in duration-700 delay-150">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400 group-focus-within:text-emerald-500 transition-colors duration-300 z-10" />
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Find a module..." 
-              className="w-full pl-16 pr-8 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 soft-shadow-md focus:outline-none focus:border-slate-400 transition-all font-bold text-base text-slate-900 dark:text-white placeholder:text-slate-400 placeholder:font-medium"
+              placeholder="What would you like to manage today?" 
+              className="relative w-full pl-16 pr-8 py-5 rounded-3xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800/80 shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium text-lg text-slate-900 dark:text-white placeholder:text-slate-400 z-10"
             />
           </div>
         </div>
