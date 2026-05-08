@@ -1,5 +1,4 @@
 export const revalidate = 30;
-export const dynamic = 'force-static';
 
 import { getSessionRole } from "@/lib/auth-utils";
 import GradebookDashboard from "@/components/gradebook/GradebookDashboard";
