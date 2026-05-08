@@ -1,5 +1,5 @@
 export const revalidate = 30;
-export const dynamic = 'force-static';
+export const dynamic = 'force-dynamic';
 
 import { createClient } from "@/lib/supabase/server";
 import { PayrollDashboard } from "@/components/payroll/PayrollDashboard";
