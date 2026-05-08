@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { createClient } from "@/lib/supabase/server";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { getSessionRole } from "@/lib/auth-utils";

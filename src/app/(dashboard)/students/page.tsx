@@ -1,4 +1,4 @@
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 import { InstitutionalService } from "@/lib/services/institutional";
 import { getSessionRole } from "@/lib/auth-utils";

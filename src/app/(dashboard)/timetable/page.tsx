@@ -1,4 +1,4 @@
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 import { createClient } from "@/lib/supabase/server";
 import { TimetableDashboard } from "@/components/timetable/TimetableDashboard";
