@@ -17,7 +17,9 @@ import {
   Activity,
   Filter,
   ArrowUpRight,
-  GraduationCap
+  GraduationCap,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import {
   Table,
@@ -55,6 +57,13 @@ import { BulkImportModal } from "./BulkImportModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StudentListProps {
   initialData: Student[];
@@ -75,12 +84,25 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [selectedClassId, setSelectedClassId] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [classFilter, setClassFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [capacityInfo, setCapacityInfo] = useState<{ capacity?: number | null; currentCount?: number; available?: number | null } | null>(null);
 
-  const filteredData = initialData.filter(student => 
-    student.profile?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.admission_number?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = initialData.filter(student => {
+    const matchesSearch = 
+      student.profile?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.admission_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.profile?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesClass = classFilter === "all" || student.class_id === classFilter;
+    const matchesStatus = statusFilter === "all" || 
+      (statusFilter === "enrolled" && student.admission_number) ||
+      (statusFilter === "pending" && !student.admission_number);
+    return matchesSearch && matchesClass && matchesStatus;
+  });
+
+  const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const onAdd = () => {
     setEditingStudent(null);
@@ -162,15 +184,40 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
 
       {/* Search & Actions Bar */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="relative flex-1 w-full md:max-w-lg">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                    placeholder="Search by name, admission number, or email..."
-                    className="h-11 pl-10 rounded-lg bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="flex flex-1 flex-col lg:flex-row gap-3 w-full">
+                <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                        placeholder="Search by name, admission number, or email..."
+                        className="h-10 pl-10 rounded-lg bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div className="flex gap-2">
+                    <Select value={classFilter} onValueChange={setClassFilter}>
+                        <SelectTrigger className="h-10 w-[140px] rounded-lg border-slate-200">
+                            <SelectValue placeholder="All Classes" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Classes</SelectItem>
+                            {classes.map((cls) => (
+                                <SelectItem key={cls.id} value={cls.id}>{cls.name}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="h-10 w-[130px] rounded-lg border-slate-200">
+                            <SelectValue placeholder="All Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="enrolled">Enrolled</SelectItem>
+                            <SelectItem value="pending">Pending</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
             
             <div className="flex flex-wrap items-center gap-2">
@@ -232,7 +279,7 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            filteredData.map((student) => (
+                            paginatedData.map((student) => (
                                 <TableRow key={student.id} className="hover:bg-emerald-50/30 transition-colors group">
                                     {isAdmin && (
                                         <TableCell className="py-4 px-4">
@@ -336,6 +383,58 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                     </TableBody>
                 </Table>
             </div>
+            
+            {/* Pagination */}
+            {filteredData.length > 0 && (
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-4 py-3 bg-white border border-slate-200 rounded-xl">
+                    <div className="text-sm text-slate-500">
+                        Showing <span className="font-medium text-slate-700">{(currentPage - 1) * itemsPerPage + 1}</span> to{" "}
+                        <span className="font-medium text-slate-700">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> of{" "}
+                        <span className="font-medium text-slate-700">{filteredData.length}</span> students
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 rounded-md border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => i + 1)
+                            .filter(page => {
+                                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+                                return page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1);
+                            })
+                            .map((page, idx, arr) => {
+                                const showEllipsis = idx > 0 && page - arr[idx - 1] > 1;
+                                return (
+                                    <div key={page} className="flex items-center">
+                                        {showEllipsis && <span className="px-2 text-slate-400">...</span>}
+                                        <Button
+                                            variant={currentPage === page ? "default" : "outline"}
+                                            size="sm"
+                                            className={`h-8 w-8 p-0 rounded-md ${currentPage === page ? "bg-emerald-600 hover:bg-emerald-700" : "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"}`}
+                                            onClick={() => setCurrentPage(page)}
+                                        >
+                                            {page}
+                                        </Button>
+                                    </div>
+                                );
+                            })}
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 rounded-md border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
+                            onClick={() => setCurrentPage(p => Math.min(Math.ceil(filteredData.length / itemsPerPage), p + 1))}
+                            disabled={currentPage >= Math.ceil(filteredData.length / itemsPerPage)}
+                        >
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+            )}
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

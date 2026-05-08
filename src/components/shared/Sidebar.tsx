@@ -228,7 +228,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-6 scrollbar-hide">
         {filteredNavigation.map((group) => (
           <div key={group.group}>
             <h3 className="text-xs font-medium text-slate-400 uppercase mb-2 px-2">

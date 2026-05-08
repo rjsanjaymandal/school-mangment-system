@@ -55,12 +55,12 @@ export default async function DashboardLayout({
               
               {/* Main Content Area */}
               <div className="flex-1 md:pl-64 flex flex-col min-h-screen bg-slate-50">
-                {/* Persistent Navbar */}
+                {/* Persistent Navbar - Fixed */}
                 <Navbar user={realUser} userRole={effectiveRole} />
                 
                 {/* Page Content with Suspense for streaming */}
                 <Suspense fallback={<LoadingFallback />}>
-                  <main className="flex-1 p-4 md:p-6">
+                  <main className="flex-1 p-4 md:p-6 mt-16">
                     {children}
                   </main>
                 </Suspense>

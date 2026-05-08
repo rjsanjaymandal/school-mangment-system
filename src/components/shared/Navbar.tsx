@@ -48,7 +48,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
   });
 
   return (
-    <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 sticky top-0 z-30">
+    <header className="h-16 border-b border-slate-200 bg-white/95 backdrop-blur-sm flex items-center justify-between px-6 fixed top-0 right-0 left-0 md:left-64 z-50 shadow-sm">
       <div className="flex-1">
         <Breadcrumb items={breadcrumbs} />
       </div>
