@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { 
   Clock, Calendar, Mail, Download, Play, Pause, 
-  TrendingUp, Users, DollarSign, BookOpen, FileText
+  TrendingUp, Users, IndianRupee, BookOpen, FileText
 } from "lucide-react";
 
 interface ScheduledReport {
@@ -33,7 +33,7 @@ const SCHEDULED_REPORTS: ScheduledReport[] = [
 
 const REPORT_TYPES = [
   { id: "attendance", name: "Attendance", icon: TrendingUp, color: "text-blue-500" },
-  { id: "fees", name: "Fee Collection", icon: DollarSign, color: "text-emerald-500" },
+  { id: "fees", name: "Fee Collection", icon: IndianRupee, color: "text-emerald-500" },
   { id: "academic", name: "Academic", icon: BookOpen, color: "text-purple-500" },
   { id: "staff", name: "Staff", icon: Users, color: "text-amber-500" },
   { id: "inventory", name: "Inventory", icon: FileText, color: "text-slate-500" },

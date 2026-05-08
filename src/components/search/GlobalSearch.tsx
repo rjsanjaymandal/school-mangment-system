@@ -1,184 +1,187 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Search, X, FileText, User, Book, CreditCard, Calendar, TrendingUp, Sparkles } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Search, X, FileText, Users, BookOpen, Calendar, GraduationCap, CreditCard, Bell, Settings, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface SearchResult {
-  id: string;
-  type: "student" | "teacher" | "fee" | "exam" | "class" | "attendance";
   title: string;
-  subtitle: string;
+  description?: string;
   href: string;
-  icon: React.ReactNode;
+  icon: any;
+  category: string;
 }
 
-const MOCK_RESULTS: SearchResult[] = [
-  { id: "1", type: "student", title: "Rahul Sharma", subtitle: "Class 10-A • Roll No. 12", href: "/students/sms-001", icon: <User className="h-4 w-4 text-blue-500" /> },
-  { id: "2", type: "student", title: "Priya Patel", subtitle: "Class 12-Science • Roll No. 05", href: "/students/sms-002", icon: <User className="h-4 w-4 text-blue-500" /> },
-  { id: "3", type: "teacher", title: "Mr. Rajesh Kumar", subtitle: "Mathematics Teacher", href: "/teachers/t-001", icon: <User className="h-4 w-4 text-emerald-500" /> },
-  { id: "4", type: "fee", title: "Annual Tuition Fee", subtitle: "₹15,000 • Class 10", href: "/finance/structure", icon: <CreditCard className="h-4 w-4 text-amber-500" /> },
-  { id: "5", type: "exam", title: "Unit Test - Term 1", subtitle: "Class 10-A • Oct 2025", href: "/exams", icon: <FileText className="h-4 w-4 text-purple-500" /> },
-  { id: "6", type: "class", title: "Class 10-A", subtitle: "Section A • 45 Students", href: "/classes", icon: <Book className="h-4 w-4 text-orange-500" /> },
-];
-
-const AI_SUGGESTIONS = [
-  "Students with low attendance",
-  "Pending fee payments over ₹10,000",
-  "Classes with average grade below 60%",
-  "Staff with upcoming evaluations",
+const QUICK_LINKS: SearchResult[] = [
+  { title: "Timetable", description: "Class schedule & teacher allocation", href: "/timetable", icon: Calendar, category: "Academics" },
+  { title: "Student List", description: "Manage all students", href: "/students", icon: GraduationCap, category: "Students" },
+  { title: "Staff Directory", description: "Manage teachers & staff", href: "/hr/directory", icon: Users, category: "HR" },
+  { title: "Fee Collection", description: "Collect and manage fees", href: "/fees", icon: CreditCard, category: "Finance" },
+  { title: "Exams", description: "Manage exams and results", href: "/exams", icon: FileText, category: "Academics" },
+  { title: "Attendance", description: "Track student attendance", href: "/attendance", icon: Users, category: "Students" },
+  { title: "Notifications", description: "View all notifications", href: "/notifications", icon: Bell, category: "System" },
+  { title: "Analytics", description: "View reports and insights", href: "/analytics", icon: Settings, category: "System" },
+  { title: "Library", description: "Book management", href: "/library", icon: BookOpen, category: "Academics" },
+  { title: "Transport", description: "Fleet and routes", href: "/transport", icon: Settings, category: "Admin" },
 ];
 
 export function GlobalSearch() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [isAIProcessing, setIsAIProcessing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setIsOpen(true);
-        setTimeout(() => inputRef.current?.focus(), 100);
+        setOpen(true);
       }
       if (e.key === "Escape") {
-        setIsOpen(false);
+        setOpen(false);
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Derived state for search results to avoid setState in effect
-  const filteredResults = query.length > 1 
-    ? MOCK_RESULTS.filter(
-        r => r.title.toLowerCase().includes(query.toLowerCase()) || 
-             r.subtitle.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  useEffect(() => {
+    if (!query.trim()) {
+      setResults(QUICK_LINKS.slice(0, 6));
+    } else {
+      const filtered = QUICK_LINKS.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query.toLowerCase()) ||
+          item.description?.toLowerCase().includes(query.toLowerCase()) ||
+          item.category.toLowerCase().includes(query.toLowerCase())
+      );
+      setResults(filtered);
+    }
+  }, [query]);
 
-  const showSuggestions = query.length > 1 && !isAIProcessing;
-
-  const handleAISearch = (suggestion: string) => {
-    setQuery(suggestion);
-    setIsAIProcessing(true);
-    setTimeout(() => {
-      setIsAIProcessing(false);
-      if (suggestion.toLowerCase().includes("attendance")) {
-        setResults([
-          { id: "ai1", type: "attendance", title: "15 students with <75% attendance", subtitle: "Requires immediate attention", href: "/students/attendance", icon: <TrendingUp className="h-4 w-4 text-red-500" /> },
-          { id: "ai2", type: "class", title: "Class 9-B", subtitle: "78% attendance • Below target", href: "/classes", icon: <Book className="h-4 w-4 text-orange-500" /> },
-        ]);
-      } else if (suggestion.toLowerCase().includes("fee")) {
-        setResults([
-          { id: "ai3", type: "fee", title: "23 pending payments", subtitle: "Total: ₹3,45,000 outstanding", href: "/finance/collect", icon: <CreditCard className="h-4 w-4 text-amber-500" /> },
-        ]);
-      } else {
-        setResults(MOCK_RESULTS);
-      }
-      // suggestions will be hidden by isAIProcessing
-    }, 1000);
+  const handleSelect = (href: string) => {
+    setOpen(false);
+    router.push(href);
   };
+
+  const categories = [...new Set(results.map((r) => r.category))];
 
   return (
     <>
       <Button
         variant="outline"
-        className="w-64 justify-between text-slate-500 hover:bg-slate-50 rounded-md"
-        onClick={() => setIsOpen(true)}
+        className="h-9 w-56 justify-between text-muted-foreground border-slate-200 hover:bg-slate-50 hover:border-slate-300 bg-slate-50/50"
+        onClick={() => setOpen(true)}
       >
         <div className="flex items-center gap-2">
-          <Search className="h-4 w-4" />
-          <span>Search...</span>
+          <Search className="h-4 w-4 text-slate-400" />
+          <span className="text-sm text-slate-500">Search...</span>
         </div>
-        <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-slate-100 px-1.5 font-mono text-[10px] font-medium text-slate-500">
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded bg-white border border-slate-200 px-1.5 font-mono text-[10px] font-medium text-slate-400">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
 
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)}>
-          <Card className="w-full max-w-xl mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <CardContent className="p-0">
-              <div className="flex items-center gap-3 p-4 border-b">
-                <Search className="h-5 w-5 text-slate-400" />
-                <input
-                  ref={inputRef}
-                  value={query}
-                  onChange={e => setQuery(e.target.value)}
-                  placeholder="Search students, teachers, fees..."
-                  className="flex-1 bg-transparent outline-none text-sm"
-                  autoFocus
-                />
-                {query && (
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setQuery("")}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-lg p-0 gap-0 bg-white rounded-xl shadow-2xl border border-slate-200">
+          <DialogHeader className="p-0">
+            <DialogTitle className="sr-only">Global Search</DialogTitle>
+          </DialogHeader>
+          <div className="p-4 border-b border-slate-100">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <Input
+                placeholder="Search pages, actions, students..."
+                className="pl-12 pr-10 h-12 border-0 focus-visible:ring-0 text-base bg-transparent placeholder:text-slate-400"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                autoFocus
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-slate-100 rounded-full"
+                onClick={() => setOpen(false)}
+              >
+                <X className="h-4 w-4 text-slate-400" />
+              </Button>
+            </div>
+          </div>
 
-              {isAIProcessing ? (
-                <div className="p-8 text-center">
-                  <Sparkles className="h-8 w-8 mx-auto text-emerald-500 animate-pulse" />
-                  <p className="mt-2 text-sm text-slate-500">Analyzing data...</p>
+          <div className="max-h-[400px] overflow-y-auto">
+            {query && (
+              <div className="px-4 py-3 text-xs text-slate-500 border-b border-slate-100">
+                Press <kbd className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">Enter</kbd> to go directly
+              </div>
+            )}
+
+            {!query && (
+              <div className="px-4 py-3 border-b border-slate-100">
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quick Navigation</p>
+              </div>
+            )}
+
+            {categories.map((category) => (
+              <div key={category} className="mb-1">
+                <div className="px-4 py-2">
+                  <Badge variant="outline" className="text-[10px] font-semibold uppercase bg-slate-50 border-slate-200 text-slate-600">
+                    {category}
+                  </Badge>
                 </div>
-              ) : query.length === 0 ? (
-                <div className="p-4">
-                  <p className="text-xs font-medium text-slate-500 mb-3 flex items-center gap-2">
-                    <Sparkles className="h-3 w-3 text-emerald-500" />
-                    AI Quick Search
-                  </p>
-                  <div className="space-y-2">
-                    {AI_SUGGESTIONS.map((suggestion, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleAISearch(suggestion)}
-                        className="w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-md flex items-center gap-2"
-                      >
-                        <Sparkles className="h-3 w-3 text-emerald-400" />
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="max-h-80 overflow-y-auto">
-                  {(results.length > 0 || filteredResults.length > 0) ? (
-                    <div className="p-2">
-                      {(results.length > 0 ? results : filteredResults).map(result => (
-                        <Link
-                          key={result.id}
-                          href={result.href}
-                          onClick={() => setIsOpen(false)}
-                          className="flex items-center gap-3 p-3 rounded-md hover:bg-slate-50 transition-colors"
-                        >
-                          <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center">
-                            {result.icon}
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-slate-900">{result.title}</p>
-                            <p className="text-xs text-slate-500">{result.subtitle}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-8 text-center text-slate-500">
-                      <p className="text-sm">No results found for "{query}"</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                {results
+                  .filter((r) => r.category === category)
+                  .map((result, idx) => (
+                    <button
+                      key={idx}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left group transition-colors"
+                      onClick={() => handleSelect(result.href)}
+                    >
+                      <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center">
+                        <result.icon className="h-4 w-4 text-emerald-600" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium text-sm text-slate-900">{result.title}</div>
+                        {result.description && (
+                          <div className="text-xs text-muted-foreground">{result.description}</div>
+                        )}
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </button>
+                  ))}
+              </div>
+            ))}
+
+            {results.length === 0 && query && (
+              <div className="text-center py-12 text-slate-400">
+                <Search className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p className="text-sm font-medium">No results found for "{query}"</p>
+                <p className="text-xs mt-1">Try searching for students, staff, or pages</p>
+              </div>
+            )}
+          </div>
+
+          <div className="p-3 border-t bg-slate-50 flex items-center justify-between text-xs text-slate-500 rounded-b-xl">
+            <div className="flex items-center gap-2">
+              <kbd className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">↑↓</kbd>
+              <span>Navigate</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <kbd className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">Enter</kbd>
+              <span>Select</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <kbd className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">Esc</kbd>
+              <span>Close</span>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Upload, Download, FileSpreadsheet, CheckCircle, XCircle, 
-  AlertCircle, ArrowRight, Clock, Users, BookOpen, DollarSign
+  AlertCircle, ArrowRight, Clock, Users, BookOpen, IndianRupee
 } from "lucide-react";
 
 interface ImportTemplate {
@@ -47,7 +47,7 @@ const IMPORT_TEMPLATES: ImportTemplate[] = [
     id: "fees", 
     name: "Fee Structure", 
     description: "Import fee categories and amounts",
-    icon: DollarSign,
+    icon: IndianRupee,
     color: "text-amber-500",
     bg: "bg-amber-50",
     fields: ["fee_name", "amount", "category", "class", "due_date", "description"],
@@ -149,7 +149,7 @@ export function BulkOperations() {
               { label: "Students", count: 450, icon: Users },
               { label: "Staff", count: 35, icon: Users },
               { label: "Attendance", count: "12,500", icon: FileSpreadsheet },
-              { label: "Payments", count: "₹45L", icon: DollarSign },
+              { label: "Payments", count: "₹45L", icon: IndianRupee },
             ].map((item, i) => (
               <div key={i} className="p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
                 <div className="flex items-center justify-between mb-2">

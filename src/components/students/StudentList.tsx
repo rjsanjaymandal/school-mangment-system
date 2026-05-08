@@ -139,135 +139,150 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
   return (
     <div className="space-y-6">
       
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Stats Grid - Enhanced */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Students", value: initialData.length, icon: Users, color: "bg-blue-100 text-blue-600", sub: "All enrolled students" },
-          { label: "Active Students", value: initialData.filter(s => s.admission_number).length, icon: CheckCircle2, color: "bg-emerald-100 text-emerald-600", sub: "With admission numbers" },
-          { label: "Classes", value: classes.length, icon: Filter, color: "bg-indigo-100 text-indigo-600", sub: "Total sections" },
-          { label: "Recent Admissions", value: initialData.slice(0, 5).length, icon: Plus, color: "bg-orange-100 text-orange-600", sub: "New enrollments" },
+          { label: "Total Students", value: initialData.length, icon: Users, color: "emerald", sub: "All enrolled" },
+          { label: "Verified", value: initialData.filter(s => s.admission_number).length, icon: CheckCircle2, color: "blue", sub: "With admission #" },
+          { label: "Classes", value: classes.length, icon: Filter, color: "purple", sub: "Total sections" },
+          { label: "Unassigned", value: initialData.filter(s => !s.class_id).length, icon: GraduationCap, color: "amber", sub: "No class" },
         ].map((stat, i) => (
-          <Card key={i} className="border-l-4 border-l-emerald-500 shadow-sm p-4">
-            <div className="flex items-center justify-between">
-              <div className={`h-10 w-10 rounded-md ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="h-5 w-5" />
+          <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 hover:border-emerald-300 transition-colors shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <div className={`h-10 w-10 rounded-lg bg-${stat.color}-50 flex items-center justify-center`}>
+                <stat.icon className={`h-5 w-5 text-${stat.color}-600`} />
               </div>
-              <p className="text-xs font-medium text-slate-500">
-                {stat.label}
-              </p>
             </div>
-            <div className="mt-3">
-              <p className="text-2xl font-bold text-slate-900">
-                {stat.value}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">
-                {stat.sub}
-              </p>
-            </div>
-          </Card>
+            <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
+            <p className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</p>
+            <p className="text-[10px] text-slate-400">{stat.sub}</p>
+          </div>
         ))}
       </div>
 
-      {/* Operations Surface */}
-      <div className="space-y-6">
+      {/* Search & Actions Bar */}
+      <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="relative flex-1 w-full md:max-w-md">
+            <div className="relative flex-1 w-full md:max-w-lg">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
-                    placeholder="Search students by name or ID..."
-                    className="h-10 pl-10 rounded-md"
+                    placeholder="Search by name, admission number, or email..."
+                    className="h-11 pl-10 rounded-lg bg-slate-50 border-slate-200 focus:bg-white focus:border-emerald-500"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
                 {isAdmin && (
                      <>
                         <Button
                             onClick={() => setIsBulkImportOpen(true)}
                             variant="outline"
-                            className="rounded-md"
+                            size="sm"
+                            className="rounded-lg border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
                         >
                             <FileUp className="h-4 w-4 mr-2" /> Import
                         </Button>
                         <Button
                             onClick={() => setIsBulkAssignOpen(true)}
                             variant="outline"
-                            className="rounded-md"
+                            size="sm"
+                            className="rounded-lg border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
                             disabled={selectedStudentIds.length === 0}
                         >
-                            <Users className="h-4 w-4 mr-2" /> Bulk Assign ({selectedStudentIds.length})
+                            <Users className="h-4 w-4 mr-2" /> Assign ({selectedStudentIds.length})
+                        </Button>
+                        <Button
+                            onClick={onAdd}
+                            size="sm"
+                            className="rounded-lg bg-emerald-600 hover:bg-emerald-700"
+                        >
+                            <Plus className="h-4 w-4 mr-2" /> Add Student
                         </Button>
                     </>
                 )}
             </div>
         </div>
+      </div>
 
-        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
+      {/* Table */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-slate-50 border-b">
+                        <TableRow className="bg-slate-50/80 border-b border-slate-200">
                             {isAdmin && <TableHead className="w-12" />}
-                            <TableHead className="text-sm font-medium text-slate-600">Student</TableHead>
-                            <TableHead className="text-sm font-medium text-slate-600">Class</TableHead>
-                            <TableHead className="text-sm font-medium text-slate-600">Status</TableHead>
-                            <TableHead className="text-right text-sm font-medium text-slate-600">Actions</TableHead>
+                            <TableHead className="text-sm font-semibold text-slate-600">Student</TableHead>
+                            <TableHead className="text-sm font-semibold text-slate-600">Class</TableHead>
+                            <TableHead className="text-sm font-semibold text-slate-600">Contact</TableHead>
+                            <TableHead className="text-sm font-semibold text-slate-600">Status</TableHead>
+                            <TableHead className="text-right text-sm font-semibold text-slate-600">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody className="divide-y divide-slate-100">
                         {filteredData.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={isAdmin ? 5 : 4} className="py-12 text-center">
+                                <TableCell colSpan={isAdmin ? 6 : 5} className="py-16 text-center">
                                     <div className="flex flex-col items-center">
-                                        <GraduationCap className="h-10 w-10 mb-3 text-slate-300" />
-                                        <p className="text-sm text-slate-500">No students found</p>
+                                        <GraduationCap className="h-12 w-12 mb-3 text-slate-200" />
+                                        <p className="text-sm font-medium text-slate-500">No students found</p>
+                                        <p className="text-xs text-slate-400 mt-1">Try adjusting your search or filters</p>
                                     </div>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             filteredData.map((student) => (
-                                <TableRow key={student.id} className="hover:bg-slate-50 transition-colors">
+                                <TableRow key={student.id} className="hover:bg-emerald-50/30 transition-colors group">
                                     {isAdmin && (
-                                        <TableCell className="py-3 px-4">
+                                        <TableCell className="py-4 px-4">
                                             <input
                                                 type="checkbox"
-                                                className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                                className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                                                 checked={selectedStudentIds.includes(student.id)}
                                                 onChange={() => toggleSelection(student.id)}
                                                 aria-label={`Select ${student.profile?.full_name || student.admission_number}`}
                                             />
                                         </TableCell>
                                     )}
-                                    <TableCell className="py-3 px-4">
+                                    <TableCell className="py-4 px-4">
                                         <div className="flex items-center gap-3">
                                             <StudentAvatar 
                                                 name={student.profile?.full_name} 
                                                 classId={student.class_id || ""} 
-                                                className="h-10 w-10 text-sm"
+                                                className="h-11 w-11 text-sm ring-2 ring-white shadow-sm"
                                             />
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-slate-900">
+                                                <span className="font-semibold text-slate-900">
                                                     {student.profile?.full_name}
                                                 </span>
-                                                <span className="text-xs text-slate-500">
-                                                    {student.admission_number || "No ID"} • Roll: {student.roll_number || "NA"}
+                                                <span className="text-xs text-slate-500 font-mono">
+                                                    {student.admission_number || "Pending"} • Roll: {student.roll_number || "—"}
                                                 </span>
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="py-3 px-4">
-                                        <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100">
+                                    <TableCell className="py-4 px-4">
+                                        <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200 font-medium">
                                             {student.class?.name || "Unassigned"}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="py-3 px-4">
-                                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-100">
-                                            Active
-                                        </Badge>
+                                    <TableCell className="py-4 px-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-slate-600">{student.profile?.email || "—"}</span>
+                                            <span className="text-[10px] text-slate-400">{student.profile?.phone || "No phone"}</span>
+                                        </div>
                                     </TableCell>
-                                    <TableCell className="py-3 px-4 text-right">
+                                    <TableCell className="py-4 px-4">
+                                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                                            student.admission_number
+                                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                                : "bg-amber-50 text-amber-700 border border-amber-200"
+                                        }`}>
+                                            {student.admission_number ? "Enrolled" : "Pending"}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="py-4 px-4 text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-md">
@@ -321,7 +336,6 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                     </TableBody>
                 </Table>
             </div>
-        </Card>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>

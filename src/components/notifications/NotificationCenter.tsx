@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { 
   Bell, Send, Mail, MessageSquare, Smartphone, 
-  Users, BookOpen, Calendar, DollarSign, Clock,
+  Users, BookOpen, Calendar, IndianRupee, Clock,
   CheckCircle, XCircle, AlertCircle, Filter
 } from "lucide-react";
 

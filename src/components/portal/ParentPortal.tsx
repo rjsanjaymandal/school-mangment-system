@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Users, Eye, MessageSquare, Calendar, BookOpen, 
-  DollarSign, TrendingUp, AlertCircle, CheckCircle
+  IndianRupee, TrendingUp, AlertCircle, CheckCircle
 } from "lucide-react";
 
 const PARENT_STATS = [

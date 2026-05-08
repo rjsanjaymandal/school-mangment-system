@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { User, BookOpen, Clock, CheckCircle, AlertCircle, DollarSign, Calendar, FileText } from "lucide-react";
+import { User, BookOpen, Clock, CheckCircle, AlertCircle, IndianRupee, Calendar, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -141,7 +141,7 @@ export default function ParentDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
           <div className="flex items-center gap-2 text-amber-700">
-            <DollarSign className="h-5 w-5" />
+            <IndianRupee className="h-5 w-5" />
             <span className="font-medium">Total Due</span>
           </div>
           <p className="text-3xl font-bold text-amber-700 mt-1">₹{totalDue.toLocaleString()}</p>
@@ -211,7 +211,7 @@ export default function ParentDashboardPage() {
           <span className="text-sm">View Timetable</span>
         </Button>
         <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2">
-          <DollarSign className="h-6 w-6 text-amber-600" />
+          <IndianRupee className="h-6 w-6 text-amber-600" />
           <span className="text-sm">Pay Fees</span>
         </Button>
         <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2">

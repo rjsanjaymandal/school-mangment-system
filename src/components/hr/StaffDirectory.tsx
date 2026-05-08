@@ -39,18 +39,24 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
     const [search, setSearch] = useState("");
     const [deptFilter, setDeptFilter] = useState("all");
     const [typeFilter, setTypeFilter] = useState("all");
+    const [roleFilter, setRoleFilter] = useState<"all" | "teaching" | "non_teaching">("all");
 
     // Client-side filtering for immediate response
     const filteredStaff = initialData.filter((staff) => {
         const matchesSearch = 
-            staff.first_name.toLowerCase().includes(search.toLowerCase()) || 
+            staff.first_name?.toLowerCase().includes(search.toLowerCase()) || 
             staff.last_name?.toLowerCase().includes(search.toLowerCase()) ||
             staff.staff_id?.toLowerCase().includes(search.toLowerCase());
         
         const matchesDept = deptFilter === "all" || staff.department_id === deptFilter;
+        
+        // Filter by staff type (teaching vs non-teaching)
+        const matchesRole = roleFilter === "all" || 
+            (roleFilter === "teaching" && staff.staff_type === "teaching") ||
+            (roleFilter === "non_teaching" && staff.staff_type === "non_teaching");
         const matchesType = typeFilter === "all" || staff.staff_type === typeFilter;
 
-        return matchesSearch && matchesDept && matchesType;
+        return matchesSearch && matchesDept && matchesType && matchesRole;
     });
 
     const isAdmin = userRole === "admin";

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Calculator, Download, Send, ChevronDown, ChevronUp,
-  DollarSign, Calendar, Users, CheckCircle, AlertCircle
+  IndianRupee, Calendar, Users, CheckCircle, AlertCircle
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";

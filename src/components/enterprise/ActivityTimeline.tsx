@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  Clock, User, BookOpen, DollarSign, Award, AlertCircle,
+  Clock, User, BookOpen, IndianRupee, Award, AlertCircle,
   CheckCircle, FileText, GraduationCap, Calendar
 } from "lucide-react";
 
@@ -17,14 +17,14 @@ interface Activity {
 }
 
 const ACTIVITIES: Activity[] = [
-  { id: "1", type: "payment", title: "Fee Payment Received", description: "₹15,000 received from Rahul Sharma (Class 10-A)", timestamp: "2 min ago", icon: DollarSign, color: "text-emerald-500 bg-emerald-50" },
+  { id: "1", type: "payment", title: "Fee Payment Received", description: "₹15,000 received from Rahul Sharma (Class 10-A)", timestamp: "2 min ago", icon: IndianRupee, color: "text-emerald-500 bg-emerald-50" },
   { id: "2", type: "attendance", title: "Attendance Marked", description: "Morning attendance completed for Class 10-A", timestamp: "15 min ago", icon: CheckCircle, color: "text-blue-500 bg-blue-50" },
   { id: "3", type: "grade", title: "Exam Results Uploaded", description: "Unit Test - Term 1 marks uploaded for Class 12", timestamp: "1 hour ago", icon: Award, color: "text-purple-500 bg-purple-50" },
   { id: "4", type: "admission", title: "New Admission", description: "New student enrolled: Aryan Singh (Class 9-B)", timestamp: "2 hours ago", icon: GraduationCap, color: "text-amber-500 bg-amber-50" },
   { id: "5", type: "notice", title: "Notice Published", description: "Parent-Teacher Meeting scheduled for May 15", timestamp: "3 hours ago", icon: FileText, color: "text-slate-500 bg-slate-50" },
   { id: "6", type: "exam", title: "Exam Schedule Updated", description: "Final exam timetable published for Class 10", timestamp: "4 hours ago", icon: BookOpen, color: "text-orange-500 bg-orange-50" },
   { id: "7", type: "attendance", title: "Attendance Alert", description: "15 students below 75% attendance threshold", timestamp: "5 hours ago", icon: AlertCircle, color: "text-red-500 bg-red-50" },
-  { id: "8", type: "payment", title: "Fee Reminder Sent", description: "Automated reminders sent to 23 families", timestamp: "6 hours ago", icon: DollarSign, color: "text-amber-500 bg-amber-50" },
+  { id: "8", type: "payment", title: "Fee Reminder Sent", description: "Automated reminders sent to 23 families", timestamp: "6 hours ago", icon: IndianRupee, color: "text-amber-500 bg-amber-50" },
 ];
 
 const TYPE_FILTERS = [

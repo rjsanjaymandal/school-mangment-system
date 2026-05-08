@@ -1,6 +1,7 @@
-export const revalidate = 30;
+"use client";
 
-import { Shield, Database, Clock, Activity, Bell, GitBranch, Code, Users, HardDrive } from "lucide-react";
+import { useState } from "react";
+import { Shield, Database, Clock, Activity as ActivityIcon, Bell, GitBranch, Code, Users, HardDrive, Download } from "lucide-react";
 import { ERPCard } from "@/components/ui/erp-card";
 import { AuditLogViewer } from "@/components/audit/AuditLogViewer";
 import { BulkOperations } from "@/components/enterprise/BulkOperations";
@@ -12,8 +13,13 @@ import { ReportBuilder } from "@/components/reports/ReportBuilder";
 import { APIDocumentation } from "@/components/api/APIDocumentation";
 import { BackupRestore } from "@/components/system/BackupRestore";
 import { ParentPortal } from "@/components/portal/ParentPortal";
+import { DataExport } from "@/components/data-export/DataExport";
+import { ActivityFeed } from "@/components/activity/ActivityFeed";
+import { Button } from "@/components/ui/button";
 
 export default function EnterpriseSettingsPage() {
+  const [exportOpen, setExportOpen] = useState(false);
+
   return (
     <div className="p-6 space-y-6">
       {/* Page Header */}
@@ -21,20 +27,34 @@ export default function EnterpriseSettingsPage() {
         <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
           <Shield className="h-5 w-5 text-emerald-600" />
         </div>
-        <div>
+        <div className="flex-1">
           <h1 className="text-xl font-semibold text-slate-900">Enterprise Settings</h1>
           <p className="text-sm text-slate-500">Advanced configuration and monitoring</p>
         </div>
+        <Button variant="outline" onClick={() => setExportOpen(true)}>
+          <Download className="h-4 w-4 mr-2" />
+          Export Data
+        </Button>
       </div>
 
       {/* System Health */}
       <ERPCard
         title="System Health"
         description="Real-time monitoring and status"
-        icon={<Activity className="h-5 w-5" />}
+        icon={<ActivityIcon className="h-5 w-5" />}
         color="emerald"
       >
         <SystemHealthDashboard />
+      </ERPCard>
+
+      {/* Recent Activity */}
+      <ERPCard
+        title="Recent Activity"
+        description="Real-time system activity feed"
+        icon={<ActivityIcon className="h-5 w-5" />}
+        color="amber"
+      >
+        <ActivityFeed />
       </ERPCard>
 
       {/* Notifications */}
@@ -126,6 +146,8 @@ export default function EnterpriseSettingsPage() {
       >
         <AuditLogViewer />
       </ERPCard>
+
+      <DataExport open={exportOpen} onOpenChange={setExportOpen} />
     </div>
   );
 }

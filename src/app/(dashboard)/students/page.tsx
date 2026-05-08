@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Users, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ERPCard } from "@/components/ui/erp-card";
+import Link from "next/link";
 
 export default async function StudentsPage() {
   const supabase = await createClient();
@@ -30,10 +31,12 @@ export default async function StudentsPage() {
             <p className="text-sm text-slate-500">{students?.length || 0} total records</p>
           </div>
         </div>
-        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
-          <UserPlus className="h-4 w-4" />
-          Enroll New Student
-        </Button>
+        <Link href="/students/enroll">
+          <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+            <UserPlus className="h-4 w-4" />
+            Enroll New Student
+          </Button>
+        </Link>
       </div>
 
       {/* Student List Card */}

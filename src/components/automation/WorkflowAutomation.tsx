@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { 
   GitBranch, Play, Pause, Plus, Settings, Trash2,
   Clock, ArrowRight, CheckCircle, AlertCircle, UserPlus,
-  DollarSign, FileText, Calendar, ClipboardCheck
+  IndianRupee, FileText, Calendar, ClipboardCheck
 } from "lucide-react";
 
 interface Workflow {
@@ -34,7 +34,7 @@ const WORKFLOWS: Workflow[] = [
 
 const TRIGGERS = [
   { id: "admission", name: "New Admission", icon: UserPlus, color: "text-blue-500" },
-  { id: "payment", name: "Payment Received", icon: DollarSign, color: "text-emerald-500" },
+  { id: "payment", name: "Payment Received", icon: IndianRupee, color: "text-emerald-500" },
   { id: "attendance", name: "Attendance Marked", icon: ClipboardCheck, color: "text-amber-500" },
   { id: "marks", name: "Marks Uploaded", icon: FileText, color: "text-purple-500" },
   { id: "schedule", name: "Schedule Change", icon: Calendar, color: "text-orange-500" },

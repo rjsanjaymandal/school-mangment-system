@@ -77,11 +77,12 @@ const navigation: NavGroup[] = [
     items: [
       { 
         name: "HR & Staff", 
-        href: "/hr", 
+        href: "/hr/directory", 
         icon: UserSquare2, 
         roles: ["admin"],
         subItems: [
           { name: "Staff Directory", href: "/hr/directory" },
+          { name: "Teachers", href: "/hr/directory?filter=teachers" },
           { name: "Add Staff", href: "/hr/add-staff" },
           { name: "Role & Permissions", href: "/hr/roles" },
           { name: "Staff Attendance", href: "/hr/attendance" },

@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/select";
 import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot } from "@/app/actions/timetable";
 import { generateOptimizedSchedule, getTeacherLoad, checkScheduleConflicts, getTodayProxies, markStaffAttendance } from "@/app/actions/timetable-autonomous";
+import { bulkGenerateSchedule, getClassTimetableOverview } from "@/app/actions/timetable-enterprise";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -101,6 +102,8 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
     const [conflictCount, setConflictCount] = useState(0);
     const [todayProxies, setTodayProxies] = useState<any[]>([]);
     const [showAttendanceDialog, setShowAttendanceDialog] = useState(false);
+    const [bulkGenerating, setBulkGenerating] = useState(false);
+    const [classOverview, setClassOverview] = useState<any[]>([]);
 
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const selectedTeacherId = selectedTeacher || teachers[0]?.id || "";
@@ -383,6 +386,25 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
         }
     };
 
+    const handleBulkGenerate = async () => {
+        if (!currentAY?.id) {
+            toast.error("No active academic year");
+            return;
+        }
+        
+        setBulkGenerating(true);
+        const result = await bulkGenerateSchedule(currentAY.id);
+        setBulkGenerating(false);
+        
+        if (result.success) {
+            const successCount = result.data?.filter((d: any) => d.success)?.length || 0;
+            toast.success(`Generated schedules for ${successCount} classes!`);
+            router.refresh();
+        } else {
+            toast.error(result.error || "Failed to bulk generate");
+        }
+    };
+
     // Filter timetable slots based on view mode (Class vs Teacher)
     const activeSlots = useMemo(() => {
         // Aggregate all slots across all timetables for this criteria on this day
@@ -556,15 +578,26 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                     </Button>
 
                     {isAdminOrTeacher && viewMode === "class" && (
-                        <Button 
-                            variant="secondary" 
-                            onClick={handleGenerateOptimizedSchedule} 
-                            disabled={generatingSchedule}
-                            className="h-12 px-6 flex items-center gap-x-2 shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white border-none transition-all hover:scale-105 active:scale-95"
-                        >
-                            {generatingSchedule ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
-                            Generate Optimized Schedule
-                        </Button>
+                        <>
+                            <Button 
+                                variant="outline"
+                                onClick={handleBulkGenerate}
+                                disabled={bulkGenerating}
+                                className="h-12 px-4 flex items-center gap-x-2 border-border"
+                            >
+                                {bulkGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LayoutGrid className="h-4 w-4" />}
+                                Bulk Generate All
+                            </Button>
+                            <Button 
+                                variant="secondary" 
+                                onClick={handleGenerateOptimizedSchedule} 
+                                disabled={generatingSchedule}
+                                className="h-12 px-6 flex items-center gap-x-2 shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white border-none transition-all hover:scale-105 active:scale-95"
+                            >
+                                {generatingSchedule ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+                                Generate
+                            </Button>
+                        </>
                     )}
 
                     {isAdminOrTeacher && viewMode === "class" && (

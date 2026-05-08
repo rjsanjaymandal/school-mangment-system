@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Settings, DollarSign, Clock, Percent, Save, 
+  Settings, IndianRupee, Clock, Percent, Save, 
   RotateCcw, Calculator
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -71,7 +71,7 @@ export function SalarySettingsClient() {
   const categoryGroups = [
     {
       title: "Deductions",
-      icon: DollarSign,
+      icon: IndianRupee,
       color: "text-red-500",
       keys: ["per_day_salary", "per_day_leave_deduction", "per_day_absence_deduction", "late_coming_deduction"],
     },

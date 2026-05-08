@@ -43,10 +43,6 @@ export default function OnlineExamsPage() {
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
-
   async function loadData() {
     setLoading(true);
     if (activeTab === "exams") {
@@ -64,6 +60,10 @@ export default function OnlineExamsPage() {
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    loadData();
+  }, [activeTab]);
 
   const stats = {
     totalExams: exams.length,

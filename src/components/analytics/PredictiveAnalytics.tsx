@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle, 
-  Users, BookOpen, DollarSign, Award, Activity, Clock 
+  Users, BookOpen, IndianRupee, Award, Activity, Clock 
 } from "lucide-react";
 
 const PREDICTIONS = [
@@ -36,7 +36,7 @@ const PREDICTIONS = [
     prediction: "₹12.5L expected collection next week",
     confidence: "95%",
     trend: "up",
-    icon: DollarSign,
+    icon: IndianRupee,
     color: "text-emerald-500",
     bg: "bg-emerald-50"
   },
