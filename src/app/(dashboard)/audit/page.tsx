@@ -1,5 +1,4 @@
 export const revalidate = 30;
-export const dynamic = 'force-static';
 
 import { createClient } from "@/lib/supabase/server";
 import AuditDashboardClient from "@/components/audit/AuditDashboardClient";
