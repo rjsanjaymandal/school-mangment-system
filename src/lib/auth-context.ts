@@ -14,11 +14,80 @@ async function getClient() {
  * within the same request and returns cached role for instant sidebar rendering
  */
 export const getAuthContext = cache(async function getAuthContext() {
-  const supabase = await getClient();
-  
-  const { data: { user: realUser }, error } = await supabase.auth.getUser();
-  
-  if (error || !realUser) {
+  try {
+    const supabase = await getClient();
+    
+    const { data: { user: realUser }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !realUser) {
+      return { 
+        realUser: null, 
+        realProfile: null, 
+        realRole: null, 
+        effectiveUser: null, 
+        effectiveRole: null, 
+        isImpersonating: false 
+      };
+    }
+
+    let impersonationId: string | undefined;
+    if (typeof window === "undefined") {
+      const { cookies } = await import("next/headers");
+      impersonationId = (await cookies()).get("impersonation_user_id")?.value;
+    } else {
+      impersonationId = undefined;
+    }
+
+    const { data: realProfile, error: profileError } = await supabase
+      .from("profiles")
+      .select("id, full_name, role, avatar_url, email, phone")
+      .eq("id", realUser.id)
+      .single();
+
+    if (profileError) {
+      console.warn("Failed to fetch profile in auth context:", profileError.message);
+    }
+
+    const realRole = realProfile?.role || "student";
+    
+    if (realRole !== "admin" || !impersonationId) {
+      return { 
+        realUser, 
+        realProfile,
+        realRole, 
+        effectiveUser: realProfile, 
+        effectiveRole: realRole, 
+        isImpersonating: false 
+      };
+    }
+
+    const { data: impersonationProfile } = await supabase
+      .from("profiles")
+      .select("id, full_name, role, avatar_url, email, phone")
+      .eq("id", impersonationId)
+      .single();
+
+    if (impersonationProfile) {
+      return { 
+        realUser, 
+        realProfile,
+        realRole, 
+        effectiveUser: impersonationProfile, 
+        effectiveRole: impersonationProfile.role, 
+        isImpersonating: true 
+      };
+    }
+
+    return { 
+      realUser, 
+      realProfile,
+      realRole, 
+      effectiveUser: realProfile, 
+      effectiveRole: realRole, 
+      isImpersonating: false 
+    };
+  } catch (error) {
+    console.error("Auth Context Critical Error:", error);
     return { 
       realUser: null, 
       realProfile: null, 
@@ -28,59 +97,6 @@ export const getAuthContext = cache(async function getAuthContext() {
       isImpersonating: false 
     };
   }
-
-  let impersonationId: string | undefined;
-  if (typeof window === "undefined") {
-    const { cookies } = await import("next/headers");
-    impersonationId = (await cookies()).get("impersonation_user_id")?.value;
-  } else {
-    impersonationId = undefined;
-  }
-
-  const { data: realProfile } = await supabase
-    .from("profiles")
-    .select("id, full_name, role, avatar_url, email, phone")
-    .eq("id", realUser.id)
-    .single();
-
-  const realRole = realProfile?.role || "student";
-  
-  if (realRole !== "admin" || !impersonationId) {
-    return { 
-      realUser, 
-      realProfile,
-      realRole, 
-      effectiveUser: realProfile, 
-      effectiveRole: realRole, 
-      isImpersonating: false 
-    };
-  }
-
-  const { data: impersonationProfile } = await supabase
-    .from("profiles")
-    .select("id, full_name, role, avatar_url, email, phone")
-    .eq("id", impersonationId)
-    .single();
-
-  if (impersonationProfile) {
-    return { 
-      realUser, 
-      realProfile,
-      realRole, 
-      effectiveUser: impersonationProfile, 
-      effectiveRole: impersonationProfile.role, 
-      isImpersonating: true 
-    };
-  }
-
-  return { 
-    realUser, 
-    realProfile,
-    realRole, 
-    effectiveUser: realProfile, 
-    effectiveRole: realRole, 
-    isImpersonating: false 
-  };
 });
 
 /**
