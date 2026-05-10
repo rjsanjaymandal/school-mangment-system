@@ -1,7 +1,7 @@
-// Export all types
-export * from "./entities";
-
-// Re-export from database
-export type { Class, Student, Subject, Staff, Profile, UserRole } from "./entities";
-export type { Fee, Payment, Attendance, Exam, Grade, HealthProfile } from "./entities";
-export type { ApiResponse, PaginatedResponse, StudentFormData, FeeFormData } from "./entities";
+export type { ClassRecord, StudentRecord, ProfileRecord, AttendanceRecord } from './database';
+export type { SubjectRecord, ClassSubjectRecord, TeacherRecord } from './database';
+export type { FeeRecord, ExamRecord, ResultRecord, PayrollRecord } from './database';
+export type { LibraryRecord, InventoryRecord, TransportRecord, TimetableRecord } from './database';
+export type { HealthProfileRecord, ActivityRecord, CertificateRecord, GuardianRecord } from './database';
+export type { AcademicYearRecord, ClassEnrollmentRecord } from './database';
+export type { ActionResult } from './database';

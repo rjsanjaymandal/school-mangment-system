@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Search, X, FileText, Users, BookOpen, Calendar, GraduationCap, CreditCard, Bell, Settings, ArrowRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -30,10 +30,20 @@ const QUICK_LINKS: SearchResult[] = [
   { title: "Transport", description: "Fleet and routes", href: "/transport", icon: Settings, category: "Admin" },
 ];
 
+const DEFAULT_RESULTS = QUICK_LINKS.slice(0, 6);
+
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const results = useMemo(() => {
+    if (!query.trim()) return DEFAULT_RESULTS;
+    return QUICK_LINKS.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.description?.toLowerCase().includes(query.toLowerCase()) ||
+        item.category.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query]);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,20 +60,6 @@ export function GlobalSearch() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  useEffect(() => {
-    if (!query.trim()) {
-      setResults(QUICK_LINKS.slice(0, 6));
-    } else {
-      const filtered = QUICK_LINKS.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          item.description?.toLowerCase().includes(query.toLowerCase()) ||
-          item.category.toLowerCase().includes(query.toLowerCase())
-      );
-      setResults(filtered);
-    }
-  }, [query]);
 
   const handleSelect = (href: string) => {
     setOpen(false);

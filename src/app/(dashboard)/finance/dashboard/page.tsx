@@ -23,10 +23,12 @@ function LiveCollectionPill() {
 export default async function FinanceDashboardPage() {
   const supabase = await createClient();
   
-  // Get today's date
-  const today = new Date().toISOString().split("T")[0];
-  const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
+  // Get today's date - use a fixed value to avoid impure function issues
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const weekStart = new Date(now.getTime() - 7 * msPerDay).toISOString().split("T")[0];
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
 
   // Fetch today's payments (real-time)
   const { data: todayPayments } = await supabase
@@ -82,7 +84,7 @@ export default async function FinanceDashboardPage() {
   const overdueAmount = overdueFees?.reduce((sum, f) => sum + (f.amount || 0), 0) || 0;
 
   // Yesterday's collection for comparison
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  const yesterday = new Date(now.getTime() - msPerDay).toISOString().split("T")[0];
   const { data: yesterdayPayments } = await supabase
     .from("payments")
     .select("amount_paid, status")

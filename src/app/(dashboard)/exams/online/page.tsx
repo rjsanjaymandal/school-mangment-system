@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { FileText, Clock, Users, CheckCircle, Plus, Play, Eye, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -61,9 +61,13 @@ export default function OnlineExamsPage() {
     setLoading(false);
   }
 
-  useEffect(() => {
+  const loadDataCallback = useCallback(() => {
     loadData();
   }, [activeTab]);
+
+  useEffect(() => {
+    loadDataCallback();
+  }, [loadDataCallback]);
 
   const stats = {
     totalExams: exams.length,

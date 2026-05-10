@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { isAdmin } from "@/lib/auth-utils";
+import type { ActionResult } from "@/types";
 
 export async function createClass(data: {
     name: string;
@@ -19,8 +20,9 @@ export async function createClass(data: {
         if (error) throw error;
         revalidatePath("/classes");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -39,8 +41,9 @@ export async function updateClass(id: string, data: Partial<{
         if (error) throw error;
         revalidatePath("/classes");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -54,7 +57,8 @@ export async function deleteClass(id: string) {
         if (error) throw error;
         revalidatePath("/classes");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }

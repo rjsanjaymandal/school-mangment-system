@@ -1,375 +1,210 @@
-export type UserRole = "admin" | "teacher" | "student" | "parent";
+export type ActionResult<T = unknown> = 
+    | { success: true; data?: T }
+    | { success: false; error: string };
 
-export interface Profile {
-  id: string;
-  full_name: string;
-  first_name?: string;
-  last_name?: string;
-  email: string;
-  role: UserRole;
-  phone?: string;
-  address?: string;
-  avatar_url?: string;
-  created_at: string;
-  updated_at: string;
-}
+export type ClassRecord = {
+    id: string;
+    name: string;
+    capacity: number | null;
+    room_number: string | null;
+    teacher_id: string | null;
+    grade_level: string | null;
+    academic_year_id: string;
+    created_at: string;
+};
 
-export interface AcademicYear {
-  id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  is_current: boolean;
-  created_at: string;
-}
+export type StudentRecord = {
+    id: string;
+    admission_number: string | null;
+    roll_number: string | null;
+    class_id: string | null;
+    category: string;
+    religion: string;
+    mother_tongue: string;
+    rte_status: boolean;
+    status: 'active' | 'dropped' | 'alumni';
+    admission_date: string;
+    created_at: string;
+    profile?: ProfileRecord;
+};
 
-export interface Class {
-  id: string;
-  name: string;
-  capacity?: number;
-  room_number?: string;
-  teacher_id?: string | null;
-  created_at: string;
-}
+export type ProfileRecord = {
+    id: string;
+    full_name: string | null;
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+    role: 'admin' | 'teacher' | 'student' | 'parent';
+    phone: string | null;
+    address: string | null;
+    avatar_url: string | null;
+    created_at: string;
+};
 
-export interface Subject {
-  id: string;
-  name: string;
-  code?: string;
-  description?: string; syllabus?: any; credits?: number;
-  created_at: string;
-}
+export type AttendanceRecord = {
+    id: string;
+    student_id: string;
+    class_id: string;
+    date: string;
+    status: string;
+    remarks: string | null;
+    marked_by: string;
+};
 
-export interface Student {
-  id: string;
-  admission_number: string;
-  roll_number?: string;
-  class_id?: string;
-  date_of_birth?: string;
-  gender?: string;
-  blood_group?: string;
-  parent_id?: string;
-  created_at: string;
-  profile?: Profile;
-  class?: Class;
-}
+export type SubjectRecord = {
+    id: string;
+    name: string;
+    code: string;
+    description: string | null;
+    created_at: string;
+};
 
-export interface Teacher {
-  id: string;
-  employee_id: string;
-  specialization?: string[];
-  qualification?: string;
-  joining_date?: string;
-  status: "active" | "inactive";
-  profile?: Profile;
-}
+export type ClassSubjectRecord = {
+    id: string;
+    class_id: string;
+    subject_id: string;
+};
 
-export interface Exam {
-  id: string;
-  name: string;
-  academic_year_id: string;
-  start_date: string;
-  end_date: string;
-  created_at: string;
-  academic_year?: AcademicYear;
-}
+export type TeacherRecord = {
+    id: string;
+    user_id: string;
+    employee_number: string | null;
+    qualification: string | null;
+    specialization: string | null;
+    date_of_joining: string | null;
+    status: string;
+    profile?: ProfileRecord;
+};
 
-export interface Mark {
-  id: string;
-  exam_id: string;
-  student_id: string;
-  subject_id: string;
-  marks_obtained: number;
-  max_marks: number;
-  grade?: string;
-  remarks?: string;
-  created_at: string;
-}
+export type FeeRecord = {
+    id: string;
+    name: string;
+    amount: number;
+    class_id: string | null;
+    academic_year_id: string;
+    due_date: string;
+    status: 'pending' | 'paid' | 'waived';
+};
 
-export interface Fee {
-  id: string;
-  name: string;
-  amount: number;
-  due_date?: string;
-  class_id?: string;
-  description?: string; syllabus?: any; credits?: number;
-  created_at: string;
-}
+export type ExamRecord = {
+    id: string;
+    name: string;
+    class_id: string;
+    subject_id: string;
+    exam_date: string;
+    total_marks: number;
+    passing_marks: number;
+};
 
-export interface Payment {
-  id: string;
-  student_id: string;
-  fee_id: string;
-  amount_paid: number;
-  payment_date: string;
-  payment_method: string;
-  transaction_id?: string;
-  status: "completed" | "pending" | "failed";
-  created_at: string;
-}
+export type ResultRecord = {
+    id: string;
+    student_id: string;
+    exam_id: string;
+    marks: number;
+    grade: string | null;
+    remarks: string | null;
+};
 
-export interface Message {
-  id: string;
-  sender_id: string;
-  receiver_id: string;
-  content: string;
-  is_read: boolean;
-  created_at: string;
-  sender?: Profile;
-  receiver?: Profile;
-}
+export type PayrollRecord = {
+    id: string;
+    staff_id: string;
+    base_salary: number;
+    bonuses: number;
+    deductions: number;
+    month: number;
+    year: number;
+    status: 'pending' | 'paid';
+};
 
-export interface LibraryBook {
-  id: string;
-  title: string;
-  author: string;
-  isbn?: string;
-  category?: string;
-  status: "available" | "issued" | "lost";
-  created_at: string;
-}
+export type LibraryRecord = {
+    id: string;
+    title: string;
+    author: string | null;
+    isbn: string | null;
+    quantity: number;
+    available: number;
+};
 
-export interface SchoolAsset {
-  id: string;
-  name: string;
-  asset_tag: string;
-  assigned_to_id?: string;
-  status: "active" | "repair" | "decommissioned";
-  location?: string;
-  created_at: string;
-  assigned_to?: Profile;
-}
+export type InventoryRecord = {
+    id: string;
+    name: string;
+    quantity_in_stock: number;
+    unit_price: number;
+    category_id: string | null;
+    sku: string | null;
+};
 
-export interface BusRoute {
-  id: string;
-  name: string;
-  driver_id?: string;
-  plate_number?: string;
-  created_at: string;
-  driver?: Teacher;
-}
+export type TransportRecord = {
+    id: string;
+    vehicle_number: string;
+    driver_name: string;
+    route: string | null;
+    capacity: number;
+};
 
-export interface BusTelemetry {
-  id: string;
-  bus_route_id: string;
-  latitude: number;
-  longitude: number;
-  speed: string;
-  status: "moving" | "stopped" | "alert";
-  last_updated: string;
-}
+export type TimetableRecord = {
+    id: string;
+    class_id: string;
+    day_of_week: string;
+    period: number;
+    subject_id: string | null;
+    teacher_id: string | null;
+    room_number: string | null;
+    start_time: string;
+    end_time: string;
+};
 
-export interface PerformancePrediction {
-  id: string;
-  student_id: string;
-  predicted_grade?: string;
-  predicted_score: number;
-  confidence_level: number;
-  insights: string[];
-  created_at: string;
-  student?: Student;
-}
+export type HealthProfileRecord = {
+    id: string;
+    student_id: string;
+    blood_group: string | null;
+    allergies: string[];
+    chronic_conditions: string[];
+    medications: string[];
+    emergency_contact_name: string | null;
+    emergency_contact_phone: string | null;
+};
 
-export interface Timetable {
-  id: string;
-  class_id: string;
-  academic_year_id: string;
-  day_of_week: string;
-  created_at: string;
-  class?: Class;
-}
+export type ActivityRecord = {
+    id: string;
+    name: string;
+    type: string;
+    date: string;
+    conducted_by: string | null;
+    venue: string | null;
+};
 
-export interface TimetableSlot {
-  id: string;
-  timetable_id: string;
-  subject_id: string;
-  teacher_id: string;
-  start_time: string;
-  end_time: string;
-  room_number?: string;
-  subject?: Subject;
-  teacher?: Teacher;
-}
+export type CertificateRecord = {
+    id: string;
+    student_id: string;
+    certificate_type: string;
+    issue_date: string;
+    issued_by: string | null;
+    file_url: string | null;
+};
 
-export interface StaffPayroll {
-  id: string;
-  staff_id: string;
-  base_salary: number;
-  bonuses: number;
-  deductions: number;
-  month: number;
-  year: number;
-  status: "pending" | "paid";
-  payment_date?: string;
-  created_at: string;
-  staff?: Profile;
-}
+export type GuardianRecord = {
+    id: string;
+    student_id: string;
+    name: string;
+    relation: string;
+    phone: string | null;
+    email: string | null;
+    occupation: string | null;
+};
 
-export interface LeaveRequest {
-  id: string;
-  staff_id: string;
-  leave_type: string;
-  start_date: string;
-  end_date: string;
-  reason?: string;
-  status: "pending" | "approved" | "rejected";
-  approved_by?: string;
-  created_at: string;
-  staff?: Profile;
-}
+export type AcademicYearRecord = {
+    id: string;
+    name: string;
+    start_date: string;
+    end_date: string;
+    is_current: boolean;
+};
 
-export interface InventoryItem {
-  id: string;
-  name: string;
-  category_id?: string;
-  quantity_in_stock: number;
-  unit_price: number;
-  sku?: string;
-  created_at: string;
-}
-
-export interface LibraryTransaction {
-  id: string;
-  book_id: string;
-  student_id: string;
-  issue_date: string;
-  due_date: string;
-  return_date?: string;
-  fine_amount: number;
-  status: "issued" | "returned" | "overdue";
-  created_at: string;
-  book?: LibraryBook;
-  student?: Student;
-}
-
-export interface StudentConduct {
-  id: string;
-  student_id: string;
-  teacher_id?: string;
-  type: "merit" | "demerit";
-  points: number;
-  category: "Discipline" | "Academics" | "Sports" | "Leadership";
-  description?: string; syllabus?: any; credits?: number;
-  incident_date: string;
-  created_at: string;
-  student?: Student;
-  teacher?: Teacher;
-}
-
-export interface AuditLog {
-  id: string;
-  actor_id?: string;
-  action: string;
-  entity_type: string;
-  entity_id: string;
-  old_data?: any;
-  new_data?: any;
-  ip_address?: string;
-  user_agent?: string;
-  created_at: string;
-  actor?: Profile;
-}
-
-export interface DocumentArchive {
-  id: string;
-  title: string;
-  category: "Legal" | "Academic" | "HR" | "Financial";
-  file_path: string;
-  uploaded_by?: string;
-  expiry_date?: string;
-  version: number;
-  is_encrypted: boolean;
-  created_at: string;
-  author?: Profile;
-}
-
-export interface HealthProfile {
-  id: string;
-  blood_group?: string;
-  allergies?: string[];
-  chronic_conditions?: string[];
-  vaccinations?: { name: string; date: string; status: string }[];
-  medications?: string[];
-  emergency_contact_name?: string;
-  emergency_contact_phone?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface InfirmaryLog {
-  id: string;
-  student_id: string;
-  recorded_by?: string;
-  visit_reason: string;
-  symptoms?: string;
-  treatment_provided?: string;
-  medication_given?: string;
-  temperature?: number;
-  check_in_time: string;
-  check_out_time?: string;
-  status: "under_observation" | "discharged" | "referral";
-  student?: Student;
-  recorder?: Profile;
-}
-
-export interface Activity {
-  id: string;
-  name: string;
-  description?: string; syllabus?: any; credits?: number;
-  category?: string;
-  teacher_in_charge?: string;
-  location?: string;
-  schedule?: string;
-  max_participants?: number;
-  created_at: string;
-  updated_at: string;
-  teacher?: Profile;
-}
-
-export interface Alumni {
-  id: string;
-  first_name: string;
-  last_name: string;
-  graduation_year: number;
-  email?: string;
-  phone?: string;
-  current_profession?: string;
-  company?: string;
-  achievements?: string;
-  profile_picture_url?: string;
-  created_at: string;
-}
-
-export interface ActivityEnrollment {
-  id: string;
-  activity_id: string;
-  student_id: string;
-  enrollment_date: string;
-  status: "enrolled" | "completed" | "dropped";
-  activity?: Activity;
-  student?: Student;
-}
-
-export interface InventoryCategory {
-  id: string;
-  name: string;
-  description?: string; syllabus?: any; credits?: number;
-  created_at: string;
-}
-
-export interface Certificate {
-  id: string;
-  student_id: string;
-  type: string;
-  reference_number: string;
-  issued_date: string;
-  issued_by?: string;
-  status: "issued" | "revoked";
-  remarks?: string;
-  student?: Student;
-  issuer?: Profile;
-}
-
-
-export interface SchoolSettings { id: string; school_name: string; academic_year_start?: string; academic_year_end?: string; contact_email?: string; contact_phone?: string; address?: string; timezone: string; currency: string; features: any; created_at: string; updated_at: string; }
-export interface PaymentGateway { id: string; name: string; provider: string; is_active: boolean; config?: any; created_at: string; updated_at: string; }
+export type ClassEnrollmentRecord = {
+    id: string;
+    student_id: string;
+    class_id: string;
+    academic_year_id: string;
+    enrolled_at: string;
+};

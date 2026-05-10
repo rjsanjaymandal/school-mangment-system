@@ -2,6 +2,9 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import type { ActionResult } from "@/types";
+
+type AttendanceResult = ActionResult<{ id: string; student_id: string; status: string }[]>;
 
 export async function markAttendance(data: {
     class_id: string;
@@ -29,8 +32,9 @@ export async function markAttendance(data: {
 
         revalidatePath("/attendance");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -48,8 +52,9 @@ export async function getAttendanceByClassAndDate(
 
         if (error) throw error;
         return { success: true, data: data || [] };
-    } catch (error: any) {
-        return { success: false, error: error.message, data: [] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message, data: [] };
     }
 }
 
@@ -68,8 +73,9 @@ export async function getAttendanceSummary(classId: string, month: number, year:
 
         if (error) throw error;
         return { success: true, data: data || [] };
-    } catch (error: any) {
-        return { success: false, error: error.message, data: [] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message, data: [] };
     }
 }
 
@@ -84,7 +90,8 @@ export async function getStudentAttendance(studentId: string) {
 
         if (error) throw error;
         return { success: true, data: data || [] };
-    } catch (error: any) {
-        return { success: false, error: error.message, data: [] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message, data: [] };
     }
 }

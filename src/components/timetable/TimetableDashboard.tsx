@@ -73,17 +73,17 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
         return WEEKDAYS.includes(detectedDay) ? detectedDay : "Monday";
     }, []);
     const [selectedDay, setSelectedDay] = useState(today);
-    const [selectedClass, setSelectedClass] = useState("");
+    const [selectedClass, setSelectedClass] = useState(() => {
+        if (typeof window === "undefined") return "";
+        return localStorage.getItem("timetable_selected_class") || "";
+    });
     
     // Persistence for selected class
     useEffect(() => {
-        const saved = localStorage.getItem("timetable_selected_class");
-        if (saved) {
-            setSelectedClass(saved);
-        } else if (classes.length > 0) {
-            setSelectedClass(classes[0].id);
+        if (selectedClass && !localStorage.getItem("timetable_selected_class")) {
+            localStorage.setItem("timetable_selected_class", selectedClass);
         }
-    }, [classes]);
+    }, [selectedClass]);
 
     const handleClassChange = (val: string) => {
         setSelectedClass(val);

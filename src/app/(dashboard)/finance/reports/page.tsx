@@ -18,11 +18,13 @@ interface Payment {
 
 export default async function FinanceReportsPage() {
   const supabase = await createClient();
-  const today = new Date().toISOString().split('T')[0];
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
 
   // Get last 30 days of payments for charts
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * msPerDay).toISOString().split('T')[0];
   
   const { data: payments } = await supabase
     .from("payments")
@@ -69,7 +71,7 @@ export default async function FinanceReportsPage() {
   // Get last 7 days summary
   const last7Days: { date: string; amount: number }[] = [];
   for (let i = 6; i >= 0; i--) {
-    const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const date = new Date(now.getTime() - i * msPerDay).toISOString().split('T')[0];
     const dayPayments = payments?.filter((p: any) => p.payment_date === date) || [];
     last7Days.push({
       date,

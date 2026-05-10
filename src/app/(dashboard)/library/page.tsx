@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Book, Search, Plus, User, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,11 +42,6 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    if (activeTab === "books") loadBooks();
-    else if (activeTab === "circulation") loadTransactions();
-  }, [activeTab]);
-
   async function loadBooks() {
     setLoading(true);
     const { data } = await supabase
@@ -67,6 +62,18 @@ export default function LibraryPage() {
     setTransactions(data || []);
     setLoading(false);
   }
+
+  const loadData = useCallback(() => {
+    if (activeTab === "books") {
+      loadBooks();
+    } else if (activeTab === "circulation") {
+      loadTransactions();
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const filteredBooks = books.filter(b =>
     b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

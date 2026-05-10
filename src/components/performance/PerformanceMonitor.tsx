@@ -45,9 +45,10 @@ export function PerformanceMonitor() {
 
     const navTiming = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming & { responseStart?: number; requestStart?: number };
     if (navTiming?.responseStart && navTiming.requestStart) {
+      const ttfb = navTiming.responseStart - navTiming.requestStart;
       setMetrics((prev) => ({ 
         ...prev, 
-        ttfb: navTiming.responseStart - navTiming.requestStart 
+        ttfb 
       }));
     }
 

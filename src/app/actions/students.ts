@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { isAdmin } from "@/lib/auth-utils";
+import type { ActionResult, StudentRecord } from "@/types";
 
 export async function createStudent(data: {
     first_name: string;
@@ -66,7 +67,7 @@ export async function createStudent(data: {
         }
 
         // 3. Create Student
-        const studentData: any = {
+        const studentData: Partial<StudentRecord> = {
             id: userId,
             admission_number: data.admission_number || null, // Let trigger handle it if null
             admission_date: data.admission_date || new Date().toISOString(),
@@ -96,8 +97,9 @@ export async function createStudent(data: {
         revalidatePath("/admin/dashboard");
         return { success: true };
     } catch (error) {
-        console.error("Error creating student:", error);
-        return { error: "An unexpected error occurred." };
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        console.error("Error creating student:", message);
+        return { error };
     }
 }
 
@@ -156,7 +158,7 @@ export async function updateStudent(
         }
 
         // 3. Update Student
-        const studentData: any = {
+        const studentData: Partial<StudentRecord> = {
             admission_number: data.admission_number,
             category: data.category,
             religion: data.religion,
@@ -181,8 +183,9 @@ export async function updateStudent(
         revalidatePath("/admin/dashboard");
         return { success: true };
     } catch (error) {
-        console.error("Error updating student:", error);
-        return { error: "An unexpected error occurred." };
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        console.error("Error updating student:", message);
+        return { error };
     }
 }
 
@@ -227,8 +230,9 @@ export async function deleteStudent(id: string) {
         revalidatePath("/admin/dashboard");
         return { success: true };
     } catch (error) {
-        console.error("Error deleting student:", error);
-        return { error: "An unexpected error occurred." };
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        console.error("Error deleting student:", message);
+        return { error };
     }
 }
 
@@ -257,8 +261,9 @@ export async function getClassCapacity(classId: string) {
             currentCount: currentCount || 0,
             available: classData?.capacity ? classData.capacity - (currentCount || 0) : null
         };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -309,8 +314,9 @@ export async function assignStudentToClass(
         revalidatePath("/classes");
         revalidatePath("/admin/dashboard");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -368,8 +374,9 @@ export async function bulkAssignStudentsToClass(
         revalidatePath("/classes");
         revalidatePath("/admin/dashboard");
         return { success: true, assignedCount: studentIds.length };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -389,8 +396,9 @@ export async function getStudentsByClass(classId: string) {
         if (error) throw error;
 
         return { success: true, students: data || [] };
-    } catch (error: any) {
-        return { success: false, error: error.message, students: [] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message, students: [] };
     }
 }
 
@@ -412,7 +420,8 @@ export async function getUnassignedStudents(academicYearId?: string) {
         if (error) throw error;
 
         return { success: true, students: data || [] };
-    } catch (error: any) {
-        return { success: false, error: error.message, students: [] };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message, students: [] };
     }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Bus, MapPin, Users, Clock, Navigation, Plus, Route, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,10 +46,6 @@ export default function TransportPage() {
   const [routes, setRoutes] = useState<RouteInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadData();
-  }, [activeTab]);
-
   async function loadData() {
     setLoading(true);
     if (activeTab === "vehicles") {
@@ -61,6 +57,14 @@ export default function TransportPage() {
     }
     setLoading(false);
   }
+
+  const loadDataCallback = useCallback(() => {
+    loadData();
+  }, [activeTab]);
+
+  useEffect(() => {
+    loadDataCallback();
+  }, [loadDataCallback]);
 
   const stats = {
     totalVehicles: vehicles.length,

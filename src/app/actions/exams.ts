@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { isAdminOrTeacher } from "@/lib/auth-utils";
+import type { ActionResult } from "@/types";
 
 // ===== EXAMS =====
 

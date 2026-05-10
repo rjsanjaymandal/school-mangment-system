@@ -29,13 +29,12 @@ interface GlobalErrorHandlerProps {
 
 export function GlobalErrorHandler({ children }: GlobalErrorHandlerProps) {
   const [errors, setErrors] = useState<ErrorLog[]>([]);
-  const [isOnline, setIsOnline] = useState(true);
-  const [lastOnline, setLastOnline] = useState<Date | null>(null);
+  const [isOnline, setIsOnline] = useState(() => 
+    typeof navigator !== "undefined" ? navigator.onLine : true
+  );
+  const [lastOnline, setLastOnline] = useState<Date | null>(() => new Date());
 
-  // Track online status
   useEffect(() => {
-    setIsOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
-    
     const handleOnline = () => {
       setIsOnline(true);
       setLastOnline(new Date());
@@ -56,7 +55,6 @@ export function GlobalErrorHandler({ children }: GlobalErrorHandlerProps) {
     };
   }, []);
 
-  // Global error handler
   useEffect(() => {
     const handleError = (event: ErrorEvent) => {
       const errorLog: ErrorLog = {
@@ -68,9 +66,8 @@ export function GlobalErrorHandler({ children }: GlobalErrorHandlerProps) {
         userAgent: navigator.userAgent,
       };
 
-      setErrors(prev => [...prev.slice(-9), errorLog]); // Keep last 10 errors
+      setErrors(prev => [...prev.slice(-9), errorLog]);
       
-      // Show toast for critical errors
       if (!errorLog.message.includes("ResizeObserver")) {
         toast.error(`Error: ${errorLog.message.substring(0, 100)}`);
       }
@@ -78,15 +75,16 @@ export function GlobalErrorHandler({ children }: GlobalErrorHandlerProps) {
 
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       const errorLog: ErrorLog = {
-        id: `err-${Date.now()}`,
-        message: event.reason?.message || String(event.reason),
+        id: `rej-${Date.now()}`,
+        message: event.reason?.message || "Unhandled Promise Rejection",
         stack: event.reason?.stack,
         timestamp: Date.now(),
         url: window.location.href,
+        userAgent: navigator.userAgent,
       };
 
       setErrors(prev => [...prev.slice(-9), errorLog]);
-      toast.error("Something went wrong. Please refresh the page.");
+      toast.error(`Error: ${errorLog.message.substring(0, 100)}`);
     };
 
     window.addEventListener("error", handleError);
@@ -98,93 +96,50 @@ export function GlobalErrorHandler({ children }: GlobalErrorHandlerProps) {
     };
   }, []);
 
-  // Retry mechanism for failed requests
-  const retryFailedRequests = useCallback(() => {
-    // Trigger a page refresh for now
-    window.location.reload();
-  }, []);
-
-  const clearErrors = useCallback(() => {
-    setErrors([]);
-  }, []);
+  if (errors.length === 0) {
+    return <>{children}</>;
+  }
 
   return (
-    <>
-      {/* Offline Indicator */}
-      {!isOnline && (
-        <div className="fixed top-0 left-0 right-0 bg-amber-500 text-white px-4 py-2 z-50 flex items-center justify-center gap-2">
-          <WifiOff className="h-4 w-4" />
-          <span className="text-sm font-medium">You are offline. Some features may be unavailable.</span>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="ml-4 bg-white text-amber-600 hover:bg-amber-50"
-            onClick={retryFailedRequests}
-          >
-            <RefreshCw className="h-3 w-3 mr-1" />
-            Retry
-          </Button>
-        </div>
-      )}
-
-      {/* Back Online Notification */}
-      {isOnline && lastOnline && (
-        <div className="fixed bottom-4 right-4 z-50 animate-in slide-in-from-bottom-2">
-          <Card className="bg-emerald-50 border-emerald-200">
-            <CardContent className="p-3 flex items-center gap-2">
-              <Wifi className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm text-emerald-700">Connection restored</span>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Error Summary (Development Only) */}
-      {process.env.NODE_ENV === "development" && errors.length > 0 && (
-        <div className="fixed bottom-4 left-4 z-50 max-w-sm">
-          <Card className="bg-red-50 border-red-200">
-            <CardContent className="p-3">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Bug className="h-4 w-4 text-red-600" />
-                  <span className="text-sm font-medium text-red-800">Recent Errors ({errors.length})</span>
-                </div>
-                <Button variant="ghost" size="sm" onClick={clearErrors} className="h-6 text-xs">
-                  Clear
-                </Button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <Card className="w-full max-w-lg m-4">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 text-red-600 mb-4">
+            <Bug className="h-5 w-5" />
+            <h2 className="font-semibold">Something went wrong</h2>
+          </div>
+          <div className="space-y-2 max-h-60 overflow-auto">
+            {errors.slice(-3).map((err) => (
+              <div key={err.id} className="p-2 bg-slate-50 rounded text-sm">
+                <p className="font-mono text-xs">{err.message}</p>
               </div>
-              <div className="space-y-1 max-h-32 overflow-y-auto">
-                {errors.slice(-3).map(err => (
-                  <div key={err.id} className="text-xs text-red-700 truncate">
-                    {err.message}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {children}
-    </>
+            ))}
+          </div>
+          <div className="flex gap-2 mt-4">
+            <Button variant="outline" onClick={() => setErrors([])}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
-// Network status hook
 export function useNetworkStatus() {
-  const [isOnline, setIsOnline] = useState(true);
+  const [isOnline, setIsOnline] = useState(() => 
+    typeof navigator !== "undefined" ? navigator.onLine : true
+  );
   const [latency, setLatency] = useState<number | null>(null);
 
   useEffect(() => {
-    setIsOnline(navigator.onLine);
-
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    // Measure latency
     const measureLatency = async () => {
       try {
         const start = Date.now();
@@ -206,48 +161,4 @@ export function useNetworkStatus() {
   }, []);
 
   return { isOnline, latency };
-}
-
-// Performance metrics hook
-export function usePerformanceMetrics() {
-  const [metrics, setMetrics] = useState({
-    fcp: 0,
-    lcp: 0,
-    fid: 0,
-    cls: 0,
-    ttfb: 0,
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const observer = new PerformanceObserver((list) => {
-      setMetrics((prev) => {
-        const next = { ...prev };
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === "first-contentful-paint") {
-            next.fcp = entry.startTime;
-          }
-          if (entry.entryType === "largest-contentful-paint") {
-            next.lcp = entry.startTime;
-          }
-          if (entry.entryType === "first-input") {
-            next.fid = (entry as any).processingStart - entry.startTime;
-          }
-          if (entry.entryType === "layout-shift") {
-            next.cls += (entry as any).value;
-          }
-        }
-        return next;
-      });
-    });
-
-    observer.observe({ 
-      entryTypes: ["first-contentful-paint", "largest-contentful-paint", "first-input", "layout-shift"] 
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  return metrics;
 }

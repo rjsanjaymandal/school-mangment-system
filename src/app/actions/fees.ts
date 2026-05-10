@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import type { ActionResult } from "@/types";
 
 // ===== FEES =====
 
@@ -13,15 +14,16 @@ export async function createFee(data: {
     academic_year_id?: string;
     description?: string;
     fee_type?: string;
-}) {
+}): ActionResult {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("fees").insert(data);
         if (error) throw error;
         revalidatePath("/fees");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
@@ -32,27 +34,29 @@ export async function updateFee(id: string, data: Partial<{
     class_id: string;
     description: string;
     fee_type: string;
-}>) {
+}>): ActionResult {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("fees").update(data).eq("id", id);
         if (error) throw error;
         revalidatePath("/fees");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
-export async function deleteFee(id: string) {
+export async function deleteFee(id: string): ActionResult {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("fees").delete().eq("id", id);
         if (error) throw error;
         revalidatePath("/fees");
         return { success: true };
-    } catch (error: any) {
-        return { success: false, error: error.message };
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred.";
+        return { success: false, error: message };
     }
 }
 
