@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Bus, MapPin, Users, Clock, Navigation, Plus, Route, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,26 +45,25 @@ export default function TransportPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [routes, setRoutes] = useState<RouteInfo[]>([]);
   const [loading, setLoading] = useState(true);
-
-  async function loadData() {
-    setLoading(true);
-    if (activeTab === "vehicles") {
-      const { data } = await supabase.from("transport_vehicles").select("*").order("vehicle_number");
-      setVehicles(data || []);
-    } else if (activeTab === "routes") {
-      const { data } = await supabase.from("transport_routes").select("*").order("route_name");
-      setRoutes(data || []);
-    }
-    setLoading(false);
-  }
-
-  const loadDataCallback = useCallback(() => {
-    loadData();
-  }, [activeTab]);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    loadDataCallback();
-  }, [loadDataCallback]);
+    const loadData = async () => {
+      setLoading(true);
+      if (activeTab === "vehicles") {
+        const { data } = await supabase.from("transport_vehicles").select("*").order("vehicle_number");
+        if (isMounted.current) setVehicles(data || []);
+      } else if (activeTab === "routes") {
+        const { data } = await supabase.from("transport_routes").select("*").order("route_name");
+        if (isMounted.current) setRoutes(data || []);
+      }
+      if (isMounted.current) setLoading(false);
+    };
+
+    loadData();
+
+    return () => { isMounted.current = false; };
+  }, [activeTab, supabase]);
 
   const stats = {
     totalVehicles: vehicles.length,

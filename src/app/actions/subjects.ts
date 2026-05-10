@@ -10,7 +10,7 @@ export async function createSubject(data: {
     description?: string;
     syllabus?: unknown;
     credits?: number;
-}): ActionResult {
+}): Promise<ActionResult> {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("subjects").insert(data);
@@ -29,7 +29,7 @@ export async function updateSubject(id: string, data: Partial<{
     description: string;
     syllabus: unknown;
     credits: number;
-}>): ActionResult {
+}>): Promise<ActionResult> {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("subjects").update(data).eq("id", id);
@@ -42,7 +42,7 @@ export async function updateSubject(id: string, data: Partial<{
     }
 }
 
-export async function deleteSubject(id: string): ActionResult {
+export async function deleteSubject(id: string): Promise<ActionResult> {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("subjects").delete().eq("id", id);

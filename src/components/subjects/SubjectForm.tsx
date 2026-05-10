@@ -62,7 +62,7 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
         router.refresh();
         onSuccess();
       } else {
-        toast.error(result.error || "Execution Failure");
+        toast.error(String(result.error) || "Execution Failure");
       }
     } catch (error) {
       toast.error("Critical System Error");

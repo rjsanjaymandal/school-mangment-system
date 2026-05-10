@@ -53,8 +53,8 @@ export default function StudentEnrollmentPage() {
                 admission_date: formData.admission_date
             });
 
-            if (res.error) {
-                toast.error(res.error);
+            if ("error" in res && res.error) {
+                toast.error(String(res.error));
             } else {
                 toast.success("Student Enrolled Successfully", {
                     description: "The record has been synchronized with the institutional registry.",

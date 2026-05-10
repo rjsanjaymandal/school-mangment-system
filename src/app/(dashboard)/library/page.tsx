@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Book, Search, Plus, User, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,39 +41,37 @@ export default function LibraryPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-
-  async function loadBooks() {
-    setLoading(true);
-    const { data } = await supabase
-      .from("library_books")
-      .select("*")
-      .order("title");
-    setBooks(data || []);
-    setLoading(false);
-  }
-
-  async function loadTransactions() {
-    setLoading(true);
-    const { data } = await supabase
-      .from("library_transactions")
-      .select("*, students!inner(full_name, admission_number)")
-      .order("issue_date", { ascending: false })
-      .limit(50);
-    setTransactions(data || []);
-    setLoading(false);
-  }
-
-  const loadData = useCallback(() => {
-    if (activeTab === "books") {
-      loadBooks();
-    } else if (activeTab === "circulation") {
-      loadTransactions();
-    }
-  }, [activeTab]);
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      if (activeTab === "books") {
+        const { data } = await supabase
+          .from("library_books")
+          .select("*")
+          .order("title");
+        if (isMounted.current) {
+          setBooks(data || []);
+          setLoading(false);
+        }
+      } else if (activeTab === "circulation") {
+        const { data } = await supabase
+          .from("library_transactions")
+          .select("*, students!inner(full_name, admission_number)")
+          .order("issue_date", { ascending: false })
+          .limit(50);
+        if (isMounted.current) {
+          setTransactions(data || []);
+          setLoading(false);
+        }
+      }
+    };
+
     loadData();
-  }, [loadData]);
+
+    return () => { isMounted.current = false; };
+  }, [activeTab, supabase]);
 
   const filteredBooks = books.filter(b =>
     b.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

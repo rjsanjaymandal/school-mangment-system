@@ -14,7 +14,7 @@ export async function createFee(data: {
     academic_year_id?: string;
     description?: string;
     fee_type?: string;
-}): ActionResult {
+}): Promise<ActionResult> {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("fees").insert(data);
@@ -34,7 +34,7 @@ export async function updateFee(id: string, data: Partial<{
     class_id: string;
     description: string;
     fee_type: string;
-}>): ActionResult {
+}>): Promise<ActionResult> {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("fees").update(data).eq("id", id);
@@ -47,7 +47,7 @@ export async function updateFee(id: string, data: Partial<{
     }
 }
 
-export async function deleteFee(id: string): ActionResult {
+export async function deleteFee(id: string): Promise<ActionResult> {
     try {
         const supabase = createAdminClient();
         const { error } = await supabase.from("fees").delete().eq("id", id);

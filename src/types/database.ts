@@ -1,6 +1,6 @@
 export type ActionResult<T = unknown> = 
     | { success: true; data?: T }
-    | { success: false; error: string };
+    | { success: false; error: string | unknown };
 
 export type ClassRecord = {
     id: string;
@@ -25,6 +25,7 @@ export type StudentRecord = {
     status: 'active' | 'dropped' | 'alumni';
     admission_date: string;
     created_at: string;
+    class?: ClassRecord;
     profile?: ProfileRecord;
 };
 
@@ -56,6 +57,8 @@ export type SubjectRecord = {
     name: string;
     code: string;
     description: string | null;
+    credits: number | null;
+    syllabus: string | null;
     created_at: string;
 };
 
@@ -69,9 +72,12 @@ export type TeacherRecord = {
     id: string;
     user_id: string;
     employee_number: string | null;
+    employee_id: string | null;
     qualification: string | null;
-    specialization: string | null;
+    specialization: string | string[] | null;
+    specialization_list?: string[];
     date_of_joining: string | null;
+    join?: string;
     status: string;
     profile?: ProfileRecord;
 };
@@ -169,9 +175,12 @@ export type ActivityRecord = {
     id: string;
     name: string;
     type: string;
+    category: string;
     date: string;
     conducted_by: string | null;
     venue: string | null;
+    description: string | null;
+    max_participants: number | null;
 };
 
 export type CertificateRecord = {
@@ -208,3 +217,27 @@ export type ClassEnrollmentRecord = {
     academic_year_id: string;
     enrolled_at: string;
 };
+
+export type AlumniRecord = {
+    id: string;
+    student_id: string;
+    first_name: string;
+    last_name: string;
+    passout_year: number;
+    graduation_year: number;
+    current_profession: string | null;
+    company: string | null;
+    phone: string | null;
+    email: string | null;
+    achievements: string | null;
+    profile_picture_url: string | null;
+    is_verified: boolean;
+};
+
+export type Student = StudentRecord;
+export type Class = ClassRecord;
+export type Activity = ActivityRecord;
+export type Certificate = CertificateRecord;
+export type Teacher = TeacherRecord;
+export type Alumni = AlumniRecord;
+export type Subject = SubjectRecord;

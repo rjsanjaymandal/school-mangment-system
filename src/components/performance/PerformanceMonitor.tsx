@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface PerformanceMetrics {
   fcp?: number;
@@ -12,6 +12,7 @@ interface PerformanceMetrics {
 
 export function PerformanceMonitor() {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({});
+  const ttfbRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -44,11 +45,11 @@ export function PerformanceMonitor() {
     });
 
     const navTiming = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming & { responseStart?: number; requestStart?: number };
-    if (navTiming?.responseStart && navTiming.requestStart) {
-      const ttfb = navTiming.responseStart - navTiming.requestStart;
+    if (navTiming?.responseStart && navTiming.requestStart && ttfbRef.current === null) {
+      ttfbRef.current = navTiming.responseStart - navTiming.requestStart;
       setMetrics((prev) => ({ 
         ...prev, 
-        ttfb 
+        ttfb: ttfbRef.current! 
       }));
     }
 

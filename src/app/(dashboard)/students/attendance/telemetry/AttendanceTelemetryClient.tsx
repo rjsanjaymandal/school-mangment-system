@@ -1,17 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calendar, Clock, Users, Download, Filter, 
-  CheckCircle, XCircle, AlertCircle, TrendingUp
-} from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
+import { Calendar, TrendingUp, Users, CheckCircle, XCircle, Clock } from "lucide-react";
 
 interface AttendanceStats {
   present: number;
@@ -31,8 +27,18 @@ export function AttendanceTelemetryClient({
   totalStudents 
 }: AttendanceTelemetryClientProps) {
   const supabase = createClient();
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [selectedClass, setSelectedClass] = useState<string>("all");
+
+  // Get last 7 days data for chart - use useMemo to avoid impure calls
+  const last7Days = useMemo(() => {
+    const now = new Date();
+    const msPerDay = 24 * 60 * 60 * 1000;
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(now.getTime() - (6 - i) * msPerDay);
+      return date.toISOString().split("T")[0];
+    });
+  }, []);
 
   // Fetch classes
   const { data: classes } = useQuery({
@@ -95,12 +101,6 @@ export function AttendanceTelemetryClient({
       console.error("Error marking attendance:", error);
     }
   };
-
-  // Get last 7 days data for chart
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(Date.now() - (6 - i) * 24 * 60 * 60 * 1000);
-    return date.toISOString().split("T")[0];
-  });
 
   return (
     <div className="space-y-6">
@@ -252,7 +252,9 @@ export function AttendanceTelemetryClient({
             {last7Days.map((date, i) => {
               const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
               const dayName = dayNames[new Date(date).getDay()];
-              const height = Math.floor(Math.random() * 80) + 20; // Mock data
+              // Use deterministic heights based on index instead of Math.random
+              const heights = [45, 60, 55, 70, 65, 80, 50];
+              const height = heights[i];
               return (
                 <div key={i} className="flex flex-col items-center gap-2 flex-1">
                   <div 

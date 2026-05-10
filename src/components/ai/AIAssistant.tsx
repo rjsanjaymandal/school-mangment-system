@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { 
   MessageSquare, 
   X, 
@@ -69,7 +70,7 @@ export function AIAssistant() {
 
     // Add user message
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       role: "user",
       content,
       timestamp: new Date()
@@ -88,7 +89,7 @@ export function AIAssistant() {
       else if (lowerContent.includes("performance") || lowerContent.includes("grade") || lowerContent.includes("academic")) response = AI_RESPONSES.performance;
 
       const aiMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: uuidv4(),
         role: "assistant",
         content: response,
         timestamp: new Date(),

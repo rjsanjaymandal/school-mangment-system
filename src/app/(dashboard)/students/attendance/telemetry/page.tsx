@@ -47,8 +47,10 @@ export default async function AttendanceTelemetryPage() {
     .select("*", { count: "exact", head: true })
     .eq("status", "active");
 
-  // Get weekly attendance (last 7 days)
-  const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+  // Get weekly attendance (last 7 days) - use single Date instance
+  const now = new Date();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const weekStart = new Date(now.getTime() - 7 * msPerDay).toISOString().split("T")[0];
   const { data: weeklyAttendance } = await supabase
     .from("attendance")
     .select("status, date")

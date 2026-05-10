@@ -70,8 +70,8 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
           const first_name = nameParts[0] || "";
           const last_name = nameParts.slice(1).join(" ") || "";
           const res = await updateStudent(initialData.id, { ...values, first_name, last_name });
-          if (res.error) {
-            toast.error(res.error);
+          if ("error" in res && res.error) {
+            toast.error(String(res.error));
             return;
           }
           toast.success("Student updated successfully");
@@ -80,8 +80,8 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
           const first_name = nameParts[0] || "";
           const last_name = nameParts.slice(1).join(" ") || "";
           const res = await createStudent({ ...values, first_name, last_name });
-          if (res.error) {
-            toast.error(res.error);
+          if ("error" in res && res.error) {
+            toast.error(String(res.error));
             return;
           }
           toast.success("Student added successfully");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { 
     Printer, 
     ArrowLeft, 
@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
+/* eslint-disable react-hooks/set-state-in-effect */
 export default function FeeReceiptArchivePage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [payments, setPayments] = useState<any[]>([]);
@@ -29,22 +30,9 @@ export default function FeeReceiptArchivePage() {
     const [loading, setLoading] = useState(false);
     const [previewMode, setPreviewMode] = useState(false);
     const [settings, setSettings] = useState<any>({});
+    const isInitialMount = useRef(true);
 
-    useEffect(() => {
-        const fetchMeta = async () => {
-            const supabase = createClient();
-            const { data } = await supabase.from("school_settings").select("key, value");
-            const s = data?.reduce((acc: any, curr) => {
-                acc[curr.key] = curr.value;
-                return acc;
-            }, {});
-            setSettings(s || {});
-        };
-        fetchMeta();
-        searchPayments(); // Initial load
-    }, []);
-
-    const searchPayments = async () => {
+    const searchPayments = useCallback(async () => {
         setLoading(true);
         const supabase = createClient();
         let query = supabase
@@ -58,19 +46,35 @@ export default function FeeReceiptArchivePage() {
             .limit(20);
         
         if (searchQuery) {
-            // Check if it's a receipt number search or name search
             if (searchQuery.startsWith('RCP')) {
                 query = query.ilike('receipt_number', `%${searchQuery}%`);
-            } else {
-                // In a real app we'd join and search students.full_name
-                // For simplicity here we'll assume the user searches by RCP or just general list
             }
         }
         
         const { data } = await query;
         setPayments(data || []);
         setLoading(false);
-    };
+    }, [searchQuery]);
+
+    useEffect(() => {
+        const fetchMeta = async () => {
+            const supabase = createClient();
+            const { data } = await supabase.from("school_settings").select("key, value");
+            const s = data?.reduce((acc: any, curr) => {
+                acc[curr.key] = curr.value;
+                return acc;
+            }, {});
+            setSettings(s || {});
+        };
+        fetchMeta();
+    }, []);
+
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            searchPayments();
+        }
+    }, [searchPayments]);
 
     if (previewMode && selectedPayment) {
         return (

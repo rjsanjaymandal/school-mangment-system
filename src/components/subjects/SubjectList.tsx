@@ -54,7 +54,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
       router.refresh();
       setData(data.filter((s) => s.id !== id));
     } else {
-      toast.error(res.error || "Failed to delete subject");
+      toast.error(String(res.error) || "Failed to delete subject");
     }
   };
 

@@ -1,5 +1,7 @@
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '.env.local' });
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -18,8 +20,11 @@ async function checkData() {
   const { data: profiles, error: profileError } = await supabase.from('profiles').select('count');
   console.log("Profile count result:", { profiles, profileError });
   
-  const { data: sample, error: sampleError } = await supabase.from('students').select('*').limit(1);
-  console.log("Sample student:", sample);
+  const { data: teachers, error: teacherError } = await supabase.from('teachers').select('count');
+  console.log("Teacher count result:", { teachers, teacherError });
+
+  const { data: classes, error: classError } = await supabase.from('classes').select('count');
+  console.log("Class count result:", { classes, classError });
 }
 
-checkData();
+checkData().catch(console.error);

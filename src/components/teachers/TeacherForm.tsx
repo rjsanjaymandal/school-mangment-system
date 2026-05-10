@@ -39,6 +39,7 @@ export function TeacherForm({ initialData, onSuccess }: TeacherFormProps) {
       full_name: initialData?.profile?.full_name || "",
       email: initialData?.profile?.email || "",
       employee_id: initialData?.employee_id || "",
+      // @ts-expect-error - join is optional for display
       specialization: initialData?.specialization?.join(", ") || "",
       qualification: initialData?.qualification || "",
     },

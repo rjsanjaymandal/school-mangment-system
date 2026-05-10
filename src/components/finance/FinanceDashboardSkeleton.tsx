@@ -1,5 +1,7 @@
 "use client";
 
+const SKEL_HEIGHTS = [45, 60, 35, 75, 50, 65, 40, 55];
+
 export function FinanceDashboardSkeleton() {
   return (
     <div className="p-6 space-y-6 animate-pulse">
@@ -37,7 +39,7 @@ export function FinanceDashboardSkeleton() {
           <div className="h-4 w-32 bg-slate-100 rounded mb-4" />
           <div className="flex items-end gap-2 h-40">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="flex-1 bg-slate-100 rounded-t" style={{ height: `${Math.random() * 80 + 20}%` }} />
+              <div key={i} className="flex-1 bg-slate-100 rounded-t" style={{ height: `${SKEL_HEIGHTS[i-1]}%` }} />
             ))}
           </div>
         </div>

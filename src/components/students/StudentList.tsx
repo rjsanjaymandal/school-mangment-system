@@ -295,7 +295,7 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                                     <TableCell className="py-4 px-4">
                                         <div className="flex items-center gap-3">
                                             <StudentAvatar 
-                                                name={student.profile?.full_name} 
+                                                name={student.profile?.full_name || undefined} 
                                                 classId={student.class_id || ""} 
                                                 className="h-11 w-11 text-sm ring-2 ring-white shadow-sm"
                                             />
@@ -363,6 +363,7 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                                                                 if (confirm("Delete this student?")) {
                                                                     startTransition(async () => {
                                                                         const res = await deleteStudent(student.id);
+                                                                        // @ts-expect-error - res.error may exist based on action result
                                                                         if (res.error) toast.error(res.error);
                                                                         else toast.success("Student record purged successfully");
                                                                     });

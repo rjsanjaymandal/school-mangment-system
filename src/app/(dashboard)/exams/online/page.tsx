@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { FileText, Clock, Users, CheckCircle, Plus, Play, Eye, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,32 +42,31 @@ export default function OnlineExamsPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-
-  async function loadData() {
-    setLoading(true);
-    if (activeTab === "exams") {
-      const { data } = await supabase
-        .from("exams")
-        .select("*, subjects(name), classes(name)")
-        .order("exam_date", { ascending: false });
-      setExams(data || []);
-    } else if (activeTab === "questions") {
-      const { data } = await supabase
-        .from("exam_questions")
-        .select("*")
-        .limit(20);
-      setQuestions(data || []);
-    }
-    setLoading(false);
-  }
-
-  const loadDataCallback = useCallback(() => {
-    loadData();
-  }, [activeTab]);
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    loadDataCallback();
-  }, [loadDataCallback]);
+    const loadData = async () => {
+      setLoading(true);
+      if (activeTab === "exams") {
+        const { data } = await supabase
+          .from("exams")
+          .select("*, subjects(name), classes(name)")
+          .order("exam_date", { ascending: false });
+        if (isMounted.current) setExams(data || []);
+      } else if (activeTab === "questions") {
+        const { data } = await supabase
+          .from("exam_questions")
+          .select("*")
+          .limit(20);
+        if (isMounted.current) setQuestions(data || []);
+      }
+      if (isMounted.current) setLoading(false);
+    };
+
+    loadData();
+
+    return () => { isMounted.current = false; };
+  }, [activeTab, supabase]);
 
   const stats = {
     totalExams: exams.length,
