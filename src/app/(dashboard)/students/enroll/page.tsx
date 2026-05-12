@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
     GraduationCap, Save, UserPlus, Info, 
     Users, MapPin, Contact, FileText, CheckCircle2 
@@ -15,10 +15,12 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 import { createStudent } from "@/app/actions/students";
 
 export default function StudentEnrollmentPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [classes, setClasses] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -28,6 +30,7 @@ export default function StudentEnrollmentPage() {
         class_id: "",
         gender: "male",
         date_of_birth: "",
+        blood_group: "",
         category: "General",
         religion: "Not Specified",
         mother_tongue: "English",
@@ -35,6 +38,15 @@ export default function StudentEnrollmentPage() {
         phone: "",
         address: ""
     });
+
+    useEffect(() => {
+        const fetchClasses = async () => {
+            const supabase = createClient();
+            const { data } = await supabase.from("classes").select("id, name").order("name");
+            if (data) setClasses(data);
+        };
+        fetchClasses();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,7 +64,10 @@ export default function StudentEnrollmentPage() {
                 rte_status: formData.rte_status === "true",
                 admission_date: formData.admission_date,
                 gender: formData.gender,
-                date_of_birth: formData.date_of_birth
+                date_of_birth: formData.date_of_birth,
+                blood_group: formData.blood_group,
+                phone: formData.phone,
+                address: formData.address
             });
 
             if ("error" in res && res.error) {
@@ -130,9 +145,9 @@ export default function StudentEnrollmentPage() {
                                     <SelectValue placeholder="Select class" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl font-bold">
-                                    <SelectItem value="1">Grade 1 - Alpha</SelectItem>
-                                    <SelectItem value="2">Grade 2 - Beta</SelectItem>
-                                    <SelectItem value="3">Grade 3 - Gamma</SelectItem>
+                                    {classes.map((c: any) => (
+                                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -171,6 +186,22 @@ export default function StudentEnrollmentPage() {
                                     <SelectItem value="male">Male</SelectItem>
                                     <SelectItem value="female">Female</SelectItem>
                                     <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Blood Group</Label>
+                            <Select 
+                                value={formData.blood_group}
+                                onValueChange={(v) => setFormData(p => ({ ...p, blood_group: v }))}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
+                                        <SelectItem key={bg} value={bg}>{bg}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>

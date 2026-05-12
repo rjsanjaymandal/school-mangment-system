@@ -20,6 +20,9 @@ export async function createStudent(data: {
     admission_date?: string;
     gender?: string;
     date_of_birth?: string;
+    blood_group?: string;
+    phone?: string;
+    address?: string;
 }) {
     try {
         if (!(await isAdmin())) {
@@ -59,6 +62,8 @@ export async function createStudent(data: {
             last_name: data.last_name,
             email: data.email,
             role: "student",
+            phone: data.phone || null,
+            address: data.address || null,
         });
 
         if (profileError) {
@@ -79,6 +84,7 @@ export async function createStudent(data: {
             rte_status: data.rte_status || false,
             gender: data.gender || 'male',
             date_of_birth: data.date_of_birth || null,
+            blood_group: data.blood_group || null,
             status: 'active'
         };
 
@@ -123,6 +129,9 @@ export async function updateStudent(
         status?: 'active' | 'dropped' | 'alumni';
         gender?: string;
         date_of_birth?: string;
+        blood_group?: string;
+        phone?: string;
+        address?: string;
     }
 ) {
     try {
@@ -155,6 +164,8 @@ export async function updateStudent(
                 first_name: data.first_name,
                 last_name: data.last_name,
                 email: data.email,
+                phone: data.phone || null,
+                address: data.address || null,
             })
             .eq("id", id);
 
@@ -173,6 +184,7 @@ export async function updateStudent(
             status: data.status,
             gender: data.gender,
             date_of_birth: data.date_of_birth,
+            blood_group: data.blood_group,
         };
         if (data.roll_number) studentData.roll_number = data.roll_number;
         if (data.class_id) studentData.class_id = data.class_id;

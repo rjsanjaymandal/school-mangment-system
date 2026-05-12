@@ -41,6 +41,13 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
                         </h1>
                     </div>
                 </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" className="rounded-md gap-2" asChild>
+                        <Link href={`/students/${id}/edit`}>
+                            Edit Profile
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
             <StudentProfileTabs student={student} grades={grades} attendance={attendance} />

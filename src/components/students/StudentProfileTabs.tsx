@@ -61,9 +61,11 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                             <Printer className="h-4 w-4" />
                             Print
                         </Button>
-                        <Button variant="outline" size="sm" className="gap-2">
-                            <Edit3 className="h-4 w-4" />
-                            Edit
+                        <Button variant="outline" size="sm" className="gap-2" asChild>
+                            <Link href={`/students/${student.id}/edit`}>
+                                <Edit3 className="h-4 w-4" />
+                                Edit
+                            </Link>
                         </Button>
                     </div>
                 </div>

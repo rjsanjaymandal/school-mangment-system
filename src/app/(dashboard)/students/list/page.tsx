@@ -15,6 +15,7 @@ import { StudentAvatar } from "@/components/students/StudentAvatar";
 import { BulkActions } from "@/components/students/BulkActions";
 import { List } from "react-window";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface StudentData { id: string; admission_number: string; roll_number: string | null; status: string; name: string; gender: string; class_name: string; category?: string; }
 
@@ -116,10 +117,25 @@ export default function StudentListPage() {
                         <DropdownMenuTrigger asChild><Button variant="ghost" className="h-8 w-8 p-0 rounded-md hover:bg-slate-100"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48 rounded-md p-1 border-slate-200">
                             <DropdownMenuLabel className="text-xs font-medium text-slate-500 px-2 py-1">Actions</DropdownMenuLabel>
-                            <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer" onClick={() => router.push(`/students/${student.id}`)}><UserCircle className="h-4 w-4 text-blue-500" /> View Profile</DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer"><Edit3 className="h-4 w-4 text-amber-500" /> Edit Record</DropdownMenuItem>
-                            <DropdownMenuSeparator className="my-1 bg-slate-100" />
-                            <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer"><Printer className="h-4 w-4 text-slate-400" /> Print ID Card</DropdownMenuItem>
+                             <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer" onClick={() => router.push(`/students/${student.id}`)}><UserCircle className="h-4 w-4 text-blue-500" /> View Profile</DropdownMenuItem>
+                             <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer" onClick={() => router.push(`/students/${student.id}/edit`)}><Edit3 className="h-4 w-4 text-amber-500" /> Edit Record</DropdownMenuItem>
+                             <DropdownMenuSeparator className="my-1 bg-slate-100" />
+                             <DropdownMenuItem className="rounded-md gap-2 py-2 text-sm cursor-pointer"><Printer className="h-4 w-4 text-slate-400" /> Print ID Card</DropdownMenuItem>
+                             <DropdownMenuItem 
+                                className="rounded-md gap-2 py-2 text-sm cursor-pointer text-rose-600 focus:text-rose-600"
+                                onClick={async () => {
+                                    if (confirm(`Are you sure you want to delete ${student.name}?`)) {
+                                        const { error } = await supabase.from("students").delete().eq("id", student.id);
+                                        if (error) toast.error("Failed to delete student");
+                                        else {
+                                            toast.success("Student record deleted");
+                                            refetch();
+                                        }
+                                    }
+                                }}
+                             >
+                                <X className="h-4 w-4" /> Delete Student
+                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
