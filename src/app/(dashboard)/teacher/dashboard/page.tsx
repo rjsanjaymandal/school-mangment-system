@@ -7,12 +7,14 @@ import {
 } from "lucide-react";
 import { ERPCard } from "@/components/ui/erp-card";
 import { InstitutionalService } from "@/lib/services/institutional";
+import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default async function TeacherDashboard() {
-  const academicYear = await InstitutionalService.getCurrentAcademicYear().catch((err: any) => ({ error: err.message }));
+  const supabase = await createClient();
+  const academicYear = await InstitutionalService.getCurrentAcademicYear(supabase).catch((err: any) => ({ error: err.message }));
   const activeYearName =
     academicYear && !("error" in academicYear)
       ? academicYear.name

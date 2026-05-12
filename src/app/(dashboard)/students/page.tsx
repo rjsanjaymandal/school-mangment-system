@@ -13,7 +13,7 @@ export default async function StudentsPage() {
   const supabase = await createClient();
   const role = await getSessionRole();
   const [students, classes, currentAcademicYear] = await Promise.all([
-    InstitutionalService.getStudents().catch(() => []),
+    InstitutionalService.getStudents(supabase).catch(() => []),
     supabase.from("classes").select("*").order("name").then(({ data }) => data || []),
     supabase.from("academic_years").select("id").eq("is_current", true).maybeSingle().then(({ data }) => data),
   ]);

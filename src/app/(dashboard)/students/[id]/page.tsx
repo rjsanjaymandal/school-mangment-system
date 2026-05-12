@@ -1,4 +1,5 @@
 import { InstitutionalService } from "@/lib/services/institutional";
+import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -9,7 +10,8 @@ import { StudentProfileTabs } from "@/components/students/StudentProfileTabs";
 
 export default async function StudentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const student = await InstitutionalService.getStudentById(id);
+    const supabase = await createClient();
+    const student = await InstitutionalService.getStudentById(id, supabase);
 
     if (!student) {
         notFound();

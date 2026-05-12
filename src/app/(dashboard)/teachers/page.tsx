@@ -17,7 +17,7 @@ export default async function TeachersPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   const [teachers, leaveRequests, payrolls] = await Promise.all([
-    InstitutionalService.getTeachers().catch(() => []),
+    InstitutionalService.getTeachers(supabase).catch(() => []),
     supabase
       .from("leave_requests")
       .select("*, staff:profiles(full_name)")

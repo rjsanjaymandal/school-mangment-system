@@ -52,7 +52,7 @@ export default function EditStudentPage() {
             try {
                 const supabase = createClient();
                 const [student, classRes] = await Promise.all([
-                    InstitutionalService.getStudentById(id),
+                    InstitutionalService.getStudentById(id, supabase),
                     supabase.from("classes").select("id, name").order("name")
                 ]);
 

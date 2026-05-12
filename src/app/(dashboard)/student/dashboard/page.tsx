@@ -1,10 +1,12 @@
 import { GraduationCap, Star, Book, Clock, TrendingUp, ClipboardCheck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InstitutionalService } from "@/lib/services/institutional";
+import { createClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
 
 export default async function StudentDashboard() {
-  const academicYear = await InstitutionalService.getCurrentAcademicYear().catch((err: any) => ({ error: err.message }));
+  const supabase = await createClient();
+  const academicYear = await InstitutionalService.getCurrentAcademicYear(supabase).catch((err: any) => ({ error: err.message }));
   const activeYearName =
     academicYear && !("error" in academicYear)
       ? academicYear.name
