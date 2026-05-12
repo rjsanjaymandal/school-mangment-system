@@ -27,6 +27,7 @@ import {
   UserCheck,
   History,
   IndianRupee,
+  BookMarked,
 } from "lucide-react";
 
 interface NavItem {
@@ -48,22 +49,30 @@ const navigation: NavGroup[] = [
     group: "Dashboard",
     items: [
       { name: "Home", href: "/", icon: LayoutDashboard, description: "Main dashboard" },
+      { name: "Teacher Dashboard", href: "/teacher/dashboard", icon: Users, roles: ["teacher"], description: "Teacher's personal dashboard" },
     ],
   },
   {
     group: "Students",
     items: [
-      { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles" },
-      { name: "Attendance", href: "/attendance", icon: ClipboardCheck, description: "Track daily attendance" },
+      { name: "All Students", href: "/students/list", icon: GraduationCap, description: "Manage student profiles" },
+      { name: "Enroll New", href: "/students/enroll", icon: GraduationCap, description: "Add new student" },
+      { name: "Attendance", href: "/students/attendance", icon: ClipboardCheck, description: "Track daily attendance" },
+      { name: "Documents", href: "/students/documents", icon: FileText, description: "Student documents" },
       { name: "Conduct", href: "/conduct", icon: ShieldCheck, description: "Student behavior records" },
       { name: "Health", href: "/health", icon: Stethoscope, description: "Health profiles & medical" },
     ],
   },
   {
     group: "Staff",
+    roles: ["admin", "teacher"],
     items: [
-      { name: "Teachers", href: "/teachers", icon: UserSquare2, roles: ["admin"], description: "Staff directory" },
-      { name: "HR", href: "/hr", icon: Users, roles: ["admin"], description: "Human resources" },
+      { name: "Staff Directory", href: "/hr/directory", icon: UserSquare2, roles: ["admin"], description: "All staff members" },
+      { name: "Teachers", href: "/teachers", icon: Users, roles: ["admin"], description: "Teacher list" },
+      { name: "Add Staff", href: "/hr/add-staff", icon: UserSquare2, roles: ["admin"], description: "Add new staff" },
+      { name: "Role & Permissions", href: "/hr/roles", icon: ShieldCheck, roles: ["admin"], description: "Manage roles" },
+      { name: "Staff Attendance", href: "/hr/attendance", icon: ClipboardCheck, roles: ["admin"], description: "Staff attendance" },
+      { name: "Download Center", href: "/hr/download-center", icon: Package, roles: ["admin"], description: "ID cards, certificates" },
     ],
   },
   {
@@ -71,7 +80,8 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"], description: "Class sections" },
       { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"], description: "Curriculum" },
-      { name: "Exams", href: "/exams", icon: FileText, description: "Exam schedules" },
+      { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"], description: "Exam schedules" },
+      { name: "Online Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"], description: "Online exam portal" },
       { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck, description: "Student marks" },
       { name: "Timetable", href: "/timetable", icon: Calendar, description: "School schedule" },
       { name: "Certificates", href: "/certificates", icon: Award, description: "Generate certificates" },
@@ -80,7 +90,13 @@ const navigation: NavGroup[] = [
   {
     group: "Finance",
     items: [
-      { name: "Fee Collection", href: "/finance/dashboard", icon: IndianRupee, description: "Manage fees & payments" },
+      { name: "Dashboard", href: "/finance/dashboard", icon: IndianRupee, description: "Financial overview" },
+      { name: "Collect Fees", href: "/finance/collect", icon: IndianRupee, description: "Fee collection" },
+      { name: "Fee Structure", href: "/finance/structure", icon: IndianRupee, description: "Manage fee types" },
+      { name: "Print Slip", href: "/finance/slips", icon: FileText, description: "Print fee receipts" },
+      { name: "Daily Report", href: "/finance/daily", icon: BarChart3, description: "Daily collection" },
+      { name: "Accounts", href: "/finance/day-book", icon: BookMarked, roles: ["admin"], description: "Day book" },
+      { name: "Payroll", href: "/finance/process-salary", icon: IndianRupee, roles: ["admin"], description: "Process salary" },
     ],
   },
   {
@@ -89,11 +105,11 @@ const navigation: NavGroup[] = [
       { name: "Library", href: "/library", icon: Library, description: "Books & issues" },
       { name: "Transport", href: "/transport", icon: Bus, description: "Bus routes" },
       { name: "Messages", href: "/messages", icon: MessageSquare, description: "Announcements" },
+      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Inventory management" },
     ],
   },
   {
     group: "Reports",
-    roles: ["admin", "teacher"],
     items: [
       { name: "Analytics", href: "/analytics", icon: BarChart3, description: "Performance analytics" },
       { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"], description: "Generate reports" },
@@ -103,8 +119,10 @@ const navigation: NavGroup[] = [
     group: "System",
     roles: ["admin"],
     items: [
+      { name: "Notifications", href: "/notifications", icon: MessageSquare, description: "System notifications" },
       { name: "Users", href: "/users", icon: UserCheck, description: "User accounts" },
       { name: "Settings", href: "/settings", icon: Settings, description: "School configuration" },
+      { name: "Enterprise", href: "/settings/enterprise", icon: Trophy, description: "Enterprise features" },
       { name: "Audit Logs", href: "/audit", icon: History, description: "System activity" },
     ],
   },

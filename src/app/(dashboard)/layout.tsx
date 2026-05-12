@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getAuthContext } from "@/lib/auth-context";
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Navbar } from "@/components/shared/Navbar";
+import { QuickActionsFab } from "@/components/shared/QuickActionsFab";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GlobalErrorHandler } from "@/components/error/GlobalErrorHandler";
@@ -64,6 +65,7 @@ export default async function DashboardLayout({
                     {children}
                   </main>
                 </Suspense>
+                <QuickActionsFab />
               </div>
       </div>
     </GlobalErrorHandler>

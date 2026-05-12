@@ -135,3 +135,30 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Dark mode styles */
+.dark {
+  --background: oklch(0.145 0.015 285);
+  --foreground: oklch(0.985 0 285);
+  --card: oklch(0.178 0.015 285);
+  --card-foreground: oklch(0.985 0 285);
+  --popover: oklch(0.178 0.015 285);
+  --popover-foreground: oklch(0.985 0 285);
+  --primary: oklch(0.708 0.156 165);
+  --primary-foreground: oklch(0.985 0 285);
+  --secondary: oklch(0.278 0.015 285);
+  --secondary-foreground: oklch(0.985 0 285);
+  --muted: oklch(0.278 0.015 285);
+  --muted-foreground: oklch(0.708 0.015 285);
+  --accent: oklch(0.278 0.015 285);
+  --accent-foreground: oklch(0.985 0 285);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.278 0.015 285);
+  --input: oklch(0.278 0.015 285);
+  --ring: oklch(0.708 0.156 165);
+}
+
+.dark body {
+  background-color: oklch(0.145 0.015 285);
+  color: oklch(0.985 0 285);
+}

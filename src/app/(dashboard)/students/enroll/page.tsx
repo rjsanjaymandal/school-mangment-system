@@ -50,7 +50,9 @@ export default function StudentEnrollmentPage() {
                 religion: formData.religion,
                 mother_tongue: formData.mother_tongue,
                 rte_status: formData.rte_status === "true",
-                admission_date: formData.admission_date
+                admission_date: formData.admission_date,
+                gender: formData.gender,
+                date_of_birth: formData.date_of_birth
             });
 
             if ("error" in res && res.error) {
@@ -69,7 +71,7 @@ export default function StudentEnrollmentPage() {
     };
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-md bg-emerald-50 flex items-center justify-center">

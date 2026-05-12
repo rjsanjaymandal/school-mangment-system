@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
 import { User } from "@supabase/supabase-js";
-import { Bell } from "lucide-react";
+import { Grid3X3, Sun, Moon } from "lucide-react";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { useTheme } from "@/lib/providers/ThemeProvider";
 import { LiveCollectionPill } from "@/components/finance/LiveCollectionPill";
 import { GlobalSearch } from "@/components/search/GlobalSearch";
 import {
@@ -29,6 +31,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const role = userRole || "student";
+  const { theme, toggleTheme } = useTheme();
   
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -55,12 +58,26 @@ export function Navbar({ user, userRole }: NavbarProps) {
 
       <div className="flex items-center gap-4">
         <LiveCollectionPill />
-        <GlobalSearch />
-        
-        <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-md">
-          <Bell className="h-4 w-4 text-slate-500" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500" />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-9 w-9 rounded-md hover:bg-slate-100"
+          onClick={() => router.push("/launcher")}
+          title="App Launcher"
+        >
+          <Grid3X3 className="h-4 w-4 text-slate-500" />
         </Button>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-9 w-9 rounded-md hover:bg-slate-100"
+          onClick={toggleTheme}
+          title={theme === "light" ? "Dark Mode" : "Light Mode"}
+        >
+          {theme === "light" ? <Moon className="h-4 w-4 text-slate-500" /> : <Sun className="h-4 w-4 text-slate-500" />}
+        </Button>
+        <GlobalSearch />
+        <NotificationBell />
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

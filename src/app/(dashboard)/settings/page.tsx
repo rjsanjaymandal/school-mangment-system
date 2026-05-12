@@ -27,7 +27,7 @@ export default async function SettingsPage() {
   const academicYears = academicYearsResult.data || [];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       {/* Page Header */}
       <div className="flex items-center gap-3">
         <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">

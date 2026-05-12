@@ -218,14 +218,12 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
 
   return (
     <div className="flex h-full flex-col bg-white border-r border-slate-200 text-slate-900">
-      <div className="p-4 flex items-center gap-3 border-b border-slate-100">
-          <div className="bg-emerald-600 text-white p-2 rounded-md">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-        <div>
-          <span className="font-semibold text-base">Edu Maysan</span>
-          <span className="text-xs text-muted-foreground block">School Management</span>
-        </div>
+      <div className="p-4 flex items-center justify-center border-b border-slate-100">
+        <Link href="/" className="flex items-center justify-center group">
+          <span className="text-xl font-black tracking-tight text-slate-900 uppercase">
+            Edu <span className="text-emerald-600">Maysan</span>
+          </span>
+        </Link>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6" style={{ overflowX: 'hidden' }}>

@@ -22,6 +22,8 @@ export type StudentRecord = {
     religion: string;
     mother_tongue: string;
     rte_status: boolean;
+    gender: string;
+    date_of_birth: string | null;
     status: 'active' | 'dropped' | 'alumni';
     admission_date: string;
     created_at: string;

@@ -108,14 +108,12 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md relative z-10 space-y-6">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="bg-emerald-600 text-white p-2 rounded-md">
-            <GraduationCap className="h-6 w-6" />
-          </div>
-          <div>
-            <span className="font-semibold text-lg text-slate-900">Edu Maysan</span>
-            <span className="text-xs text-slate-500 block">School Management System</span>
-          </div>
+        <div className="flex items-center justify-center mb-8">
+          <Link href="/" className="flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+            <span className="text-4xl font-black tracking-tighter text-slate-900 uppercase">
+              Edu <span className="text-emerald-600">Maysan</span>
+            </span>
+          </Link>
         </div>
 
         {!selectedRole ? (

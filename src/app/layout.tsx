@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 import { getAuthContext } from "@/lib/auth-context";
 import { ImpersonationBanner } from "@/components/shared/ImpersonationBanner";
 import { AIAssistant } from "@/components/ai";
+import { ThemeProvider } from "@/lib/providers/ThemeProvider";
+import { KeyboardShortcutsProvider } from "@/components/shortcuts";
 
 export default async function RootLayout({
   children,
@@ -40,12 +42,16 @@ export default async function RootLayout({
             targetRole={effectiveRole || "unknown"}
           />
         )}
-        <ReactQueryProvider>
-          <main className="flex-1 w-full overflow-x-hidden">
-            {children}
-          </main>
-          <Toaster />
-          <AIAssistant />
+<ReactQueryProvider>
+          <ThemeProvider>
+            <KeyboardShortcutsProvider>
+              <main className="flex-1 w-full overflow-x-hidden">
+                {children}
+              </main>
+              <Toaster />
+              <AIAssistant />
+            </KeyboardShortcutsProvider>
+          </ThemeProvider>
         </ReactQueryProvider>
       </body>
     </html>

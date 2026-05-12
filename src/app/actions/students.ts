@@ -18,6 +18,8 @@ export async function createStudent(data: {
     mother_tongue?: string;
     rte_status?: boolean;
     admission_date?: string;
+    gender?: string;
+    date_of_birth?: string;
 }) {
     try {
         if (!(await isAdmin())) {
@@ -75,6 +77,8 @@ export async function createStudent(data: {
             religion: data.religion || 'Not Specified',
             mother_tongue: data.mother_tongue || 'English',
             rte_status: data.rte_status || false,
+            gender: data.gender || 'male',
+            date_of_birth: data.date_of_birth || null,
             status: 'active'
         };
 
@@ -117,6 +121,8 @@ export async function updateStudent(
         mother_tongue?: string;
         rte_status?: boolean;
         status?: 'active' | 'dropped' | 'alumni';
+        gender?: string;
+        date_of_birth?: string;
     }
 ) {
     try {
@@ -165,6 +171,8 @@ export async function updateStudent(
             mother_tongue: data.mother_tongue,
             rte_status: data.rte_status,
             status: data.status,
+            gender: data.gender,
+            date_of_birth: data.date_of_birth,
         };
         if (data.roll_number) studentData.roll_number = data.roll_number;
         if (data.class_id) studentData.class_id = data.class_id;

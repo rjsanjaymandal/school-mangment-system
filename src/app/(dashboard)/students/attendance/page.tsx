@@ -63,7 +63,7 @@ export default function StudentAttendancePage() {
     };
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-6">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-md bg-emerald-50 flex items-center justify-center">

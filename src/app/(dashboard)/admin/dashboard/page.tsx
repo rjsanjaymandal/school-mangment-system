@@ -36,7 +36,7 @@ export default async function AdminDashboard() {
       : "Academic Year 2024-25";
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">

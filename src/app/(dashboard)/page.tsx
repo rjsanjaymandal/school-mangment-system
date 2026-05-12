@@ -20,7 +20,6 @@ import { getSessionRole } from "@/lib/auth-utils";
 import { cn } from "@/lib/utils";
 import { ERPCard } from "@/components/ui/erp-card";
 import { Card } from "@/components/ui/card";
-import { PerformancePredictor } from "@/components/shared/DynamicWrapper";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -180,7 +179,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -261,7 +260,10 @@ export default async function DashboardPage() {
         </ERPCard>
 
         <ERPCard title="Academic Performance" className="lg:col-span-2" accentColor="emerald" icon={<BarChart3 className="h-4 w-4" />}>
-          <PerformancePredictor />
+          <div className="h-48 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-lg bg-slate-50">
+            <BarChart3 className="h-8 w-8 text-slate-300 mb-2" />
+            <p className="text-sm text-slate-400">Performance data will appear here</p>
+          </div>
         </ERPCard>
       </div>
 
