@@ -15,10 +15,18 @@ CREATE TABLE IF NOT EXISTS user_roles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 1b. Add columns that may be missing if table was created by an earlier migration
+ALTER TABLE user_roles ADD COLUMN IF NOT EXISTS department VARCHAR(100);
+ALTER TABLE user_roles ADD COLUMN IF NOT EXISTS designation VARCHAR(100);
+ALTER TABLE user_roles ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT true;
+ALTER TABLE user_roles ADD COLUMN IF NOT EXISTS permissions JSONB DEFAULT '{}';
+ALTER TABLE user_roles ADD COLUMN IF NOT EXISTS created_by UUID;
+ALTER TABLE user_roles ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
 -- 2. Create indexes
-CREATE INDEX idx_user_roles_user_id ON user_roles(user_id);
-CREATE INDEX idx_user_roles_role ON user_roles(role);
-CREATE INDEX idx_user_roles_active ON user_roles(is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_user_roles_user_id ON user_roles(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_role ON user_roles(role);
+CREATE INDEX IF NOT EXISTS idx_user_roles_active ON user_roles(is_active) WHERE is_active = true;
 
 -- 3. Create permissions reference table
 CREATE TABLE IF NOT EXISTS role_permissions (
@@ -90,12 +98,14 @@ ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE role_permissions ENABLE ROW LEVEL SECURITY;
 
 -- Admin can manage all roles
+DROP POLICY IF EXISTS "Admins can manage user roles" ON user_roles;
 CREATE POLICY "Admins can manage user roles" ON user_roles
   FOR ALL USING (
     EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role = 'admin' AND is_active = true)
   );
 
 -- Users can view their own role
+DROP POLICY IF EXISTS "Users can view own role" ON user_roles;
 CREATE POLICY "Users can view own role" ON user_roles
   FOR SELECT USING (user_id = auth.uid());
 
