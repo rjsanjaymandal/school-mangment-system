@@ -1,75 +1,101 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-    ClipboardCheck, Calendar as CalendarIcon, Filter, Save, 
-    CheckCircle2, AlertCircle, Clock
-} from "lucide-react";
+import { ClipboardCheck, Save, CheckCircle2, AlertCircle, Clock, Users, CalendarDays, ChevronLeft, ChevronRight, CheckCheck, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ERPCard } from "@/components/ui/erp-card";
-import { 
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { StudentAvatar } from "@/components/students/StudentAvatar";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
-import { AttendanceService } from "@/lib/services/attendance";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function StudentAttendancePage() {
+    const supabase = createClient();
+    const queryClient = useQueryClient();
+    
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [selectedClassId, setSelectedClassId] = useState("");
     const [isSaving, setIsSaving] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [classes, setClasses] = useState<any[]>([]);
-    const [students, setStudents] = useState<any[]>([]);
-    const [attendance, setAttendance] = useState<Record<string, string>>({});
+    const [searchQuery, setSearchQuery] = useState("");
 
-    const supabase = createClient();
-
-    // Fetch classes on mount
-    useEffect(() => {
-        const fetchClasses = async () => {
+    const { data: classes = [] } = useQuery({
+        queryKey: ['classes-attendance'],
+        queryFn: async () => {
             const { data } = await supabase.from("classes").select("id, name").order("name");
-            if (data) {
-                setClasses(data);
-                if (data.length > 0) setSelectedClassId(data[0].id);
-            }
-        };
-        fetchClasses();
-    }, []);
+            return data || [];
+        }
+    });
 
-    // Fetch students when class changes
-    useEffect(() => {
-        if (!selectedClassId) return;
-        const fetchStudents = async () => {
-            setIsLoading(true);
+    const { data: students = [], isLoading, refetch } = useQuery({
+        queryKey: ['students-attendance', selectedClassId],
+        queryFn: async () => {
+            if (!selectedClassId) return [];
             const { data } = await supabase
                 .from("students")
-                .select(`
-                    id, 
-                    roll_number, 
-                    profile:profiles(first_name, last_name)
-                `)
+                .select(`id, roll_number, profile:profiles(first_name, last_name)`)
                 .eq("class_id", selectedClassId)
                 .order("roll_number");
             
-            if (data) {
-                const mapped = (data as any[]).map(s => ({
-                    id: s.id,
-                    name: `${s.profile?.first_name || ""} ${s.profile?.last_name || ""}`.trim(),
-                    roll: s.roll_number || "-"
-                }));
-                setStudents(mapped);
-                setAttendance(Object.fromEntries(mapped.map(s => [s.id, "present"])));
-            }
-            setIsLoading(false);
-        };
-        fetchStudents();
-    }, [selectedClassId]);
+            return (data || []).map((s: any) => ({
+                id: s.id,
+                name: `${s.profile?.first_name || ""} ${s.profile?.last_name || ""}`.trim(),
+                roll: s.roll_number || "-"
+            }));
+        },
+        enabled: !!selectedClassId
+    });
+
+    const { data: existingAttendance = [] } = useQuery({
+        queryKey: ['attendance-check', selectedClassId, selectedDate],
+        queryFn: async () => {
+            if (!selectedClassId || !selectedDate) return [];
+            const { data } = await supabase
+                .from("attendance")
+                .select("student_id, status")
+                .eq("class_id", selectedClassId)
+                .eq("date", selectedDate);
+            return data || [];
+        },
+        enabled: !!selectedClassId && !!selectedDate
+    });
+
+    const [attendance, setAttendance] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        if (existingAttendance.length > 0) {
+            const mapped = Object.fromEntries(existingAttendance.map((a: any) => [a.student_id, a.status]));
+            setAttendance(mapped);
+        } else if (students.length > 0) {
+            setAttendance(Object.fromEntries(students.map((s: any) => [s.id, "present"])));
+        }
+    }, [existingAttendance, students]);
+
+    useEffect(() => {
+        if (classes.length > 0 && !selectedClassId) {
+            setSelectedClassId(classes[0].id);
+        }
+    }, [classes]);
+
+    const filteredStudents = students.filter((s: any) => 
+        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.roll.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const stats = {
+        present: Object.values(attendance).filter(v => v === "present").length,
+        late: Object.values(attendance).filter(v => v === "late").length,
+        absent: Object.values(attendance).filter(v => v === "absent").length,
+    };
+
+    const markAll = (status: string) => {
+        const updated: Record<string, string> = {};
+        students.forEach((s: any) => { updated[s.id] = status; });
+        setAttendance(updated);
+    };
 
     const handleSave = async () => {
         if (students.length === 0) return;
@@ -82,168 +108,172 @@ export default function StudentAttendancePage() {
                 date: selectedDate
             }));
 
-            const res = await AttendanceService.batchMarkAttendance(attendanceData);
-            if (res && "error" in res) {
-                toast.error("Failed to synchronize attendance.");
-            } else {
-                toast.success("Attendance Synchronized", {
-                    description: `Successfully logged for ${students.length} students on ${selectedDate}.`,
-                    icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                });
+            for (const record of attendanceData) {
+                await supabase.from("attendance").upsert(record, { onConflict: 'student_id,class_id,date' });
             }
+
+            toast.success("Attendance Saved", {
+                description: `${stats.present} present, ${stats.late} late, ${stats.absent} absent`,
+                icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            });
+            queryClient.invalidateQueries({ queryKey: ['attendance-check'] });
         } catch (error) {
-            toast.error("An unexpected error occurred during synchronization.");
+            toast.error("Failed to save attendance");
         } finally {
             setIsSaving(false);
         }
     };
 
+    const changeDate = (days: number) => {
+        const date = new Date(selectedDate);
+        date.setDate(date.getDate() + days);
+        setSelectedDate(date.toISOString().split('T')[0]);
+    };
+
     return (
         <div className="p-4 md:p-6 space-y-6">
+            {/* Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-md bg-emerald-50 flex items-center justify-center">
+                    <div className="h-12 w-12 rounded-md bg-emerald-100 flex items-center justify-center">
                         <ClipboardCheck className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Attendance</h1>
-                        <p className="text-sm text-slate-500">Daily compliance monitor</p>
+                        <h1 className="text-2xl font-bold">Student Attendance</h1>
+                        <p className="text-sm text-slate-500">
+                            {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                        </p>
                     </div>
                 </div>
-
                 <div className="flex items-center gap-3">
-                    <Input 
-                        type="date" 
-                        className="w-40"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                    />
-                    <Select 
-                        value={selectedClassId}
-                        onValueChange={setSelectedClassId}
-                    >
-                        <SelectTrigger className="w-48 h-12 rounded-md bg-white border-slate-200">
-                            <SelectValue placeholder="Select Class" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl font-bold">
-                            {classes.map(c => (
-                                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                            ))}
+                    <div className="flex items-center border rounded-md">
+                        <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => changeDate(-1)}>
+                            <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <Input type="date" className="w-36 h-10 border-0 text-center" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                        <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => changeDate(1)}>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                    <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+                        <SelectTrigger className="w-48 h-10 rounded-md"><SelectValue placeholder="Select Class" /></SelectTrigger>
+                        <SelectContent>
+                            {classes.map(c => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
                         </SelectContent>
                     </Select>
+                </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="p-4 flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-500 uppercase">Total</p>
+                        <p className="text-2xl font-bold">{students.length}</p>
                     </div>
-                    <Button 
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        className="h-12 px-6 rounded-md bg-emerald-600 text-white font-medium text-sm gap-2 shadow-sm hover:bg-emerald-700"
-                    >
-                        <Save className="h-4 w-4" />
-                        {isSaving ? "Syncing..." : "Save Daily Log"}
+                    <Users className="h-8 w-8 text-slate-300" />
+                </Card>
+                <Card className="p-4 flex items-center justify-between border-l-4 border-l-emerald-500">
+                    <div>
+                        <p className="text-xs text-slate-500 uppercase">Present</p>
+                        <p className="text-2xl font-bold text-emerald-600">{stats.present}</p>
+                    </div>
+                    <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+                </Card>
+                <Card className="p-4 flex items-center justify-between border-l-4 border-l-amber-500">
+                    <div>
+                        <p className="text-xs text-slate-500 uppercase">Late</p>
+                        <p className="text-2xl font-bold text-amber-600">{stats.late}</p>
+                    </div>
+                    <Clock className="h-8 w-8 text-amber-500" />
+                </Card>
+                <Card className="p-4 flex items-center justify-between border-l-4 border-l-red-500">
+                    <div>
+                        <p className="text-xs text-slate-500 uppercase">Absent</p>
+                        <p className="text-2xl font-bold text-red-600">{stats.absent}</p>
+                    </div>
+                    <XCircle className="h-8 w-8 text-red-500" />
+                </Card>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap items-center gap-3">
+                <span className="text-sm text-slate-500">Quick Mark:</span>
+                <Button variant="outline" size="sm" className="gap-2 text-emerald-600" onClick={() => markAll("present")}>
+                    <CheckCheck className="h-4 w-4" /> All Present
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2 text-red-600" onClick={() => markAll("absent")}>
+                    <XCircle className="h-4 w-4" /> All Absent
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2 text-amber-600" onClick={() => markAll("late")}>
+                    <Clock className="h-4 w-4" /> All Late
+                </Button>
+                
+                <div className="flex-1" />
+                
+                <div className="relative w-64">
+                    <Input placeholder="Search student..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-9 pl-9" />
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                </div>
+            </div>
+
+            {/* Attendance List */}
+            <Card className="overflow-hidden">
+                <div className="flex items-center px-4 py-3 border-b bg-slate-50">
+                    <div className="w-16 text-xs font-medium text-slate-500">Roll</div>
+                    <div className="flex-1 text-xs font-medium text-slate-500">Student</div>
+                    <div className="w-48 text-center text-xs font-medium text-slate-500">Status</div>
+                </div>
+                <div className="max-h-[60vh] overflow-auto">
+                    {isLoading ? (
+                        <div className="flex items-center justify-center h-40 text-slate-500">Loading...</div>
+                    ) : filteredStudents.length === 0 ? (
+                        <div className="flex items-center justify-center h-40 text-slate-500">
+                            {students.length === 0 ? "No students in this class" : "No matching students"}
+                        </div>
+                    ) : (
+                        filteredStudents.map((s: any, idx: number) => (
+                            <div key={s.id} className={cn("flex items-center px-4 py-3 border-b hover:bg-slate-50", idx % 2 === 0 ? "bg-white" : "bg-slate-50/50")}>
+                                <div className="w-16 text-center">
+                                    <span className="text-sm font-mono text-slate-600">{s.roll}</span>
+                                </div>
+                                <div className="flex-1 flex items-center gap-3">
+                                    <StudentAvatar name={s.name} size="sm" />
+                                    <span className="font-medium text-sm">{s.name}</span>
+                                </div>
+                                <div className="w-48 flex justify-center gap-2">
+                                    {[
+                                        { id: "present", label: "Present", color: "emerald" },
+                                        { id: "late", label: "Late", color: "amber" },
+                                        { id: "absent", label: "Absent", color: "red" },
+                                    ].map((opt) => (
+                                        <button
+                                            key={opt.id}
+                                            onClick={() => setAttendance(prev => ({ ...prev, [s.id]: opt.id }))}
+                                            className={cn(
+                                                "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                                                attendance[s.id] === opt.id
+                                                    ? opt.color === "emerald" ? "bg-emerald-100 text-emerald-700 border border-emerald-300" :
+                                                      opt.color === "amber" ? "bg-amber-100 text-amber-700 border border-amber-300" :
+                                                      "bg-red-100 text-red-700 border border-red-300"
+                                                    : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                            )}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+                <div className="px-4 py-3 border-t bg-slate-50 flex items-center justify-between">
+                    <span className="text-sm text-slate-500">{filteredStudents.length} of {students.length} students</span>
+                    <Button onClick={handleSave} disabled={isSaving} className="bg-emerald-600 gap-2">
+                        <Save className="h-4 w-4" /> {isSaving ? "Saving..." : "Save Attendance"}
                     </Button>
                 </div>
-
-            {/* Attendance Logger Table */}
-            <ERPCard accentColor="emerald">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100">
-                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase w-16 text-center">Roll</th>
-                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase">Student</th>
-                                <th className="px-4 py-3 text-xs font-medium text-slate-500 uppercase text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {isLoading ? (
-                                <tr>
-                                    <td colSpan={3} className="px-4 py-20 text-center text-slate-500">
-                                        Querying student registry...
-                                    </td>
-                                </tr>
-                            ) : students.length > 0 ? (
-                                students.map((s) => (
-                                    <tr key={s.id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="px-4 py-3 text-center">
-                                            <span className="text-sm font-medium text-slate-500">{s.roll}</span>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <div className="flex items-center gap-3">
-                                                <StudentAvatar 
-                                                    name={s.name} 
-                                                    classId={selectedClassId} 
-                                                    className="h-9 w-9 text-xs"
-                                                />
-                                                <div>
-                                                    <p className="text-sm font-medium text-slate-900">{s.name}</p>
-                                                    <p className="text-xs text-slate-400">{s.id}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center justify-center gap-x-4">
-                                                {[
-                                                    { id: "present", label: "P", color: "emerald", icon: CheckCircle2 },
-                                                    { id: "late", label: "L", color: "amber", icon: Clock },
-                                                    { id: "absent", label: "A", color: "rose", icon: AlertCircle },
-                                                ].map((opt) => (
-                                                    <button
-                                                        key={opt.id}
-                                                        onClick={() => setAttendance(prev => ({ ...prev, [s.id]: opt.id }))}
-                                                        className={cn(
-                                                            "flex flex-col items-center gap-y-1 group/btn",
-                                                            attendance[s.id] === opt.id ? "scale-110" : "opacity-40 grayscale hover:opacity-100 hover:grayscale-0"
-                                                        )}
-                                                    >
-                                                        <div className={cn(
-                                                            "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-300",
-                                                            attendance[s.id] === opt.id 
-                                                                ? `bg-${opt.color}-500 text-white shadow-lg shadow-${opt.color}-500/20` 
-                                                                : `bg-slate-100 text-slate-400`
-                                                        )}>
-                                                            <opt.icon className="h-5 w-5" />
-                                                        </div>
-                                                        <span className={cn(
-                                                            "text-[9px] font-black uppercase tracking-widest",
-                                                            attendance[s.id] === opt.id ? `text-${opt.color}-600` : "text-slate-400"
-                                                        )}>
-                                                            {opt.id}
-                                                        </span>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={3} className="px-4 py-20 text-center text-slate-500">
-                                        No students found in this class registry.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </ERPCard>
-
-            <div className="flex items-center justify-center">
-                <ERPCard accentColor="slate">
-                    <div className="flex items-center gap-x-3">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                        <span className="text-white text-[10px] font-black uppercase tracking-widest">Present: {Object.values(attendance).filter(v => v === "present").length}</span>
-                    </div>
-                    <div className="h-4 w-[1px] bg-white/10" />
-                    <div className="flex items-center gap-x-3">
-                        <div className="h-2 w-2 rounded-full bg-amber-500" />
-                        <span className="text-white text-[10px] font-black uppercase tracking-widest">Late: {Object.values(attendance).filter(v => v === "late").length}</span>
-                    </div>
-                    <div className="h-4 w-[1px] bg-white/10" />
-                    <div className="flex items-center gap-x-3">
-                        <div className="h-2 w-2 rounded-full bg-rose-500" />
-                        <span className="text-white text-[10px] font-black uppercase tracking-widest">Absent: {Object.values(attendance).filter(v => v === "absent").length}</span>
-                    </div>
-                </ERPCard>
-            </div>
+            </Card>
         </div>
     );
 }

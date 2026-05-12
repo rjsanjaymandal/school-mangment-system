@@ -445,3 +445,24 @@ export async function getUnassignedStudents(academicYearId?: string) {
         return { success: false, error: message, students: [] };
     }
 }
+
+export async function generateRollNumber(classId: string): Promise<string> {
+    const supabase = createAdminClient();
+    
+    const { data: classData } = await supabase
+        .from("classes")
+        .select("name, section")
+        .eq("id", classId)
+        .single();
+
+    const { count } = await supabase
+        .from("students")
+        .select("*", { count: "exact", head: true })
+        .eq("class_id", classId);
+
+    const nextNumber = (count || 0) + 1;
+    const classPrefix = classData?.name?.substring(0, 3).toUpperCase() || "CLS";
+    const sectionSuffix = classData?.section ? `-${classData.section.charAt(0).toUpperCase()}` : "";
+    
+    return `${classPrefix}${sectionSuffix}-${String(nextNumber).padStart(3, "0")}`;
+}
