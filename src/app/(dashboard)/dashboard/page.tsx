@@ -1,13 +1,13 @@
 export const dynamic = "force-dynamic";
 
 import { createClient } from "@/lib/supabase/server";
-import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
-import { DemographicsPanel } from "@/components/analytics/DemographicsPanel";
-import { PredictiveAnalytics } from "@/components/analytics/PredictiveAnalytics";
+import { AnalyticsDashboard } from "@/components/dashboard/AnalyticsDashboard";
+import { DemographicsPanel } from "@/components/dashboard/DemographicsPanel";
+import { PredictiveAnalytics } from "@/components/dashboard/PredictiveAnalytics";
 import { ERPCard } from "@/components/ui/erp-card";
 import { Users, BarChart3, GraduationCap, UserSquare2, Library, BookOpen } from "lucide-react";
 
-export default async function AnalyticsPage() {
+export default async function DashboardPage() {
   const supabase = await createClient();
 
   // Date ranges

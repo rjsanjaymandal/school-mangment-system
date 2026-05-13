@@ -1,3 +1,3 @@
-export { QuickStatsWidget } from "./QuickStatsWidget";
-export { RecentPaymentsWidget } from "./RecentPaymentsWidget";
-export { UpcomingEventsWidget } from "./UpcomingEventsWidget";
+export { AnalyticsDashboard } from "./AnalyticsDashboard";
+export { DemographicsPanel } from "./DemographicsPanel";
+export { PredictiveAnalytics } from "./PredictiveAnalytics";

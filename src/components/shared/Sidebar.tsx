@@ -49,7 +49,7 @@ const navigation: NavGroup[] = [
   {
     group: "Main",
     items: [
-      { name: "Dashboard", href: "/", icon: LayoutDashboard },
+      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     ],
   },
   {
@@ -160,19 +160,18 @@ const navigation: NavGroup[] = [
     group: "Reports",
     roles: ["admin", "teacher"],
     items: [
+      { name: "Report Cards", href: "/reports", icon: FileText },
       { name: "Analytics", href: "/analytics", icon: BarChart3 },
-      { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"] },
     ],
   },
   {
     group: "System",
     roles: ["admin"],
     items: [
+      { name: "Audit Logs", href: "/audit", icon: History },
       { name: "Notifications", href: "/notifications", icon: Bell },
       { name: "Users", href: "/users", icon: UserCheck },
       { name: "Settings", href: "/settings", icon: Settings },
-      { name: "Enterprise", href: "/settings/enterprise", icon: Shield, roles: ["admin"] },
-      { name: "Audit Logs", href: "/audit", icon: History },
     ],
   },
 ];
