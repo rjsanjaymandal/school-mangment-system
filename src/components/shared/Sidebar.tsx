@@ -56,9 +56,9 @@ const navigation: NavGroup[] = [
     group: "Students",
     roles: ["admin", "teacher", "student"],
     items: [
-      { 
-        name: "Students", 
-        href: "/students", 
+      {
+        name: "Students",
+        href: "/students",
         icon: GraduationCap,
         subItems: [
           { name: "All Students", href: "/students/list" },
@@ -75,18 +75,15 @@ const navigation: NavGroup[] = [
     group: "Staff",
     roles: ["admin", "teacher"],
     items: [
-      { 
-        name: "HR & Staff", 
-        href: "/hr/directory", 
-        icon: UserSquare2, 
-        roles: ["admin"],
+      {
+        name: "HR & Staff",
+        href: "/hr/directory",
+        icon: UserSquare2,
         subItems: [
           { name: "Staff Directory", href: "/hr/directory" },
-          { name: "Teachers", href: "/hr/directory?filter=teachers" },
           { name: "Add Staff", href: "/hr/add-staff" },
           { name: "Role & Permissions", href: "/hr/roles" },
           { name: "Staff Attendance", href: "/hr/attendance" },
-          { name: "Download Center", href: "/hr/download-center" },
         ]
       },
       { name: "Teacher Dashboard", href: "/teacher/dashboard", icon: Users, roles: ["teacher"] },
@@ -96,72 +93,48 @@ const navigation: NavGroup[] = [
     group: "Academics",
     roles: ["admin", "teacher", "student"],
     items: [
-      {
-        name: "Classes",
-        href: "/classes",
-        icon: Users,
-        roles: ["admin", "teacher"],
-      },
-      {
-        name: "Subjects",
-        href: "/subjects",
-        icon: BookOpen,
-        roles: ["admin", "teacher"],
-      },
+      { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"] },
+      { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"] },
       { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"] },
       { name: "Online Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"] },
       { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck },
       { name: "Timetable", href: "/timetable", icon: Calendar },
+      { name: "Report Cards", href: "/reports", icon: BarChart3 },
       { name: "Certificates", href: "/certificates", icon: Award },
     ],
   },
   {
     group: "Finance",
     items: [
-      { 
-        name: "Fee Collection", 
-        href: "/finance/dashboard", 
+      {
+        name: "Fee Collection",
+        href: "/finance/collect",
         icon: IndianRupee,
         subItems: [
-          { name: "Dashboard", href: "/finance/dashboard" },
           { name: "Collect Fees", href: "/finance/collect" },
           { name: "Fee Structure", href: "/finance/structure" },
-          { name: "Print Slip", href: "/finance/slips" },
           { name: "Daily Report", href: "/finance/daily" },
+          { name: "Print Slip", href: "/finance/slips" },
         ]
       },
-      { 
-        name: "Accounts & Payroll", 
-        href: "/finance/process-salary", 
+      {
+        name: "Accounts & Payroll",
+        href: "/finance/process-salary",
         icon: Wallet,
-        roles: ["admin", "principal"],
+        roles: ["admin"],
         subItems: [
           { name: "Process Salary", href: "/finance/process-salary" },
           { name: "Day Book", href: "/finance/day-book" },
           { name: "Salary Settings", href: "/finance/salary-settings" },
-          { name: "Reports", href: "/finance/reports" },
         ]
       },
     ],
   },
   {
-    group: "Library",
+    group: "Resources",
     items: [
       { name: "Library", href: "/library", icon: Library },
-    ],
-  },
-  {
-    group: "Transport",
-    items: [
       { name: "Transport", href: "/transport", icon: Bus },
-    ],
-  },
-  {
-    group: "Reports",
-    roles: ["admin", "teacher"],
-    items: [
-      { name: "Report Cards", href: "/reports", icon: FileText },
-      { name: "Analytics", href: "/analytics", icon: BarChart3 },
     ],
   },
   {
@@ -302,13 +275,13 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
         ))}
       </div>
 
-      <div className="p-6 border-t border-slate-100 border-slate-200 bg-slate-50/50 bg-slate-50/50">
+      <div className="p-6 border-t border-slate-100 border-slate-200 bg-slate-50/50">
         <Link href="/profile" className="flex items-center gap-3 p-3 rounded-md bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
-            <div className="h-10 w-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-medium">
-              {userProfile?.full_name?.toUpperCase().startsWith('R') ? 'S' : (userProfile?.full_name?.[0] || 'U')}
+            <div className="h-10 w-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-medium" suppressHydrationWarning>
+              {(initialProfile?.full_name || userProfile?.full_name || 'U')[0]?.toUpperCase() || 'U'}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{userProfile?.full_name || "Loading..."}</p>
+            <div className="flex-1 min-w-0" suppressHydrationWarning>
+              <p className="text-sm font-medium truncate">{initialProfile?.full_name || userProfile?.full_name || "Loading..."}</p>
               <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
             </div>
           </Link>

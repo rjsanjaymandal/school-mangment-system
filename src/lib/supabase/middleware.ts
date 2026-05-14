@@ -38,8 +38,6 @@ export const updateSession = async (request: NextRequest) => {
       error,
     } = await supabase.auth.getUser();
 
-    // Diagnostic log
-    console.log(`[MIDDLEWARE] Path: ${request.nextUrl.pathname}, User: ${user?.id || 'null'}, Error: ${error?.message || 'none'}`);
 
     // Prevent redirect loops on /login
     if (error && error.name === 'AuthApiError' && !request.nextUrl.pathname.startsWith('/login')) {
@@ -58,7 +56,6 @@ export const updateSession = async (request: NextRequest) => {
 
     // Authentication check: redirect to /login if no user and path is not /login
     if (!user && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/unauthorized')) {
-      console.log(`[MIDDLEWARE] No user found, redirecting to /login from ${request.nextUrl.pathname}`);
       const url = request.nextUrl.clone();
       url.pathname = '/login';
       return NextResponse.redirect(url);
