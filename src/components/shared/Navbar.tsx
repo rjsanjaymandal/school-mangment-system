@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSidebarStore } from "@/lib/store/sidebar-store";
+import { cn } from "@/lib/utils";
 
 import { User } from "@supabase/supabase-js";
 import { Grid3X3, Sun, Moon } from "lucide-react";
@@ -67,14 +68,32 @@ export function Navbar({ user, userRole }: NavbarProps) {
 
   const { isCollapsed, width } = useSidebarStore();
   const [mounted, setMounted] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    const handleMouseDown = (e: MouseEvent) => {
+      if (e.clientX >= width - 10 && e.clientX <= width + 10) {
+        setIsResizing(true);
+      }
+    };
+    const handleMouseUp = () => setIsResizing(false);
+
+    window.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [width]);
 
   return (
     <header 
-      className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 fixed top-0 right-0 z-50 transition-all duration-300"
+      className={cn(
+        "h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 fixed top-0 right-0 z-50",
+        isResizing ? "transition-none" : "transition-all duration-300"
+      )}
       style={{ left: !mounted ? 256 : (isCollapsed ? 80 : width) }}
     >
       <div className="flex-1">

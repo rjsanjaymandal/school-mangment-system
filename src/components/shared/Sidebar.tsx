@@ -226,7 +226,8 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
   return (
     <div 
       className={cn(
-        "flex flex-col h-full bg-slate-950 border-r border-slate-800 transition-all duration-300 relative group/sidebar",
+        "flex flex-col h-full bg-slate-950 border-r border-slate-800 relative group/sidebar select-none",
+        isResizing ? "transition-none border-r-emerald-500/50 shadow-2xl shadow-emerald-500/5" : "transition-all duration-300",
         isCollapsed ? "w-20" : "w-64"
       )}
       style={{ width: isCollapsed ? 80 : width }}
@@ -235,8 +236,18 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
       {!isCollapsed && (
         <div 
           onMouseDown={() => setIsResizing(true)}
-          className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-emerald-500/50 transition-colors z-[60]"
-        />
+          className={cn(
+            "absolute right-0 top-0 bottom-0 w-1 cursor-col-resize transition-all duration-300 z-[60] group/handle",
+            isResizing ? "bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)] w-1.5" : "hover:bg-emerald-500/30 hover:w-1.5"
+          )}
+        >
+          <div className={cn(
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-12 rounded-full bg-slate-800 border border-slate-700 flex flex-col items-center justify-center gap-1 transition-all duration-300 opacity-0 group-hover/handle:opacity-100",
+            isResizing && "opacity-100 bg-emerald-500 border-emerald-400"
+          )}>
+            <div className="w-0.5 h-4 bg-slate-600/50 rounded-full" />
+          </div>
+        </div>
       )}
       {/* Brand Logo */}
       <div className="p-6 flex items-center gap-3">
