@@ -47,6 +47,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
     "directory": "Student List",
     "enroll": "Enrollment",
     "attendance": "Attendance",
+    "conduct": "Conduct",
     "finance": "Finance",
     "launcher": "Launchpad"
   };

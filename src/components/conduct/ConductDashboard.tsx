@@ -4,28 +4,47 @@ import { useState, useMemo } from "react";
 import { 
     Shield, 
     Plus, 
-    TrendingUp, 
-    TrendingDown, 
     Award, 
     Star, 
     Edit, 
     Trash2, 
-    Calendar as CalendarIcon, 
     Search,
-    Filter,
-    User
+    User,
+    AlertCircle,
+    CheckCircle2,
+    Calendar,
+    Activity,
+    MoreHorizontal,
+    FileText
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addConductRecord, updateConductRecord, deleteConductRecord } from "@/app/actions/conduct";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { ERPCard } from "@/components/ui/erp-card";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 
 interface ConductDashboardProps {
     records: any[];
@@ -121,7 +140,7 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Delete this record?")) return;
+        if (!confirm("Delete this record? This action is irreversible.")) return;
         const result = await deleteConductRecord(id);
         if (result.success) {
             toast.success("Record deleted");
@@ -146,284 +165,358 @@ export function ConductDashboard({ records, students, teachers, userRole }: Cond
     };
 
     return (
-        <div className="space-y-6">
-            {/* Stats */}
+        <div className="space-y-8">
+            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-500">Merits</p>
-                                <p className="text-2xl font-bold text-emerald-600">{stats.merits}</p>
-                            </div>
-                            <Award className="h-8 w-8 text-emerald-200" />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="border-l-4 border-l-amber-500 shadow-sm">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-500">Demerits</p>
-                                <p className="text-2xl font-bold text-amber-600">{stats.demerits}</p>
-                            </div>
-                            <TrendingDown className="h-8 w-8 text-amber-200" />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="border-l-4 border-l-violet-500 shadow-sm">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-500">Total Points</p>
-                                <p className="text-2xl font-bold text-violet-600">{stats.totalPoints}</p>
-                            </div>
-                            <Star className="h-8 w-8 text-violet-200" />
-                        </div>
-                    </CardContent>
-                </Card>
+                <DashboardStatCard 
+                    title="Positive Merits" 
+                    value={stats.merits} 
+                    icon={CheckCircle2} 
+                    color="emerald" 
+                    description="Commendable actions" 
+                />
+                <DashboardStatCard 
+                    title="Demerit Incidents" 
+                    value={stats.demerits} 
+                    icon={AlertCircle} 
+                    color="amber" 
+                    description="Correction required" 
+                />
+                <DashboardStatCard 
+                    title="Institutional Points" 
+                    value={stats.totalPoints} 
+                    icon={Star} 
+                    color="purple" 
+                    description="Global behavior score" 
+                />
             </div>
 
-            {/* Filters */}
-            <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                <CardContent className="pt-6">
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            {/* Action Bar */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200 p-5 shadow-sm">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                    <div className="flex flex-1 flex-col lg:flex-row gap-4 w-full">
+                        <div className="relative flex-1 max-w-md">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <Input
-                                placeholder="Search by name or admission number..."
+                                placeholder="Search by student name..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="pl-10 rounded-md"
+                                className="h-11 pl-11 rounded-xl bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-emerald-500 text-xs font-bold"
                             />
                         </div>
-                        <Select value={typeFilter} onValueChange={setTypeFilter}>
-                            <SelectTrigger className="w-full md:w-40 rounded-md">
-                                <SelectValue placeholder="Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Types</SelectItem>
-                                <SelectItem value="merit">Merit</SelectItem>
-                                <SelectItem value="demerit">Demerit</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                            <SelectTrigger className="w-full md:w-40 rounded-md">
-                                <SelectValue placeholder="Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Categories</SelectItem>
-                                {CATEGORIES.map(cat => (
-                                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <div className="flex gap-3">
+                            <Select value={typeFilter} onValueChange={setTypeFilter}>
+                                <SelectTrigger className="h-11 w-[140px] rounded-xl border-slate-200 text-xs font-bold">
+                                    <SelectValue placeholder="All Types" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                    <SelectItem value="all">All Types</SelectItem>
+                                    <SelectItem value="merit">Merit</SelectItem>
+                                    <SelectItem value="demerit">Demerit</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                                <SelectTrigger className="h-11 w-[160px] rounded-xl border-slate-200 text-xs font-bold">
+                                    <SelectValue placeholder="All Categories" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-xl">
+                                    <SelectItem value="all">All Categories</SelectItem>
+                                    {CATEGORIES.map(cat => (
+                                        <SelectItem key={cat} value={cat} className="rounded-lg">{cat}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
-                </CardContent>
-            </Card>
 
-            {/* Records Table */}
-            <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                <CardHeader className="border-b bg-slate-50/50">
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="text-base">Behavior Records</CardTitle>
-                        {isAdminOrTeacher && (
-                            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-                                <DialogTrigger asChild>
-                                    <Button size="sm" className="rounded-md bg-emerald-600 hover:bg-emerald-700">
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Add Record
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-lg">
+                    {isAdminOrTeacher && (
+                        <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+                            <DialogTrigger asChild>
+                                <Button className="h-11 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
+                                    <Plus className="h-4 w-4" /> Add Record
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-background border-none shadow-2xl rounded-3xl backdrop-blur-xl">
+                                <div className="p-8 border-b border-slate-100 bg-slate-50/50">
                                     <DialogHeader>
-                                        <DialogTitle>Add Conduct Record</DialogTitle>
+                                        <DialogTitle className="font-black text-2xl text-slate-900 tracking-tight">Add Conduct Record</DialogTitle>
+                                        <DialogDescription className="text-slate-400 mt-2 text-[10px] font-black uppercase tracking-widest">
+                                            Institutional behavioral framework
+                                        </DialogDescription>
                                     </DialogHeader>
-                                    <div className="space-y-4 py-4">
+                                </div>
+                                <div className="p-8 space-y-6">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Student</Label>
+                                        <Select value={form.student_id} onValueChange={(val) => setForm({...form, student_id: val})}>
+                                            <SelectTrigger className="h-11 rounded-xl border-slate-200 text-xs font-bold">
+                                                <SelectValue placeholder="Select target student" />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl">
+                                                {students.map(s => (
+                                                    <SelectItem key={s.id} value={s.id} className="rounded-lg">
+                                                        {s.profile?.full_name} ({s.admission_number})
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Student</Label>
-                                            <Select value={form.student_id} onValueChange={(val) => setForm({...form, student_id: val})}>
-                                                <SelectTrigger className="rounded-md">
-                                                    <SelectValue placeholder="Select student" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {students.map(s => (
-                                                        <SelectItem key={s.id} value={s.id}>
-                                                            {s.profile?.full_name} ({s.admission_number})
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <Label>Type</Label>
-                                                <Select value={form.type} onValueChange={(val) => setForm({...form, type: val as "merit" | "demerit"})}>
-                                                    <SelectTrigger className="rounded-md">
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="merit">Merit</SelectItem>
-                                                        <SelectItem value="demerit">Demerit</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label>Points</Label>
-                                                <Input type="number" value={form.points} onChange={(e) => setForm({...form, points: e.target.value})} className="rounded-md" />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label>Category</Label>
-                                            <Select value={form.category} onValueChange={(val) => setForm({...form, category: val})}>
-                                                <SelectTrigger className="rounded-md">
+                                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Record Type</Label>
+                                            <Select value={form.type} onValueChange={(val) => setForm({...form, type: val as "merit" | "demerit"})}>
+                                                <SelectTrigger className="h-11 rounded-xl border-slate-200 text-xs font-bold">
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent>
-                                                    {CATEGORIES.map(cat => (
-                                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                                                    ))}
+                                                <SelectContent className="rounded-xl">
+                                                    <SelectItem value="merit" className="text-emerald-600 font-bold">Merit</SelectItem>
+                                                    <SelectItem value="demerit" className="text-amber-600 font-bold">Demerit</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Description</Label>
-                                            <Input value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} className="rounded-md" placeholder="Enter description" />
+                                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Points</Label>
+                                            <Input 
+                                                type="number" 
+                                                value={form.points} 
+                                                onChange={(e) => setForm({...form, points: e.target.value})} 
+                                                className="h-11 rounded-xl border-slate-200 text-xs font-bold"
+                                            />
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label>Incident Date</Label>
-                                            <Input type="date" value={form.incident_date} onChange={(e) => setForm({...form, incident_date: e.target.value})} className="rounded-md" />
-                                        </div>
-                                        <Button onClick={handleAdd} disabled={loading} className="w-full rounded-md bg-emerald-600 hover:bg-emerald-700">
-                                            {loading ? "Saving..." : "Save Record"}
-                                        </Button>
                                     </div>
-                                </DialogContent>
-                            </Dialog>
-                        )}
-                    </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-slate-50 border-b">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Student</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Type</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Category</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Points</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Description</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Date</th>
-                                    {isAdminOrTeacher && <th className="px-4 py-3 text-right text-sm font-medium text-slate-600">Actions</th>}
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {filteredRecords.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={isAdminOrTeacher ? 7 : 6} className="px-4 py-8 text-center text-slate-500">
-                                            No records found
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredRecords.map((record) => (
-                                        <tr key={record.id} className="hover:bg-slate-50">
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                                        <User className="h-4 w-4 text-slate-500" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-medium text-slate-900">{record.student?.profile?.full_name}</p>
-                                                        <p className="text-xs text-slate-500">{record.student?.admission_number}</p>
-                                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Institutional Category</Label>
+                                        <Select value={form.category} onValueChange={(val) => setForm({...form, category: val})}>
+                                            <SelectTrigger className="h-11 rounded-xl border-slate-200 text-xs font-bold">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-xl">
+                                                {CATEGORIES.map(cat => (
+                                                    <SelectItem key={cat} value={cat} className="rounded-lg">{cat}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Detailed Description</Label>
+                                        <Input 
+                                            value={form.description} 
+                                            onChange={(e) => setForm({...form, description: e.target.value})} 
+                                            className="h-11 rounded-xl border-slate-200 text-xs font-bold" 
+                                            placeholder="Nature of the incident or achievement..." 
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Incident Date</Label>
+                                        <Input 
+                                            type="date" 
+                                            value={form.incident_date} 
+                                            onChange={(e) => setForm({...form, incident_date: e.target.value})} 
+                                            className="h-11 rounded-xl border-slate-200 text-xs font-bold" 
+                                        />
+                                    </div>
+                                    <Button 
+                                        onClick={handleAdd} 
+                                        disabled={loading} 
+                                        className="w-full h-12 rounded-xl bg-slate-900 hover:bg-black font-black text-[10px] uppercase tracking-widest text-white shadow-xl transition-all active:scale-95"
+                                    >
+                                        {loading ? "Processing..." : "Commit Record"}
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    )}
+                </div>
+            </div>
+
+            {/* Records List */}
+            <ERPCard
+                title="Conduct Ledger"
+                description="Historical behavioral audit trail"
+                icon={<FileText className="h-5 w-5" />}
+                color="purple"
+                className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+            >
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <TableHead className="px-6 py-4">Target Student</TableHead>
+                                <TableHead className="px-6 py-4">Assessment</TableHead>
+                                <TableHead className="px-6 py-4">Category</TableHead>
+                                <TableHead className="px-6 py-4">Impact</TableHead>
+                                <TableHead className="px-6 py-4">Description</TableHead>
+                                <TableHead className="px-6 py-4">Timestamp</TableHead>
+                                {isAdminOrTeacher && <TableHead className="px-6 py-4 text-right">Control</TableHead>}
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody className="divide-y divide-slate-100">
+                            {filteredRecords.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={isAdminOrTeacher ? 7 : 6} className="py-24 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <div className="p-6 bg-slate-50 rounded-full mb-4">
+                                                <Shield className="h-12 w-12 text-slate-200" />
+                                            </div>
+                                            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No behavioral records identified</p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                filteredRecords.map((record) => (
+                                    <TableRow key={record.id} className="hover:bg-slate-50/50 transition-all group">
+                                        <TableCell className="px-6 py-5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="h-11 w-11 rounded-xl bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-100">
+                                                    <User className="h-5 w-5 text-slate-400" />
                                                 </div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <Badge className={record.type === "merit" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}>
-                                                    {record.type}
-                                                </Badge>
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-slate-600">{record.category}</td>
-                                            <td className="px-4 py-3">
-                                                <span className={cn("font-semibold", record.type === "merit" ? "text-emerald-600" : "text-amber-600")}>
-                                                    {record.type === "merit" ? "+" : "-"}{record.points}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-slate-600 max-w-xs truncate">{record.description}</td>
-                                            <td className="px-4 py-3 text-sm text-slate-500">{new Date(record.incident_date).toLocaleDateString()}</td>
-                                            {isAdminOrTeacher && (
-                                                <td className="px-4 py-3 text-right">
-                                                    <div className="flex items-center justify-end gap-1">
-                                                        <Button variant="ghost" size="icon" onClick={() => openEdit(record)} className="h-8 w-8">
-                                                            <Edit className="h-4 w-4" />
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-slate-900 text-sm tracking-tight">{record.student?.profile?.full_name}</span>
+                                                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">{record.student?.admission_number}</span>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <span className={cn(
+                                                "text-[9px] font-black uppercase px-2.5 py-1 rounded-md tracking-tighter border",
+                                                record.type === "merit" 
+                                                    ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
+                                                    : "bg-amber-50 text-amber-600 border-amber-100"
+                                            )}>
+                                                {record.type}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/50">
+                                                {record.category}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <span className={cn(
+                                                "font-black text-sm tabular-nums",
+                                                record.type === "merit" ? "text-emerald-600" : "text-amber-600"
+                                            )}>
+                                                {record.type === "merit" ? "+" : "-"}{record.points}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <div className="flex items-center gap-2 group/desc cursor-default">
+                                                <Activity className="h-3 w-3 text-slate-300 group-hover/desc:text-slate-500 transition-colors" />
+                                                <span className="text-xs font-bold text-slate-600 max-w-[200px] truncate">{record.description}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-6 py-5">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="h-3 w-3 text-slate-400" />
+                                                <span className="text-[10px] font-black text-slate-400 uppercase">{new Date(record.incident_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                            </div>
+                                        </TableCell>
+                                        {isAdminOrTeacher && (
+                                            <TableCell className="px-6 py-5 text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-xl">
+                                                            <MoreHorizontal className="h-4 w-4" />
                                                         </Button>
-                                                        <Button variant="ghost" size="icon" onClick={() => handleDelete(record.id)} className="h-8 w-8 text-red-500 hover:text-red-600">
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </CardContent>
-            </Card>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-56 rounded-xl p-2 shadow-2xl border-slate-200/60 backdrop-blur-xl">
+                                                        <DropdownMenuLabel className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 py-2">Management</DropdownMenuLabel>
+                                                        <DropdownMenuItem 
+                                                            onClick={() => openEdit(record)}
+                                                            className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold text-slate-700 cursor-pointer rounded-lg hover:bg-slate-50 transition-colors"
+                                                        >
+                                                            <Edit className="h-4 w-4" /> Edit Record
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="my-2 bg-slate-100" />
+                                                        <DropdownMenuItem 
+                                                            onClick={() => handleDelete(record.id)}
+                                                            className="flex items-center gap-3 px-3 py-2.5 text-xs font-black text-rose-500 cursor-pointer rounded-lg hover:bg-rose-50 transition-colors"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" /> Purge Record
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            </ERPCard>
 
             {/* Edit Dialog */}
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogContent className="max-w-lg">
-                    <DialogHeader>
-                        <DialogTitle>Edit Conduct Record</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
+                <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-background border-none shadow-2xl rounded-3xl backdrop-blur-xl">
+                    <div className="p-8 border-b border-slate-100 bg-slate-50/50">
+                        <DialogHeader>
+                            <DialogTitle className="font-black text-2xl text-slate-900 tracking-tight">Edit Record</DialogTitle>
+                            <DialogDescription className="text-slate-400 mt-2 text-[10px] font-black uppercase tracking-widest">
+                                Modification of behavioral metrics
+                            </DialogDescription>
+                        </DialogHeader>
+                    </div>
+                    <div className="p-8 space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Type</Label>
+                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Record Type</Label>
                                 <Select value={form.type} onValueChange={(val) => setForm({...form, type: val as "merit" | "demerit"})}>
-                                    <SelectTrigger className="rounded-md">
+                                    <SelectTrigger className="h-11 rounded-xl border-slate-200 text-xs font-bold">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="merit">Merit</SelectItem>
-                                        <SelectItem value="demerit">Demerit</SelectItem>
+                                    <SelectContent className="rounded-xl">
+                                        <SelectItem value="merit" className="text-emerald-600 font-bold">Merit</SelectItem>
+                                        <SelectItem value="demerit" className="text-amber-600 font-bold">Demerit</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label>Points</Label>
-                                <Input type="number" value={form.points} onChange={(e) => setForm({...form, points: e.target.value})} className="rounded-md" />
+                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Points</Label>
+                                <Input 
+                                    type="number" 
+                                    value={form.points} 
+                                    onChange={(e) => setForm({...form, points: e.target.value})} 
+                                    className="h-11 rounded-xl border-slate-200 text-xs font-bold"
+                                />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>Category</Label>
+                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Institutional Category</Label>
                             <Select value={form.category} onValueChange={(val) => setForm({...form, category: val})}>
-                                <SelectTrigger className="rounded-md">
+                                <SelectTrigger className="h-11 rounded-xl border-slate-200 text-xs font-bold">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-xl">
                                     {CATEGORIES.map(cat => (
-                                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        <SelectItem key={cat} value={cat} className="rounded-lg">{cat}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Description</Label>
-                            <Input value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} className="rounded-md" />
+                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Detailed Description</Label>
+                            <Input 
+                                value={form.description} 
+                                onChange={(e) => setForm({...form, description: e.target.value})} 
+                                className="h-11 rounded-xl border-slate-200 text-xs font-bold" 
+                            />
                         </div>
                         <div className="space-y-2">
-                            <Label>Incident Date</Label>
-                            <Input type="date" value={form.incident_date} onChange={(e) => setForm({...form, incident_date: e.target.value})} className="rounded-md" />
+                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Incident Date</Label>
+                            <Input 
+                                type="date" 
+                                value={form.incident_date} 
+                                onChange={(e) => setForm({...form, incident_date: e.target.value})} 
+                                className="h-11 rounded-xl border-slate-200 text-xs font-bold" 
+                            />
                         </div>
-                        <div className="flex gap-3">
-                            <Button variant="outline" onClick={() => { setIsEditOpen(false); setSelectedRecord(null); }} className="flex-1 rounded-md">
-                                Cancel
+                        <div className="flex gap-3 pt-2">
+                            <Button variant="outline" onClick={() => { setIsEditOpen(false); setSelectedRecord(null); }} className="flex-1 h-12 rounded-xl border-slate-200 font-black text-[10px] uppercase tracking-widest text-slate-400 hover:bg-slate-50">
+                                Abort
                             </Button>
-                            <Button onClick={handleEdit} disabled={loading} className="flex-1 rounded-md bg-emerald-600 hover:bg-emerald-700">
-                                {loading ? "Saving..." : "Update"}
+                            <Button onClick={handleEdit} disabled={loading} className="flex-1 h-12 rounded-xl bg-slate-900 hover:bg-black font-black text-[10px] uppercase tracking-widest text-white shadow-xl transition-all active:scale-95">
+                                {loading ? "Updating..." : "Commit Changes"}
                             </Button>
                         </div>
                     </div>

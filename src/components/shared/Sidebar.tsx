@@ -222,7 +222,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
       </button>
 
       {/* Navigation Links */}
-      <ScrollArea className="flex-1 px-4 py-6">
+      <ScrollArea className="flex-1 px-4 py-6" hideScrollbar>
         <div className="space-y-8">
           {navigation.filter(canSeeGroup).map((group) => (
             <div key={group.group} className="space-y-2">
