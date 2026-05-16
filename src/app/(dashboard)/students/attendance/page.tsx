@@ -18,7 +18,8 @@ import {
     Download,
     ShieldCheck,
     TrendingUp,
-    PieChart as PieChartIcon
+    PieChart as PieChartIcon,
+    History as HistoryIcon
 } from "lucide-react";
 import { 
     BarChart, Bar, 
@@ -192,6 +193,16 @@ export default function StudentAttendancePage() {
         enabled: activeTab === "history" && !!selectedClassId
     });
 
+    const historyStats = useMemo(() => {
+        if (!historyData) return null;
+        return {
+            present: historyData.filter((r: any) => r.status === "present").length,
+            absent: historyData.filter((r: any) => r.status === "absent").length,
+            late: historyData.filter((r: any) => r.status === "late").length,
+            total: historyData.length
+        };
+    }, [historyData]);
+
     // --- Charts Feature ---
     const chartData = [
         { name: "Mon", Present: 45, Absent: 5 },
@@ -209,7 +220,7 @@ export default function StudentAttendancePage() {
     ].filter(d => d.value > 0);
 
     return (
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-8 animate-in fade-in duration-700">
             {/* Page Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="flex items-center gap-4">
@@ -264,7 +275,7 @@ export default function StudentAttendancePage() {
                         <ClipboardCheck className="w-4 h-4 mr-2" /> Mark
                     </TabsTrigger>
                     <TabsTrigger value="history" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-[10px] font-black uppercase tracking-[0.1em]">
-                        <Calendar className="w-4 h-4 mr-2" /> History
+                        <HistoryIcon className="w-4 h-4 mr-2" /> History
                     </TabsTrigger>
                     <TabsTrigger value="charts" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-[10px] font-black uppercase tracking-[0.1em]">
                         <TrendingUp className="w-4 h-4 mr-2" /> Trends
@@ -352,21 +363,36 @@ export default function StudentAttendancePage() {
 
                 {/* --- TAB: HISTORY --- */}
                 <TabsContent value="history" className="space-y-6 outline-none">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="md:col-span-2 space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Select Date</label>
                             <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-10 rounded-xl border-slate-200 bg-white shadow-sm text-xs font-bold" />
                         </div>
                         <div className="flex items-end">
-                            <Button variant="outline" className="h-10 rounded-xl w-full border-slate-200 gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm">
+                            <Button variant="outline" className="h-10 rounded-xl w-full border-slate-200 gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all active:scale-95">
                                 <Download className="h-4 w-4" /> Export CSV
+                            </Button>
+                        </div>
+                        <div className="flex items-end">
+                            <Button variant="outline" className="h-10 rounded-xl w-full border-slate-200 gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all active:scale-95">
+                                <Search className="h-4 w-4" /> Filter Records
                             </Button>
                         </div>
                     </div>
 
+                    {/* Historical Snapshot Bar */}
+                    {historyStats && (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in slide-in-from-top-2 duration-500">
+                            <HistoryStatMini label="Total Logged" value={historyStats.total} color="slate" />
+                            <HistoryStatMini label="Present" value={historyStats.present} color="emerald" />
+                            <HistoryStatMini label="Absent" value={historyStats.absent} color="rose" />
+                            <HistoryStatMini label="Late" value={historyStats.late} color="amber" />
+                        </div>
+                    )}
+
                     <ERPCard
                         title="History"
-                        description="Past attendance records"
+                        description="Past attendance records for selected date"
                         icon={<Calendar className="h-5 w-5" />}
                         color="blue"
                         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -375,13 +401,13 @@ export default function StudentAttendancePage() {
                             <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                 <tr>
                                     <th className="px-8 py-4">Student</th>
-                                    <th className="px-8 py-4">Status</th>
-                                    <th className="px-8 py-4 text-right">Date</th>
+                                    <th className="px-8 py-4 text-center">Status</th>
+                                    <th className="px-8 py-4 text-right">Logged Date</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {historyLoading ? (
-                                    <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest animate-pulse">Loading...</td></tr>
+                                    <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest animate-pulse">Fetching Archives...</td></tr>
                                 ) : historyData?.length === 0 ? (
                                     <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 text-[10px] font-black uppercase tracking-widest">No Logs Found</td></tr>
                                 ) : (
@@ -390,11 +416,12 @@ export default function StudentAttendancePage() {
                                             <td className="px-8 py-5">
                                                 <div className="font-bold text-slate-900 text-sm tracking-tight">{r.student?.profile?.full_name}</div>
                                             </td>
-                                            <td className="px-8 py-5">
+                                            <td className="px-8 py-5 text-center">
                                                 <span className={cn(
-                                                    "text-[10px] font-black uppercase px-2.5 py-1 rounded-md tracking-tighter",
-                                                    r.status === "present" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
-                                                    r.status === "absent" ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-amber-50 text-amber-600 border border-amber-100"
+                                                    "text-[10px] font-black uppercase px-3 py-1 rounded-lg tracking-tighter border",
+                                                    r.status === "present" ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                    r.status === "absent" ? "bg-rose-50 text-rose-600 border-rose-100" : 
+                                                    r.status === "late" ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-blue-50 text-blue-600 border-blue-100"
                                                 )}>{r.status}</span>
                                             </td>
                                             <td className="px-8 py-5 text-right text-[10px] font-mono font-bold text-slate-400">{r.date}</td>
@@ -547,6 +574,22 @@ function DashboardStatCard({ title, value, icon: Icon, color }: { title: string;
             <div className={cn("p-3 rounded-xl border-2 transition-all group-hover:rotate-12", colors[color])}>
                 <Icon className="h-6 w-6" />
             </div>
+        </div>
+    );
+}
+
+function HistoryStatMini({ label, value, color }: { label: string; value: number; color: string }) {
+    const colors: Record<string, string> = {
+        emerald: "text-emerald-600 bg-emerald-50 border-emerald-100",
+        rose: "text-rose-600 bg-rose-50 border-rose-100",
+        amber: "text-amber-600 bg-amber-50 border-amber-100",
+        slate: "text-slate-600 bg-slate-50 border-slate-200",
+    };
+
+    return (
+        <div className={cn("p-4 rounded-xl border flex flex-col gap-1 shadow-sm transition-all hover:shadow-md", colors[color])}>
+            <span className="text-[9px] font-black uppercase tracking-widest opacity-70">{label}</span>
+            <span className="text-xl font-black tracking-tight">{value}</span>
         </div>
     );
 }
