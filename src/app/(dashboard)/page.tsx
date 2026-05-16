@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { getDashboardMetrics } from "@/app/actions/dashboard-metrics";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
-import { QuickSearch } from "@/components/dashboard/QuickSearch";
 
 export default async function DashboardPage() {
   // Single, unified data fetch for the entire dashboard
