@@ -18,12 +18,12 @@ interface FinancialDashboardProps {
 }
 
 export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
-  const collectionVsExpenseRatio = metrics.todayCollection > 0 
-    ? (metrics.todayExpenses / metrics.todayCollection) * 100 
-    : (metrics.todayExpenses > 0 ? 100 : 0);
+  const collectionVsExpenseRatio = (metrics?.todayCollection || 0) > 0 
+    ? ((metrics?.todayExpenses || 0) / metrics.todayCollection) * 100 
+    : ((metrics?.todayExpenses || 0) > 0 ? 100 : 0);
 
-  const payrollPaidPercentage = metrics.payroll.generated > 0 
-    ? (metrics.payroll.paid / metrics.payroll.generated) * 100 
+  const payrollPaidPercentage = (metrics?.payroll?.generated || 0) > 0 
+    ? ((metrics?.payroll?.paid || 0) / metrics.payroll.generated) * 100 
     : 0;
 
   return (
@@ -41,14 +41,14 @@ export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Collections</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-xl font-black text-emerald-600">₹{metrics.todayCollection.toLocaleString()}</span>
+                <span className="text-xl font-black text-emerald-600">₹{(metrics?.todayCollection || 0).toLocaleString()}</span>
                 <ArrowUpRight className="h-3 w-3 text-emerald-500" />
               </div>
             </div>
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expenses</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-xl font-black text-rose-600">₹{metrics.todayExpenses.toLocaleString()}</span>
+                <span className="text-xl font-black text-rose-600">₹{(metrics?.todayExpenses || 0).toLocaleString()}</span>
                 <ArrowDownRight className="h-3 w-3 text-rose-500" />
               </div>
             </div>
@@ -80,15 +80,15 @@ export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Salary Generated</p>
-              <p className="text-lg font-black text-slate-900">₹{metrics.payroll.generated.toLocaleString()}</p>
+              <p className="text-lg font-black text-slate-900">₹{(metrics?.payroll?.generated || 0).toLocaleString()}</p>
             </div>
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Amount Paid</p>
-              <p className="text-lg font-black text-emerald-600">₹{metrics.payroll.paid.toLocaleString()}</p>
+              <p className="text-lg font-black text-emerald-600">₹{(metrics?.payroll?.paid || 0).toLocaleString()}</p>
             </div>
             <div className="space-y-1">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pending Liability</p>
-              <p className="text-lg font-black text-rose-600">₹{metrics.payroll.pending.toLocaleString()}</p>
+              <p className="text-lg font-black text-rose-600">₹{(metrics?.payroll?.pending || 0).toLocaleString()}</p>
             </div>
           </div>
 
@@ -102,7 +102,7 @@ export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
             </div>
             <Progress value={payrollPaidPercentage} className="h-2 bg-white" />
             
-            {metrics.payroll.pending > 0 && (
+            {(metrics?.payroll?.pending || 0) > 0 && (
               <div className="mt-4 flex items-center gap-2 text-rose-600">
                 <AlertCircle className="h-3.5 w-3.5" />
                 <p className="text-[10px] font-bold uppercase tracking-tight">Requires attention: pending salaries</p>

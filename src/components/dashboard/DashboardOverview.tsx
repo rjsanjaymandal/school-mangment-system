@@ -60,7 +60,7 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
         <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-l-4 border-blue-500 pl-3">
           Academic Footprint
         </h3>
-        <InstitutionalBanner metrics={metrics} />
+        <InstitutionalBanner metrics={metrics.footprint} />
       </section>
 
       {/* Section 3: Financial Command Center */}
@@ -68,7 +68,7 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
         <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-l-4 border-purple-500 pl-3">
           Financial Command Center
         </h3>
-        <FinancialDashboard metrics={metrics} />
+        <FinancialDashboard metrics={metrics.finance} />
       </section>
 
       {/* Section 4: Advanced Demographics */}
@@ -76,7 +76,7 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
         <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-l-4 border-amber-500 pl-3">
           Advanced Analytics
         </h3>
-        <DemographicsAnalytics metrics={metrics} />
+        <DemographicsAnalytics metrics={metrics.demographics} />
       </section>
     </div>
   );

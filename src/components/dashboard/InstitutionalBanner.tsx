@@ -4,10 +4,10 @@ import { LayoutGrid, Bus, Route, Users, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InstitutionalBannerProps {
-  metrics: {
+  metrics?: {
     classes: number;
     departments: number;
-    transport: {
+    transport?: {
       vehicles: number;
       routes: number;
       students: number;
@@ -15,7 +15,15 @@ interface InstitutionalBannerProps {
   };
 }
 
+const defaultMetrics = {
+  classes: 0,
+  departments: 0,
+  transport: { vehicles: 0, routes: 0, students: 0 }
+};
+
 export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
+  const safeMetrics = { ...defaultMetrics, ...metrics };
+  const transport = safeMetrics.transport || defaultMetrics.transport;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Academic Footprint */}
@@ -26,7 +34,7 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Footprint</p>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{metrics.classes}</span>
+            <span className="text-xl font-black text-slate-900">{safeMetrics.classes}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase">Classes / Sections</span>
           </div>
         </div>
@@ -39,7 +47,7 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Departments</p>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{metrics.departments}</span>
+            <span className="text-xl font-black text-slate-900">{safeMetrics.departments}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase">Operational Units</span>
           </div>
         </div>
@@ -53,7 +61,7 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Transport Fleet</p>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{metrics.transport.vehicles}</span>
+            <span className="text-xl font-black text-slate-900">{transport.vehicles}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase">Active Vans/Buses</span>
           </div>
         </div>
@@ -66,7 +74,7 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Service Routes</p>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{metrics.transport.routes}</span>
+            <span className="text-xl font-black text-slate-900">{transport.routes}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase">Assigned Routes</span>
           </div>
         </div>

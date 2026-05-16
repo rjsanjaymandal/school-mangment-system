@@ -14,6 +14,9 @@ interface DemographicsAnalyticsProps {
 const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4"];
 
 export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
+  const motherTongue = metrics?.motherTongue || [];
+  const category = metrics?.category || [];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Mother Tongue Distribution */}
@@ -25,7 +28,7 @@ export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
       >
         <div className="h-72 w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={metrics.motherTongue} layout="vertical" margin={{ left: 40, right: 20 }}>
+            <BarChart data={motherTongue} layout="vertical" margin={{ left: 40, right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
               <XAxis type="number" hide />
               <YAxis 
@@ -41,7 +44,7 @@ export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
               />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
-                {metrics.motherTongue.map((entry, index) => (
+                {motherTongue.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Bar>
@@ -59,7 +62,7 @@ export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
       >
         <div className="h-72 w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={metrics.category} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <BarChart data={category} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
               <XAxis 
                 dataKey="name" 
@@ -77,7 +80,7 @@ export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
                 contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
-                {metrics.category.map((entry, index) => (
+                {category.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} />
                 ))}
               </Bar>
