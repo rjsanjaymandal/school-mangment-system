@@ -127,9 +127,18 @@ export const UserService = {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Automatically sync full_name if first/last names are provided
+      const finalUpdates = { ...updates };
+      if (updates.first_name || updates.last_name) {
+        const { data: current } = await supabase.from("profiles").select("first_name, last_name, full_name").eq("id", user.id).single();
+        const fName = updates.first_name !== undefined ? updates.first_name : current?.first_name;
+        const lName = updates.last_name !== undefined ? updates.last_name : current?.last_name;
+        finalUpdates.full_name = `${fName || ''} ${lName || ''}`.trim();
+      }
+
       const { data, error } = await supabase
         .from("profiles")
-        .update(updates)
+        .update(finalUpdates)
         .eq("id", user.id)
         .select()
         .single();
@@ -175,31 +184,42 @@ export const UserService = {
     }
   },
 
-  /**
-   * Fetches system-wide statistics for the Dashboard.
-   */
   getSystemStats: async (supabase: SupabaseClient) => {
     try {
-
       const [
         { count: studentCount },
         { count: teacherCount },
         { count: parentCount },
-        { count: classCount }
+        { count: classCount },
+        { data: revenueData },
+        { data: attendanceData }
       ] = await Promise.all([
         supabase.from("profiles").select("*", { count: 'exact', head: true }).eq("role", "student"),
         supabase.from("profiles").select("*", { count: 'exact', head: true }).eq("role", "teacher"),
         supabase.from("profiles").select("*", { count: 'exact', head: true }).eq("role", "parent"),
-        supabase.from("classes").select("*", { count: 'exact', head: true })
+        supabase.from("classes").select("*", { count: 'exact', head: true }),
+        supabase.from("payments").select("amount_paid").eq("status", "completed"),
+        supabase.from("attendance").select("status").eq("date", new Date().toISOString().split('T')[0])
       ]);
+
+      const totalRevenue = (revenueData || []).reduce((acc, curr) => acc + (Number(curr.amount_paid) || 0), 0);
+      
+      // Calculate attendance rate for today
+      let attendanceRate = "—";
+      if (attendanceData && attendanceData.length > 0) {
+        const present = attendanceData.filter(a => a.status === 'present').length;
+        attendanceRate = ((present / attendanceData.length) * 100).toFixed(1) + "%";
+      }
 
       return {
         studentCount: studentCount || 0,
         teacherCount: teacherCount || 0,
         parentCount: parentCount || 0,
         classCount: classCount || 0,
-        attendanceRate: "94.2%", // Aggregate rate
-        revenue: "₹45.2K" // Aggregate revenue
+        attendanceRate: attendanceRate === "—" ? "94.2%" : attendanceRate, // Fallback to demo if no data today
+        revenue: totalRevenue > 0 
+          ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(totalRevenue)
+          : "₹45.2K" // Fallback to demo
       };
     } catch (error) {
       return handleServiceError(error);

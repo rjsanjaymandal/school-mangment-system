@@ -43,6 +43,7 @@ export type ProfileRecord = {
     address: string | null;
     avatar_url: string | null;
     created_at: string;
+    status?: 'active' | 'inactive';
 };
 
 export type AttendanceRecord = {
@@ -177,22 +178,29 @@ export type HealthProfileRecord = {
 export type ActivityRecord = {
     id: string;
     name: string;
-    type: string;
-    category: string;
-    date: string;
-    conducted_by: string | null;
-    venue: string | null;
     description: string | null;
+    category: string | null;
+    teacher_in_charge: string | null;
+    location: string | null;
+    schedule: string | null;
     max_participants: number | null;
+    created_at: string;
+    updated_at: string;
 };
 
 export type CertificateRecord = {
     id: string;
     student_id: string;
-    certificate_type: string;
-    issue_date: string;
+    type: string;
+    reference_number: string;
+    issued_date: string;
     issued_by: string | null;
-    file_url: string | null;
+    status: 'issued' | 'revoked';
+    remarks: string | null;
+    created_at: string;
+    file_url?: string | null;
+    student?: StudentRecord;
+    issuer?: ProfileRecord;
 };
 
 export type GuardianRecord = {
@@ -223,18 +231,16 @@ export type ClassEnrollmentRecord = {
 
 export type AlumniRecord = {
     id: string;
-    student_id: string;
     first_name: string;
     last_name: string;
-    passout_year: number;
     graduation_year: number;
+    email: string | null;
+    phone: string | null;
     current_profession: string | null;
     company: string | null;
-    phone: string | null;
-    email: string | null;
     achievements: string | null;
     profile_picture_url: string | null;
-    is_verified: boolean;
+    created_at: string;
 };
 
 export type Student = StudentRecord;
