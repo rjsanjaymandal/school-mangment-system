@@ -295,20 +295,18 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
                   </div>
                 );
 
-                if (isCollapsed) {
-                    return (
-                        <Tooltip key={item.name}>
-                            <TooltipTrigger asChild>
-                                {content}
-                            </TooltipTrigger>
-                            <TooltipContent side="right" className="bg-slate-900 text-white border-none px-3 py-1.5 text-xs font-bold rounded-lg shadow-xl">
-                                {item.name}
-                            </TooltipContent>
-                        </Tooltip>
-                    );
-                }
-
-                return content;
+                return (
+                  <Tooltip key={item.name} delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      {content}
+                    </TooltipTrigger>
+                    {isCollapsed && (
+                      <TooltipContent side="right" className="bg-slate-900 text-white border-none px-3 py-1.5 text-xs font-bold rounded-lg shadow-xl">
+                        {item.name}
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                );
               })}
             </div>
           </div>
