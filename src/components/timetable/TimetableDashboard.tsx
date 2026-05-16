@@ -797,99 +797,105 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                 </div>
             </div>
 
-            {/* Analytics Layer */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-                <div className="md:col-span-7 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
-                    <div className="relative z-10 h-full flex flex-col">
-                        <div className="mb-8 flex justify-between items-start">
+            {/* Analytics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Subject Distribution */}
+                <div className="md:col-span-2 bg-card border border-border/50 p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:border-primary/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-all" />
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-4">
                             <div>
-                                <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground">
-                                    Course <span className="text-primary italic">Distribution</span>
+                                <h3 className="text-lg font-bold tracking-tight text-foreground">
+                                    Subject Distribution
                                 </h3>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-3">
-                                    Subject-wise hour allocation for current class
-                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">Hours per subject</p>
                             </div>
-                            <BookMarked className="h-5 w-5 text-primary opacity-20 group-hover:opacity-100 transition-opacity" />
+                            <div className="p-2 bg-primary/10 rounded-xl">
+                                <BookMarked className="w-5 h-5 text-primary" />
+                            </div>
                         </div>
-                        <div className="flex-1 h-[280px]">
+                        <div className="h-[200px] mt-4">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={subjectDistribution}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888815" vertical={false} />
                                     <XAxis 
                                         dataKey="name" 
                                         axisLine={false} 
                                         tickLine={false} 
-                                        tick={{ fill: "#88888860", fontSize: 10, fontWeight: "bold" }}
+                                        tick={{ fill: "#88888860", fontSize: 10, fontWeight: "600" }}
                                     />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 10 }} />
                                     <RechartsTooltip 
-                                        cursor={{ fill: "#ffffff05" }} 
+                                        cursor={{ fill: "#ffffff03" }} 
                                         contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
                                     />
-                                    <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={40} />
+                                    <Bar dataKey="value" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} barSize={32} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
                 </div>
 
-                <div className="md:col-span-5 bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden group">
-                    <div className="mb-4 relative z-10 flex justify-between items-start">
-                        <div>
-                            <h3 className="text-xl font-bold tracking-tight uppercase leading-none text-foreground">
-                                Teacher <span className="text-primary font-light px-1">/</span> Load
-                            </h3>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mt-3">Hours Scheduled / Max Hours</p>
+                {/* Teacher Load */}
+                <div className="bg-card border border-border/50 p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:border-primary/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl" />
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 className="text-lg font-bold tracking-tight text-foreground">
+                                    Teacher Load
+                                </h3>
+                                <p className="text-xs text-muted-foreground mt-1">Workload distribution</p>
+                            </div>
+                            {isAdminOrTeacher && (
+                                <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={handleGenerateOptimizedSchedule}
+                                    disabled={generatingSchedule}
+                                    className="h-8 text-xs"
+                                >
+                                    {generatingSchedule ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Zap className="w-3 h-3 mr-1" />}
+                                    Auto
+                                </Button>
+                            )}
                         </div>
-                        {isAdminOrTeacher && (
-                            <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={handleGenerateOptimizedSchedule}
-                                disabled={generatingSchedule}
-                                className="text-[10px] h-8"
-                            >
-                                {generatingSchedule ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Zap className="h-3 w-3 mr-1" />}
-                                Auto-Schedule
-                            </Button>
-                        )}
-                    </div>
-                    <div className="h-[240px] w-full mt-4 overflow-y-auto pr-2 scrollbar-thin">
-                        {teacherLoadData.length > 0 ? (
-                            <div className="space-y-4">
-                                {teacherLoadData.slice(0, 8).map((t: any) => (
-                                    <div key={t.teacher_id} className="space-y-1.5">
-                                        <div className="flex justify-between items-end">
-                                            <span className="text-[10px] font-bold uppercase tracking-tight truncate max-w-[150px]">
-                                                {t.teacher_name}
-                                            </span>
-                                            <span className={cn(
-                                                "text-[9px] font-black",
-                                                t.is_overloaded ? "text-rose-500" : "text-muted-foreground"
-                                            )}>
-                                                {t.daily_hours} / {t.max_daily_hours} HR
-                                            </span>
+                        <div className="h-[200px] overflow-y-auto pr-2 scrollbar-thin">
+                            {teacherLoadData.length > 0 ? (
+                                <div className="space-y-3">
+                                    {teacherLoadData.slice(0, 6).map((t: any) => (
+                                        <div key={t.teacher_id} className="space-y-1.5">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-xs font-semibold truncate max-w-[120px]">
+                                                    {t.teacher_name}
+                                                </span>
+                                                <span className={cn(
+                                                    "text-[10px] font-bold",
+                                                    t.is_overloaded ? "text-rose-500" : "text-muted-foreground"
+                                                )}>
+                                                    {t.daily_hours}/{t.max_daily_hours}h
+                                                </span>
+                                            </div>
+                                            <div className="h-2 w-full bg-muted/50 rounded-full overflow-hidden">
+                                                <div 
+                                                    className={cn(
+                                                        "h-full rounded-full transition-all duration-700",
+                                                        t.is_overloaded ? "bg-rose-500" : 
+                                                        t.utilization_pct > 80 ? "bg-amber-500" : "bg-primary"
+                                                    )}
+                                                    style={{ width: `${Math.min(100, t.utilization_pct)}%` }}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                                            <div 
-                                                className={cn(
-                                                    "h-full transition-all duration-1000",
-                                                    t.is_overloaded ? "bg-rose-500" : 
-                                                    t.utilization_pct > 80 ? "bg-amber-500" : "bg-primary"
-                                                )}
-                                                style={{ width: `${Math.min(100, t.utilization_pct)}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground text-sm h-full flex flex-col justify-center items-center">
-                                <Loader2 className="h-8 w-8 mx-auto mb-2 animate-spin opacity-20" />
-                                <p>Calculating staff loads...</p>
-                            </div>
-                        )}
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground text-sm h-full flex flex-col justify-center items-center">
+                                    <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin opacity-30" />
+                                    <p className="text-xs">Loading...</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -897,36 +903,36 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
             {/* Main Scheduling Grid */}
             <div className="grid gap-12 lg:grid-cols-4">
                 {/* Day Selector */}
-                <div className="lg:col-span-1 space-y-6">
-                    <div className="flex items-center justify-between ml-2">
-                        <div className="flex items-center gap-x-3">
-                            <Calendar className="h-4 w-4 text-primary" />
-                            <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Weekdays</h3>
+                <div className="lg:col-span-1 space-y-4">
+                    <div className="flex items-center gap-x-3">
+                        <div className="p-2 bg-primary/10 rounded-xl">
+                            <Calendar className="w-4 h-4 text-primary" />
                         </div>
+                        <h3 className="text-sm font-semibold text-foreground">Weekdays</h3>
                     </div>
-                    <div className="p-3 space-y-2 border border-border bg-card rounded-xl">
+                    <div className="p-2 space-y-1.5 border border-border/50 bg-card/50 backdrop-blur-sm rounded-2xl">
                         {WEEKDAYS.map((day) => (
                             <button
                                 key={day}
                                 onClick={() => setSelectedDay(day)}
-                                className={`w-full group relative flex items-center justify-between p-4 rounded-lg transition-all font-bold text-[11px] uppercase tracking-wider ${
+                                className={`w-full group relative flex items-center justify-between p-3 rounded-xl transition-all duration-200 font-medium text-sm ${
                                     selectedDay === day 
-                                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30" 
-                                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" 
+                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                 }`}
                             >
                                 <div className="flex items-center gap-x-2 relative z-10">
-                                    <span>{day}</span>
+                                    <span className={cn("text-xs", selectedDay === day && "font-semibold")}>{day.slice(0, 3)}</span>
                                     {today === day && (
-                                        <span className={`px-1.5 py-0.5 rounded-sm text-[8px] font-black tracking-tighter uppercase ${
+                                        <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-tight ${
                                             selectedDay === day ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
                                         }`}>Today</span>
                                     )}
                                 </div>
                                 {selectedDay === day ? (
-                                    <CheckCircle2 className="h-4 w-4 relative z-10" />
+                                    <CheckCircle2 className="w-4 h-4 relative z-10" />
                                 ) : (
-                                    <div className="h-1.5 w-1.5 rounded-full bg-border group-hover:bg-primary transition-colors" />
+                                    <div className="w-2 h-2 rounded-full bg-border group-hover:bg-primary transition-colors" />
                                 )}
                             </button>
                         ))}
@@ -934,8 +940,8 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                 </div>
 
                 {/* Schedule Grid Content */}
-                <div className="lg:col-span-3 space-y-12">
-                        <div className="flex gap-x-10 overflow-x-auto pb-10 scrollbar-emerald">
+                <div className="lg:col-span-3 space-y-8">
+                        <div className="flex gap-4 md:gap-6 overflow-x-auto pb-6 scrollbar-thin -mx-2 px-2">
                             {TIME_SLOTS.map((time) => {
                             const hour = time.split(':')[0].padStart(2, '0');
                             const matchingSlots = activeSlots
@@ -946,97 +952,97 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                 .sort((a: any, b: any) => (a.start_time || "").localeCompare(b.start_time || ""));
                                 
                             return (
-                                <div key={time} className="flex-1 min-w-[220px] space-y-8 no-print animate-in slide-in-from-bottom-5 duration-700" style={{ animationDelay: `${parseInt(time) * 50}ms` }}>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-x-4">
-                                            <p className="text-[11px] font-bold uppercase tracking-widest text-primary italic">{time}</p>
-                                            <div className="h-px flex-1 bg-border" />
+                                <div key={time} className="flex-1 min-w-[180px] md:min-w-[200px] space-y-6 no-print animate-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${parseInt(time) * 30}ms` }}>
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-x-3">
+                                            <p className="text-sm font-bold text-primary">{time}</p>
+                                            <div className="h-px flex-1 bg-border/50" />
                                         </div>
                                     </div>
-                                    <div className="space-y-6">
+                                    <div className="space-y-4">
                                         {matchingSlots.map((s: any) => (
                                             <div 
                                                 key={s.id}
                                                 className={cn(
-                                                    "group relative p-4 rounded-xl border transition-all duration-300",
-                                                    "hover:shadow-lg hover:-translate-y-1 hover:border-primary/30",
+                                                    "group relative p-4 rounded-2xl border transition-all duration-300",
+                                                    "hover:shadow-xl hover:-translate-y-1.5 hover:border-primary/40",
                                                     s.is_proxy 
-                                                        ? "bg-amber-50/50 border-amber-200 shadow-sm" 
-                                                        : "bg-white border-slate-100 shadow-sm"
+                                                        ? "bg-gradient-to-br from-amber-50 to-amber-100/30 border-amber-200/50 shadow-md" 
+                                                        : "bg-gradient-to-br from-card to-muted/30 border-border/50 shadow-md hover:shadow-primary/10"
                                                 )}
                                             >
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <div className="flex items-center gap-1.5 min-w-0">
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <div className="flex items-center gap-2.5 min-w-0">
                                                         <div className={cn(
-                                                            "h-7 w-7 rounded-lg flex items-center justify-center shrink-0",
-                                                            s.is_proxy ? "bg-amber-100" : "bg-primary/10"
+                                                            "h-8 w-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+                                                            s.is_proxy ? "bg-amber-200/50" : "bg-primary/15"
                                                         )}>
-                                                            <BookOpenCheck className={cn("h-4 w-4", s.is_proxy ? "text-amber-600" : "text-primary")} />
+                                                            <BookOpenCheck className={cn("w-4 h-4", s.is_proxy ? "text-amber-600" : "text-primary")} />
                                                         </div>
-                                                        <h4 className="font-bold text-sm text-slate-900 truncate">
+                                                        <h4 className="font-bold text-sm text-foreground truncate">
                                                             {s.subject?.name || "No Subject"}
                                                         </h4>
                                                     </div>
                                                     
                                                     {isAdminOrTeacher && viewMode === "class" && (
-                                                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
+                                                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-all duration-200 shrink-0">
                                                             <Button 
                                                                 variant="ghost" 
                                                                 size="icon" 
-                                                                className="h-7 w-7 rounded-lg hover:bg-slate-100"
+                                                                className="h-7 w-7 rounded-lg hover:bg-primary/10"
                                                                 onClick={() => handleEditClick(s)}
                                                             >
-                                                                <Settings className="h-3.5 w-3.5" />
+                                                                <Settings className="w-3.5 h-3.5" />
                                                             </Button>
                                                             <Button 
                                                                 variant="ghost" 
                                                                 size="icon" 
-                                                                className="h-7 w-7 rounded-lg hover:bg-red-50 hover:text-red-600"
+                                                                className="h-7 w-7 rounded-lg hover:bg-red-100 hover:text-red-600"
                                                                 onClick={() => handleDeleteSlot(s.id)}
                                                             >
-                                                                <Trash2 className="h-3.5 w-3.5" />
+                                                                <Trash2 className="w-3.5 h-3.5" />
                                                             </Button>
                                                         </div>
                                                     )}
                                                 </div>
 
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded-md w-fit uppercase tracking-tighter">
-                                                        <Clock className="h-3 w-3 mr-1.5 text-slate-400" />
+                                                <div className="space-y-2.5">
+                                                    <div className="flex items-center text-xs font-semibold text-muted-foreground bg-muted/50 px-2.5 py-1.5 rounded-lg w-fit">
+                                                        <Clock className="w-3 h-3 mr-1.5 text-muted-foreground/70" />
                                                         {s.start_time?.substring(0, 5)} - {s.end_time?.substring(0, 5)}
                                                     </div>
 
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 ring-1 ring-slate-200">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0 ring-1 ring-border">
                                                             {s.teacher?.profile?.avatar_url ? (
                                                                 <img src={s.teacher.profile.avatar_url} className="h-full w-full object-cover" />
                                                             ) : (
-                                                                <UserCircle className="h-4 w-4 text-slate-400" />
+                                                                <UserCircle className="w-4 h-4 text-muted-foreground" />
                                                             )}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-[11px] font-bold text-slate-700 truncate">
+                                                            <p className="text-xs font-semibold text-foreground truncate">
                                                                 {viewMode === "class" ? (s.teacher?.profile?.full_name || "Unassigned") : s.class_name}
                                                             </p>
                                                             {s.is_proxy && (
-                                                                <p className="text-[9px] font-bold text-amber-600 flex items-center">
-                                                                    <Zap className="h-2.5 w-2.5 mr-0.5 animate-pulse" /> Proxy Active
+                                                                <p className="text-[10px] font-bold text-amber-600 flex items-center">
+                                                                    <Zap className="w-2.5 h-2.5 mr-1 animate-pulse" /> Proxy
                                                                 </p>
                                                             )}
                                                         </div>
                                                     </div>
 
                                                     {s.room_number && (
-                                                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-50 pt-1.5 flex items-center gap-1">
-                                                            <MapPin className="h-2.5 w-2.5" /> Room: {s.room_number}
+                                                        <div className="text-[10px] font-semibold text-muted-foreground/70 border-t border-border/30 pt-2 mt-2 flex items-center gap-1.5">
+                                                            <MapPin className="w-3 h-3" /> Room {s.room_number}
                                                         </div>
                                                     )}
                                                 </div>
 
                                                 {s.auto_assigned && (
-                                                    <div className="absolute top-2 right-2">
-                                                        <div className="h-4 w-4 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-sm ring-2 ring-white">
-                                                            <Zap className="h-2.5 w-2.5" />
+                                                    <div className="absolute -top-1 -right-1">
+                                                        <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg ring-2 ring-background">
+                                                            <Zap className="w-3 h-3" />
                                                         </div>
                                                     </div>
                                                 )}
@@ -1053,10 +1059,12 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                                     }); 
                                                     setIsAddSlotOpen(true); 
                                                 }}
-                                                className="h-32 w-full rounded-xl border-2 border-dashed border-border bg-muted/20 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-primary/5 transition-all mt-4"
+                                                className="h-28 w-full rounded-2xl border-2 border-dashed border-border/50 bg-muted/20 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-primary/5 transition-all duration-300"
                                             >
-                                                <Plus className="h-6 w-6 text-muted-foreground/30 group-hover:text-primary transition-all" />
-                                                <span className="mt-2 text-[9px] font-bold uppercase tracking-widest text-muted-foreground opacity-0 group-hover:opacity-100 transition-all">Add Slot</span>
+                                                <div className="p-2 rounded-xl bg-muted/50 group-hover:bg-primary/10 transition-colors">
+                                                    <Plus className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                                                </div>
+                                                <span className="mt-2 text-[10px] font-semibold text-muted-foreground/60 group-hover:text-primary transition-colors">Add Slot</span>
                                             </button>
                                         )}
                                     </div>
@@ -1126,75 +1134,98 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                         )}
                     </div>
 
-                    <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-                        <div className="bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden">
-                            <div className="flex items-center justify-between relative z-10">
-                                <div className="space-y-3">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Schedule Status</p>
-                                    <div className="flex items-center gap-x-4">
-                                        <h4 className="text-4xl font-bold text-foreground leading-none">
-                                            {!hasConflicts && validationIssues.length === 0 ? "Healthy" : "Conflict Detected"}
-                                        </h4>
-                                        <div className={`px-2 py-1 rounded-md font-bold text-[10px] uppercase ${
-                                            !hasConflicts && validationIssues.length === 0
-                                                ? "bg-primary/10 border border-primary/20 text-primary"
-                                                : "bg-rose-500/10 border border-rose-500/20 text-rose-600"
-                                        }`}>
-                                            {!hasConflicts && validationIssues.length === 0 ? "All Clear" : `${conflictCount + validationIssues.length} Issue${conflictCount + validationIssues.length > 1 ? "s" : ""}`}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {/* Schedule Status */}
+                        <div className="bg-card border border-border/50 p-5 rounded-2xl shadow-sm relative overflow-hidden hover:border-primary/20 transition-colors">
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full blur-2xl" />
+                            <div className="relative z-10">
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-semibold text-primary">Status</p>
+                                        <div className="flex items-center gap-x-3">
+                                            <h4 className="text-2xl md:text-3xl font-bold text-foreground leading-none">
+                                                {!hasConflicts && validationIssues.length === 0 ? "Healthy" : "Conflict"}
+                                            </h4>
+                                            <div className={cn(
+                                                "px-2 py-1 rounded-lg text-xs font-bold",
+                                                !hasConflicts && validationIssues.length === 0
+                                                    ? "bg-primary/10 text-primary"
+                                                    : "bg-rose-500/10 text-rose-600"
+                                            )}>
+                                                {!hasConflicts && validationIssues.length === 0 ? "OK" : `${conflictCount + validationIssues.length}`}
+                                            </div>
                                         </div>
                                     </div>
+                                    {!hasConflicts && validationIssues.length === 0 ? (
+                                        <div className="p-2 bg-primary/10 rounded-xl">
+                                            <CheckCircle2 className="w-5 h-5 text-primary" />
+                                        </div>
+                                    ) : (
+                                        <div className="p-2 bg-rose-500/10 rounded-xl">
+                                            <AlertTriangle className="w-5 h-5 text-rose-500" />
+                                        </div>
+                                    )}
                                 </div>
-                                {!hasConflicts && validationIssues.length === 0 ? (
-                                    <CheckCircle2 className="h-8 w-8 text-primary opacity-30" />
-                                ) : (
-                                    <AlertTriangle className="h-8 w-8 text-rose-500 opacity-30" />
-                                )}
+                                <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                                    {!hasConflicts && validationIssues.length === 0
+                                        ? "No schedule conflicts detected"
+                                        : hasConflicts 
+                                            ? `${conflictCount} teacher overlap(s)` 
+                                            : validationIssues[0]}
+                                </p>
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
-                                {!hasConflicts && validationIssues.length === 0
-                                    ? "No teacher overlaps or resource conflicts detected."
-                                    : hasConflicts 
-                                        ? `Teacher conflict detected: ${conflictCount} overlap(s)` 
-                                        : validationIssues[0]}
-                            </p>
                         </div>
                         
-                        <div className="bg-card border border-border p-8 rounded-xl shadow-sm relative overflow-hidden">
-                            <div className="flex items-center justify-between relative z-10">
-                                <div className="space-y-3">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Total Slots</p>
-                                    <h4 className="text-5xl font-bold text-foreground leading-none">{totalSlots}</h4>
+                        {/* Total Slots */}
+                        <div className="bg-card border border-border/50 p-5 rounded-2xl shadow-sm relative overflow-hidden hover:border-primary/20 transition-colors">
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-indigo-500/5 rounded-full blur-2xl" />
+                            <div className="relative z-10">
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-semibold text-primary">Total Slots</p>
+                                        <h4 className="text-3xl md:text-4xl font-bold text-foreground leading-none">{totalSlots}</h4>
+                                    </div>
+                                    <div className="p-2 bg-indigo-500/10 rounded-xl">
+                                        <Activity className="w-5 h-5 text-indigo-500" />
+                                    </div>
                                 </div>
-                                <Activity className="h-8 w-8 text-primary opacity-20" />
+                                <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                                    Scheduled periods this week
+                                </p>
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
-                                Total scheduled periods across the current academic week.
-                            </p>
                         </div>
 
-                        {/* Today's Proxies */}
-                        <div className="bg-card border border-amber-500/30 p-8 rounded-xl shadow-sm relative overflow-hidden">
-                            <div className="flex items-center justify-between relative z-10">
-                                <div className="space-y-3">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Today's Proxies</p>
-                                    <h4 className="text-5xl font-bold text-foreground leading-none">{todayProxies.length}</h4>
+                        {/* Proxies */}
+                        <div className={cn(
+                            "bg-card border border p-5 rounded-2xl shadow-sm relative overflow-hidden hover:border-amber-500/30 transition-colors",
+                            todayProxies.length > 0 ? "border-amber-500/30" : "border-border/50"
+                        )}>
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl" />
+                            <div className="relative z-10">
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-semibold text-amber-600">Proxies</p>
+                                        <h4 className="text-3xl md:text-4xl font-bold text-foreground leading-none">{todayProxies.length}</h4>
+                                    </div>
+                                    <div className="p-2 bg-amber-500/10 rounded-xl">
+                                        <ArrowRightCircle className="w-5 h-5 text-amber-500" />
+                                    </div>
                                 </div>
-                                <ArrowRightCircle className="h-8 w-8 text-amber-500 opacity-30" />
+                                <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                                    {todayProxies.length === 0 
+                                        ? "No substitutions today"
+                                        : `${todayProxies.length} auto-assigned`}
+                                </p>
+                                {todayProxies.length > 0 && (
+                                    <div className="mt-2 space-y-1 max-h-16 overflow-y-auto">
+                                        {todayProxies.slice(0, 2).map((proxy: any, idx: number) => (
+                                            <p key={idx} className="text-[10px] text-amber-600 truncate font-medium">
+                                                {proxy.original_teacher} → {proxy.proxy_teacher}
+                                            </p>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-relaxed max-w-[280px] mt-4">
-                                {todayProxies.length === 0 
-                                    ? "No auto-substitutions for today."
-                                    : `${todayProxies.length} substitution(s) assigned automatically.`}
-                            </p>
-                            {todayProxies.length > 0 && (
-                                <div className="mt-2 space-y-1 max-h-20 overflow-y-auto">
-                                    {todayProxies.slice(0, 2).map((proxy: any, idx: number) => (
-                                        <p key={idx} className="text-[9px] text-amber-600 truncate">
-                                            {proxy.original_teacher} → {proxy.proxy_teacher} ({proxy.class_name})
-                                        </p>
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
