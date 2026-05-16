@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReportCardDownloadButton } from "@/components/reporting/ReportCardDownloadButton";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { SmartActionCenter } from "./SmartActionCenter";
+
 export function DashboardOverview({ initialData }: { initialData?: any }) {
   const { data, isLoading } = useDashboardMetrics();
 
@@ -70,7 +72,10 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
           </TabsList>
         </div>
 
-        <TabsContent value="ops" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
+        <TabsContent value="ops" className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
+          {/* Intelligent Alerts Panel */}
+          <SmartActionCenter alerts={metrics.alerts} />
+
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <span className="w-1 h-4 bg-emerald-500 rounded-full" />

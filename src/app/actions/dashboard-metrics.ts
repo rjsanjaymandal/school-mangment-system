@@ -2,6 +2,14 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+export type DashboardAlert = {
+  id: string;
+  type: 'warning' | 'info' | 'critical';
+  title: string;
+  description: string;
+  action?: string;
+};
+
 export type DashboardMetrics = {
   counts: {
     students: number;
@@ -45,12 +53,12 @@ export type DashboardMetrics = {
     motherTongue: { name: string; value: number }[];
     category: { name: string; value: number }[];
   };
+  alerts: DashboardAlert[];
 };
 
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   const supabase = await createClient();
   const today = new Date().toISOString().split("T")[0];
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   // Parallelize all aggregation queries
   const [
@@ -62,51 +70,40 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     academicRes,
     transportRes,
     demographicsRes,
-    // New top card counts
     studentCountRes,
     teacherCountRes,
     totalBooksRes,
     activeLoansRes,
+    // New queries for Smart Alerts
+    lowInventoryRes,
+    overdueBooksRes
   ] = await Promise.all([
-    // 1. Student Attendance (Today)
     supabase.from("attendance").select("status").eq("date", today),
-    
-    // 2. Staff Attendance (Today)
     supabase.from("staff_attendance").select("status").eq("date", today),
-    
-    // 3. Today's Fee Collection
     supabase.from("payments").select("amount_paid").eq("payment_date", today).eq("status", "completed"),
-    
-    // 4. Today's Operational Expenses
     supabase.from("transactions").select("amount").eq("date", today).eq("type", "expense"),
-    
-    // 5. Staff Payroll Tracker
     supabase.from("staff_payrolls").select("base_salary, net_pay, status"),
-    
-    // 6. Academic Footprint
     Promise.all([
       supabase.from("classes").select("*", { count: "exact", head: true }),
       supabase.from("departments").select("*", { count: "exact", head: true })
     ]),
-    
-    // 7. Transport Fleet Status
     Promise.all([
       supabase.from("transport_vehicles").select("*", { count: "exact", head: true }),
       supabase.from("transport_routes").select("*", { count: "exact", head: true }),
       supabase.from("student_transport").select("*", { count: "exact", head: true })
     ]),
-    
-    // 8. Advanced Demographics
     supabase.from("students").select("mother_tongue, category, gender"),
-
-    // 9. Top Card Counts
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "teacher"),
     supabase.from("library_books").select("*", { count: "exact", head: true }),
     supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued"),
+    
+    // Alert specific data
+    supabase.from("inventory_items").select("name, quantity_in_stock, min_stock_level").filter("quantity_in_stock", "lt", "min_stock_level"),
+    supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued").lt("due_date", today)
   ]);
 
-  // Process data
+  // Process core data
   const studentAtt = studentAttRes.data || [];
   const staffAtt = staffAttRes.data || [];
   const collections = (collectionsRes.data || []).reduce((sum, p) => sum + (Number(p.amount_paid) || 0), 0);
@@ -133,6 +130,58 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     return acc;
   }, {} as Record<string, number>);
 
+  // --- SMART ALERT LOGIC ---
+  const alerts: DashboardAlert[] = [];
+
+  // 1. Attendance Alert
+  const studentPresentCount = studentAtt.filter(a => a.status === "present").length;
+  const attendanceRate = studentAtt.length > 0 ? (studentPresentCount / studentAtt.length) * 100 : 100;
+  if (attendanceRate < 80 && studentAtt.length > 0) {
+    alerts.push({
+      id: 'low-attendance',
+      type: 'warning',
+      title: 'Low Student Attendance',
+      description: `Only ${attendanceRate.toFixed(1)}% of students are present today. Consider checking for local issues.`,
+      action: 'View Attendance'
+    });
+  }
+
+  // 2. Payroll Alert
+  const pendingSalary = salaryGenerated - salaryPaid;
+  if (pendingSalary > 0) {
+    alerts.push({
+      id: 'pending-payroll',
+      type: 'critical',
+      title: 'Unpaid Staff Salaries',
+      description: `₹${pendingSalary.toLocaleString()} is pending for staff payroll this month.`,
+      action: 'Manage Payroll'
+    });
+  }
+
+  // 3. Inventory Alert
+  const lowStockItems = lowInventoryRes.data || [];
+  if (lowStockItems.length > 0) {
+    alerts.push({
+      id: 'low-inventory',
+      type: 'critical',
+      title: 'Low Inventory Stock',
+      description: `${lowStockItems.length} items (including ${lowStockItems[0].name}) are below minimum stock levels.`,
+      action: 'Restock'
+    });
+  }
+
+  // 4. Library Alert
+  const overdueCount = overdueBooksRes.count || 0;
+  if (overdueCount > 0) {
+    alerts.push({
+      id: 'overdue-books',
+      type: 'info',
+      title: 'Overdue Library Books',
+      description: `${overdueCount} books are currently past their return deadline.`,
+      action: 'View Loans'
+    });
+  }
+
   return {
     counts: {
       students: studentCountRes.count || 0,
@@ -142,7 +191,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     },
     attendance: {
       student: {
-        present: studentAtt.filter(a => a.status === "present").length,
+        present: studentPresentCount,
         absent: studentAtt.filter(a => a.status === "absent").length,
         leave: studentAtt.filter(a => a.status === "leave").length,
         total: studentAtt.length
@@ -175,6 +224,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     demographics: {
       motherTongue: Object.entries(motherTongueDist).map(([name, value]) => ({ name, value: Number(value) })),
       category: Object.entries(categoryDist).map(([name, value]) => ({ name, value: Number(value) }))
-    }
+    },
+    alerts
   };
 }
