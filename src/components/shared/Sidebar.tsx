@@ -108,10 +108,10 @@ const navigation: NavGroup[] = [
     items: [
       {
         name: "Fee Collection",
-        href: "/finance/collect",
+        href: "/finance/collect-fees",
         icon: IndianRupee,
         subItems: [
-          { name: "Collect Fees", href: "/finance/collect" },
+          { name: "Collect Fees", href: "/finance/collect-fees" },
           { name: "Fee Structure", href: "/finance/structure" },
           { name: "Daily Report", href: "/finance/daily" },
           { name: "Print Slip", href: "/finance/slips" },
