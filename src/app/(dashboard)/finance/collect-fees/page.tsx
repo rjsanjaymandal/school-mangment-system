@@ -15,7 +15,8 @@ import {
   ChevronRight,
   Loader2,
   CheckCircle2,
-  ReceiptText
+  ReceiptText,
+  Printer
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -282,6 +283,18 @@ export default function AdvancedFeeCollectionPage() {
               onClick={() => handleSendReminder(row.original)}
             >
               <Bell className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-colors"
+              title="Print Slip"
+              onClick={() => {
+                // Redirect to slips page with student ID
+                window.location.href = `/finance/slips?studentId=${row.original.student_id}`;
+              }}
+            >
+              <Printer className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"

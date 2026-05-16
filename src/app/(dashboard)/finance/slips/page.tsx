@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { FileText, Printer, Download, Search, Calendar } from "lucide-react";
+import { FileText, Printer, Search, ChevronRight, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ERPCard } from "@/components/ui/erp-card";
-import { useFinanceStore } from "@/lib/store/finance-store";
+import { toast } from "sonner";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Student {
   id: string;
@@ -20,28 +21,62 @@ interface Student {
 
 export default function FeeSlipsPage() {
   const supabase = createClient();
-  const { activeSession } = useFinanceStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [students, setStudents] = useState<Student[]>([]);
   const [selectedClass, setSelectedClass] = useState("");
   const [classes, setClasses] = useState<{ id: string; name: string }[]>([]);
   const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [schoolSettings, setSchoolSettings] = useState<any>({});
 
-  // Load classes
-  useState(() => {
-    const loadClasses = async () => {
-      const { data } = await supabase.from("classes").select("id, name").order("name");
-      if (data) setClasses(data);
+  // Load initial data
+  useEffect(() => {
+    const loadData = async () => {
+      const [{ data: classData }, { data: settingsData }] = await Promise.all([
+        supabase.from("classes").select("id, name").order("name"),
+        supabase.from("school_settings").select("key, value")
+      ]);
+      
+      if (classData) setClasses(classData);
+      
+      if (settingsData) {
+        const settings: any = {};
+        settingsData.forEach(s => {
+          settings[s.key] = s.value;
+        });
+        setSchoolSettings(settings);
+      }
+
+      // Check for studentId in query params
+      const params = new URLSearchParams(window.location.search);
+      const studentId = params.get("studentId");
+      if (studentId) {
+        const { data: studentData } = await supabase
+          .from("students")
+          .select(`
+            id,
+            admission_number,
+            class_id,
+            profile:profiles(full_name),
+            class:classes(name)
+          `)
+          .eq("id", studentId)
+          .single();
+
+        if (studentData) {
+          setStudents([studentData as any]);
+          setSelectedStudents([studentData.id]);
+        }
+      }
     };
-    loadClasses();
-  });
+    loadData();
+  }, [supabase]);
 
   // Search students
-  useState(() => {
+  useEffect(() => {
     const searchStudents = async () => {
       if (searchQuery.length < 2) {
-        setStudents([]);
+        if (!selectedClass) setStudents([]);
         return;
       }
       
@@ -62,12 +97,13 @@ export default function FeeSlipsPage() {
 
     const debounce = setTimeout(searchStudents, 300);
     return () => clearTimeout(debounce);
-  });
+  }, [searchQuery, selectedClass, supabase]);
 
   // Load students by class
   const loadClassStudents = async () => {
     if (!selectedClass) return;
     
+    setIsGenerating(true);
     const { data } = await supabase
       .from("students")
       .select(`
@@ -83,6 +119,7 @@ export default function FeeSlipsPage() {
       setStudents(data as any);
       setSelectedStudents(data.map((s: any) => s.id));
     }
+    setIsGenerating(false);
   };
 
   const toggleStudent = (id: string) => {
@@ -103,161 +140,316 @@ export default function FeeSlipsPage() {
 
   const handleGenerateSlips = async () => {
     if (selectedStudents.length === 0) {
-      alert("Please select at least one student");
+      toast.error("Please select at least one student");
       return;
     }
 
     setIsGenerating(true);
     
-    // Simulate slip generation
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    alert(`Generated ${selectedStudents.length} fee slips for session ${activeSession}`);
-    setIsGenerating(false);
+    try {
+      const doc = new jsPDF();
+      const schoolName = schoolSettings.school_name || "EDU MAYSAN SCHOOL";
+      const schoolAddress = schoolSettings.school_address || "Maysan Labs, New Delhi, India";
+      const academicYear = schoolSettings.academic_year || "2024-25";
+
+      for (let i = 0; i < selectedStudents.length; i++) {
+        if (i > 0) doc.addPage();
+        
+        const studentId = selectedStudents[i];
+        const student = students.find(s => s.id === studentId);
+        
+        if (!student) continue;
+
+        // Fetch fee assignments and payments for this student
+        const [{ data: assignments }, { data: payments }] = await Promise.all([
+          supabase.from("fees").select("*").eq("class_id", student.class_id),
+          supabase.from("payments").select("*").eq("student_id", studentId).eq("status", "completed")
+        ]);
+
+        const totalDue = assignments?.reduce((sum, a) => sum + (a.amount || 0), 0) || 0;
+        const totalPaid = payments?.reduce((sum, p) => sum + (p.amount_paid || 0), 0) || 0;
+        const balance = totalDue - totalPaid;
+
+        // PDF Header
+        doc.setFontSize(18);
+        doc.setTextColor(16, 185, 129); // Emerald Green
+        doc.text(schoolName, 105, 20, { align: "center" });
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(schoolAddress, 105, 26, { align: "center" });
+        
+        doc.setDrawColor(226, 232, 240);
+        doc.line(20, 32, 190, 32);
+
+        doc.setFontSize(14);
+        doc.setTextColor(30, 41, 59);
+        doc.text("FEE INVOICE", 105, 42, { align: "center" });
+
+        // Student Info Box
+        doc.setFillColor(248, 250, 252);
+        doc.rect(20, 50, 170, 30, "F");
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text("Student Name:", 25, 60);
+        doc.setTextColor(30, 41, 59);
+        doc.setFont("helvetica", "bold");
+        doc.text(student.profile?.full_name || "N/A", 55, 60);
+        
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(100);
+        doc.text("Admission No:", 25, 68);
+        doc.setTextColor(30, 41, 59);
+        doc.text(student.admission_number || "N/A", 55, 68);
+
+        doc.setTextColor(100);
+        doc.text("Class:", 120, 60);
+        doc.setTextColor(30, 41, 59);
+        doc.text(student.class?.name || "N/A", 145, 60);
+
+        doc.setTextColor(100);
+        doc.text("Session:", 120, 68);
+        doc.setTextColor(30, 41, 59);
+        doc.text(academicYear, 145, 68);
+
+        // Fee Table
+        const tableData = assignments?.map(a => [
+          a.fee_type || "Tuition Fee",
+          `INR ${a.amount.toLocaleString()}`
+        ]) || [["No fee items assigned", "0"]];
+
+        autoTable(doc, {
+          startY: 90,
+          head: [["Description", "Amount"]],
+          body: tableData,
+          theme: "grid",
+          headStyles: { fillColor: [16, 185, 129], textColor: 255 },
+          styles: { fontSize: 9 },
+          margin: { left: 20, right: 20 }
+        });
+
+        // Summary
+        const finalY = (doc as any).lastAutoTable.finalY + 10;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text("Total Amount Due:", 120, finalY);
+        doc.setTextColor(30, 41, 59);
+        doc.text(`INR ${totalDue.toLocaleString()}`, 160, finalY, { align: "right" });
+
+        doc.setTextColor(100);
+        doc.text("Total Amount Paid:", 120, finalY + 7);
+        doc.setTextColor(16, 185, 129);
+        doc.text(`INR ${totalPaid.toLocaleString()}`, 160, finalY + 7, { align: "right" });
+
+        doc.setDrawColor(16, 185, 129);
+        doc.line(120, finalY + 10, 190, finalY + 10);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        if (balance > 0) {
+          doc.setTextColor(225, 29, 72); // Rose Red
+        } else {
+          doc.setTextColor(16, 185, 129); // Emerald Green
+        }
+        doc.text("Outstanding Balance:", 120, finalY + 16);
+        doc.text(`INR ${balance.toLocaleString()}`, 160, finalY + 16, { align: "right" });
+
+        // Footer
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text("This is a computer generated invoice. No signature required.", 105, 280, { align: "center" });
+        doc.text(`Generated on ${new Date().toLocaleDateString()}`, 105, 285, { align: "center" });
+      }
+
+      doc.save(`Fee_Slips_${new Date().getTime()}.pdf`);
+      toast.success(`Successfully generated ${selectedStudents.length} fee slips!`);
+    } catch (error) {
+      console.error("PDF Generation Error:", error);
+      toast.error("Failed to generate PDF slips");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
-          <FileText className="h-5 w-5 text-emerald-600" />
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900">Fee Slip Print</h1>
-          <p className="text-sm text-slate-500">Generate bulk invoices for students</p>
+    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
+      {/* Breadcrumb */}
+      <div className="flex items-center text-sm text-slate-500 mb-1">
+        <span>Home</span>
+        <ChevronRight className="h-3 w-3 mx-1" />
+        <span>Finance</span>
+        <ChevronRight className="h-3 w-3 mx-1" />
+        <span className="text-slate-900 font-medium">Fee Slips</span>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
+            <FileText className="h-5 w-5 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Fee Slip Print</h1>
+            <p className="text-sm text-slate-500">Generate and print bulk fee invoices for students</p>
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Panel - Selection */}
+        {/* Selection Panel */}
         <div className="lg:col-span-1 space-y-4">
-          {/* Class Selection */}
-          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
-            <h3 className="text-sm font-semibold text-slate-900 mb-4">Select by Class</h3>
-            <div className="space-y-3">
-              <select
-                className="w-full px-3 py-2 border border-slate-200 rounded-md text-sm"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-5">
+            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-emerald-500" />
+              Filter Students
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-500 uppercase">Select Class</Label>
+                <select
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option value="">Choose a class...</option>
+                  {classes.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+                <Button 
+                  onClick={loadClassStudents}
+                  disabled={!selectedClass || isGenerating}
+                  variant="outline"
+                  className="w-full rounded-lg border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                >
+                  {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load Class Students"}
+                </Button>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-slate-100"></span>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-slate-400">OR</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-500 uppercase">Search by Name/ID</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Input
+                    placeholder="Enter name or admission no..."
+                    className="pl-10 rounded-lg text-sm bg-slate-50 focus:bg-white"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100">
+              <Button
+                onClick={handleGenerateSlips}
+                disabled={isGenerating || selectedStudents.length === 0}
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg h-11 font-semibold shadow-md shadow-emerald-600/20"
               >
-                <option value="">Select class</option>
-                {classes.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              <Button 
-                onClick={loadClassStudents}
-                disabled={!selectedClass}
-                variant="outline"
-                className="w-full rounded-md"
-              >
-                Load Students
+                {isGenerating ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Printer className="h-4 w-4 mr-2" />
+                )}
+                Generate {selectedStudents.length > 0 ? `(${selectedStudents.length})` : ""} Slips
               </Button>
             </div>
           </div>
-
-          {/* Search */}
-          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
-            <Label className="text-sm font-medium text-slate-600">Search Individual</Label>
-            <div className="relative mt-2">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search by name or admission..."
-                className="pl-10 rounded-md text-sm"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Generate Button */}
-          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
-            <div className="text-center mb-3">
-              <p className="text-sm text-slate-500">{selectedStudents.length} student(s) selected</p>
-            </div>
-            <Button
-              onClick={handleGenerateSlips}
-              disabled={isGenerating || selectedStudents.length === 0}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 rounded-md"
-            >
-              {isGenerating ? (
-                <>
-                  <Printer className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Generate Fee Slips
-                </>
-              )}
-            </Button>
-          </div>
         </div>
 
-        {/* Right Panel - Student List */}
+        {/* List Panel */}
         <div className="lg:col-span-2">
-          <div className="bg-white border border-slate-200 rounded-md shadow-sm">
-            <div className="p-4 border-b border-slate-100 border-l-4 border-l-emerald-500 flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-[600px]">
+            <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">Student List</h3>
-                <p className="text-xs text-slate-500">Select students to generate fee slips</p>
+                <h3 className="text-sm font-semibold text-slate-900">Selection List</h3>
+                <p className="text-xs text-slate-500">{selectedStudents.length} of {students.length} students selected</p>
               </div>
               {students.length > 0 && (
-                <Button variant="outline" size="sm" onClick={toggleAll} className="rounded-md text-xs">
+                <Button variant="outline" size="sm" onClick={toggleAll} className="rounded-lg text-xs h-8">
                   {selectedStudents.length === students.length ? "Deselect All" : "Select All"}
                 </Button>
               )}
             </div>
             
-            <div className="divide-y divide-slate-100 max-h-96 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto">
               {students.length === 0 ? (
-                <div className="p-8 text-center text-slate-400">
-                  <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p className="text-sm">Select a class or search for students</p>
+                <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8">
+                  <div className="h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                    <Search className="h-8 w-8 opacity-20" />
+                  </div>
+                  <p className="text-sm font-medium">No students found</p>
+                  <p className="text-xs mt-1">Select a class or use the search bar to find students</p>
                 </div>
               ) : (
-                students.map((student: any) => (
-                  <div 
-                    key={student.id} 
-                    className={`p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 ${
-                      selectedStudents.includes(student.id) ? "bg-emerald-50" : ""
-                    }`}
-                    onClick={() => toggleStudent(student.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={selectedStudents.includes(student.id)}
-                        onChange={() => toggleStudent(student.id)}
-                        className="h-4 w-4 rounded border-slate-300"
-                      />
-                      <div>
-                        <p className="text-sm font-medium text-slate-900">{student.profile?.full_name}</p>
-                        <p className="text-xs text-slate-500">{student.admission_number} • {student.class?.name}</p>
+                <div className="divide-y divide-slate-100">
+                  {students.map((student: any) => (
+                    <div 
+                      key={student.id} 
+                      className={`p-4 flex items-center justify-between cursor-pointer transition-colors ${
+                        selectedStudents.includes(student.id) ? "bg-emerald-50/50" : "hover:bg-slate-50"
+                      }`}
+                      onClick={() => toggleStudent(student.id)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${
+                          selectedStudents.includes(student.id) 
+                            ? "bg-emerald-600 border-emerald-600" 
+                            : "border-slate-300 bg-white"
+                        }`}>
+                          {selectedStudents.includes(student.id) && <CheckCircle2 className="h-3.5 w-3.5 text-white" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-slate-900">{student.profile?.full_name}</p>
+                          <p className="text-xs text-slate-500 font-medium">{student.admission_number} • {student.class?.name}</p>
+                        </div>
                       </div>
+                      <Badge variant="secondary" className="bg-white border-slate-200 text-slate-600 text-[10px] uppercase font-bold">
+                        {schoolSettings.academic_year || "2024-25"}
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {activeSession}
-                    </Badge>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
-            </div>
-          </div>
-
-          {/* Preview Area */}
-          <div className="mt-4 bg-white border border-slate-200 rounded-md p-4">
-            <h3 className="text-sm font-semibold text-slate-900 mb-3">Preview</h3>
-            <div className="border border-dashed border-slate-200 rounded-md p-8 text-center text-slate-400">
-              <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">Fee slip preview will appear here</p>
-              <p className="text-xs mt-1">Student name, class, fee heads, amount, due date</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function Calendar({ className }: { className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+    >
+      <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+      <line x1="16" x2="16" y1="2" y2="6"/>
+      <line x1="8" x2="8" y1="2" y2="6"/>
+      <line x1="3" x2="21" y1="10" y2="10"/>
+      <path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>
+    </svg>
   );
 }
