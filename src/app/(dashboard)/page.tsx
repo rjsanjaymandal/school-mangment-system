@@ -137,16 +137,25 @@ export default async function DashboardPage() {
     doc_count,
   }));
 
+  // New Metrics Aggregation
+  const metrics = await getDashboardMetrics();
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-8 max-w-[1600px] mx-auto">
       {/* Page Header */}
-      <div className="flex items-center gap-4">
-        <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
-          <BarChart3 className="h-5 w-5 text-emerald-600" />
+      <div className="flex justify-between items-end">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 shadow-sm">
+            <BarChart3 className="h-6 w-6 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Institutional <span className="text-emerald-600 font-light">Analytics</span></h1>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Global Command Overview</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900">Analytics</h1>
-          <p className="text-sm text-slate-500">Dashboard overview and insights</p>
+        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-lg border border-slate-100">
+          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[10px] font-black text-slate-600 uppercase tracking-tighter">System Health: Operational</span>
         </div>
       </div>
 
@@ -159,79 +168,33 @@ export default async function DashboardPage() {
           color="emerald"
         />
         <StatCard
-          title="Teachers"
+          title="Active Teachers"
           value={teacherCount || 0}
           icon={UserSquare2}
           color="blue"
         />
         <StatCard
-          title="Library Books"
+          title="Library Asset Index"
           value={totalBooks || 0}
           icon={Library}
           color="purple"
         />
         <StatCard
-          title="Active Loans"
+          title="Asset Circulation"
           value={activeLoans || 0}
           icon={BookOpen}
           color="amber"
         />
       </div>
 
-      {/* Main Dashboard */}
-      <ERPCard
-        title="Analytics Dashboard"
-        description="Key performance indicators and trends"
-        icon={<BarChart3 className="h-5 w-5" />}
-        color="emerald"
-      >
-        <AnalyticsDashboard
-          studentCount={studentCount || 0}
-          teacherCount={teacherCount || 0}
-          currentAttendance={currentAttendance || []}
-          previousAttendance={previousAttendance || []}
-          payments={payments || []}
-          currentMarks={currentMarks || []}
-          previousMarks={previousMarks || []}
-          totalBooks={totalBooks || 0}
-          activeLoans={activeLoans || 0}
-          conductData={conductData || []}
-          monthlyAttendance={monthlyAttendance || []}
-          targetRevenue={targetRevenue}
-          alerts={{
-            lowInventory: lowInventory?.map((i: any) => i.name) || [],
-            lowAttendanceCount: lowAttendanceStudentIds.length,
-            lowAttendanceNames: lowAttendanceStudents.map((s: any) => s.full_name)
-          }}
-        />
-      </ERPCard>
-
-      {/* Demographics */}
-      <ERPCard
-        title="Demographics"
-        description="Student distribution and statistics"
-        icon={<Users className="h-5 w-5" />}
-        color="purple"
-      >
-        <DemographicsPanel
-          students={demographicStudents}
-          classes={classList}
-          documentStats={documentStats}
-        />
-      </ERPCard>
-
-      {/* Predictive Analytics */}
-      <ERPCard
-        title="AI Insights & Predictions"
-        description="Machine learning powered analytics and anomaly detection"
-        icon={<BarChart3 className="h-5 w-5" />}
-        color="amber"
-      >
-        <PredictiveAnalytics />
-      </ERPCard>
+      {/* Modern Dashboard Sections */}
+      <DashboardOverview initialData={metrics} />
     </div>
   );
 }
+
+import { getDashboardMetrics } from "@/app/actions/dashboard-metrics";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 
 // Stat Card Component
 function StatCard({ 
