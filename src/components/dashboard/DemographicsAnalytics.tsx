@@ -18,13 +18,14 @@ export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
   const category = metrics?.category || [];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Mother Tongue Distribution */}
       <ERPCard 
         title="Language Distribution" 
         description="Students mapped by mother tongue" 
         icon={<Globe2 className="h-4 w-4" />}
         color="emerald"
+        className="glass futuristic-card border-none shadow-xl rounded-2xl"
       >
         <div className="h-72 w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
@@ -59,6 +60,7 @@ export function DemographicsAnalytics({ metrics }: DemographicsAnalyticsProps) {
         description="Social group representation (General/OBC/SC/ST)" 
         icon={<Users2 className="h-4 w-4" />}
         color="blue"
+        className="glass futuristic-card border-none shadow-xl rounded-2xl"
       >
         <div className="h-72 w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">

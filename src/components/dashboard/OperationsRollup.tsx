@@ -82,13 +82,13 @@ function AttendanceSnap({ title, data, icon: Icon, color }: AttendanceSnapProps)
 
 export function OperationsRollup({ metrics }: { metrics: any }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <ERPCard 
         title="Student Attendance Snap" 
         description="Daily enrollment vs presence" 
         icon={<Users className="h-4 w-4" />}
         color="emerald"
-        className="overflow-hidden"
+        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
       >
         <AttendanceSnap 
           title="Student Today" 
@@ -103,7 +103,7 @@ export function OperationsRollup({ metrics }: { metrics: any }) {
         description="Daily substitution availability" 
         icon={<UserSquare2 className="h-4 w-4" />}
         color="blue"
-        className="overflow-hidden"
+        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
       >
         <AttendanceSnap 
           title="Staff Today" 

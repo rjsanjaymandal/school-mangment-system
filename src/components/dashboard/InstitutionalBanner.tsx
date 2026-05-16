@@ -25,57 +25,57 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
   const safeMetrics = { ...defaultMetrics, ...metrics };
   const transport = safeMetrics.transport || defaultMetrics.transport;
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Academic Footprint */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4 border-l-4 border-l-emerald-500">
-        <div className="h-10 w-10 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-          <Building2 className="h-5 w-5 text-emerald-600" />
+      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-emerald-500">
+        <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+          <Building2 className="h-6 w-6 text-emerald-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Footprint</p>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{safeMetrics.classes}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Classes / Sections</span>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Academic Footprint</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-2xl font-black text-slate-900 tracking-tighter">{safeMetrics.classes}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Classes</span>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4 border-l-4 border-l-blue-500">
-        <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-          <LayoutGrid className="h-5 w-5 text-blue-600" />
+      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-blue-500">
+        <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
+          <LayoutGrid className="h-6 w-6 text-blue-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Departments</p>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{safeMetrics.departments}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Operational Units</span>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Departments</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-2xl font-black text-slate-900 tracking-tighter">{safeMetrics.departments}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Units</span>
           </div>
         </div>
       </div>
 
       {/* Transport Status */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4 border-l-4 border-l-amber-500">
-        <div className="h-10 w-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-          <Bus className="h-5 w-5 text-amber-600" />
+      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-amber-500">
+        <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 border border-amber-100">
+          <Bus className="h-6 w-6 text-amber-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Transport Fleet</p>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{transport.vehicles}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Active Vans/Buses</span>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Transport Fleet</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-2xl font-black text-slate-900 tracking-tighter">{transport.vehicles}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Vehicles</span>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4 border-l-4 border-l-purple-500">
-        <div className="h-10 w-10 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
-          <Route className="h-5 w-5 text-purple-600" />
+      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-purple-500">
+        <div className="h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100">
+          <Route className="h-6 w-6 text-purple-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Service Routes</p>
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black text-slate-900">{transport.routes}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Assigned Routes</span>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Service Routes</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-2xl font-black text-slate-900 tracking-tighter">{transport.routes}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Routes</span>
           </div>
         </div>
       </div>
