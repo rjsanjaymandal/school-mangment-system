@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useSidebarStore } from "@/lib/store/sidebar-store";
 
 import { User } from "@supabase/supabase-js";
 import { Grid3X3, Sun, Moon } from "lucide-react";
@@ -63,8 +65,18 @@ export function Navbar({ user, userRole }: NavbarProps) {
     };
   });
 
+  const { isCollapsed, width } = useSidebarStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 fixed top-0 right-0 left-0 md:left-64 z-50">
+    <header 
+      className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 fixed top-0 right-0 z-50 transition-all duration-300"
+      style={{ left: !mounted ? 256 : (isCollapsed ? 80 : width) }}
+    >
       <div className="flex-1">
         <Breadcrumb items={breadcrumbs} />
       </div>

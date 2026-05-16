@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 export function DashboardWrapper({ children }: { children: React.ReactNode }) {
-  const { isCollapsed } = useSidebarStore();
+  const { isCollapsed, width } = useSidebarStore();
   const [mounted, setMounted] = useState(false);
 
   // Avoid hydration mismatch
@@ -16,9 +16,11 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div 
       className={cn(
-        "flex-1 flex flex-col min-h-screen bg-slate-50 transition-all duration-300",
-        !mounted ? "md:pl-64" : (isCollapsed ? "md:pl-20" : "md:pl-64")
+        "flex-1 flex flex-col min-h-screen bg-slate-50 transition-all duration-300"
       )}
+      style={{ 
+        paddingLeft: !mounted ? 256 : (isCollapsed ? 80 : width) 
+      }}
     >
       {children}
     </div>

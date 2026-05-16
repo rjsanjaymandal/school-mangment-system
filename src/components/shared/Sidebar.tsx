@@ -156,9 +156,37 @@ const navigation: NavGroup[] = [
 
 export function Sidebar({ initialProfile, userRole }: { initialProfile: any; userRole: string | null }) {
   const pathname = usePathname();
-  const { isCollapsed, toggle: toggleSidebar } = useSidebarStore();
+  const { isCollapsed, toggle: toggleSidebar, width, setWidth } = useSidebarStore();
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [profile, setProfile] = useState(initialProfile);
+  const [isResizing, setIsResizing] = useState(false);
+
+  useEffect(() => {
+    if (isResizing) {
+      const handleMouseMove = (e: MouseEvent) => {
+        let newWidth = e.clientX;
+        if (newWidth < 200) newWidth = 200;
+        if (newWidth > 450) newWidth = 450;
+        setWidth(newWidth);
+      };
+
+      const handleMouseUp = () => {
+        setIsResizing(false);
+        document.body.style.cursor = "default";
+        document.body.style.userSelect = "auto";
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+    }
+  }, [isResizing, setWidth]);
 
   useEffect(() => {
     // Determine which groups should be expanded based on current path
@@ -196,10 +224,20 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
   };
 
   return (
-    <div className={cn(
-      "flex flex-col h-full bg-slate-950 border-r border-slate-800 transition-all duration-300 relative",
-      isCollapsed ? "w-20" : "w-64"
-    )}>
+    <div 
+      className={cn(
+        "flex flex-col h-full bg-slate-950 border-r border-slate-800 transition-all duration-300 relative group/sidebar",
+        isCollapsed ? "w-20" : "w-64"
+      )}
+      style={{ width: isCollapsed ? 80 : width }}
+    >
+      {/* Resize Handle */}
+      {!isCollapsed && (
+        <div 
+          onMouseDown={() => setIsResizing(true)}
+          className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-emerald-500/50 transition-colors z-[60]"
+        />
+      )}
       {/* Brand Logo */}
       <div className="p-6 flex items-center gap-3">
         <div className="h-10 w-10 bg-emerald-500 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
@@ -208,7 +246,6 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
         {!isCollapsed && (
           <div className="animate-in fade-in slide-in-from-left-2 duration-500">
             <h1 className="text-xl font-black text-white tracking-tighter">Edu Maysan</h1>
-            <p className="text-[8px] font-black uppercase text-slate-500 tracking-[0.3em]">Institutional Hub</p>
           </div>
         )}
       </div>
