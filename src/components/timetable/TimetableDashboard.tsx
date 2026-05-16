@@ -19,11 +19,16 @@ import {
     Printer,
     ArrowRightCircle,
     Loader2,
+    Settings,
+    MoreVertical,
+    Copy,
+    UserCircle,
+    BookOpenCheck,
 } from "lucide-react";
 import { 
     BarChart, Bar, 
     PieChart, Pie, Cell, 
-    ResponsiveContainer, Tooltip, Legend, 
+    ResponsiveContainer, Tooltip as RechartsTooltip, Legend, 
     XAxis, YAxis, CartesianGrid 
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,9 +50,22 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { createTimetableSlot, deleteTimetableSlot, updateTimetableSlot } from "@/app/actions/timetable";
 import { generateOptimizedSchedule, getTeacherLoad, checkScheduleConflicts, getTodayProxies, markStaffAttendance } from "@/app/actions/timetable-autonomous";
-import { bulkGenerateSchedule, getClassTimetableOverview } from "@/app/actions/timetable-enterprise";
+import { bulkGenerateSchedule, getClassTimetableOverview, clearTimetableForClass, copyTimetableToDay } from "@/app/actions/timetable-enterprise";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -597,16 +615,52 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                 {generatingSchedule ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
                                 Generate
                             </Button>
-                        </>
-                    )}
+                        
 
-                    {isAdminOrTeacher && viewMode === "class" && (
-                        <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
-                            <DialogTrigger asChild>
-                                <Button className="h-12 px-8 flex items-center gap-x-2 shadow-sm">
-                                    <Plus className="h-4 w-4" /> Add Slot
-                                </Button>
-                            </DialogTrigger>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" size="icon" className="h-12 w-12 rounded-xl border-border no-print">
+                                        <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-border">
+                                    <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground px-2 py-1.5">Manage Class Timetable</DropdownMenuLabel>
+                                    <DropdownMenuItem 
+                                        className="rounded-lg gap-x-2 text-sm py-2 cursor-pointer"
+                                        onClick={() => {
+                                            if (confirm("Are you sure you want to clear all slots for this class?")) {
+                                                clearTimetableForClass(selectedClass, currentAY.id).then(() => {
+                                                    toast.success("Timetable cleared");
+                                                    router.refresh();
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                        <span className="text-destructive font-medium">Clear All Slots</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                        className="rounded-lg gap-x-2 text-sm py-2 cursor-pointer"
+                                        onClick={() => {
+                                            const targetDays = WEEKDAYS.filter(d => d !== selectedDay);
+                                            copyTimetableToDay(selectedDay, targetDays).then(() => {
+                                                toast.success("Schedule copied to other days");
+                                                router.refresh();
+                                            });
+                                        }}
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                        <span>Copy Day to Rest of Week</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+
+                            <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
+                                <DialogTrigger asChild>
+                                    <Button className="h-12 px-8 flex items-center gap-x-2 shadow-sm bg-primary hover:bg-primary/90 rounded-xl transition-all">
+                                        <Plus className="h-4 w-4" /> Add Slot
+                                    </Button>
+                                </DialogTrigger>
                             <DialogContent className="sm:max-w-[500px] p-0">
                                 <DialogHeader className="p-6 border-b border-border bg-muted/50">
                                     <DialogTitle>Add Schedule Slot</DialogTitle>
@@ -738,6 +792,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                 </div>
                             </DialogContent>
                         </Dialog>
+                        </>
                     )}
                 </div>
             </div>
@@ -768,7 +823,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                         tick={{ fill: "#88888860", fontSize: 10, fontWeight: "bold" }}
                                     />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 10 }} />
-                                    <Tooltip 
+                                    <RechartsTooltip 
                                         cursor={{ fill: "#ffffff05" }} 
                                         contentStyle={{ backgroundColor: "hsl(var(--card))", borderRadius: "12px", border: "1px solid hsl(var(--border))", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
                                     />
@@ -901,33 +956,42 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                     <div className="space-y-6">
                                         {matchingSlots.map((s: any) => (
                                             <div 
-                                                key={s.id} 
-                                                className="group relative bg-card border border-border p-5 rounded-xl space-y-4 shadow-sm hover:shadow-md transition-all"
+                                                key={s.id}
+                                                className={cn(
+                                                    "group relative p-4 rounded-xl border transition-all duration-300",
+                                                    "hover:shadow-lg hover:-translate-y-1 hover:border-primary/30",
+                                                    s.is_proxy 
+                                                        ? "bg-amber-50/50 border-amber-200 shadow-sm" 
+                                                        : "bg-white border-slate-100 shadow-sm"
+                                                )}
                                             >
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-x-2 flex-wrap">
-                                                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                                                        <span className="text-[9px] font-bold uppercase tracking-widest text-primary">{s.start_time?.slice(0, 5)} - {s.end_time?.slice(0, 5)}</span>
-                                                        {s.is_proxy && (
-                                                            <Badge variant="secondary" className="text-[8px] h-5 bg-amber-100 text-amber-700 border-amber-200">
-                                                                Proxy Assigned {s.teacher?.profile?.full_name ? `(${s.teacher.profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)})` : ""}
-                                                            </Badge>
-                                                        )}
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div className="flex items-center gap-1.5 min-w-0">
+                                                        <div className={cn(
+                                                            "h-7 w-7 rounded-lg flex items-center justify-center shrink-0",
+                                                            s.is_proxy ? "bg-amber-100" : "bg-primary/10"
+                                                        )}>
+                                                            <BookOpenCheck className={cn("h-4 w-4", s.is_proxy ? "text-amber-600" : "text-primary")} />
+                                                        </div>
+                                                        <h4 className="font-bold text-sm text-slate-900 truncate">
+                                                            {s.subject?.name || "No Subject"}
+                                                        </h4>
                                                     </div>
-                                                    {isAdminOrTeacher && (
-                                                        <div className="flex items-center gap-x-1">
+                                                    
+                                                    {isAdminOrTeacher && viewMode === "class" && (
+                                                        <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity shrink-0">
                                                             <Button 
                                                                 variant="ghost" 
                                                                 size="icon" 
-                                                                className="h-7 w-7 text-muted-foreground hover:text-primary transition-colors"
+                                                                className="h-7 w-7 rounded-lg hover:bg-slate-100"
                                                                 onClick={() => handleEditClick(s)}
                                                             >
-                                                                <Edit className="h-3.5 w-3.5" />
+                                                                <Settings className="h-3.5 w-3.5" />
                                                             </Button>
                                                             <Button 
                                                                 variant="ghost" 
                                                                 size="icon" 
-                                                                className="h-7 w-7 text-muted-foreground hover:text-destructive transition-colors"
+                                                                className="h-7 w-7 rounded-lg hover:bg-red-50 hover:text-red-600"
                                                                 onClick={() => handleDeleteSlot(s.id)}
                                                             >
                                                                 <Trash2 className="h-3.5 w-3.5" />
@@ -935,28 +999,47 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                                         </div>
                                                     )}
                                                 </div>
-                                                
-                                                <div className="space-y-1">
-                                                    <h4 className="font-bold text-foreground text-sm uppercase tracking-tight group-hover:text-primary transition-colors leading-tight">
-                                                        {s.subject?.name || "No Subject"}
-                                                    </h4>
-                                                    <p className={`text-[10px] font-semibold flex items-center gap-x-2 uppercase ${s.is_proxy ? 'text-amber-600' : 'text-muted-foreground'}`}>
-                                                        {viewMode === "class" ? s.teacher?.profile?.full_name : s.class_name}
-                                                        {s.is_proxy && s.original_teacher_id && (
-                                                            <span className="text-[9px] normal-case">(Original: {s.original_teacher?.profile?.full_name || s.original_teacher?.first_name || "Unknown"})</span>
-                                                        )}
-                                                    </p>
-                                                    {s.is_proxy && s.proxy_reason && (
-                                                        <p className="text-[9px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
-                                                            {s.proxy_reason}
-                                                        </p>
-                                                    )}
+
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center text-[10px] font-bold text-slate-500 bg-slate-50 px-2 py-1 rounded-md w-fit uppercase tracking-tighter">
+                                                        <Clock className="h-3 w-3 mr-1.5 text-slate-400" />
+                                                        {s.start_time?.substring(0, 5)} - {s.end_time?.substring(0, 5)}
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="h-6 w-6 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden shrink-0 ring-1 ring-slate-200">
+                                                            {s.teacher?.profile?.avatar_url ? (
+                                                                <img src={s.teacher.profile.avatar_url} className="h-full w-full object-cover" />
+                                                            ) : (
+                                                                <UserCircle className="h-4 w-4 text-slate-400" />
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-[11px] font-bold text-slate-700 truncate">
+                                                                {viewMode === "class" ? (s.teacher?.profile?.full_name || "Unassigned") : s.class_name}
+                                                            </p>
+                                                            {s.is_proxy && (
+                                                                <p className="text-[9px] font-bold text-amber-600 flex items-center">
+                                                                    <Zap className="h-2.5 w-2.5 mr-0.5 animate-pulse" /> Proxy Active
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
                                                     {s.room_number && (
-                                                        <p className="text-[9px] text-primary/70 font-bold uppercase tracking-widest border-t border-border pt-1 mt-1 flex items-center gap-x-1">
-                                                            <MapPin className="h-2.5 w-2.5" /> Room {s.room_number}
-                                                        </p>
+                                                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest border-t border-slate-50 pt-1.5 flex items-center gap-1">
+                                                            <MapPin className="h-2.5 w-2.5" /> Room: {s.room_number}
+                                                        </div>
                                                     )}
                                                 </div>
+
+                                                {s.auto_assigned && (
+                                                    <div className="absolute top-2 right-2">
+                                                        <div className="h-4 w-4 bg-indigo-500 rounded-full flex items-center justify-center text-white shadow-sm ring-2 ring-white">
+                                                            <Zap className="h-2.5 w-2.5" />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
 

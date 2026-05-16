@@ -26,10 +26,14 @@ import {
   Shield,
   Wallet,
   Bell,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserService } from "@/lib/services/user";
 import { createClient } from "@/lib/supabase/client";
+import { useSidebarStore } from "@/lib/store/sidebar-store";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface NavItem {
   name: string;
@@ -153,9 +157,13 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
   const pathname = usePathname();
   const [userProfile, setUserProfile] = useState<any>(initialProfile || null);
   const [expandedItems, setExpandedItems] = useState<string[]>(["Students"]);
+  const { isCollapsed, toggle } = useSidebarStore();
   const currentRole = userRole || userProfile?.role || "student";
 
   const toggleExpand = (name: string) => {
+    if (isCollapsed) {
+        toggle(); // Expand if collapsed when clicking a group
+    }
     setExpandedItems(prev => 
       prev.includes(name) ? prev.filter(i => i !== name) : [...prev, name]
     );
@@ -189,76 +197,93 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
     .filter((group) => group.items.length > 0);
 
   return (
-    <div className="flex h-full flex-col bg-white border-r border-slate-200 text-slate-900">
-      <div className="p-4 flex items-center justify-center border-b border-slate-100">
-        <Link href="/" className="flex items-center justify-center group">
-          <span className="text-xl font-black tracking-tight text-slate-900 uppercase">
-            Edu <span className="text-emerald-600">Maysan</span>
-          </span>
-        </Link>
+    <TooltipProvider delayDuration={0}>
+    <div className={cn(
+        "flex h-full flex-col bg-white border-r border-slate-200 text-slate-900 transition-all duration-300",
+        isCollapsed ? "w-20" : "w-64"
+    )}>
+      <div className={cn(
+        "p-4 flex items-center border-b border-slate-100 h-16",
+        isCollapsed ? "justify-center" : "justify-between"
+      )}>
+        {!isCollapsed && (
+          <Link href="/" className="flex items-center group">
+            <span className="text-xl font-black tracking-tight text-slate-900 uppercase whitespace-nowrap">
+              Edu <span className="text-emerald-600">Maysan</span>
+            </span>
+          </Link>
+        )}
+        <button 
+          onClick={toggle}
+          className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+        >
+          {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+        </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6" style={{ overflowX: 'hidden' }}>
+      <div className="flex-1 overflow-y-auto p-3 space-y-6 scrollbar-hide" style={{ overflowX: 'hidden' }}>
         {filteredNavigation.map((group) => (
           <div key={group.group}>
-            <h3 className="text-xs font-medium text-slate-400 uppercase mb-2 px-2">
-              {group.group}
-            </h3>
-            <div className="space-y-0.5">
-            </div>
+            {!isCollapsed && (
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase mb-3 px-3 tracking-widest">
+                {group.group}
+              </h3>
+            )}
             <div className="space-y-1">
               {group.items.map((item) => {
                 const isExpanded = expandedItems.includes(item.name);
                 const hasSubItems = item.subItems && item.subItems.length > 0;
                 const isActive = pathname === item.href || (hasSubItems && item.subItems?.some(s => pathname === s.href));
 
-                return (
+                const content = (
                   <div key={item.name} className="space-y-1">
                     {hasSubItems ? (
                       <button
                         onClick={() => toggleExpand(item.name)}
                         className={cn(
-                          "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium",
+                          "w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                           isActive && !hasSubItems
-                            ? "bg-slate-900 text-white" 
-                            : "text-slate-600 hover:bg-slate-100"
+                            ? "bg-slate-900 text-white shadow-lg shadow-slate-200" 
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+                          isCollapsed && "justify-center px-0"
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.name}</span>
+                        <div className={cn("flex items-center gap-3", isCollapsed && "gap-0")}>
+                          <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-emerald-500" : "text-slate-400")} />
+                          {!isCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
                         </div>
-                        <ChevronDown className={cn("h-4 w-4", isExpanded ? "rotate-180" : "")} />
+                        {!isCollapsed && <ChevronDown className={cn("h-4 w-4 ml-auto transition-transform duration-200", isExpanded ? "rotate-180" : "")} />}
                       </button>
                     ) : (
                       <Link
                         href={item.href}
                         prefetch={true}
                         className={cn(
-                          "w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium",
+                          "w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                           isActive
-                            ? "bg-slate-900 text-white" 
-                            : "text-slate-600 hover:bg-slate-100"
+                            ? "bg-slate-900 text-white shadow-lg shadow-slate-200" 
+                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+                          isCollapsed && "justify-center px-0"
                         )}
                       >
-                        <div className="flex items-center gap-3">
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.name}</span>
+                        <div className={cn("flex items-center gap-3", isCollapsed && "gap-0")}>
+                          <item.icon className={cn("h-5 w-5 shrink-0", isActive ? "text-emerald-500" : "text-slate-400")} />
+                          {!isCollapsed && <span className="whitespace-nowrap">{item.name}</span>}
                         </div>
                       </Link>
                     )}
 
-                    {hasSubItems && isExpanded && (
-                      <div className="ml-4 pl-4 border-l border-slate-200 space-y-1 py-1">
+                    {hasSubItems && isExpanded && !isCollapsed && (
+                      <div className="ml-4 pl-4 border-l-2 border-slate-100 space-y-1 mt-1 animate-in slide-in-from-left-2 duration-200">
                         {item.subItems?.map(sub => (
                           <Link
                             key={sub.href}
                             href={sub.href}
                             prefetch={true}
                             className={cn(
-                              "block px-3 py-1.5 text-sm rounded-md",
+                              "block px-3 py-2 text-xs rounded-lg transition-colors",
                               pathname === sub.href
-                                ? "text-emerald-600 bg-emerald-50 font-medium"
+                                ? "text-emerald-600 bg-emerald-50/50 font-semibold"
                                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
                             )}
                           >
@@ -269,23 +294,47 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile?: any; us
                     )}
                   </div>
                 );
+
+                if (isCollapsed) {
+                    return (
+                        <Tooltip key={item.name}>
+                            <TooltipTrigger asChild>
+                                {content}
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="bg-slate-900 text-white border-none px-3 py-1.5 text-xs font-bold rounded-lg shadow-xl">
+                                {item.name}
+                            </TooltipContent>
+                        </Tooltip>
+                    );
+                }
+
+                return content;
               })}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="p-6 border-t border-slate-100 border-slate-200 bg-slate-50/50">
-        <Link href="/profile" className="flex items-center gap-3 p-3 rounded-md bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors">
-            <div className="h-10 w-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-medium" suppressHydrationWarning>
+      <div className={cn(
+        "p-4 border-t border-slate-100 bg-slate-50/30",
+        isCollapsed ? "flex justify-center" : ""
+      )}>
+        <Link href="/profile" className={cn(
+            "flex items-center gap-3 p-2 rounded-xl transition-all hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100",
+            isCollapsed ? "justify-center p-0 border-none" : ""
+        )}>
+            <div className="h-9 w-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0" suppressHydrationWarning>
               {(initialProfile?.full_name || userProfile?.full_name || 'U')[0]?.toUpperCase() || 'U'}
             </div>
-            <div className="flex-1 min-w-0" suppressHydrationWarning>
-              <p className="text-sm font-medium truncate">{initialProfile?.full_name || userProfile?.full_name || "Loading..."}</p>
-              <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
-            </div>
+            {!isCollapsed && (
+                <div className="flex-1 min-w-0" suppressHydrationWarning>
+                  <p className="text-sm font-bold truncate text-slate-900">{initialProfile?.full_name || userProfile?.full_name || "Loading..."}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{userRole}</p>
+                </div>
+            )}
           </Link>
       </div>
     </div>
+    </TooltipProvider>
   );
 }

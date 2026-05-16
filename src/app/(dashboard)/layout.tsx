@@ -6,6 +6,7 @@ import { QuickActionsFab } from "@/components/shared/QuickActionsFab";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GlobalErrorHandler } from "@/components/error/GlobalErrorHandler";
+import { DashboardWrapper } from "@/components/layout/DashboardWrapper";
 
 function LoadingFallback() {
   return (
@@ -38,35 +39,30 @@ export default async function DashboardLayout({
     return redirect("/login");
   }
 
-  const impersonationData = isImpersonating ? {
-    name: effectiveUser?.full_name || "Unknown",
-    role: effectiveRole || "unknown"
-  } : null;
-
   return (
     <GlobalErrorHandler>
-      <div className="h-full flex">
-              {/* Persistent Sidebar - Never re-renders on navigation */}
-              <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-50">
-                <Sidebar 
-                  initialProfile={effectiveUser} 
-                  userRole={effectiveRole}
-                />
-              </aside>
-              
-              {/* Main Content Area */}
-              <div className="flex-1 md:pl-64 flex flex-col min-h-screen bg-slate-50">
-                {/* Persistent Navbar - Fixed */}
-                <Navbar user={realUser} userRole={effectiveRole} />
-                
-                {/* Page Content with Suspense for streaming */}
-                <Suspense fallback={<LoadingFallback />}>
-                  <main className="flex-1 p-4 md:p-6 mt-16">
-                    {children}
-                  </main>
-                </Suspense>
-                <QuickActionsFab />
-              </div>
+      <div className="h-full flex overflow-hidden">
+        {/* Persistent Sidebar - Fixed but with dynamic width handled by component */}
+        <aside className="hidden md:block fixed inset-y-0 left-0 z-50">
+          <Sidebar 
+            initialProfile={effectiveUser} 
+            userRole={effectiveRole}
+          />
+        </aside>
+        
+        {/* Main Content Area with Dynamic Padding Wrapper */}
+        <DashboardWrapper>
+          {/* Persistent Navbar - Fixed */}
+          <Navbar user={realUser} userRole={effectiveRole} />
+          
+          {/* Page Content with Suspense for streaming */}
+          <Suspense fallback={<LoadingFallback />}>
+            <main className="flex-1 p-4 md:p-6 mt-16 overflow-y-auto">
+              {children}
+            </main>
+          </Suspense>
+          <QuickActionsFab />
+        </DashboardWrapper>
       </div>
     </GlobalErrorHandler>
   );
