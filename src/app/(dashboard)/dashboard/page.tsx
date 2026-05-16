@@ -16,6 +16,16 @@ export default async function DashboardPage() {
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
   const yearStart = new Date(now.getFullYear(), 0, 1).toISOString().split("T")[0];
 
+  // Safe query helper
+  const safeQuery = async (queryBuilder: any) => {
+    try {
+      const result = await queryBuilder;
+      return result.error ? { data: [], error: null } : result;
+    } catch (e) {
+      return { data: [], error: null };
+    }
+  };
+
   // Parallelize ALL independent queries (original + demographics)
   const [
     currentAttendanceRes,
@@ -38,26 +48,26 @@ export default async function DashboardPage() {
     documentCountsRes,
   ] = await Promise.all([
     // Original queries
-    supabase.from("attendance").select("status, date").gte("date", thirtyDaysAgo.toISOString().split("T")[0]),
-    supabase.from("attendance").select("status, date").lt("date", thirtyDaysAgo.toISOString().split("T")[0]).gte("date", sixtyDaysAgo.toISOString().split("T")[0]),
-    supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").gte("created_at", thirtyDaysAgo.toISOString()),
-    supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").lt("created_at", thirtyDaysAgo.toISOString()).gte("created_at", sixtyDaysAgo.toISOString()),
-    supabase.from("school_settings").select("key, value"),
-    supabase.from("inventory_items").select("name, quantity_in_stock, min_stock_level").filter("quantity_in_stock", "lt", "min_stock_level").limit(3),
-    supabase.from("attendance").select("student_id, status").gte("date", thirtyDaysAgo.toISOString().split("T")[0]),
-    supabase.from("attendance").select("status, date").gte("date", yearStart),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "teacher"),
-    supabase.from("payments").select("amount_paid, status, payment_date"),
-    supabase.from("library_books").select("*", { count: "exact", head: true }),
-    supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued"),
-    supabase.from("student_conduct").select("type, points"),
+    safeQuery(supabase.from("attendance").select("status, date").gte("date", thirtyDaysAgo.toISOString().split("T")[0])),
+    safeQuery(supabase.from("attendance").select("status, date").lt("date", thirtyDaysAgo.toISOString().split("T")[0]).gte("date", sixtyDaysAgo.toISOString().split("T")[0])),
+    safeQuery(supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").gte("created_at", thirtyDaysAgo.toISOString())),
+    safeQuery(supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").lt("created_at", thirtyDaysAgo.toISOString()).gte("created_at", sixtyDaysAgo.toISOString())),
+    safeQuery(supabase.from("school_settings").select("key, value")),
+    safeQuery(supabase.from("inventory_items").select("name, quantity_in_stock, min_stock_level").filter("quantity_in_stock", "lt", "min_stock_level").limit(3)),
+    safeQuery(supabase.from("attendance").select("student_id, status").gte("date", thirtyDaysAgo.toISOString().split("T")[0])),
+    safeQuery(supabase.from("attendance").select("status, date").gte("date", yearStart)),
+    safeQuery(supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student")),
+    safeQuery(supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "teacher")),
+    safeQuery(supabase.from("payments").select("amount_paid, status, payment_date").limit(50)),
+    safeQuery(supabase.from("library_books").select("*", { count: "exact", head: true })),
+    safeQuery(supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued")),
+    safeQuery(supabase.from("student_conduct").select("type, points")),
     // Demographics: students with demographic fields + class name
-    supabase.from("students").select("id, gender, date_of_birth, category, religion, class_id, class:classes(name)"),
+    safeQuery(supabase.from("students").select("id, gender, date_of_birth, category, religion, class_id, class:classes(name)").limit(100)),
     // All classes for filter dropdown
-    supabase.from("classes").select("id, name").order("name"),
+    safeQuery(supabase.from("classes").select("id, name").order("name")),
     // Document counts per student (grouped)
-    supabase.from("student_documents").select("student_id"),
+    safeQuery(supabase.from("student_documents").select("student_id").limit(100)),
   ]);
 
   // Original data extraction
@@ -76,11 +86,11 @@ export default async function DashboardPage() {
   const activeLoans = activeLoansRes.count || 0;
   const conductData = conductDataRes.data || [];
 
-  const targetRevenue = parseFloat(settings?.find(s => s.key === "target_revenue")?.value || "5000000");
+  const targetRevenue = parseFloat(settings?.find((s: any) => s.key === "target_revenue")?.value || "5000000");
 
   // Low attendance calculation
   const studentStats: Record<string, { total: number; present: number }> = {};
-  attendanceSummary?.forEach(a => {
+  attendanceSummary?.forEach((a: any) => {
     if (!studentStats[a.student_id]) studentStats[a.student_id] = { total: 0, present: 0 };
     studentStats[a.student_id].total++;
     if (a.status === "present") studentStats[a.student_id].present++;
@@ -189,9 +199,9 @@ export default async function DashboardPage() {
           monthlyAttendance={monthlyAttendance || []}
           targetRevenue={targetRevenue}
           alerts={{
-            lowInventory: lowInventory?.map(i => i.name) || [],
+            lowInventory: lowInventory?.map((i: any) => i.name) || [],
             lowAttendanceCount: lowAttendanceStudentIds.length,
-            lowAttendanceNames: lowAttendanceStudents.map(s => s.full_name)
+            lowAttendanceNames: lowAttendanceStudents.map((s: any) => s.full_name)
           }}
         />
       </ERPCard>
