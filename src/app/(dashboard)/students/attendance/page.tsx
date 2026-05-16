@@ -22,15 +22,16 @@ export default function StudentAttendancePage() {
     const [isSaving, setIsSaving] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
-    const { data: classes = [] } = useQuery({
+    const { data: classesData, isLoading: classesLoading } = useQuery({
         queryKey: ['classes-attendance'],
         queryFn: async () => {
             const { data } = await supabase.from("classes").select("id, name").order("name");
             return data || [];
         }
     });
+    const classes = classesData || [];
 
-    const { data: students = [], isLoading, refetch } = useQuery({
+    const { data: studentsData, isLoading, refetch } = useQuery({
         queryKey: ['students-attendance', selectedClassId],
         queryFn: async () => {
             if (!selectedClassId) return [];
@@ -48,8 +49,9 @@ export default function StudentAttendancePage() {
         },
         enabled: !!selectedClassId
     });
+    const students = studentsData || [];
 
-    const { data: existingAttendance = [] } = useQuery({
+    const { data: existingAttendanceData } = useQuery({
         queryKey: ['attendance-check', selectedClassId, selectedDate],
         queryFn: async () => {
             if (!selectedClassId || !selectedDate) return [];
@@ -62,23 +64,33 @@ export default function StudentAttendancePage() {
         },
         enabled: !!selectedClassId && !!selectedDate
     });
+    const existingAttendance = existingAttendanceData || [];
 
     const [attendance, setAttendance] = useState<Record<string, string>>({});
 
+    // Initialize attendance only when data arrives or class changes
     useEffect(() => {
         if (existingAttendance.length > 0) {
             const mapped = Object.fromEntries(existingAttendance.map((a: any) => [a.student_id, a.status]));
             setAttendance(mapped);
         } else if (students.length > 0) {
-            setAttendance(Object.fromEntries(students.map((s: any) => [s.id, "present"])));
+            // Only set default "present" if attendance is currently empty
+            // This prevents the infinite loop and preserves manual changes
+            setAttendance(prev => {
+                const hasExistingData = Object.keys(prev).length > 0;
+                if (hasExistingData) return prev;
+                return Object.fromEntries(students.map((s: any) => [s.id, "present"]));
+            });
+        } else {
+            setAttendance({});
         }
-    }, [existingAttendance, students]);
+    }, [existingAttendance, students, selectedClassId, selectedDate]);
 
     useEffect(() => {
         if (classes.length > 0 && !selectedClassId) {
             setSelectedClassId(classes[0].id);
         }
-    }, [classes]);
+    }, [classes, selectedClassId]);
 
     const filteredStudents = students.filter((s: any) => 
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

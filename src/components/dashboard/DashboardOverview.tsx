@@ -1,42 +1,47 @@
 "use client";
+
 import { useDashboardMetrics } from "@/lib/hooks/useDashboardMetrics";
 import { OperationsRollup } from "./OperationsRollup";
 import { FinancialDashboard } from "./FinancialDashboard";
 import { InstitutionalBanner } from "./InstitutionalBanner";
 import { DemographicsAnalytics } from "./DemographicsAnalytics";
 import { PredictiveAnalytics } from "./PredictiveAnalytics";
-import { Loader2, LayoutDashboard, GraduationCap, IndianRupee, BrainCircuit } from "lucide-react";
+import { LayoutDashboard, GraduationCap, IndianRupee, BrainCircuit } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReportCardDownloadButton } from "@/components/reporting/ReportCardDownloadButton";
-
-const defaultMetrics = {
-  attendance: { today: { present: 0, absent: 0, late: 0 }, weekly: [] },
-  finance: { collected: 0, pending: 0, expenses: 0 },
-  footprint: { classes: 0, departments: 0, transport: { vehicles: 0, routes: 0, students: 0 } },
-  demographics: { total: 0, byGender: {}, byClass: {} },
-  insights: {}
-};
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function DashboardOverview({ initialData }: { initialData?: any }) {
   const { data, isLoading } = useDashboardMetrics();
 
-  const metrics = { ...defaultMetrics, ...(data || initialData || {}) };
+  // Use real-time data if available, otherwise fall back to initial server data
+  const metrics = data || initialData;
 
-  if (!metrics && isLoading && !initialData) {
+  if (isLoading && !initialData) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Loading...</span>
+      <div className="space-y-8">
+        <div className="flex gap-4 mb-6">
+          <Skeleton className="h-10 w-32 rounded-xl" />
+          <Skeleton className="h-10 w-32 rounded-xl" />
+          <Skeleton className="h-10 w-32 rounded-xl" />
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Skeleton className="h-48 rounded-2xl" />
+          <Skeleton className="h-48 rounded-2xl" />
+        </div>
+        <Skeleton className="h-80 rounded-2xl" />
       </div>
     );
   }
 
   if (!metrics) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-sm text-muted-foreground">No data available</p>
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="bg-slate-50 p-4 rounded-full mb-4">
+          <LayoutDashboard className="h-8 w-8 text-slate-300" />
+        </div>
+        <h3 className="text-lg font-bold text-slate-900">No dashboard data</h3>
+        <p className="text-sm text-slate-500 mt-1 max-w-xs">We couldn't retrieve the school metrics. Please check your connection or try again.</p>
       </div>
     );
   }
@@ -108,7 +113,7 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
           </div>
         </TabsContent>
 
-<TabsContent value="financial" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
+        <TabsContent value="financial" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <span className="w-1 h-4 bg-purple-500 rounded-full" />
@@ -118,7 +123,7 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
           </section>
         </TabsContent>
 
-<TabsContent value="insights" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
+        <TabsContent value="insights" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <span className="w-1 h-4 bg-indigo-500 rounded-full" />

@@ -2,10 +2,55 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function getDashboardMetrics() {
+export type DashboardMetrics = {
+  counts: {
+    students: number;
+    teachers: number;
+    books: number;
+    loans: number;
+  };
+  attendance: {
+    student: {
+      present: number;
+      absent: number;
+      leave: number;
+      total: number;
+    };
+    staff: {
+      present: number;
+      absent: number;
+      leave: number;
+      total: number;
+    };
+  };
+  finance: {
+    todayCollection: number;
+    todayExpenses: number;
+    payroll: {
+      generated: number;
+      paid: number;
+      pending: number;
+    };
+  };
+  footprint: {
+    classes: number;
+    departments: number;
+    transport: {
+      vehicles: number;
+      routes: number;
+      students: number;
+    };
+  };
+  demographics: {
+    motherTongue: { name: string; value: number }[];
+    category: { name: string; value: number }[];
+  };
+};
+
+export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   const supabase = await createClient();
   const today = new Date().toISOString().split("T")[0];
-  const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0];
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   // Parallelize all aggregation queries
   const [
@@ -16,7 +61,12 @@ export async function getDashboardMetrics() {
     payrollRes,
     academicRes,
     transportRes,
-    demographicsRes
+    demographicsRes,
+    // New top card counts
+    studentCountRes,
+    teacherCountRes,
+    totalBooksRes,
+    activeLoansRes,
   ] = await Promise.all([
     // 1. Student Attendance (Today)
     supabase.from("attendance").select("status").eq("date", today),
@@ -30,7 +80,7 @@ export async function getDashboardMetrics() {
     // 4. Today's Operational Expenses
     supabase.from("transactions").select("amount").eq("date", today).eq("type", "expense"),
     
-    // 5. Staff Payroll Tracker (Current Month)
+    // 5. Staff Payroll Tracker
     supabase.from("staff_payrolls").select("base_salary, net_pay, status"),
     
     // 6. Academic Footprint
@@ -47,7 +97,13 @@ export async function getDashboardMetrics() {
     ]),
     
     // 8. Advanced Demographics
-    supabase.from("students").select("mother_tongue, category, gender")
+    supabase.from("students").select("mother_tongue, category, gender"),
+
+    // 9. Top Card Counts
+    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
+    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "teacher"),
+    supabase.from("library_books").select("*", { count: "exact", head: true }),
+    supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued"),
   ]);
 
   // Process data
@@ -65,19 +121,25 @@ export async function getDashboardMetrics() {
 
   // Demographics processing
   const demoData = demographicsRes.data || [];
-  const motherTongueDist = demoData.reduce((acc: any, s) => {
+  const motherTongueDist = demoData.reduce((acc: Record<string, number>, s) => {
     const mt = s.mother_tongue || "Other";
     acc[mt] = (acc[mt] || 0) + 1;
     return acc;
-  }, {});
+  }, {} as Record<string, number>);
 
-  const categoryDist = demoData.reduce((acc: any, s) => {
+  const categoryDist = demoData.reduce((acc: Record<string, number>, s) => {
     const cat = s.category || "General";
     acc[cat] = (acc[cat] || 0) + 1;
     return acc;
-  }, {});
+  }, {} as Record<string, number>);
 
   return {
+    counts: {
+      students: studentCountRes.count || 0,
+      teachers: teacherCountRes.count || 0,
+      books: totalBooksRes.count || 0,
+      loans: activeLoansRes.count || 0,
+    },
     attendance: {
       student: {
         present: studentAtt.filter(a => a.status === "present").length,
@@ -111,8 +173,8 @@ export async function getDashboardMetrics() {
       }
     },
     demographics: {
-      motherTongue: Object.entries(motherTongueDist).map(([name, value]) => ({ name, value })),
-      category: Object.entries(categoryDist).map(([name, value]) => ({ name, value }))
+      motherTongue: Object.entries(motherTongueDist).map(([name, value]) => ({ name, value: Number(value) })),
+      category: Object.entries(categoryDist).map(([name, value]) => ({ name, value: Number(value) }))
     }
   };
 }

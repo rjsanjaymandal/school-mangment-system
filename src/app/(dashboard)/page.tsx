@@ -1,146 +1,13 @@
 export const dynamic = "force-dynamic";
 
-import { createClient } from "@/lib/supabase/server";
-import { AnalyticsDashboard } from "@/components/dashboard/AnalyticsDashboard";
-import { DemographicsPanel } from "@/components/dashboard/DemographicsPanel";
-import { PredictiveAnalytics } from "@/components/dashboard/PredictiveAnalytics";
-import { ERPCard } from "@/components/ui/erp-card";
-import { Users, BarChart3, GraduationCap, UserSquare2, Library, BookOpen } from "lucide-react";
+import { BarChart3, GraduationCap, UserSquare2, Library, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getDashboardMetrics } from "@/app/actions/dashboard-metrics";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-
-  // Date ranges
-  const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
-  const yearStart = new Date(now.getFullYear(), 0, 1).toISOString().split("T")[0];
-
-  // Safe query helper
-  const safeQuery = async (queryBuilder: any) => {
-    try {
-      const result = await queryBuilder;
-      return result.error ? { data: [], error: null } : result;
-    } catch (e) {
-      return { data: [], error: null };
-    }
-  };
-
-  // Parallelize ALL independent queries (original + demographics)
-  const [
-    currentAttendanceRes,
-    previousAttendanceRes,
-    currentMarksRes,
-    previousMarksRes,
-    settingsRes,
-    lowInventoryRes,
-    attendanceSummaryRes,
-    monthlyAttendanceRes,
-    studentCountRes,
-    teacherCountRes,
-    paymentsRes,
-    totalBooksRes,
-    activeLoansRes,
-    conductDataRes,
-    // Demographics queries
-    demographicStudentsRes,
-    classListRes,
-    documentCountsRes,
-  ] = await Promise.all([
-    // Original queries
-    safeQuery(supabase.from("attendance").select("status, date").gte("date", thirtyDaysAgo.toISOString().split("T")[0])),
-    safeQuery(supabase.from("attendance").select("status, date").lt("date", thirtyDaysAgo.toISOString().split("T")[0]).gte("date", sixtyDaysAgo.toISOString().split("T")[0])),
-    safeQuery(supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").gte("created_at", thirtyDaysAgo.toISOString())),
-    safeQuery(supabase.from("marks").select("marks_obtained, exam:exams(max_marks, passing_marks)").lt("created_at", thirtyDaysAgo.toISOString()).gte("created_at", sixtyDaysAgo.toISOString())),
-    safeQuery(supabase.from("school_settings").select("key, value")),
-    safeQuery(supabase.from("inventory_items").select("name, quantity_in_stock, min_stock_level").filter("quantity_in_stock", "lt", "min_stock_level").limit(3)),
-    safeQuery(supabase.from("attendance").select("student_id, status").gte("date", thirtyDaysAgo.toISOString().split("T")[0])),
-    safeQuery(supabase.from("attendance").select("status, date").gte("date", yearStart)),
-    safeQuery(supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student")),
-    safeQuery(supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "teacher")),
-    safeQuery(supabase.from("payments").select("amount_paid, status, payment_date").limit(50)),
-    safeQuery(supabase.from("library_books").select("*", { count: "exact", head: true })),
-    safeQuery(supabase.from("library_transactions").select("*", { count: "exact", head: true }).eq("status", "issued")),
-    safeQuery(supabase.from("student_conduct").select("type, points")),
-    // Demographics: students with demographic fields + class name
-    safeQuery(supabase.from("students").select("id, gender, date_of_birth, category, religion, class_id, class:classes(name)").limit(100)),
-    // All classes for filter dropdown
-    safeQuery(supabase.from("classes").select("id, name").order("name")),
-    // Document counts per student (grouped)
-    safeQuery(supabase.from("student_documents").select("student_id").limit(100)),
-  ]);
-
-  // Original data extraction
-  const currentAttendance = currentAttendanceRes.data || [];
-  const previousAttendance = previousAttendanceRes.data || [];
-  const currentMarks = currentMarksRes.data || [];
-  const previousMarks = previousMarksRes.data || [];
-  const settings = settingsRes.data || [];
-  const lowInventory = lowInventoryRes.data || [];
-  const attendanceSummary = attendanceSummaryRes.data || [];
-  const monthlyAttendance = monthlyAttendanceRes.data || [];
-  const studentCount = studentCountRes.count || 0;
-  const teacherCount = teacherCountRes.count || 0;
-  const payments = paymentsRes.data || [];
-  const totalBooks = totalBooksRes.count || 0;
-  const activeLoans = activeLoansRes.count || 0;
-  const conductData = conductDataRes.data || [];
-
-  const targetRevenue = parseFloat(settings?.find((s: any) => s.key === "target_revenue")?.value || "5000000");
-
-  // Low attendance calculation
-  const studentStats: Record<string, { total: number; present: number }> = {};
-  attendanceSummary?.forEach((a: any) => {
-    if (!studentStats[a.student_id]) studentStats[a.student_id] = { total: 0, present: 0 };
-    studentStats[a.student_id].total++;
-    if (a.status === "present") studentStats[a.student_id].present++;
-  });
-
-  const lowAttendanceStudentIds = Object.entries(studentStats)
-    .filter(([_, stats]) => (stats.present / stats.total) < 0.75)
-    .map(([id]) => id)
-    .slice(0, 3);
-
-  let lowAttendanceStudents: any[] = [];
-  if (lowAttendanceStudentIds.length > 0) {
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("full_name")
-      .in("id", lowAttendanceStudentIds);
-    lowAttendanceStudents = profiles || [];
-  }
-
-  // Demographics data extraction
-  const demographicStudents = (demographicStudentsRes.data || []).map((s: any) => ({
-    id: s.id,
-    gender: s.gender,
-    date_of_birth: s.date_of_birth,
-    category: s.category || "General",
-    religion: s.religion || "Not Specified",
-    class_id: s.class_id,
-    class: s.class,
-  }));
-
-  const classList = (classListRes.data || []).map((c: any) => ({
-    id: c.id,
-    name: c.name,
-  }));
-
-  // Count documents per student
-  const docRaw = documentCountsRes.data || [];
-  const docCountMap: Record<string, number> = {};
-  docRaw.forEach((d: any) => {
-    docCountMap[d.student_id] = (docCountMap[d.student_id] || 0) + 1;
-  });
-  const documentStats = Object.entries(docCountMap).map(([student_id, doc_count]) => ({
-    student_id,
-    doc_count,
-  }));
-
-  // New Metrics Aggregation
+  // Single, unified data fetch for the entire dashboard
   const metrics = await getDashboardMetrics();
 
   return (
@@ -162,36 +29,38 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Hydrated from Unified Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <StatCard
           title="Students"
-          value={studentCount || 0}
+          value={metrics.counts.students}
           icon={GraduationCap}
           color="emerald"
         />
         <StatCard
           title="Teachers"
-          value={teacherCount || 0}
+          value={metrics.counts.teachers}
           icon={UserSquare2}
           color="blue"
         />
         <StatCard
           title="Books"
-          value={totalBooks || 0}
+          value={metrics.counts.books}
           icon={Library}
           color="purple"
         />
         <StatCard
           title="Loans"
-          value={activeLoans || 0}
+          value={metrics.counts.loans}
           icon={BookOpen}
           color="amber"
         />
       </div>
 
       {/* Modern Dashboard Sections */}
-      <DashboardOverview initialData={metrics} />
+      <ErrorBoundary>
+        <DashboardOverview initialData={metrics} />
+      </ErrorBoundary>
     </div>
   );
 }
