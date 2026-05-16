@@ -21,7 +21,7 @@ export default async function AttendancePage() {
     const { data: student } = await supabase
       .from("students")
       .select("*, profile:profiles(*), class:classes(*)")
-      .eq("profile_id", user?.id)
+      .eq("id", user?.id)
       .single();
 
     if (student) {
