@@ -1,3 +1,4 @@
+// Triggering restart for route changes
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {

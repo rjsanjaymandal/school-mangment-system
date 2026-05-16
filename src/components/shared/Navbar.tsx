@@ -40,10 +40,22 @@ export function Navbar({ user, userRole }: NavbarProps) {
     router.refresh();
   };
 
+  const labelMapping: Record<string, string> = {
+    "hr": "Staff",
+    "students": "Students",
+    "list": "Student List",
+    "directory": "Student List",
+    "enroll": "Enrollment",
+    "attendance": "Attendance",
+    "finance": "Finance",
+    "launcher": "Launchpad"
+  };
+
   const pathSegments = pathname.split("/").filter(Boolean);
   const breadcrumbs = pathSegments.map((segment, index) => {
     const href = "/" + pathSegments.slice(0, index + 1).join("/");
-    const label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
+    const label = labelMapping[segment.toLowerCase()] || 
+                  (segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " "));
     return {
       label,
       href: index < pathSegments.length - 1 ? href : undefined,

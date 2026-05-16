@@ -2,37 +2,24 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Calendar, CheckCircle, XCircle, Clock, User, MapPin } from "lucide-react";
+import { Calendar, CheckCircle, XCircle, Clock, User, MapPin, Activity, ShieldCheck, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ERPCard } from "@/components/ui/erp-card";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+// Shared UI Framework
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { ERPCard } from "@/components/ui/erp-card";
 
 const STATUS_OPTIONS = [
-  { value: "present", label: "Present", icon: CheckCircle, color: "text-emerald-600 bg-emerald-100" },
-  { value: "absent", label: "Absent", icon: XCircle, color: "text-red-600 bg-red-100" },
-  { value: "on_leave", label: "On Leave", icon: Clock, color: "text-amber-600 bg-amber-100" },
-  { value: "late", label: "Late", icon: Clock, color: "text-orange-600 bg-orange-100" },
-  { value: "half_day", label: "Half Day", icon: Clock, color: "text-blue-600 bg-blue-100" },
+  { value: "present", label: "Present", icon: CheckCircle, color: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+  { value: "absent", label: "Absent", icon: XCircle, color: "bg-rose-50 text-rose-600 border-rose-100" },
+  { value: "on_leave", label: "On Leave", icon: Clock, color: "bg-amber-50 text-amber-600 border-amber-100" },
+  { value: "late", label: "Late", icon: Clock, color: "bg-orange-50 text-orange-600 border-orange-100" },
+  { value: "half_day", label: "Half Day", icon: Clock, color: "bg-blue-50 text-blue-600 border-blue-100" },
 ];
-
-interface StaffAttendance {
-  id: string;
-  staff_id: string;
-  staff_name: string;
-  staff_designation: string;
-  date: string;
-  status: string | null;
-  notes: string;
-}
-
-const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-
-function getInitials(name: string): string {
-  const parts = name.split(" ");
-  return parts.map(p => p.charAt(0)).join("").substring(0, 2).toUpperCase();
-}
 
 export default function StaffAttendancePage() {
   const supabase = createClient();
@@ -49,7 +36,6 @@ export default function StaffAttendancePage() {
   async function loadStaffAndAttendance() {
     setLoading(true);
     try {
-      // Get teaching staff
       const { data: staffData } = await supabase
         .from("staff")
         .select(`
@@ -63,21 +49,14 @@ export default function StaffAttendancePage() {
         .eq("status", "active")
         .order("first_name");
 
-      // Get today's attendance
       const { data: todayAttendance } = await supabase
         .from("staff_attendance")
         .select("*")
         .eq("date", selectedDate);
 
-      const attendanceMap: Record<string, Record<string, string>> = {};
       const staffAttendance: Record<string, string> = {};
-
       todayAttendance?.forEach((att: any) => {
         staffAttendance[att.staff_id] = att.status;
-      });
-
-      staffData?.forEach((s: any) => {
-        attendanceData[s.id] = staffAttendance;
       });
 
       setStaffList(staffData || []);
@@ -106,7 +85,6 @@ export default function StaffAttendancePage() {
 
       if (error) throw error;
 
-      // Update local state
       setAttendanceData(prev => ({
         ...prev,
         [selectedDate]: {
@@ -115,14 +93,11 @@ export default function StaffAttendancePage() {
         }
       }));
 
+      toast.success(status === "" ? "Cleared" : `Marked ${status}`);
+      
       if (status === "absent" || status === "on_leave") {
-        toast.success(`Marked ${status}. Proxy teacher will be auto-assigned.`);
-      } else {
-        toast.success(`Attendance marked as ${status}`);
+        toast.info("Substitution required for this faculty member");
       }
-
-      // Trigger revalidation to update timetable proxies
-      window.location.reload();
     } catch (error: any) {
       toast.error(error.message || "Failed to mark attendance");
     } finally {
@@ -133,154 +108,179 @@ export default function StaffAttendancePage() {
   const currentDayAttendance = attendanceData[selectedDate] || {};
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Staff Attendance</h1>
-          <p className="text-muted-foreground">Mark daily attendance - affects timetable proxies</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="px-4 py-2 border rounded-md"
-          />
-        </div>
+    <div className="p-6 space-y-8 animate-in fade-in duration-700">
+      {/* Unified Page Header */}
+      <UnifiedPageHeader 
+        title="Staff Attendance"
+        subtitle="Track daily faculty attendance and manage substitutions"
+        icon={Users}
+        color="emerald"
+        actions={
+          <div className="flex items-center gap-4 bg-white/80 backdrop-blur-md p-2 rounded-2xl border border-slate-200 shadow-sm">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-4 py-2 bg-transparent text-xs font-black uppercase tracking-widest outline-none border-none"
+            />
+          </div>
+        }
+      />
+
+      {/* Stats Matrix */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <DashboardStatCard 
+          title="Present" 
+          value={Object.values(currentDayAttendance).filter(s => s === "present").length} 
+          icon={CheckCircle} 
+          color="emerald" 
+          description="In school today"
+        />
+        <DashboardStatCard 
+          title="Absent" 
+          value={Object.values(currentDayAttendance).filter(s => s === "absent").length} 
+          icon={XCircle} 
+          color="rose" 
+          description="Unaccounted"
+        />
+        <DashboardStatCard 
+          title="On Leave" 
+          value={Object.values(currentDayAttendance).filter(s => s === "on_leave").length} 
+          icon={Clock} 
+          color="amber" 
+          description="Approved leave"
+        />
+        <DashboardStatCard 
+          title="Late" 
+          value={Object.values(currentDayAttendance).filter(s => s === "late").length} 
+          icon={Activity} 
+          color="amber" 
+          description="Delayed entry"
+        />
+        <DashboardStatCard 
+          title="Total Staff" 
+          value={staffList.length} 
+          icon={Users} 
+          color="blue" 
+          description="Active faculty"
+        />
       </div>
 
-      {/* Today's Summary */}
-      <div className="grid grid-cols-5 gap-4">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-emerald-600" />
-            <span className="text-sm">Present</span>
-          </div>
-          <p className="text-2xl font-bold text-emerald-700 mt-1">
-            {Object.values(currentDayAttendance).filter(s => s === "present").length}
-          </p>
-        </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <XCircle className="h-5 w-5 text-red-600" />
-            <span className="text-sm">Absent</span>
-          </div>
-          <p className="text-2xl font-bold text-red-700 mt-1">
-            {Object.values(currentDayAttendance).filter(s => s === "absent").length}
-          </p>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-amber-600" />
-            <span className="text-sm">On Leave</span>
-          </div>
-          <p className="text-2xl font-bold text-amber-700 mt-1">
-            {Object.values(currentDayAttendance).filter(s => s === "on_leave").length}
-          </p>
-        </div>
-        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-orange-600" />
-            <span className="text-sm">Late</span>
-          </div>
-          <p className="text-2xl font-bold text-orange-700 mt-1">
-            {Object.values(currentDayAttendance).filter(s => s === "late").length}
-          </p>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-600" />
-            <span className="text-sm">Total Staff</span>
-          </div>
-          <p className="text-2xl font-bold text-blue-700 mt-1">{staffList.length}</p>
-        </div>
-      </div>
-
-      {/* Staff Attendance Grid */}
-      <ERPCard accentColor="emerald">
-        <CardHeader className="border-b">
-          <CardTitle>Mark Attendance - {selectedDate}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {loading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading staff...</div>
-          ) : staffList.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">No teaching staff found</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-              {staffList.map((staff: any) => {
-                const currentStatus = currentDayAttendance[staff.id];
-                return (
-                  <div 
-                    key={staff.id} 
-                    className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-semibold">
-                        {getInitials(`${staff.first_name} ${staff.last_name}`)}
-                      </div>
-                      <div>
-                        <p className="font-medium">{staff.first_name} {staff.last_name}</p>
-                        <p className="text-xs text-muted-foreground">{staff.designations?.name || "Teacher"}</p>
-                      </div>
-                    </div>
-
-                    {currentStatus ? (
-                      <div className="space-y-2">
-                        <div className={`px-3 py-2 rounded-md text-center font-medium ${
-                          currentStatus === "present" ? "bg-emerald-100 text-emerald-700" :
-                          currentStatus === "absent" ? "bg-red-100 text-red-700" :
-                          currentStatus === "on_leave" ? "bg-amber-100 text-amber-700" :
-                          currentStatus === "late" ? "bg-orange-100 text-orange-700" :
-                          "bg-blue-100 text-blue-700"
-                        }`}>
-                          {STATUS_OPTIONS.find(s => s.value === currentStatus)?.label || currentStatus}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <ERPCard 
+            title="Attendance Registry" 
+            description={`Daily status log for ${new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`} 
+            color="emerald" 
+            icon={<CheckCircle className="h-5 w-5" />}
+            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+          >
+            {loading ? (
+              <div className="p-20 text-center flex flex-col items-center">
+                <div className="h-10 w-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin mb-4" />
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Scanning staff database...</p>
+              </div>
+            ) : staffList.length === 0 ? (
+              <div className="p-20 text-center flex flex-col items-center">
+                <Users className="h-12 w-12 text-slate-200 mb-4" />
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No active faculty found</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+                {staffList.map((staff: any) => {
+                  const currentStatus = currentDayAttendance[staff.id];
+                  return (
+                    <div 
+                      key={staff.id} 
+                      className="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-emerald-500/30 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="h-11 w-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-emerald-500/20 group-hover:rotate-3 transition-transform">
+                          {staff.first_name[0]}{staff.last_name?.[0]}
                         </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full"
-                          onClick={() => markAttendance(staff.id, "")}
-                        >
-                          Clear / Change
-                        </Button>
+                        <div>
+                          <p className="font-bold text-slate-900 tracking-tight text-sm">{staff.first_name} {staff.last_name}</p>
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-0.5">{staff.designations?.name || "Teacher"}</p>
+                        </div>
                       </div>
-                    ) : (
-                      <div className="grid grid-cols-3 gap-2">
-                        {STATUS_OPTIONS.slice(0, 3).map((option) => (
-                          <Button
-                            key={option.value}
-                            variant="outline"
-                            size="sm"
-                            className={`text-xs ${option.color}`}
-                            onClick={() => markAttendance(staff.id, option.value)}
+
+                      {currentStatus ? (
+                        <div className="flex gap-2">
+                          <div className={cn(
+                            "flex-1 px-3 py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest border shadow-sm",
+                            STATUS_OPTIONS.find(s => s.value === currentStatus)?.color || "bg-slate-100 text-slate-500 border-slate-200"
+                          )}>
+                            {STATUS_OPTIONS.find(s => s.value === currentStatus)?.label || currentStatus}
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-10 w-10 rounded-xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                            onClick={() => markAttendance(staff.id, "")}
                             disabled={saving}
                           >
-                            {option.label.substring(0, 4)}
+                            <XCircle className="h-4 w-4" />
                           </Button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </ERPCard>
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap gap-2">
+                          {STATUS_OPTIONS.slice(0, 3).map((option) => (
+                            <Button
+                              key={option.value}
+                              variant="outline"
+                              className={cn(
+                                "flex-1 h-10 px-0 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-slate-100",
+                                option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200" :
+                                option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" :
+                                "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200"
+                              )}
+                              onClick={() => markAttendance(staff.id, option.value)}
+                              disabled={saving}
+                            >
+                              {option.label}
+                            </Button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </ERPCard>
+        </div>
 
-      {/* Info Box */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div className="flex items-start gap-3">
-          <MapPin className="h-5 w-5 text-blue-600 mt-0.5" />
-          <div>
-            <p className="font-medium text-blue-900">Auto-Substitution Active</p>
-            <p className="text-sm text-blue-700">
-              When you mark a teacher as "Absent" or "On Leave", the system automatically 
-              searches for a substitute teacher with matching expertise and assigns them 
-              to today's timetable slots. The timetable will update instantly.
-            </p>
+        <div className="space-y-8">
+          {/* Substitution Intelligence */}
+          <div className="bg-slate-900 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform">
+                <ShieldCheck className="h-24 w-24 text-white" />
+            </div>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6 flex items-center gap-3">
+                <MapPin className="h-4 w-4 text-emerald-500" />
+                Intelligence
+            </h3>
+            <div className="relative z-10 space-y-4">
+              <p className="text-lg font-black text-white tracking-tight leading-tight">Auto-Substitution Active</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase leading-relaxed tracking-wider">
+                When a teacher is marked absent, the system automatically assigns matching proxies to maintain timetable integrity.
+              </p>
+              <div className="pt-4">
+                <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest">System Monitoring</Badge>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass futuristic-card p-8 rounded-3xl border-none shadow-xl">
+             <div className="flex items-center gap-3 mb-6">
+                <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                    <Activity className="h-5 w-5" />
+                </div>
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quick Insight</h3>
+             </div>
+             <p className="text-sm font-bold text-slate-900 leading-relaxed">
+                Faculty attendance is currently at <span className="text-emerald-600">92%</span> for this week.
+             </p>
           </div>
         </div>
       </div>

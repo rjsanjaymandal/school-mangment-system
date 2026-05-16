@@ -83,7 +83,10 @@ export const InstitutionalService = {
         .select(`
           *,
           profile:profiles(*),
-          class:classes(*)
+          class:classes(*),
+          guardian_students(
+            guardian:profiles(*)
+          )
         `)
         .order("created_at", { ascending: false });
 
@@ -102,7 +105,10 @@ export const InstitutionalService = {
         .select(`
           *,
           profile:profiles(*),
-          class:classes(*)
+          class:classes(*),
+          guardian_students(
+            guardian:profiles(*)
+          )
         `)
         .eq("id", id)
         .single();

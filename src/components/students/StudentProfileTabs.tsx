@@ -37,10 +37,10 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
     const tabItems = [
         { id: "overview", label: "Overview", icon: User },
-        { id: "academics", label: "Performance", icon: GraduationCap },
+        { id: "academics", label: "Grades", icon: GraduationCap },
         { id: "attendance", label: "Attendance", icon: ClipboardCheck },
         { id: "fees", label: "Finance", icon: DollarSign },
-        { id: "documents", label: "Vault", icon: FileText },
+        { id: "documents", label: "Documents", icon: FileText },
     ];
 
     return (
@@ -63,7 +63,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                     <div className="flex gap-2 w-full md:w-auto">
                         <Button variant="outline" size="sm" className="flex-1 md:flex-none h-10 px-4 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all active:scale-95 gap-2">
                             <Printer className="h-4 w-4" />
-                            Print Dossier
+                            Print Report
                         </Button>
                     </div>
                 </div>
@@ -72,8 +72,8 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         {/* Profile Persona */}
                         <ERPCard
-                            title="Member Identity"
-                            description="Core institutional profile"
+                            title="Profile Info"
+                            description="Core student details"
                             icon={<ShieldCheck className="h-5 w-5" />}
                             color="emerald"
                             className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
@@ -99,29 +99,29 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                     <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-colors">
                                         <Mail className="h-4 w-4" />
                                     </div>
-                                    <span className="truncate">{student.profile?.email || "No digital contact"}</span>
+                                    <span className="truncate">{student.profile?.email || "No email"}</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 group cursor-default">
                                     <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
                                         <Phone className="h-4 w-4" />
                                     </div>
-                                    <span>{student.profile?.phone || "No registered phone"}</span>
+                                    <span>{student.profile?.phone || "No phone"}</span>
                                 </div>
                                 <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 group cursor-default">
                                     <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:bg-amber-50 group-hover:text-amber-500 transition-colors">
                                         <MapPin className="h-4 w-4" />
                                     </div>
-                                    <span className="truncate">{student.profile?.address || "Location unverified"}</span>
+                                    <span className="truncate">{student.profile?.address || "No address"}</span>
                                 </div>
                             </div>
 
                             <div className="mt-8 pt-8 border-t border-slate-100 grid grid-cols-2 gap-4 text-center">
                                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Maturity ID</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Admission #</p>
                                     <p className="font-mono font-black text-slate-900 text-xs">{student.admission_number || "SYS-000"}</p>
                                 </div>
                                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Roll Tag</p>
+                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Roll #</p>
                                     <p className="font-mono font-black text-slate-900 text-xs">{student.roll_number || "—"}</p>
                                 </div>
                             </div>
@@ -131,41 +131,41 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                         <div className="lg:col-span-3 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <DashboardStatCard 
-                                    title="Attendance Velocity" 
+                                    title="Attendance Rate" 
                                     value={`${attendanceRate}%`} 
                                     icon={ClipboardCheck} 
                                     color={attendanceRate >= 75 ? "emerald" : "rose"} 
-                                    description={attendanceRate >= 75 ? "Target Achieved" : "Under Threshold"}
+                                    description={attendanceRate >= 75 ? "Target met" : "Below target"}
                                 />
                                 <DashboardStatCard 
-                                    title="Academic Quotient" 
+                                    title="Average Grade" 
                                     value={`${avgGrade}%`} 
                                     icon={GraduationCap} 
                                     color="blue" 
-                                    description="Aggregate Evaluation"
+                                    description="Aggregate score"
                                 />
                                 <DashboardStatCard 
-                                    title="Verified Events" 
+                                    title="Total Logs" 
                                     value={attendance.length + grades.length} 
                                     icon={Activity} 
                                     color="amber" 
-                                    description="Historical Logs"
+                                    description="Historical records"
                                 />
                             </div>
 
                             {/* Institutional Metadata */}
                             <ERPCard
-                                title="Metadata Portfolio"
-                                description="Verified institutional demographic parameters"
+                                title="Personal Details"
+                                description="Basic student demographic information"
                                 icon={<BarChart3 className="h-5 w-5" />}
                                 color="blue"
                                 className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
                             >
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                                    <MetadataItem label="Identity Gender" value={student.gender} />
-                                    <MetadataItem label="Origin Date" value={student.date_of_birth} />
-                                    <MetadataItem label="Category Class" value={student.category || "General"} />
-                                    <MetadataItem label="Theological Root" value={student.religion} />
+                                    <MetadataItem label="Gender" value={student.gender} />
+                                    <MetadataItem label="Date of Birth" value={student.date_of_birth} />
+                                    <MetadataItem label="Category" value={student.category || "General"} />
+                                    <MetadataItem label="Religion" value={student.religion} />
                                     <MetadataItem label="Blood Group" value={student.blood_group} />
                                     <MetadataItem label="Nationality" value={student.nationality || "Indian"} />
                                     <MetadataItem label="Mother Tongue" value={student.mother_tongue} />
@@ -178,8 +178,8 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
                 <TabsContent value="academics" className="mt-8 outline-none animate-in fade-in zoom-in-95 duration-500">
                     <ERPCard
-                        title="Academic Performance"
-                        description="Verified evaluation outcomes and term metrics"
+                        title="Academic Record"
+                        description="Past exam results and term evaluations"
                         icon={<TrendingUp className="h-5 w-5" />}
                         color="blue"
                         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -193,20 +193,20 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                                 {Math.round((grade.marks_obtained / (grade.exam?.max_marks || 100)) * 100)}%
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{grade.exam?.name || "Term Evaluation"}</p>
+                                                <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{grade.exam?.name || "Exam"}</p>
                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
-                                                    Quantum: {grade.marks_obtained} / {grade.exam?.max_marks || 100} Points
+                                                    Score: {grade.marks_obtained} / {grade.exam?.max_marks || 100}
                                                 </p>
                                             </div>
                                         </div>
-                                        <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-md border bg-blue-50 text-blue-600 border-blue-100 tracking-tighter">Verified Result</span>
+                                        <span className="text-[9px] font-black uppercase px-2.5 py-1 rounded-md border bg-blue-50 text-blue-600 border-blue-100 tracking-tighter">Verified</span>
                                     </div>
                                 ))}
                             </div>
                         ) : (
                             <div className="py-20 text-center">
                                 <GraduationCap className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No Academic Logs Found</p>
+                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No exam records</p>
                             </div>
                         )}
                     </ERPCard>
@@ -215,7 +215,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                 <TabsContent value="attendance" className="mt-8 outline-none animate-in fade-in zoom-in-95 duration-500">
                     <ERPCard
                         title="Attendance History"
-                        description="Chronological record of institutional presence"
+                        description="Daily record of institutional presence"
                         icon={<ClipboardCheck className="h-5 w-5" />}
                         color="emerald"
                         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -236,7 +236,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                                     {new Date(record.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                                                 </p>
                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
-                                                    Institutional Status: {record.status}
+                                                    Status: {record.status}
                                                 </p>
                                             </div>
                                         </div>
@@ -252,7 +252,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                         ) : (
                             <div className="py-20 text-center">
                                 <ClipboardCheck className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No Presence Records Found</p>
+                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No attendance records</p>
                             </div>
                         )}
                     </ERPCard>
@@ -260,16 +260,16 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
                 {/* Other tabs can be similarly modernized if content is added */}
                 <TabsContent value="fees" className="mt-8 outline-none">
-                     <ERPCard title="Finance Dossier" description="Verified billing and credit history" icon={<DollarSign className="h-5 w-5" />} color="emerald" className="glass futuristic-card border-none shadow-xl rounded-2xl p-12 text-center">
+                     <ERPCard title="Finance" description="Payment and billing history" icon={<DollarSign className="h-5 w-5" />} color="emerald" className="glass futuristic-card border-none shadow-xl rounded-2xl p-12 text-center">
                          <Activity className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Synchronizing Financial Archive...</p>
+                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Loading financial data...</p>
                      </ERPCard>
                 </TabsContent>
 
                 <TabsContent value="documents" className="mt-8 outline-none">
-                     <ERPCard title="Document Vault" description="Verified institutional certifications" icon={<FileText className="h-5 w-5" />} color="blue" className="glass futuristic-card border-none shadow-xl rounded-2xl p-12 text-center">
+                     <ERPCard title="Documents" description="Student certificates and uploads" icon={<FileText className="h-5 w-5" />} color="blue" className="glass futuristic-card border-none shadow-xl rounded-2xl p-12 text-center">
                          <ShieldCheck className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Vault Integration Pending...</p>
+                         <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No documents found</p>
                      </ERPCard>
                 </TabsContent>
             </Tabs>

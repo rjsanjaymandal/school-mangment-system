@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { ERPCard } from "@/components/ui/erp-card";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { UnifiedPagination } from "@/components/shared/UnifiedPagination";
 import { cn } from "@/lib/utils";
 
 export function DayBook() {
@@ -21,6 +22,8 @@ export function DayBook() {
   const [dateTo, setDateTo] = useState(new Date().toISOString().split("T")[0]);
   const [transactionType, setTransactionType] = useState("all");
   const [paymentMode, setPaymentMode] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
 
   // Fetch transactions
   const { data: transactions, isLoading } = useQuery({
@@ -77,6 +80,9 @@ export function DayBook() {
     ?.filter(t => t.mode !== "cash")
     ?.reduce((sum, t) => sum + (t.type === "income" || t.type === "fee_collection" ? t.amount : -t.amount), 0) || 0;
 
+  const totalPages = Math.ceil((transactions?.length || 0) / itemsPerPage);
+  const paginatedTransactions = transactions?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="space-y-8">
       {/* Unified Stats Grid */}
@@ -94,13 +100,13 @@ export function DayBook() {
           <div className="flex flex-1 flex-col lg:flex-row gap-4 w-full">
             <div className="flex items-center bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-1 gap-2">
               <Calendar className="h-4 w-4 text-slate-400" />
-              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
+              <Input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
               <span className="text-slate-300 font-black">→</span>
-              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
+              <Input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
             </div>
             
             <div className="flex gap-3">
-              <select value={transactionType} onChange={(e) => setTransactionType(e.target.value)} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
+              <select value={transactionType} onChange={(e) => { setTransactionType(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
                 <option value="all">All Channels</option>
                 <option value="fee_collection">Revenue Stream</option>
                 <option value="income">Direct Income</option>
@@ -108,7 +114,7 @@ export function DayBook() {
                 <option value="salary">Payroll</option>
               </select>
 
-              <select value={paymentMode} onChange={(e) => setPaymentMode(e.target.value)} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
+              <select value={paymentMode} onChange={(e) => { setPaymentMode(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
                 <option value="all">All Protocols</option>
                 <option value="cash">Cash Protocol</option>
                 <option value="bank">Digital Clearing</option>
@@ -150,14 +156,14 @@ export function DayBook() {
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Synchronizing Archive...</p>
                   </td>
                 </tr>
-              ) : transactions?.length === 0 ? (
+              ) : paginatedTransactions?.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-20 text-center">
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No Records Discovered</p>
                   </td>
                 </tr>
               ) : (
-                transactions?.map((txn) => {
+                paginatedTransactions?.map((txn) => {
                   const isIncome = txn.type === "income" || txn.type === "fee_collection";
                   return (
                     <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors group">
@@ -194,6 +200,19 @@ export function DayBook() {
             </tbody>
           </table>
         </div>
+        {/* Unified Pagination Framework */}
+        <UnifiedPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={transactions?.length || 0}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={(size) => {
+                setItemsPerPage(size);
+                setCurrentPage(1);
+            }}
+            itemName="transactions"
+        />
       </ERPCard>
     </div>
   );

@@ -20,7 +20,7 @@ function LiveCollectionPill() {
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
-      <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Live Streams</span>
+      <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Live Payments</span>
     </div>
   );
 }
@@ -98,8 +98,8 @@ export default async function FinanceDashboardPage() {
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
       {/* Unified Page Header */}
       <UnifiedPageHeader 
-        title="Finance Dashboard"
-        subtitle="Real-time institutional liquidity and revenue tracking"
+        title="Finance"
+        subtitle="Track school revenue, fees, and collections"
         icon={IndianRupee}
         color="emerald"
         actions={<LiveCollectionPill />}
@@ -108,47 +108,47 @@ export default async function FinanceDashboardPage() {
       {/* Unified Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <DashboardStatCard 
-          title="Daily Revenue" 
+          title="Today's Collection" 
           value={`₹${todayCollected.toLocaleString()}`} 
           icon={IndianRupee} 
           color="emerald" 
           trend={{ value: `${Math.abs(percentChange)}%`, isUp: percentChange >= 0 }}
         />
         <DashboardStatCard 
-          title="Weekly Volume" 
+          title="Weekly Collection" 
           value={`₹${weeklyCollected.toLocaleString()}`} 
           icon={Calendar} 
           color="blue" 
-          description="Verified Transactions"
+          description="Total this week"
         />
         <DashboardStatCard 
-          title="Recovery Velocity" 
+          title="Fee Recovery" 
           value={`${recoveryPercentage}%`} 
           icon={Percent} 
           color="purple" 
-          description="Institutional Target"
+          description="Collection target"
         />
         <DashboardStatCard 
-          title="Outstanding" 
+          title="Outstanding Fees" 
           value={`₹${overdueAmount.toLocaleString()}`} 
           icon={Clock} 
           color="rose" 
-          description={`${pendingPayments || 0} Open Tickets`}
+          description={`${pendingPayments || 0} pending payments`}
         />
       </div>
 
       {/* Quick Action Framework */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in slide-in-from-bottom-4 duration-700 delay-150">
-        <FinanceActionCard title="Record Fee" desc="Credit payment" icon={Receipt} color="emerald" />
-        <FinanceActionCard title="Fee Policy" desc="Manage plans" icon={Wallet} color="blue" />
-        <FinanceActionCard title="Analytics" desc="Growth logs" icon={BarChart3} color="purple" />
-        <FinanceActionCard title="Day-Book" desc="Audit trails" icon={Calendar} color="amber" />
+        <FinanceActionCard title="New Payment" desc="Collect fees" icon={Receipt} color="emerald" />
+        <FinanceActionCard title="Fee Setup" desc="Manage fees" icon={Wallet} color="blue" />
+        <FinanceActionCard title="Reports" desc="Finance charts" icon={BarChart3} color="purple" />
+        <FinanceActionCard title="Transactions" desc="Daily log" icon={Calendar} color="amber" />
       </div>
 
-      {/* Transaction Repository */}
+      {/* Recent Payments */}
       <ERPCard
-        title="Revenue Stream"
-        description="Chronological log of verified institutional credits"
+        title="Recent Payments"
+        description="Daily log of all completed transactions"
         icon={<TrendingUp className="h-5 w-5" />}
         color="emerald"
         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -158,11 +158,11 @@ export default async function FinanceDashboardPage() {
             <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
               <tr>
                 <th className="px-6 py-4">Receipt</th>
-                <th className="px-6 py-4">Member Identity</th>
-                <th className="px-6 py-4">Group</th>
+                <th className="px-6 py-4">Student Name</th>
+                <th className="px-6 py-4">Class</th>
                 <th className="px-6 py-4 text-center">Amount</th>
-                <th className="px-6 py-4 text-center">Protocol</th>
-                <th className="px-6 py-4 text-right">Verification</th>
+                <th className="px-6 py-4 text-center">Mode</th>
+                <th className="px-6 py-4 text-right">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -172,7 +172,7 @@ export default async function FinanceDashboardPage() {
                       <div className="p-6 bg-slate-50 rounded-full mb-4 animate-pulse">
                          <PieChart className="h-10 w-10 text-slate-200" />
                       </div>
-                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Synchronizing Revenue Logs...</p>
+                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Loading Transactions...</p>
                    </div>
                 </td>
               </tr>

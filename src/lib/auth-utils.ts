@@ -1,4 +1,5 @@
 import { getAuthContext } from "./auth-context";
+import { createClient } from "./supabase/server";
 
 /**
  * getSessionRole
@@ -35,4 +36,14 @@ export async function isAdmin() {
 export async function isImpersonating() {
     const { isImpersonating } = await getAuthContext();
     return isImpersonating;
+}
+export async function getAcademicYearId() {
+    const supabase = await createClient();
+    const { data } = await supabase
+        .from("academic_years")
+        .select("id")
+        .eq("is_current", true)
+        .maybeSingle();
+    
+    return data?.id;
 }

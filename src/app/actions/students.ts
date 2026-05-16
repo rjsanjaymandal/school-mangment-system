@@ -5,6 +5,25 @@ import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { isAdmin } from "@/lib/auth-utils";
 import type { ActionResult, StudentRecord } from "@/types";
+import { InstitutionalService } from "@/lib/services/institutional";
+
+export async function getStudents() {
+    const supabase = createAdminClient();
+    const data = await InstitutionalService.getStudents(supabase);
+    return { data };
+}
+
+export async function getClasses() {
+    const supabase = createAdminClient();
+    const { data: ayData } = await supabase
+        .from("academic_years")
+        .select("id")
+        .eq("is_current", true)
+        .maybeSingle();
+        
+    const data = await InstitutionalService.getClasses(ayData?.id || "", supabase);
+    return { data };
+}
 
 export async function createStudent(data: {
     first_name: string;
@@ -109,7 +128,7 @@ export async function createStudent(data: {
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";
         console.error("Error creating student:", message);
-        return { error };
+        return { error: message };
     }
 }
 
@@ -205,7 +224,7 @@ export async function updateStudent(
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";
         console.error("Error updating student:", message);
-        return { error };
+        return { error: message };
     }
 }
 
@@ -252,7 +271,7 @@ export async function deleteStudent(id: string) {
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";
         console.error("Error deleting student:", message);
-        return { error };
+        return { error: message };
     }
 }
 

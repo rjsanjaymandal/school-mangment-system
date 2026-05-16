@@ -40,7 +40,7 @@ export default async function DailyCollectionPage() {
       {/* Unified Page Header */}
       <UnifiedPageHeader 
         title="Daily Collection"
-        subtitle={`Real-time transaction logs for ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
+        subtitle={`Transaction log for ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
         icon={Clock}
         color="emerald"
       />
@@ -48,25 +48,25 @@ export default async function DailyCollectionPage() {
       {/* Unified Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <DashboardStatCard 
-          title="Revenue Captured" 
+          title="Total Collected" 
           value={`₹${totalCollected.toLocaleString()}`} 
           icon={IndianRupee} 
           color="emerald" 
-          description="Total Credits Recorded"
+          description="Fees collected today"
         />
         <DashboardStatCard 
-          title="Transaction Count" 
+          title="Payments" 
           value={transactionCount} 
           icon={CreditCard} 
           color="blue" 
-          description="Verified Operations"
+          description="Completed transactions"
         />
         <DashboardStatCard 
-          title="Ticket Average" 
+          title="Average Payment" 
           value={`₹${transactionCount > 0 ? Math.round(totalCollected / transactionCount).toLocaleString() : 0}`} 
           icon={TrendingUp} 
           color="purple" 
-          description="Per Member Velocity"
+          description="Average per student"
         />
       </div>
 
@@ -74,8 +74,8 @@ export default async function DailyCollectionPage() {
         {/* Collection Breakdown */}
         <div className="lg:col-span-1">
           <ERPCard 
-            title="Distribution Protocol" 
-            description="Payment mode distribution ratio" 
+            title="Payment Methods" 
+            description="Breakdown of how students paid" 
             color="emerald"
             icon={<BarChart3 className="h-5 w-5" />}
             className="glass futuristic-card border-none shadow-xl rounded-2xl p-6"
@@ -101,7 +101,7 @@ export default async function DailyCollectionPage() {
               {Object.keys(modeData).length === 0 && (
                 <div className="py-12 text-center">
                     <Activity className="h-8 w-8 text-slate-200 mx-auto mb-3" />
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No Streams Detected</p>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No payments today</p>
                 </div>
               )}
             </div>
@@ -111,8 +111,8 @@ export default async function DailyCollectionPage() {
         {/* Real-time Ledger */}
         <div className="lg:col-span-2">
           <ERPCard 
-            title="Operational Ledger" 
-            description="Chronological stream of verified credits" 
+            title="Recent Transactions" 
+            description="Recent payments received today" 
             color="blue" 
             icon={<CheckCircle className="h-5 w-5" />}
             className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -122,17 +122,17 @@ export default async function DailyCollectionPage() {
                 <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                   <tr>
                     <th className="px-6 py-4">Time</th>
-                    <th className="px-6 py-4">Member</th>
-                    <th className="px-6 py-4">Group</th>
-                    <th className="px-6 py-4">Protocol</th>
-                    <th className="px-6 py-4 text-right">Value</th>
+                    <th className="px-6 py-4">Student</th>
+                    <th className="px-6 py-4">Class</th>
+                    <th className="px-6 py-4">Mode</th>
+                    <th className="px-6 py-4 text-right">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {todayPayments?.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-20 text-center">
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Ledger Awaiting Data</p>
+                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No data available</p>
                       </td>
                     </tr>
                   ) : (

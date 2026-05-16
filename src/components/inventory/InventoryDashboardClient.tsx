@@ -31,11 +31,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { UnifiedPagination } from "@/components/shared/UnifiedPagination";
 import { cn } from "@/lib/utils";
 
 export default function InventoryDashboardClient({ initialInventory, userRole }: { initialInventory: any[], userRole?: string | null }) {
     const isAdminOrTeacher = userRole === "admin" || userRole === "teacher";
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(50);
 
     const inventory = useMemo(() => initialInventory.map((item) => ({
         ...item,
@@ -46,6 +49,9 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
         (item.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
         (item.category?.name?.toLowerCase() || "").includes(searchTerm.toLowerCase())
     );
+
+    const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
+    const paginatedInventory = filteredInventory.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     // --- Logistics Intelligence Layer ---
     const consumptionVelocity = useMemo(() => {
@@ -266,7 +272,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                 placeholder="SEARCH INVENTORY..."
                                 className="pl-9 rounded-sm border-border bg-card/40 backdrop-blur-md h-10 text-[10px] uppercase font-black tracking-widest placeholder:text-foreground/20 focus:border-primary transition-all shadow-xl"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                             />
                         </div>
                     </div>
@@ -293,7 +299,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border/30">
-                                    {filteredInventory.map((item) => (
+                                    {paginatedInventory.map((item) => (
                                         <tr
                                             key={item.id}
                                             className="hover:bg-white/60 transition-colors"
@@ -367,7 +373,7 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                             )}
                                         </tr>
                                     ))}
-                                    {filteredInventory.length === 0 && (
+                                    {paginatedInventory.length === 0 && (
                                         <tr>
                                             <td colSpan={4} className="text-center p-8 text-muted-foreground text-sm">
                                                 No inventory items found.
@@ -377,6 +383,19 @@ export default function InventoryDashboardClient({ initialInventory, userRole }:
                                 </tbody>
                             </table>
                         </div>
+                        {/* Unified Pagination Framework */}
+                        <UnifiedPagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            totalItems={filteredInventory.length}
+                            itemsPerPage={itemsPerPage}
+                            onItemsPerPageChange={(size) => {
+                                setItemsPerPage(size);
+                                setCurrentPage(1);
+                            }}
+                            itemName="assets"
+                        />
                     </Card>
                 </div>
 

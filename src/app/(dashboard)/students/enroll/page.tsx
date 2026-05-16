@@ -2,23 +2,30 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { UserPlus, Save, CheckCircle2, ArrowLeft, ArrowRight, User, Users, MapPin, Contact, Heart, Pencil, RotateCw } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { 
+    UserPlus, Save, CheckCircle2, ArrowLeft, ArrowRight, 
+    User, Users, MapPin, Contact, Heart, Pencil, 
+    RotateCw, ShieldCheck, Activity, GraduationCap,
+    Stethoscope, Smartphone, Home
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { createStudent, generateRollNumber } from "@/app/actions/students";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+// Shared UI Framework
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { ERPCard } from "@/components/ui/erp-card";
+
 const STEPS = [
-    { id: 1, title: "Admission", icon: User },
-    { id: 2, title: "Personal", icon: Users },
-    { id: 3, title: "Guardian", icon: Contact },
-    { id: 4, title: "Medical", icon: Heart },
+    { id: 1, title: "Admission", icon: ShieldCheck, color: "emerald" },
+    { id: 2, title: "Personal", icon: User, color: "blue" },
+    { id: 3, title: "Guardian", icon: Users, color: "purple" },
+    { id: 4, title: "Health", icon: Stethoscope, color: "rose" },
 ];
 
 export default function StudentEnrollmentPage() {
@@ -131,8 +138,8 @@ export default function StudentEnrollmentPage() {
             if ("error" in res && res.error) {
                 toast.error(String(res.error));
             } else {
-                toast.success("Student Enrolled Successfully", {
-                    description: "Record synchronized with institutional registry.",
+                toast.success("Enrollment Successful", {
+                    description: "Student added to registry.",
                     icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 });
                 setTimeout(() => router.push("/students"), 1500);
@@ -152,346 +159,321 @@ export default function StudentEnrollmentPage() {
     };
 
     return (
-        <div className="p-4 md:p-6">
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button variant="ghost" size="icon" asChild className="shrink-0">
-                    <Link href="/students"><ArrowLeft className="h-5 w-5" /></Link>
-                </Button>
-                <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-md bg-emerald-100 flex items-center justify-center">
-                        <UserPlus className="h-5 w-5 text-emerald-600" />
-                    </div>
-                    <div>
-                        <h1 className="text-xl font-bold">Enroll New Student</h1>
-                        <p className="text-sm text-slate-500">Academic Year 2026-27</p>
-                    </div>
+        <div className="p-6 space-y-8 animate-in fade-in duration-700">
+            {/* Unified Page Header */}
+            <UnifiedPageHeader 
+                title="Add Student"
+                subtitle="Register a new student"
+                icon={UserPlus}
+                color="emerald"
+                actions={
+                    <Link href="/students">
+                        <Button variant="outline" className="h-10 px-4 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 gap-2">
+                            <ArrowLeft className="h-4 w-4" />
+                            Student List
+                        </Button>
+                    </Link>
+                }
+            />
+
+            {/* Stepper Framework */}
+            <div className="max-w-4xl mx-auto">
+                <div className="flex items-center justify-between px-4">
+                    {STEPS.map((step, idx) => {
+                        const isCompleted = currentStep > step.id;
+                        const isActive = currentStep === step.id;
+                        
+                        return (
+                            <div key={step.id} className="flex items-center flex-1 last:flex-none">
+                                <div className="flex flex-col items-center group">
+                                    <div className={cn(
+                                        "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm border-2",
+                                        isCompleted ? "bg-emerald-500 border-emerald-400 text-white rotate-6" : 
+                                        isActive ? "bg-slate-900 border-slate-800 text-white scale-110 shadow-xl" : 
+                                        "bg-white border-slate-100 text-slate-300"
+                                    )}>
+                                        {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : <step.icon className="h-5 w-5" />}
+                                    </div>
+                                    <span className={cn(
+                                        "text-[9px] font-black uppercase tracking-[0.2em] mt-3 transition-colors",
+                                        isActive || isCompleted ? "text-slate-900" : "text-slate-400"
+                                    )}>
+                                        {step.title}
+                                    </span>
+                                </div>
+                                {idx < STEPS.length - 1 && (
+                                    <div className="flex-1 h-[2px] mx-6 bg-slate-100 relative overflow-hidden">
+                                        <div className={cn(
+                                            "absolute inset-0 bg-emerald-500 transition-all duration-700 ease-in-out",
+                                            currentStep > step.id ? "translate-x-0" : "-translate-x-full"
+                                        )} />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
-            {/* Progress Steps */}
-            <div className="mb-8">
-                <div className="flex items-center justify-between max-w-xl">
-                    {STEPS.map((step, idx) => (
-                        <div key={step.id} className="flex items-center">
-                            <div className="flex flex-col items-center">
-                                <div className={cn(
-                                    "h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold transition-colors",
-                                    currentStep >= step.id 
-                                        ? "bg-emerald-600 text-white" 
-                                        : "bg-slate-100 text-slate-400"
-                                )}>
-                                    {currentStep > step.id ? <CheckCircle2 className="h-5 w-5" /> : <step.icon className="h-5 w-5" />}
+            <form onSubmit={handleSubmit} className="max-w-4xl mx-auto pb-20">
+                <div className="animate-in slide-in-from-bottom-4 duration-500">
+                    {/* Step 1: Admission Details */}
+                    {currentStep === 1 && (
+                        <ERPCard
+                            title="Admission Details"
+                            description="Basic enrollment information"
+                            icon={<ShieldCheck className="h-5 w-5" />}
+                            color="emerald"
+                            className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name *</Label>
+                                    <Input placeholder="Enter first name" value={formData.first_name} onChange={(e) => updateForm("first_name", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
                                 </div>
-                                <span className={cn("text-xs mt-1", currentStep >= step.id ? "text-emerald-600 font-medium" : "text-slate-400")}>
-                                    {step.title}
-                                </span>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name *</Label>
+                                    <Input placeholder="Enter last name" value={formData.last_name} onChange={(e) => updateForm("last_name", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Admission Date</Label>
+                                    <Input type="date" value={formData.admission_date} onChange={(e) => updateForm("admission_date", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold uppercase tracking-tighter" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign Class *</Label>
+                                    <select value={formData.class_id} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white focus:ring-emerald-500 transition-all">
+                                        <option value="">Select Class</option>
+                                        {classes.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Roll Number</Label>
+                                    <div className="flex items-center gap-2">
+                                        <Input 
+                                            placeholder="System Generated" 
+                                            value={formData.roll_number} 
+                                            onChange={(e) => {
+                                                updateForm("roll_number", e.target.value);
+                                                updateForm("auto_roll", false);
+                                            }} 
+                                            className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono tracking-widest"
+                                            disabled={formData.auto_roll}
+                                        />
+                                        {formData.roll_number && (
+                                            <Button type="button" variant="outline" size="icon" className="h-12 w-12 shrink-0 rounded-xl border-slate-200 hover:bg-slate-50" onClick={regenerateRollNumber}>
+                                                <RotateCw className="h-4 w-4 text-slate-400" />
+                                            </Button>
+                                        )}
+                                    </div>
+                                    <label className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-widest cursor-pointer ml-1 mt-1">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.auto_roll}
+                                            onChange={(e) => {
+                                                updateForm("auto_roll", e.target.checked);
+                                                if (e.target.checked && formData.class_id) regenerateRollNumber();
+                                            }}
+                                            className="rounded-md border-slate-200 text-emerald-500 focus:ring-emerald-500"
+                                        />
+                                        Auto-generate Roll#
+                                    </label>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Admission Type</Label>
+                                    <select value={formData.admission_type} onChange={(e) => updateForm("admission_type", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="new">New Admission</option>
+                                        <option value="transfer">Transfer Student</option>
+                                        <option value="readmission">Re-admission</option>
+                                    </select>
+                                </div>
                             </div>
-                            {idx < STEPS.length - 1 && (
-                                <div className={cn("h-0.5 w-12 md:w-20 mx-2", currentStep > step.id ? "bg-emerald-600" : "bg-slate-200")} />
-                            )}
-                        </div>
-                    ))}
+                        </ERPCard>
+                    )}
+
+                    {/* Step 2: Personal Details */}
+                    {currentStep === 2 && (
+                        <ERPCard
+                            title="Personal Information"
+                            description="Demographic and personal data"
+                            icon={<User className="h-5 w-5" />}
+                            color="blue"
+                            className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date of Birth *</Label>
+                                    <Input type="date" value={formData.date_of_birth} onChange={(e) => updateForm("date_of_birth", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold uppercase tracking-tighter" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Gender</Label>
+                                    <select value={formData.gender} onChange={(e) => updateForm("gender", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Blood Group</Label>
+                                    <select value={formData.blood_group} onChange={(e) => updateForm("blood_group", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="">Select</option>
+                                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (<option key={bg} value={bg}>{bg}</option>))}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Category</Label>
+                                    <select value={formData.category} onChange={(e) => updateForm("category", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="General">General</option>
+                                        <option value="OBC">OBC</option>
+                                        <option value="SC">SC</option>
+                                        <option value="ST">ST</option>
+                                        <option value="EWS">EWS</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Religion</Label>
+                                    <select value={formData.religion} onChange={(e) => updateForm("religion", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Muslim">Muslim</option>
+                                        <option value="Sikh">Sikh</option>
+                                        <option value="Christian">Christian</option>
+                                        <option value="Not Specified">Not Specified</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mother Tongue</Label>
+                                    <select value={formData.mother_tongue} onChange={(e) => updateForm("mother_tongue", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="English">English</option>
+                                        <option value="Hindi">Hindi</option>
+                                        <option value="Punjabi">Punjabi</option>
+                                        <option value="Urdu">Urdu</option>
+                                        <option value="Bengali">Bengali</option>
+                                        <option value="Marathi">Marathi</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </ERPCard>
+                    )}
+
+                    {/* Step 3: Guardian Details */}
+                    {currentStep === 3 && (
+                        <ERPCard
+                            title="Guardian Information"
+                            description="Parent and contact details"
+                            icon={<Users className="h-5 w-5" />}
+                            color="purple"
+                            className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Father's Name *</Label>
+                                    <Input placeholder="Enter father's name" value={formData.father_name} onChange={(e) => updateForm("father_name", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Father's Phone *</Label>
+                                    <div className="relative">
+                                        <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                        <Input placeholder="+91 XXXXX XXXXX" value={formData.father_phone} onChange={(e) => updateForm("father_phone", e.target.value)} className="pl-11 h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mother's Name</Label>
+                                    <Input placeholder="Enter mother's name" value={formData.mother_name} onChange={(e) => updateForm("mother_name", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Emergency Phone</Label>
+                                    <Input placeholder="Enter backup number" value={formData.emergency_phone} onChange={(e) => updateForm("emergency_phone", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                </div>
+                                <div className="md:col-span-2 space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Permanent Address</Label>
+                                    <div className="relative">
+                                        <Home className="absolute left-4 top-4 h-4 w-4 text-slate-400" />
+                                        <Input placeholder="House No, Street, Area" value={formData.address} onChange={(e) => updateForm("address", e.target.value)} className="pl-11 h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 md:col-span-2">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">City</Label>
+                                        <Input placeholder="City" value={formData.city} onChange={(e) => updateForm("city", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Pincode</Label>
+                                        <Input placeholder="Zip Code" value={formData.pincode} onChange={(e) => updateForm("pincode", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                                    </div>
+                                </div>
+                            </div>
+                        </ERPCard>
+                    )}
+
+                    {/* Step 4: Medical Details */}
+                    {currentStep === 4 && (
+                        <ERPCard
+                            title="Medical Information"
+                            description="Health and medical conditions"
+                            icon={<Stethoscope className="h-5 w-5" />}
+                            color="red"
+                            className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Known Allergies</Label>
+                                    <Input placeholder="None or specify" value={formData.allergies} onChange={(e) => updateForm("allergies", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Current Medications</Label>
+                                    <Input placeholder="None or specify" value={formData.medications} onChange={(e) => updateForm("medications", e.target.value)} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Vision</Label>
+                                    <select value={formData.vision} onChange={(e) => updateForm("vision", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="normal">Normal</option>
+                                        <option value="corrected">Corrected (Glasses)</option>
+                                        <option value="impaired">Impaired</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hearing</Label>
+                                    <select value={formData.hearing} onChange={(e) => updateForm("hearing", e.target.value)} className="w-full h-12 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white">
+                                        <option value="normal">Normal</option>
+                                        <option value="aided">Hearing Aid</option>
+                                        <option value="impaired">Impaired</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </ERPCard>
+                    )}
                 </div>
-            </div>
 
-            <form onSubmit={handleSubmit} className="max-w-4xl">
-                {/* Step 1: Admission Details */}
-                {currentStep === 1 && (
-                    <Card className="p-6 space-y-6">
-                        <div className="flex items-center gap-2 pb-4 border-b">
-                            <User className="h-5 w-5 text-emerald-600" />
-                            <h2 className="font-semibold">Admission Details</h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>First Name *</Label>
-                                <Input placeholder="Enter first name" value={formData.first_name} onChange={(e) => updateForm("first_name", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Last Name *</Label>
-                                <Input placeholder="Enter last name" value={formData.last_name} onChange={(e) => updateForm("last_name", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Admission Date</Label>
-                                <Input type="date" value={formData.admission_date} onChange={(e) => updateForm("admission_date", e.target.value)} className="h-11" />
-                            </div>
-<div className="space-y-2">
-                                <Label>Assigned Class *</Label>
-                                <Select value={formData.class_id} onValueChange={handleClassChange}>
-                                    <SelectTrigger className="h-11"><SelectValue placeholder="Select class" /></SelectTrigger>
-                                    <SelectContent>
-                                        {classes.map((c) => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Roll Number</Label>
-                                <div className="flex items-center gap-2">
-                                    <Input 
-                                        placeholder="Auto-generated" 
-                                        value={formData.roll_number} 
-                                        onChange={(e) => {
-                                            updateForm("roll_number", e.target.value);
-                                            updateForm("auto_roll", false);
-                                        }} 
-                                        className="h-11 font-mono"
-                                        disabled={formData.auto_roll}
-                                    />
-                                    {formData.roll_number && (
-                                        <Button type="button" variant="outline" size="icon" className="h-11 w-11 shrink-0" onClick={regenerateRollNumber} title="Regenerate">
-                                            <RotateCw className="h-4 w-4" />
-                                        </Button>
-                                    )}
-                                </div>
-                                <label className="flex items-center gap-2 text-sm text-slate-500 cursor-pointer">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={formData.auto_roll}
-                                        onChange={(e) => {
-                                            updateForm("auto_roll", e.target.checked);
-                                            if (e.target.checked && formData.class_id) {
-                                                regenerateRollNumber();
-                                            }
-                                        }}
-                                        className="rounded"
-                                    />
-                                    Auto-generate
-                                </label>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Admission Type</Label>
-                                <Select value={formData.admission_type} onValueChange={(v) => updateForm("admission_type", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="new">New Admission</SelectItem>
-                                        <SelectItem value="transfer">Transfer Entry</SelectItem>
-                                        <SelectItem value="readmission">Readmission</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Roll Number</Label>
-                                <Input placeholder="Auto-generated" value={formData.roll_number} onChange={(e) => updateForm("roll_number", e.target.value)} className="h-11" />
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                {/* Step 2: Personal Details */}
-                {currentStep === 2 && (
-                    <Card className="p-6 space-y-6">
-                        <div className="flex items-center gap-2 pb-4 border-b">
-                            <Users className="h-5 w-5 text-blue-600" />
-                            <h2 className="font-semibold">Personal Information</h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                                <Label>Date of Birth *</Label>
-                                <Input type="date" value={formData.date_of_birth} onChange={(e) => updateForm("date_of_birth", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Gender</Label>
-                                <Select value={formData.gender} onValueChange={(v) => updateForm("gender", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="male">Male</SelectItem>
-                                        <SelectItem value="female">Female</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Blood Group</Label>
-                                <Select value={formData.blood_group} onValueChange={(v) => updateForm("blood_group", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue placeholder="Select" /></SelectTrigger>
-                                    <SelectContent>
-                                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (<SelectItem key={bg} value={bg}>{bg}</SelectItem>))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Category</Label>
-                                <Select value={formData.category} onValueChange={(v) => updateForm("category", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="General">General</SelectItem>
-                                        <SelectItem value="OBC">OBC</SelectItem>
-                                        <SelectItem value="SC">SC</SelectItem>
-                                        <SelectItem value="ST">ST</SelectItem>
-                                        <SelectItem value="EWS">EWS</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Religion</Label>
-                                <Select value={formData.religion} onValueChange={(v) => updateForm("religion", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Hindu">Hindu</SelectItem>
-                                        <SelectItem value="Muslim">Muslim</SelectItem>
-                                        <SelectItem value="Sikh">Sikh</SelectItem>
-                                        <SelectItem value="Christian">Christian</SelectItem>
-                                        <SelectItem value="Not Specified">Not Specified</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Mother Tongue</Label>
-                                <Select value={formData.mother_tongue} onValueChange={(v) => updateForm("mother_tongue", v === "custom" ? "" : v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="English">English</SelectItem>
-                                        <SelectItem value="Hindi">Hindi</SelectItem>
-                                        <SelectItem value="Punjabi">Punjabi</SelectItem>
-                                        <SelectItem value="Urdu">Urdu</SelectItem>
-                                        <SelectItem value="Bengali">Bengali</SelectItem>
-                                        <SelectItem value="Marathi">Marathi</SelectItem>
-                                        <SelectItem value="Tamil">Tamil</SelectItem>
-                                        <SelectItem value="Telugu">Telugu</SelectItem>
-                                        <SelectItem value="Kannada">Kannada</SelectItem>
-                                        <SelectItem value="Malayalam">Malayalam</SelectItem>
-                                        <SelectItem value="Other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>RTE Status</Label>
-                                <Select value={formData.rte_status} onValueChange={(v) => updateForm("rte_status", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="false">Non-RTE</SelectItem>
-                                        <SelectItem value="true">RTE Candidate</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                {/* Step 3: Guardian Details */}
-                {currentStep === 3 && (
-                    <Card className="p-6 space-y-6">
-                        <div className="flex items-center gap-2 pb-4 border-b">
-                            <Contact className="h-5 w-5 text-purple-600" />
-                            <h2 className="font-semibold">Guardian Information</h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Father's Name *</Label>
-                                <Input placeholder="Enter father's name" value={formData.father_name} onChange={(e) => updateForm("father_name", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Father's Phone *</Label>
-                                <Input placeholder="+91 XXXXX XXXXX" value={formData.father_phone} onChange={(e) => updateForm("father_phone", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Father's Occupation</Label>
-                                <Input placeholder="Enter occupation" value={formData.father_occupation} onChange={(e) => updateForm("father_occupation", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Mother's Name</Label>
-                                <Input placeholder="Enter mother's name" value={formData.mother_name} onChange={(e) => updateForm("mother_name", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Mother's Phone</Label>
-                                <Input placeholder="+91 XXXXX XXXXX" value={formData.mother_phone} onChange={(e) => updateForm("mother_phone", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Emergency Contact</Label>
-                                <Input placeholder="+91 XXXXX XXXXX" value={formData.emergency_phone} onChange={(e) => updateForm("emergency_phone", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Email</Label>
-                                <Input type="email" placeholder="email@example.com" value={formData.email} onChange={(e) => updateForm("email", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Guardian Relation</Label>
-                                <Select value={formData.guardian_relation} onValueChange={(v) => updateForm("guardian_relation", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Father">Father</SelectItem>
-                                        <SelectItem value="Mother">Mother</SelectItem>
-                                        <SelectItem value="Guardian">Guardian</SelectItem>
-                                        <SelectItem value="Other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="md:col-span-2 space-y-2">
-                                <Label>Permanent Address</Label>
-                                <Input placeholder="House/Flat No, Street, Area" value={formData.address} onChange={(e) => updateForm("address", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>City</Label>
-                                <Input placeholder="City" value={formData.city} onChange={(e) => updateForm("city", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>State</Label>
-                                <Input placeholder="State" value={formData.state} onChange={(e) => updateForm("state", e.target.value)} className="h-11" />
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                {/* Step 4: Medical Details */}
-                {currentStep === 4 && (
-                    <Card className="p-6 space-y-6">
-                        <div className="flex items-center gap-2 pb-4 border-b">
-                            <Heart className="h-5 w-5 text-red-500" />
-                            <h2 className="font-semibold">Medical Information</h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Known Allergies</Label>
-                                <Input placeholder="None or specify" value={formData.allergies} onChange={(e) => updateForm("allergies", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Current Medications</Label>
-                                <Input placeholder="None or specify" value={formData.medications} onChange={(e) => updateForm("medications", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Medical Conditions</Label>
-                                <Input placeholder="None or specify" value={formData.medical_conditions} onChange={(e) => updateForm("medical_conditions", e.target.value)} className="h-11" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Vision</Label>
-                                <Select value={formData.vision} onValueChange={(v) => updateForm("vision", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="normal">Normal</SelectItem>
-                                        <SelectItem value="corrected">Corrected (Glasses)</SelectItem>
-                                        <SelectItem value="impaired">Impaired</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Hearing</Label>
-                                <Select value={formData.hearing} onValueChange={(v) => updateForm("hearing", v)}>
-                                    <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="normal">Normal</SelectItem>
-                                        <SelectItem value="aided">Aided</SelectItem>
-                                        <SelectItem value="impaired">Impaired</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                    </Card>
-                )}
-
-                {/* Navigation Buttons */}
-                <div className="flex items-center justify-between mt-6">
-                    <Button type="button" variant="outline" onClick={prevStep} disabled={currentStep === 1} className="gap-2">
+                {/* Navigation Controls */}
+                <div className="flex items-center justify-between mt-10">
+                    <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={prevStep} 
+                        disabled={currentStep === 1} 
+                        className="h-12 px-8 rounded-2xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 gap-2"
+                    >
                         <ArrowLeft className="h-4 w-4" /> Previous
                     </Button>
-                    <div className="flex gap-2">
+                    
+                    <div className="flex gap-4">
                         {currentStep < 4 ? (
-                            <Button type="button" onClick={nextStep} disabled={!canProceed()} className="gap-2 bg-emerald-600">
-                                Next <ArrowRight className="h-4 w-4" />
+                            <Button 
+                                type="button" 
+                                onClick={nextStep} 
+                                disabled={!canProceed()} 
+                                className="h-12 px-10 rounded-2xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2"
+                            >
+                                Next Step <ArrowRight className="h-4 w-4" />
                             </Button>
                         ) : (
-                            <Button type="submit" disabled={isSubmitting} className="gap-2 bg-emerald-600">
-                                <Save className="h-4 w-4" /> {isSubmitting ? "Saving..." : "Enroll Student"}
+                            <Button 
+                                type="submit" 
+                                disabled={isSubmitting} 
+                                className="h-12 px-10 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-emerald-200 transition-all active:scale-95 gap-2"
+                            >
+                                {isSubmitting ? <Activity className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                {isSubmitting ? "Saving..." : "Enroll Student"}
                             </Button>
                         )}
                     </div>

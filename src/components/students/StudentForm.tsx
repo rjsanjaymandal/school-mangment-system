@@ -71,7 +71,7 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
           const last_name = nameParts.slice(1).join(" ") || "";
           const res = await updateStudent(initialData.id, { ...values, first_name, last_name });
           if ("error" in res && res.error) {
-            toast.error(String(res.error));
+            toast.error(res.error);
             return;
           }
           toast.success("Student updated successfully");
@@ -95,18 +95,18 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 p-8">
-        <div className="grid grid-cols-1 gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 gap-6">
           <FormField
             control={form.control}
             name="full_name"
             render={({ field }) => (
-              <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Full Name</FormLabel>
+              <FormItem className="space-y-2">
+                <FormLabel className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                  <Input placeholder="Enter student name" {...field} className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-emerald-500 font-bold text-xs tracking-tight transition-all" />
                 </FormControl>
-                <FormMessage className="text-[9px] font-bold uppercase" />
+                <FormMessage className="text-[9px] font-bold text-rose-500 uppercase ml-1" />
               </FormItem>
             )}
           />
@@ -115,26 +115,26 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem className="space-y-1">
-              <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Email Address</FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Email Address</FormLabel>
               <FormControl>
-                <Input placeholder="john.doe@example.com" {...field} className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight" />
+                <Input placeholder="student@example.com" {...field} className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-emerald-500 font-bold text-xs tracking-tight transition-all" />
               </FormControl>
-              <FormMessage className="text-[9px] font-bold uppercase" />
+              <FormMessage className="text-[9px] font-bold text-rose-500 uppercase ml-1" />
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FormField
             control={form.control}
             name="admission_number"
             render={({ field }) => (
-              <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Admission#</FormLabel>
+              <FormItem className="space-y-2">
+                <FormLabel className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Admission #</FormLabel>
                 <FormControl>
-                  <Input placeholder="ADM-001" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase h-10" />
+                  <Input placeholder="ADM-001" {...field} className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-emerald-500 font-mono font-black text-xs transition-all" />
                 </FormControl>
-                <FormMessage className="text-[9px] font-bold uppercase" />
+                <FormMessage className="text-[9px] font-bold text-rose-500 uppercase ml-1" />
               </FormItem>
             )}
           />
@@ -142,12 +142,12 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
             control={form.control}
             name="roll_number"
             render={({ field }) => (
-              <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Roll#</FormLabel>
+              <FormItem className="space-y-2">
+                <FormLabel className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Roll #</FormLabel>
                 <FormControl>
-                  <Input placeholder="00" {...field} className="rounded-sm bg-background/50 border-border font-mono font-black text-xs uppercase h-10" />
+                  <Input placeholder="00" {...field} className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-emerald-500 font-mono font-black text-xs transition-all" />
                 </FormControl>
-                <FormMessage className="text-[9px] font-bold uppercase" />
+                <FormMessage className="text-[9px] font-bold text-rose-500 uppercase ml-1" />
               </FormItem>
             )}
           />
@@ -155,33 +155,42 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
             control={form.control}
             name="class_id"
             render={({ field }) => (
-              <FormItem className="space-y-1">
-                <FormLabel className="text-[10px] font-black uppercase text-primary tracking-widest">Class</FormLabel>
+              <FormItem className="space-y-2">
+                <FormLabel className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Class</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger className="rounded-sm bg-background/50 border-border font-bold text-xs uppercase tracking-tight h-10">
-                      <SelectValue placeholder="Select" />
+                    <SelectTrigger className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-emerald-500 font-bold text-xs transition-all">
+                      <SelectValue placeholder="Select class" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="bg-card border-border shadow-2xl">
+                  <SelectContent className="rounded-xl border-slate-200 shadow-2xl">
                     {classes.map((c) => (
-                      <SelectItem key={c.id} value={c.id} className="font-bold text-[10px] uppercase tracking-tighter cursor-pointer focus:bg-primary/10 focus:text-primary">
+                      <SelectItem key={c.id} value={c.id} className="font-bold text-xs rounded-lg cursor-pointer transition-colors">
                         {c.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage className="text-[9px] font-bold uppercase" />
+                <FormMessage className="text-[9px] font-bold text-rose-500 uppercase ml-1" />
               </FormItem>
             )}
           />
         </div>
-        <div className="flex justify-end gap-x-3 pt-6">
-          <Button variant="ghost" type="button" onClick={() => onSuccess()} className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-sm px-6">
+        <div className="flex justify-end gap-3 pt-8">
+          <Button 
+            variant="ghost" 
+            type="button" 
+            onClick={() => onSuccess()} 
+            className="h-11 px-8 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all"
+          >
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending} className="bg-primary text-primary-foreground font-black uppercase tracking-[0.2em] emerald-glow rounded-sm px-8 shadow-xl text-[10px]">
-            {isPending ? "Saving..." : initialData ? "Save Changes" : "Add Student"}
+          <Button 
+            type="submit" 
+            disabled={isPending} 
+            className="h-11 px-10 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95"
+          >
+            {isPending ? "Saving..." : initialData ? "Update Student" : "Add Student"}
           </Button>
         </div>
       </form>

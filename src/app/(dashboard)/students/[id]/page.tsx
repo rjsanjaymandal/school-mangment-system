@@ -9,8 +9,17 @@ import { getStudentAttendance } from "@/app/actions/attendance";
 import { StudentProfileTabs } from "@/components/students/StudentProfileTabs";
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
+import { redirect } from "next/navigation";
+
 export default async function StudentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+    
+    // Basic UUID format validation to prevent DB syntax errors
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+        notFound();
+    }
+
     const supabase = await createClient();
     const student = await InstitutionalService.getStudentById(id, supabase);
 
@@ -34,16 +43,16 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
                 color="emerald"
                 actions={
                     <>
-                        <Link href="/students">
+                        <Link href="/students/list">
                             <Button variant="outline" className="h-10 px-4 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 gap-2">
                                 <ArrowLeft className="h-4 w-4" />
-                                Back to Directory
+                                Back to List
                             </Button>
                         </Link>
                         <Link href={`/students/${id}/edit`}>
                             <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
                                 <Edit3 className="h-4 w-4" />
-                                Modify Profile
+                                Edit Student
                             </Button>
                         </Link>
                     </>

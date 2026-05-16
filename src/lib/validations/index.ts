@@ -19,20 +19,22 @@ export const profileSchema = z.object({
 
 // --- Academic Structure ---
 export const academicYearSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(4),
-  start_date: z.string(),
-  end_date: z.string(),
-  is_current: z.boolean(),
+  id: z.string(),
+  name: z.string().min(1),
+  start_date: z.string().optional().nullable(),
+  end_date: z.string().optional().nullable(),
+  is_current: z.boolean().optional().nullable().default(false),
 });
 
 export const classSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
   name: z.string().min(1),
   capacity: z.number().int().optional().nullable(),
   room_number: z.string().optional().nullable(),
-  grade_level: z.string().optional(),
-  academic_year_id: z.string().uuid(),
+  grade_level: z.string().optional().nullable(),
+  academic_year_id: z.string().optional().nullable(),
+  teacher_id: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
 });
 
 export const subjectSchema = z.object({

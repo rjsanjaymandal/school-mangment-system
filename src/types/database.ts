@@ -1,6 +1,6 @@
 export type ActionResult<T = unknown> = 
     | { success: true; data?: T }
-    | { success: false; error: string | unknown };
+    | { success: false; error: string };
 
 export type ClassRecord = {
     id: string;

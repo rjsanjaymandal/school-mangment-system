@@ -55,7 +55,7 @@ const navigation: NavGroup[] = [
   {
     group: "Students",
     items: [
-      { name: "All Students", href: "/students/list", icon: GraduationCap, description: "Manage student profiles" },
+      { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles" },
       { name: "Enroll New", href: "/students/enroll", icon: GraduationCap, description: "Add new student" },
       { name: "Attendance", href: "/students/attendance", icon: ClipboardCheck, description: "Track daily attendance" },
       { name: "Documents", href: "/students/documents", icon: FileText, description: "Student documents" },
