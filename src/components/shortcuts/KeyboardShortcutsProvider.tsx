@@ -21,7 +21,7 @@ const shortcuts: KeyboardShortcut[] = [
   { key: "g a", ctrl: true, action: "Go to Academics", href: "/academics" },
   { key: "n s", ctrl: true, action: "New Student", href: "/students/enroll" },
   { key: "n f", ctrl: true, action: "Collect Fee", href: "/fees/collect" },
-  { key: "n a", ctrl: true, action: "Mark Attendance", href: "/attendance" },
+  { key: "n a", ctrl: true, action: "Mark Attendance", href: "/students/attendance" },
   { key: "k", ctrl: true, action: "Search (Global)", href: "/search" },
   { key: "?", shift: true, action: "Show Keyboard Shortcuts" },
   { key: "Escape", action: "Close Dialog/Panel" },

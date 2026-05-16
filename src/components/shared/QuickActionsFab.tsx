@@ -9,7 +9,7 @@ const quickActions = [
   { label: "Add Student", icon: GraduationCap, href: "/students/enroll", color: "bg-emerald-500" },
   { label: "Collect Fee", icon: IndianRupee, href: "/fees", color: "bg-blue-500" },
   { label: "Add Staff", icon: UserPlus, href: "/hr/add-staff", color: "bg-purple-500" },
-  { label: "Mark Attendance", icon: ClipboardCheck, href: "/attendance", color: "bg-amber-500" },
+  { label: "Mark Attendance", icon: ClipboardCheck, href: "/students/attendance", color: "bg-amber-500" },
   { label: "Schedule Exam", icon: BookOpen, href: "/exams", color: "bg-cyan-500" },
   { label: "Send Message", icon: Users, href: "/messages", color: "bg-pink-500" },
 ];
