@@ -14,7 +14,7 @@ interface KeyboardShortcut {
 }
 
 const shortcuts: KeyboardShortcut[] = [
-  { key: "g d", ctrl: true, action: "Go to Dashboard", href: "/dashboard" },
+  { key: "g d", ctrl: true, action: "Go to Dashboard", href: "/" },
   { key: "g s", ctrl: true, action: "Go to Students", href: "/students" },
   { key: "g f", ctrl: true, action: "Go to Finance", href: "/finance" },
   { key: "g h", ctrl: true, action: "Go to HR/Staff", href: "/hr" },

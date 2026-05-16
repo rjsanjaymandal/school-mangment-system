@@ -49,7 +49,7 @@ const navigation: NavGroup[] = [
   {
     group: "Main",
     items: [
-      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { name: "Dashboard", href: "/", icon: LayoutDashboard },
     ],
   },
   {

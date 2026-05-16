@@ -41,7 +41,7 @@ export function throttle<T extends (...args: any[]) => any>(
 // Critical routes that should always be prefetched
 export const CRITICAL_ROUTES = [
   "/launcher",
-  "/dashboard",
+  "/",
   "/students",
   "/attendance",
   "/fees",
