@@ -275,7 +275,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
           {navigation.filter(canSeeGroup).map((group) => (
             <div key={group.group} className="space-y-2">
               {!isCollapsed && (
-                <h2 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-600 mb-4 animate-in fade-in duration-700">
+                <h2 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 animate-in fade-in duration-700">
                   {group.group}
                 </h2>
               )}
@@ -298,7 +298,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
                                   "flex items-center justify-center h-12 w-12 mx-auto rounded-xl transition-all duration-200",
                                   active 
                                     ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
-                                    : "text-slate-500 hover:text-slate-200 hover:bg-slate-900"
+                                    : "text-slate-400 hover:text-slate-100 hover:bg-slate-900"
                                 )}
                               >
                                 <item.icon className="h-5 w-5" />
@@ -316,7 +316,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
                               onClick={() => toggleGroup(item.name)}
                               className={cn(
                                 "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
-                                active ? "text-white" : "text-slate-500 hover:text-slate-200 hover:bg-slate-900/50"
+                                active ? "text-white" : "text-slate-400 hover:text-slate-100 hover:bg-slate-900/50"
                               )}
                             >
                               <item.icon className={cn("h-5 w-5 transition-colors", active ? "text-emerald-400" : "group-hover:text-slate-200")} />
@@ -328,7 +328,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
                               href={item.href}
                               className={cn(
                                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative",
-                                active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-slate-500 hover:text-slate-200 hover:bg-slate-900/50"
+                                active ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" : "text-slate-400 hover:text-slate-100 hover:bg-slate-900/50"
                               )}
                             >
                               <item.icon className={cn("h-5 w-5 transition-colors", active ? "text-white" : "group-hover:text-slate-200")} />
@@ -350,7 +350,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
                                       "block px-3 py-2 text-xs font-bold transition-all rounded-lg relative",
                                       subActive 
                                         ? "text-emerald-400" 
-                                        : "text-slate-600 hover:text-slate-400"
+                                        : "text-slate-500 hover:text-slate-300"
                                     )}
                                   >
                                     {subActive && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3 bg-emerald-500 rounded-full" />}
@@ -380,7 +380,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-xs font-black text-white truncate">{profile?.full_name || "School User"}</p>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest truncate">{userRole?.replace('_', ' ') || "Administrator"}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{userRole?.replace('_', ' ') || "Administrator"}</p>
             </div>
           </div>
         </div>
