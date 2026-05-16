@@ -343,28 +343,30 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
         window.print();
     };
 
-    // Debug: Log data to console
+    // Debug: Log data to console (runs once on mount)
     useEffect(() => {
         console.log("Timetable Debug:", {
-            timetablesCount: timetables.length,
-            slotsInTimetables: timetables.reduce((sum, t) => sum + (t.slots?.length || 0), 0),
-            currentAY: currentAY?.id,
             selectedClass,
             selectedDay,
             viewMode
         });
-    }, [timetables, currentAY, selectedClass, selectedDay, viewMode]);
+    }, []);
 
     // Fetch Teacher Load, Conflicts, and Proxies
     useEffect(() => {
+        const academicYearId = currentAY?.id;
+        if (!academicYearId || !isAdminOrTeacher) return;
+
+        let active = true;
+        
         async function fetchAutonomousData() {
-            if (!currentAY?.id) return;
-            
             const [loadResult, conflictResult, proxyResult] = await Promise.all([
-                getTeacherLoad(currentAY.id),
-                checkScheduleConflicts(currentAY.id),
+                getTeacherLoad(academicYearId),
+                checkScheduleConflicts(academicYearId),
                 getTodayProxies()
             ]);
+
+            if (!active) return;
 
             if (loadResult.success) {
                 setTeacherLoadData(loadResult.data || []);
@@ -380,10 +382,12 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
             }
         }
         
-        if (isAdminOrTeacher) {
-            fetchAutonomousData();
-        }
-    }, [currentAY?.id, isAdminOrTeacher, timetables]);
+        fetchAutonomousData();
+
+        return () => {
+            active = false;
+        };
+    }, [currentAY?.id, isAdminOrTeacher]);
 
     const handleGenerateOptimizedSchedule = async () => {
         if (!currentAY?.id) {

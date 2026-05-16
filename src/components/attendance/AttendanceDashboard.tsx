@@ -273,91 +273,119 @@ export function AttendanceDashboard({
     );
 
     return (
-        <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
 
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-border pb-8 relative z-10">
-                <div className="flex items-center gap-x-6">
-                    <div className="h-14 w-14 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-sm transition-all duration-300">
-                        <Users className="h-7 w-7 transition-all duration-300" />
+            {/* Header */}
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background via-background to-primary/5 border border-border/50 p-6 md:p-8">
+                <div className="absolute inset-0 bg-grid-slate-100/50 [mask-image:linear-gradient(0deg,white,transparent)]" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                
+                <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div className="flex items-center gap-x-5">
+                        <div className="h-14 w-14 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-2xl shadow-lg shadow-primary/10">
+                            <Users className="h-7 w-7" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                                Attendance
+                            </h2>
+                            <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
+                                <Activity className="w-4 h-4 text-primary" /> 
+                                {isStudent ? "Your Attendance Record" : "Student Attendance Board"}
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                            Daily Attendance
-                        </h2>
-                        <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-                            <Activity className="h-4 w-4 text-primary" /> 
-                            {isStudent ? "Individual Attendance Record" : "Student Attendance Board"}
-                        </p>
-                    </div>
-                </div>
 
-                {isAdminOrTeacher && (
-                    <div className="flex items-center gap-4">
-                        <Button variant="outline" onClick={handleExportCSV} className="h-10 px-4 font-medium transition-all group">
-                            <Download className="h-4 w-4 mr-2 group-hover:text-primary transition-colors" /> Export Data
-                        </Button>
-                    </div>
-                )}
-            </div>
-
-            {/* Matrix Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-4 reveal-2 relative z-10">
-                <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-                    <p className="text-xs font-medium text-muted-foreground mb-2">Weekly Attendance Rate</p>
-                    <h3 className="text-4xl font-bold text-foreground leading-none">{weekRate}%</h3>
-                    <div className="mt-8 h-1.5 w-full bg-muted relative overflow-hidden rounded-full">
-                        <div className="absolute inset-0 bg-primary transition-all duration-1000" style={{ width: `${weekRate}%` }} />
-                    </div>
-                </div>
-
-                <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-                    <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <UserCheck className="h-20 w-20 text-emerald-500" />
-                    </div>
-                    <p className="text-xs font-medium text-muted-foreground mb-2">Present Today</p>
-                    <h3 className="text-4xl font-bold text-foreground leading-none">{todayPresent}</h3>
-                    <p className="text-xs font-medium text-emerald-500 mt-6 flex items-center gap-2">
-                       <Check className="h-3.5 w-3.5" /> Verified
-                    </p>
-                </div>
-
-                <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-                    <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <UserX className="h-20 w-20 text-red-500" />
-                    </div>
-                    <p className="text-xs font-medium text-muted-foreground mb-2">Absent Today</p>
-                    <h3 className="text-4xl font-bold text-red-500 leading-none">{todayAbsent}</h3>
-                    <p className="text-xs font-medium text-red-500 mt-6 flex items-center gap-2">
-                       <X className="h-3.5 w-3.5" /> Action Required
-                    </p>
-                </div>
-
-                <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-                    <div className="absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <AlertTriangle className="h-20 w-20 text-amber-500" />
-                    </div>
-                    <p className="text-xs font-medium text-muted-foreground mb-2">Late Today</p>
-                    <h3 className="text-4xl font-bold text-amber-500 leading-none">{weekLate}</h3>
-                    <p className="text-xs font-medium text-amber-500 mt-6 flex items-center gap-2">
-                       <Clock className="h-3.5 w-3.5" /> Arrived Late
-                    </p>
+                    {isAdminOrTeacher && (
+                        <div className="flex items-center gap-3">
+                            <Button variant="outline" onClick={handleExportCSV} className="h-10 px-4 font-medium transition-all group bg-background/80 backdrop-blur-sm border-border/50">
+                                <Download className="w-4 h-4 mr-2 group-hover:text-primary transition-colors" /> Export
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <Tabs defaultValue={isStudent ? "history" : "mark"} className="space-y-8 relative z-10">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <TabsList className="bg-muted border border-border p-1 rounded-sm h-auto w-fit">
+            {/* Stats Cards */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {/* Weekly Rate */}
+                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-primary/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl" />
+                    <div className="relative z-10">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2">Weekly Rate</p>
+                        <h3 className="text-3xl md:text-4xl font-bold text-foreground leading-none">{weekRate}%</h3>
+                        <div className="mt-4 h-2 w-full bg-muted/50 relative overflow-hidden rounded-full">
+                            <div className="absolute inset-0 bg-primary rounded-full transition-all duration-1000" style={{ width: `${weekRate}%` }} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Present */}
+                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-emerald-500/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl" />
+                    <div className="relative z-10 flex items-start justify-between">
+                        <div>
+                            <p className="text-xs font-semibold text-muted-foreground mb-2">Present</p>
+                            <h3 className="text-3xl md:text-4xl font-bold text-foreground leading-none">{todayPresent}</h3>
+                        </div>
+                        <div className="p-2 bg-emerald-500/10 rounded-xl">
+                            <UserCheck className="w-5 h-5 text-emerald-500" />
+                        </div>
+                    </div>
+                    <p className="text-xs font-medium text-emerald-600 mt-3 flex items-center gap-1.5">
+                       <Check className="w-3.5 h-3.5" /> Verified
+                    </p>
+                </div>
+
+                {/* Absent */}
+                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-red-500/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full blur-2xl" />
+                    <div className="relative z-10 flex items-start justify-between">
+                        <div>
+                            <p className="text-xs font-semibold text-muted-foreground mb-2">Absent</p>
+                            <h3 className="text-3xl md:text-4xl font-bold text-red-500 leading-none">{todayAbsent}</h3>
+                        </div>
+                        <div className="p-2 bg-red-500/10 rounded-xl">
+                            <UserX className="w-5 h-5 text-red-500" />
+                        </div>
+                    </div>
+                    <p className="text-xs font-medium text-red-600 mt-3 flex items-center gap-1.5">
+                       <X className="w-3.5 h-3.5" /> Needs action
+                    </p>
+                </div>
+
+                {/* Late */}
+                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-amber-500/20 transition-colors">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl" />
+                    <div className="relative z-10 flex items-start justify-between">
+                        <div>
+                            <p className="text-xs font-semibold text-muted-foreground mb-2">Late</p>
+                            <h3 className="text-3xl md:text-4xl font-bold text-amber-500 leading-none">{weekLate}</h3>
+                        </div>
+                        <div className="p-2 bg-amber-500/10 rounded-xl">
+                            <Clock className="w-5 h-5 text-amber-500" />
+                        </div>
+                    </div>
+                    <p className="text-xs font-medium text-amber-600 mt-3 flex items-center gap-1.5">
+                       <AlertTriangle className="w-3.5 h-3.5" /> Arrived late
+                    </p>
+                </div>
+            </div>
+
+            <Tabs defaultValue={isStudent ? "history" : "mark"} className="space-y-6">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <TabsList className="bg-muted/80 backdrop-blur-sm border border-border/50 p-1 rounded-xl h-auto w-fit">
                         <div className="flex gap-1">
                             {!isStudent && (
-                                <TabsTrigger value="mark" className="px-6 py-2 rounded-sm text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all focus:ring-0">
-                                    <ClipboardCheck className="h-4 w-4 mr-2" /> Mark Attendance
+                                <TabsTrigger value="mark" className="px-5 py-2 rounded-lg text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all focus:ring-0">
+                                    <ClipboardCheck className="w-4 h-4 mr-2" /> Mark
                                 </TabsTrigger>
                             )}
-                            <TabsTrigger value="history" className="px-6 py-2 rounded-sm text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all focus:ring-0">
-                                <Calendar className="h-4 w-4 mr-2" /> History
+                            <TabsTrigger value="history" className="px-5 py-2 rounded-lg text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all focus:ring-0">
+                                <Calendar className="w-4 h-4 mr-2" /> History
                             </TabsTrigger>
-                            <TabsTrigger value="stats" className="px-6 py-2 rounded-sm text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all focus:ring-0">
-                                <BarChart3 className="h-4 w-4 mr-2" /> Charts
+                            <TabsTrigger value="stats" className="px-5 py-2 rounded-lg text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all focus:ring-0">
+                                <BarChart3 className="w-4 h-4 mr-2" /> Charts
                             </TabsTrigger>
                         </div>
                     </TabsList>
@@ -434,16 +462,17 @@ export function AttendanceDashboard({
                 </TabsContent>
 
                 {/* MARK ATTENDANCE TAB */}
-                <TabsContent value="mark" className="space-y-8 animate-in slide-in-from-bottom-2 mt-4">
-                    <div className="border border-border bg-card/40 p-6 rounded-sm">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                <TabsContent value="mark" className="space-y-6 animate-in slide-in-from-bottom-2 mt-4">
+                    {/* Filters */}
+                    <div className="border border-border/50 bg-card/50 backdrop-blur-sm p-5 rounded-2xl">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                             <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Select Class</Label>
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Class</Label>
                                 <Select value={selectedClass} onValueChange={handleClassChange}>
-                                    <SelectTrigger className="h-11 rounded-sm bg-background border-border font-medium text-sm">
-                                        <SelectValue placeholder="Select a class" />
+                                    <SelectTrigger className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm">
+                                        <SelectValue placeholder="Select class" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-background border-border rounded-sm">
+                                    <SelectContent className="bg-background border-border/50 rounded-xl">
                                         {classes.map(c => <SelectItem key={c.id} value={c.id} className="text-sm font-medium">{c.name}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
@@ -451,32 +480,33 @@ export function AttendanceDashboard({
                             <div className="space-y-2">
                                 <Label className="text-xs font-semibold text-muted-foreground uppercase">Date</Label>
                                 <div className="relative">
-                                    <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="h-11 rounded-sm bg-background border-border font-medium text-sm pl-10" />
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm pl-10" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Search Students</Label>
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Search</Label>
                                 <div className="relative group">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by name or roll no..." className="h-11 pl-10 rounded-sm bg-background border-border font-medium text-sm focus:bg-background transition-all" />
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="h-11 pl-10 rounded-xl bg-background/80 border-border/50 font-medium text-sm focus:bg-background transition-all" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {studentsLoaded && classStudents.length > 0 && (
-                        <div className="space-y-6 reveal-3">
-                            <div className="flex flex-wrap items-center justify-between gap-6 p-6 border border-border bg-card/40 rounded-sm backdrop-blur-sm">
-                                <div className="flex items-center gap-4">
-                                    <Button onClick={markAllPresent} variant="outline" className="h-10 px-4 font-medium transition-all gap-2 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200">
-                                        <Check className="h-4 w-4" /> Mark All Present
+                        <div className="space-y-5">
+                            {/* Quick Actions */}
+                            <div className="flex flex-wrap items-center justify-between gap-4 p-5 border border-border/50 bg-card/50 backdrop-blur-sm rounded-2xl">
+                                <div className="flex items-center gap-3">
+                                    <Button onClick={markAllPresent} variant="outline" className="h-10 px-4 font-medium transition-all gap-2 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 bg-background/80">
+                                        <Check className="w-4 h-4" /> All Present
                                     </Button>
-                                    <Button onClick={markAllAbsent} variant="outline" className="h-10 px-4 font-medium transition-all gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-                                        <X className="h-4 w-4" /> Mark All Absent
+                                    <Button onClick={markAllAbsent} variant="outline" className="h-10 px-4 font-medium transition-all gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 bg-background/80">
+                                        <X className="w-4 h-4" /> All Absent
                                     </Button>
                                 </div>
-                                <div className="flex items-center gap-8 border-l border-border pl-8">
+                                <div className="flex items-center gap-6 border-l border-border/50 pl-6">
                                     <div className="flex flex-col items-center">
                                         <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Present</span>
                                         <span className="text-xl font-bold text-foreground mt-1 leading-none">{presentCount}</span>
@@ -492,22 +522,22 @@ export function AttendanceDashboard({
                                 </div>
                             </div>
 
-                            <div className="border border-border bg-card/40 rounded-sm overflow-hidden">
+                            <div className="border border-border/50 bg-card/50 rounded-2xl overflow-hidden">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="border-b border-border bg-muted/50">
-                                                <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Student Name</th>
-                                                <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Admission No</th>
-                                                <th className="py-3 px-6 text-sm font-semibold text-muted-foreground text-center">Status</th>
+                                            <tr className="border-b border-border/50 bg-muted/30">
+                                                <th className="py-3 px-5 text-sm font-semibold text-muted-foreground">Student</th>
+                                                <th className="py-3 px-5 text-sm font-semibold text-muted-foreground">Adm No</th>
+                                                <th className="py-3 px-5 text-sm font-semibold text-muted-foreground text-center">Status</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-border">
+                                        <tbody className="divide-y divide-border/50">
                                             {filteredStudents.map((student) => (
                                                 <tr key={student.id} className="group hover:bg-muted/30 transition-colors">
-                                                    <td className="py-4 px-6">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="h-8 w-8 flex items-center justify-center font-bold text-white text-xs rounded-full bg-primary/20 border border-primary/20">
+                                                    <td className="py-3.5 px-5">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="h-9 w-9 flex items-center justify-center font-bold text-white text-xs rounded-xl bg-primary/20 border border-primary/20">
                                                                 {student.profile?.full_name?.[0] || "?"}
                                                             </div>
                                                             <div className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
@@ -515,15 +545,15 @@ export function AttendanceDashboard({
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="py-4 px-6 font-mono text-sm text-muted-foreground font-medium">
+                                                    <td className="py-3.5 px-5 font-mono text-sm text-muted-foreground font-medium">
                                                         {student.admission_number || "N/A"}
                                                     </td>
-                                                    <td className="py-4 px-6">
-                                                        <div className="flex items-center justify-center gap-2">
-                                                            {statusButton(student.id, "present", <Check className="h-4 w-4" />, "Present", "bg-emerald-600")}
-                                                            {statusButton(student.id, "absent", <X className="h-4 w-4" />, "Absent", "bg-red-600")}
-                                                            {statusButton(student.id, "late", <Clock className="h-4 w-4" />, "Late", "bg-amber-500")}
-                                                            {statusButton(student.id, "excused", <ShieldCheck className="h-4 w-4" />, "Excused", "bg-blue-600")}
+                                                    <td className="py-3.5 px-5">
+                                                        <div className="flex items-center justify-center gap-1.5">
+                                                            {statusButton(student.id, "present", <Check className="w-4 h-4" />, "Present", "bg-emerald-600")}
+                                                            {statusButton(student.id, "absent", <X className="w-4 h-4" />, "Absent", "bg-red-600")}
+                                                            {statusButton(student.id, "late", <Clock className="w-4 h-4" />, "Late", "bg-amber-500")}
+                                                            {statusButton(student.id, "excused", <ShieldCheck className="w-4 h-4" />, "Excused", "bg-blue-600")}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -534,15 +564,15 @@ export function AttendanceDashboard({
                             </div>
 
                             {isAdminOrTeacher && (
-                                <div className="flex justify-end pt-4">
+                                <div className="flex justify-end pt-3">
                                     <Button 
                                         onClick={handleSave} 
                                         disabled={loading} 
-                                        className="h-11 px-8 font-medium transition-all"
+                                        className="h-11 px-8 font-medium transition-all shadow-lg hover:shadow-xl"
                                     >
                                         <div className="flex items-center gap-2">
-                                            {loading ? <Activity className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                                            {loading ? "Saving..." : `Save Attendance (${Object.keys(studentRecords).length})`}
+                                            {loading ? <Activity className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+                                            {loading ? "Saving..." : `Save (${Object.keys(studentRecords).length})`}
                                         </div>
                                     </Button>
                                 </div>
@@ -551,18 +581,18 @@ export function AttendanceDashboard({
                     )}
                 </TabsContent>
 
-                {/* ARCHIVE TAB */}
-                <TabsContent value="history" className="space-y-8 animate-in slide-in-from-bottom-2 mt-4">
-                    <div className="border border-border bg-card/40 p-6 rounded-sm">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                {/* HISTORY TAB */}
+                <TabsContent value="history" className="space-y-6 animate-in slide-in-from-bottom-2 mt-4">
+                    <div className="border border-border/50 bg-card/50 backdrop-blur-sm p-5 rounded-2xl">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                             {!isStudent && (
                                 <div className="space-y-2">
-                                    <Label className="text-xs font-semibold text-muted-foreground uppercase">Select Class</Label>
+                                    <Label className="text-xs font-semibold text-muted-foreground uppercase">Class</Label>
                                     <Select value={historyClass} onValueChange={setHistoryClass}>
-                                        <SelectTrigger className="h-11 rounded-sm bg-background border-border font-medium text-sm">
-                                            <SelectValue placeholder="Select a class" />
+                                        <SelectTrigger className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm">
+                                            <SelectValue placeholder="Select class" />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-background border-border rounded-sm">
+                                        <SelectContent className="bg-background border-border/50 rounded-xl">
                                             {classes.map(c => <SelectItem key={c.id} value={c.id} className="text-sm font-medium">{c.name}</SelectItem>)}
                                         </SelectContent>
                                     </Select>
@@ -571,13 +601,13 @@ export function AttendanceDashboard({
                             <div className="space-y-2">
                                 <Label className="text-xs font-semibold text-muted-foreground uppercase">Date</Label>
                                 <div className="relative">
-                                    <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-11 rounded-sm bg-background border-border font-medium text-sm pl-10" />
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm pl-10" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 </div>
                             </div>
                             <Button onClick={fetchHistory} disabled={(!isStudent && !historyClass) || historyLoading} className="h-11 px-6 font-medium transition-all gap-2">
-                                {historyLoading ? <Activity className="h-4 w-4 animate-spin" /> : <Filter className="h-4 w-4" />}
-                                {historyLoading ? "Loading..." : "View History"}
+                                {historyLoading ? <Activity className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
+                                {historyLoading ? "Loading..." : "View"}
                             </Button>
                         </div>
                     </div>
