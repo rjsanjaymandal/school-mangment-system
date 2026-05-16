@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
     User, Mail, Phone, MapPin, Calendar, GraduationCap, 
-    FileText, DollarSign, ClipboardCheck, Upload, 
+    FileText, IndianRupee, ClipboardCheck, Upload, 
     Download, Printer, Edit3, CheckCircle2, XCircle,
     Activity, ShieldCheck, TrendingUp, BarChart3
 } from "lucide-react";
@@ -39,7 +39,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
         { id: "overview", label: "Overview", icon: User },
         { id: "academics", label: "Grades", icon: GraduationCap },
         { id: "attendance", label: "Attendance", icon: ClipboardCheck },
-        { id: "fees", label: "Finance", icon: DollarSign },
+        { id: "fees", label: "Finance", icon: IndianRupee },
         { id: "documents", label: "Documents", icon: FileText },
     ];
 
@@ -260,7 +260,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
                 {/* Other tabs can be similarly modernized if content is added */}
                 <TabsContent value="fees" className="mt-8 outline-none">
-                     <ERPCard title="Finance" description="Payment and billing history" icon={<DollarSign className="h-5 w-5" />} color="emerald" className="glass futuristic-card border-none shadow-xl rounded-2xl p-12 text-center">
+                     <ERPCard title="Finance" description="Payment and billing history" icon={<IndianRupee className="h-5 w-5" />} color="emerald" className="glass futuristic-card border-none shadow-xl rounded-2xl p-12 text-center">
                          <Activity className="h-10 w-10 text-slate-200 mx-auto mb-3" />
                          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Loading financial data...</p>
                      </ERPCard>
