@@ -13,17 +13,16 @@ import {
     CheckCheck, 
     XCircle,
     BarChart3,
-    Filter,
-    Download,
+    Search,
     Activity,
-    Search
+    Download,
+    ShieldCheck
 } from "lucide-react";
 import { 
     BarChart, Bar, 
     ResponsiveContainer, Tooltip, 
     XAxis, YAxis, CartesianGrid 
 } from "recharts";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -33,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { markAttendance, getAttendanceByClassAndDate } from "@/app/actions/attendance";
+import { ERPCard } from "@/components/ui/erp-card";
 
 export default function StudentAttendancePage() {
     const supabase = createClient();
@@ -134,6 +134,7 @@ export default function StudentAttendancePage() {
         present: Object.values(attendance).filter(v => v === "present").length,
         absent: Object.values(attendance).filter(v => v === "absent").length,
         late: Object.values(attendance).filter(v => v === "late").length,
+        excused: Object.values(attendance).filter(v => v === "excused").length,
         total: students.length
     }), [attendance, students]);
 
@@ -161,7 +162,7 @@ export default function StudentAttendancePage() {
             });
 
             if (result.success) {
-                toast.success("Attendance Recorded", {
+                toast.success("Attendance Saved", {
                     description: `${stats.present} Present, ${stats.absent} Absent`,
                     icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 });
@@ -197,109 +198,114 @@ export default function StudentAttendancePage() {
     ];
 
     return (
-        <div className="p-6 space-y-8 max-w-[1600px] mx-auto">
-            {/* Header */}
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                <div className="flex items-center gap-5">
-                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 shadow-sm">
-                        <ClipboardCheck className="h-8 w-8 text-emerald-600" />
+        <div className="p-6 space-y-8">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 shadow-sm shadow-emerald-500/5">
+                        <ClipboardCheck className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
-                            Student <span className="text-emerald-600">Attendance</span>
-                        </h1>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Attendance</h1>
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">
                             {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 w-full lg:w-auto">
+                <div className="flex items-center gap-3 w-full md:w-auto">
                     <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                        <SelectTrigger className="w-full lg:w-48 h-12 rounded-xl bg-white border-slate-200">
-                            <SelectValue placeholder="Select Class" />
+                        <SelectTrigger className="w-full md:w-44 h-10 rounded-xl bg-white/80 backdrop-blur-sm border-slate-200 shadow-sm transition-all">
+                            <SelectValue placeholder="Class" />
                         </SelectTrigger>
-                        <SelectContent>
-                            {classes.map(c => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
+                        <SelectContent className="rounded-xl">
+                            {classes.map(c => (<SelectItem key={c.id} value={c.id} className="rounded-lg">{c.name}</SelectItem>))}
                         </SelectContent>
                     </Select>
-                    <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                        <Button variant="ghost" size="icon" className="h-12 w-10" onClick={() => {
+                    <div className="flex items-center bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                        <Button variant="ghost" size="icon" className="h-10 w-9" onClick={() => {
                             const d = new Date(selectedDate); d.setDate(d.getDate() - 1); setSelectedDate(d.toISOString().split('T')[0]);
                         }}>
-                            <ChevronLeft className="h-4 w-4" />
+                            <ChevronLeft className="h-4 w-4 text-slate-500" />
                         </Button>
-                        <Input type="date" className="border-0 bg-transparent w-36 h-12 text-center font-bold" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
-                        <Button variant="ghost" size="icon" className="h-12 w-10" onClick={() => {
+                        <Input type="date" className="border-0 bg-transparent w-32 h-10 text-center text-[10px] font-black uppercase tracking-tighter" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                        <Button variant="ghost" size="icon" className="h-10 w-9" onClick={() => {
                             const d = new Date(selectedDate); d.setDate(d.getDate() + 1); setSelectedDate(d.toISOString().split('T')[0]);
                         }}>
-                            <ChevronRight className="h-4 w-4" />
+                            <ChevronRight className="h-4 w-4 text-slate-500" />
                         </Button>
                     </div>
                 </div>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <StatsCard title="Total Students" value={stats.total} icon={Users} color="slate" />
-                <StatsCard title="Present" value={stats.present} icon={CheckCircle2} color="emerald" />
-                <StatsCard title="Absent" value={stats.absent} icon={XCircle} color="rose" />
-                <StatsCard title="Late" value={stats.late} icon={Clock} color="amber" />
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                <DashboardStatCard title="Total Students" value={stats.total} icon={Users} color="emerald" />
+                <DashboardStatCard title="Present Today" value={stats.present} icon={CheckCircle2} color="emerald" />
+                <DashboardStatCard title="Absent Today" value={stats.absent} icon={XCircle} color="rose" />
+                <DashboardStatCard title="Late" value={stats.late} icon={Clock} color="amber" />
+                <DashboardStatCard title="Leave" value={stats.excused} icon={ShieldCheck} color="blue" />
             </div>
 
             <Tabs defaultValue="mark" onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="bg-slate-100/50 p-1 rounded-xl h-auto border border-slate-200">
-                    <TabsTrigger value="mark" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs font-bold uppercase tracking-widest">
-                        <ClipboardCheck className="w-4 h-4 mr-2" /> Mark Attendance
+                <TabsList className="bg-slate-100/50 backdrop-blur-sm p-1 rounded-xl h-auto border border-slate-200/60 w-fit">
+                    <TabsTrigger value="mark" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-[10px] font-black uppercase tracking-[0.1em]">
+                        <ClipboardCheck className="w-4 h-4 mr-2" /> Mark
                     </TabsTrigger>
-                    <TabsTrigger value="history" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs font-bold uppercase tracking-widest">
-                        <Calendar className="w-4 h-4 mr-2" /> View History
+                    <TabsTrigger value="history" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-[10px] font-black uppercase tracking-[0.1em]">
+                        <Calendar className="w-4 h-4 mr-2" /> History
                     </TabsTrigger>
-                    <TabsTrigger value="charts" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-xs font-bold uppercase tracking-widest">
-                        <BarChart3 className="w-4 h-4 mr-2" /> Insights
+                    <TabsTrigger value="charts" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-[10px] font-black uppercase tracking-[0.1em]">
+                        <BarChart3 className="w-4 h-4 mr-2" /> Trends
                     </TabsTrigger>
                 </TabsList>
 
-                {/* --- TAB: MARK ATTENDANCE --- */}
-                <TabsContent value="mark" className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+                {/* --- TAB: MARK --- */}
+                <TabsContent value="mark" className="space-y-6 outline-none">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="rounded-xl border-emerald-100 text-emerald-600 bg-emerald-50/30 hover:bg-emerald-50" onClick={() => markAll("present")}>
+                            <Button variant="outline" size="sm" className="rounded-xl border-emerald-500/20 text-emerald-600 bg-emerald-500/5 text-[10px] font-black uppercase tracking-widest shadow-sm" onClick={() => markAll("present")}>
                                 <CheckCheck className="h-4 w-4 mr-2" /> All Present
                             </Button>
-                            <Button variant="outline" size="sm" className="rounded-xl border-rose-100 text-rose-600 bg-rose-50/30 hover:bg-rose-50" onClick={() => markAll("absent")}>
+                            <Button variant="outline" size="sm" className="rounded-xl border-rose-500/20 text-rose-600 bg-rose-500/5 text-[10px] font-black uppercase tracking-widest shadow-sm" onClick={() => markAll("absent")}>
                                 <XCircle className="h-4 w-4 mr-2" /> All Absent
                             </Button>
                         </div>
-                        <div className="relative w-full md:w-72 group">
-                            <Input placeholder="Search student name or roll..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-11 pl-11 rounded-xl border-slate-200 group-focus-within:border-emerald-500 transition-all shadow-sm" />
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                        <div className="relative w-full md:w-72">
+                            <Input placeholder="Search students..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-10 pl-11 rounded-xl border-slate-200 bg-white/80 shadow-sm text-xs font-bold" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         </div>
                     </div>
 
-                    <Card className="glass futuristic-card rounded-2xl overflow-hidden border-slate-200/60 shadow-xl">
+                    <ERPCard
+                        title="Students"
+                        description="Mark daily attendance for students"
+                        icon={<ClipboardCheck className="h-5 w-5" />}
+                        color="emerald"
+                        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+                    >
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                     <tr>
                                         <th className="px-8 py-4">Roll</th>
                                         <th className="px-8 py-4">Student</th>
-                                        <th className="px-8 py-4 text-center">Mark Status</th>
+                                        <th className="px-8 py-4 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
                                     {isLoading ? (
-                                        <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 animate-pulse uppercase font-bold">Fetching class data...</td></tr>
+                                        <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest animate-pulse">Loading...</td></tr>
                                     ) : filteredStudents.length === 0 ? (
-                                        <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest">No matching students</td></tr>
+                                        <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 text-[10px] font-black uppercase tracking-widest">No matching records</td></tr>
                                     ) : (
                                         filteredStudents.map((s: any) => (
-                                            <tr key={s.id} className="hover:bg-slate-50/50 transition-colors group">
+                                            <tr key={s.id} className="hover:bg-slate-50/50 transition-all group">
                                                 <td className="px-8 py-5">
-                                                    <span className="text-xs font-black text-slate-400 bg-slate-100 px-2 py-1 rounded-md">{s.roll}</span>
+                                                    <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/50">{s.roll}</span>
                                                 </td>
                                                 <td className="px-8 py-5">
-                                                    <div className="font-bold text-slate-900 text-sm">{s.name}</div>
+                                                    <div className="font-bold text-slate-900 text-sm tracking-tight">{s.name}</div>
                                                 </td>
                                                 <td className="px-8 py-5">
                                                     <div className="flex justify-center gap-2">
@@ -315,41 +321,47 @@ export default function StudentAttendancePage() {
                                 </tbody>
                             </table>
                         </div>
-                    </Card>
+                    </ERPCard>
 
-                    <div className="flex justify-end">
+                    <div className="flex justify-end pt-2">
                         <Button 
                             onClick={handleSave} 
                             disabled={isSaving || students.length === 0} 
-                            className="h-14 px-10 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg shadow-emerald-200/50 transition-all hover:scale-[1.02] active:scale-[0.98] group"
+                            className="h-12 px-10 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl shadow-slate-200 transition-all active:scale-95 group"
                         >
                             {isSaving ? (
-                                <Activity className="h-5 w-5 animate-spin mr-2" />
+                                <Activity className="h-4 w-4 animate-spin mr-2" />
                             ) : (
-                                <Save className="h-5 w-5 mr-2 group-hover:animate-bounce" />
+                                <Save className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
                             )}
-                            {isSaving ? "Saving..." : "Save Daily Records"}
+                            {isSaving ? "Saving..." : "Save Records"}
                         </Button>
                     </div>
                 </TabsContent>
 
-                {/* --- TAB: HISTORY LOG --- */}
-                <TabsContent value="history" className="animate-in fade-in slide-in-from-bottom-2">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                {/* --- TAB: HISTORY --- */}
+                <TabsContent value="history" className="space-y-6 outline-none">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Historical Date</label>
-                            <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-12 rounded-xl border-slate-200" />
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Select Date</label>
+                            <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-10 rounded-xl border-slate-200 bg-white shadow-sm text-xs font-bold" />
                         </div>
                         <div className="flex items-end">
-                            <Button variant="outline" className="h-12 rounded-xl w-full border-slate-200 gap-2 font-bold uppercase text-[10px] tracking-widest">
+                            <Button variant="outline" className="h-10 rounded-xl w-full border-slate-200 gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm">
                                 <Download className="h-4 w-4" /> Export CSV
                             </Button>
                         </div>
                     </div>
 
-                    <Card className="glass futuristic-card rounded-2xl overflow-hidden border-slate-200/60 shadow-xl">
+                    <ERPCard
+                        title="History"
+                        description="Past attendance records"
+                        icon={<Calendar className="h-5 w-5" />}
+                        color="blue"
+                        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+                    >
                         <table className="w-full text-left">
-                            <thead className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                 <tr>
                                     <th className="px-8 py-4">Student</th>
                                     <th className="px-8 py-4">Status</th>
@@ -358,68 +370,76 @@ export default function StudentAttendancePage() {
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {historyLoading ? (
-                                    <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 animate-pulse">Scanning records...</td></tr>
+                                    <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest animate-pulse">Loading...</td></tr>
                                 ) : historyData?.length === 0 ? (
-                                    <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 font-bold uppercase tracking-widest">No records for this date</td></tr>
+                                    <tr><td colSpan={3} className="px-8 py-20 text-center text-slate-400 text-[10px] font-black uppercase tracking-widest">No Logs Found</td></tr>
                                 ) : (
                                     historyData?.map((r: any) => (
                                         <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="px-8 py-5">
-                                                <div className="font-bold text-slate-800 text-sm">{r.student?.profile?.full_name}</div>
+                                                <div className="font-bold text-slate-900 text-sm tracking-tight">{r.student?.profile?.full_name}</div>
                                             </td>
                                             <td className="px-8 py-5">
                                                 <span className={cn(
-                                                    "text-[10px] font-black uppercase px-2 py-1 rounded-md tracking-tighter",
-                                                    r.status === "present" ? "bg-emerald-50 text-emerald-600" :
-                                                    r.status === "absent" ? "bg-rose-50 text-rose-600" : "bg-amber-50 text-amber-600"
+                                                    "text-[10px] font-black uppercase px-2.5 py-1 rounded-md tracking-tighter",
+                                                    r.status === "present" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+                                                    r.status === "absent" ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-amber-50 text-amber-600 border border-amber-100"
                                                 )}>{r.status}</span>
                                             </td>
-                                            <td className="px-8 py-5 text-right font-mono text-[10px] text-slate-400">{r.date}</td>
+                                            <td className="px-8 py-5 text-right text-[10px] font-mono font-bold text-slate-400">{r.date}</td>
                                         </tr>
                                     ))
                                 )}
                             </tbody>
                         </table>
-                    </Card>
+                    </ERPCard>
                 </TabsContent>
 
-                {/* --- TAB: CHARTS & TRENDS --- */}
-                <TabsContent value="charts" className="animate-in fade-in slide-in-from-bottom-2">
+                {/* --- TAB: TRENDS --- */}
+                <TabsContent value="charts" className="space-y-6 outline-none">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <Card className="p-8 glass futuristic-card rounded-2xl border-slate-200/60 shadow-xl">
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-8 flex items-center gap-2">
-                                <Activity className="h-4 w-4 text-emerald-500" /> Weekly Presence Trend
-                            </h3>
-                            <div className="h-[300px] w-full">
+                        <ERPCard
+                            title="Trends"
+                            icon={<Activity className="h-5 w-5" />}
+                            color="amber"
+                            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden p-8"
+                        >
+                            <div className="h-[280px] w-full mt-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={chartData}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
+                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }} />
                                         <Tooltip 
                                             cursor={{ fill: '#f8fafc' }}
-                                            contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '10px', fontWeight: 'bold' }}
+                                            contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'none', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase' }}
                                         />
                                         <Bar dataKey="Present" fill="#10b981" radius={[4, 4, 0, 0]} />
                                         <Bar dataKey="Absent" fill="#f43f5e" radius={[4, 4, 0, 0]} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
-                        </Card>
+                        </ERPCard>
 
                         <div className="space-y-6">
-                            <Card className="p-6 glass futuristic-card rounded-2xl border-slate-200/60 shadow-xl bg-emerald-50/20">
-                                <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Weekly Performance</h4>
-                                <p className="text-3xl font-black text-slate-900">92% <span className="text-xs font-bold text-emerald-500 tracking-tight">↑ 4% this week</span></p>
-                                <div className="mt-4 h-2 bg-white rounded-full overflow-hidden border border-emerald-100">
-                                    <div className="h-full bg-emerald-500" style={{ width: '92%' }} />
+                            <ERPCard
+                                title="Growth"
+                                color="emerald"
+                                className="glass futuristic-card border-none shadow-2xl rounded-2xl overflow-hidden p-8"
+                            >
+                                <p className="text-4xl font-black text-slate-900 tracking-tighter">92% <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest ml-2">↑ Up</span></p>
+                                <div className="mt-6 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                                    <div className="h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" style={{ width: '92%' }} />
                                 </div>
-                            </Card>
-                            <Card className="p-6 glass futuristic-card rounded-2xl border-slate-200/60 shadow-xl bg-rose-50/20">
-                                <h4 className="text-[10px] font-black text-rose-600 uppercase tracking-widest mb-1">Chronic Absenteeism</h4>
-                                <p className="text-3xl font-black text-slate-900">3 <span className="text-xs font-bold text-rose-500 tracking-tight">Students Flagged</span></p>
-                                <p className="text-[10px] text-slate-500 mt-2 font-medium italic">System detected 3 students with {">"} 3 days of consecutive absence.</p>
-                            </Card>
+                            </ERPCard>
+                            <ERPCard
+                                title="Flags"
+                                color="red"
+                                className="glass futuristic-card border-none shadow-2xl rounded-2xl overflow-hidden p-8"
+                            >
+                                <p className="text-4xl font-black text-slate-900 tracking-tighter">3 <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest ml-2">Alerts</span></p>
+                                <p className="text-[10px] text-slate-500 mt-3 font-bold uppercase tracking-tight leading-relaxed">Students with consecutive absence flagged.</p>
+                            </ERPCard>
                         </div>
                     </div>
                 </TabsContent>
@@ -430,7 +450,7 @@ export default function StudentAttendancePage() {
 
 // --- SUB-COMPONENTS ---
 
-function StatsCard({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) {
+function DashboardStatCard({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) {
     const colors: Record<string, string> = {
         emerald: "text-emerald-600 bg-emerald-50 border-emerald-100",
         rose: "text-rose-600 bg-rose-50 border-rose-100",
@@ -440,32 +460,32 @@ function StatsCard({ title, value, icon: Icon, color }: { title: string; value: 
     };
 
     return (
-        <Card className="glass futuristic-card p-5 rounded-2xl border-slate-200/60 shadow-sm flex items-center justify-between group hover:scale-[1.02] transition-transform">
+        <div className="glass futuristic-card p-6 rounded-2xl border-none shadow-xl flex items-center justify-between group hover:scale-[1.05] transition-all duration-300 cursor-pointer hover:shadow-2xl">
             <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-                <p className="text-2xl font-black text-slate-900">{value}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">{title}</p>
+                <p className="text-3xl font-black text-slate-900 tracking-tight">{value}</p>
             </div>
-            <div className={cn("p-3 rounded-xl border", colors[color])}>
-                <Icon className="h-5 w-5" />
+            <div className={cn("p-3 rounded-xl border-2 transition-all group-hover:rotate-12", colors[color])}>
+                <Icon className="h-6 w-6" />
             </div>
-        </Card>
+        </div>
     );
 }
 
 function StatusButton({ studentId, status, active, onClick }: { studentId: string; status: string; active: string; onClick: any }) {
     const isActive = active === status;
     const colors: Record<string, string> = {
-        present: isActive ? "bg-emerald-500 text-white shadow-emerald-200" : "bg-slate-100 text-slate-400 hover:bg-emerald-50 hover:text-emerald-500",
-        absent: isActive ? "bg-rose-500 text-white shadow-rose-200" : "bg-slate-100 text-slate-400 hover:bg-rose-50 hover:text-rose-500",
-        late: isActive ? "bg-amber-500 text-white shadow-amber-200" : "bg-slate-100 text-slate-400 hover:bg-amber-50 hover:text-amber-500",
-        excused: isActive ? "bg-blue-500 text-white shadow-blue-200" : "bg-slate-100 text-slate-400 hover:bg-blue-50 hover:text-blue-500",
+        present: isActive ? "bg-emerald-500 text-white shadow-[0_4px_12px_rgba(16,185,129,0.3)]" : "bg-slate-100 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600",
+        absent: isActive ? "bg-rose-500 text-white shadow-[0_4px_12px_rgba(244,63,94,0.3)]" : "bg-slate-100 text-slate-400 hover:bg-rose-50 hover:text-rose-600",
+        late: isActive ? "bg-amber-500 text-white shadow-[0_4px_12px_rgba(245,158,11,0.3)]" : "bg-slate-100 text-slate-400 hover:bg-amber-50 hover:text-amber-600",
+        excused: isActive ? "bg-blue-500 text-white shadow-[0_4px_12px_rgba(59,130,246,0.3)]" : "bg-slate-100 text-slate-400 hover:bg-blue-50 hover:text-blue-600",
     };
 
     return (
         <button
             onClick={() => onClick((prev: any) => ({ ...prev, [studentId]: status }))}
             className={cn(
-                "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shadow-sm",
+                "px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95",
                 colors[status]
             )}
         >
