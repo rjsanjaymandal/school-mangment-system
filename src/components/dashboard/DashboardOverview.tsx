@@ -11,11 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReportCardDownloadButton } from "@/components/reporting/ReportCardDownloadButton";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { DailyLog } from "./DailyLog";
 import { SmartActionCenter } from "./SmartActionCenter";
 
 export function DashboardOverview({ initialData }: { initialData?: any }) {
   const { data, isLoading } = useDashboardMetrics();
-
+  
   // Use real-time data if available, otherwise fall back to initial server data
   const metrics = data || initialData;
 
@@ -76,21 +77,33 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
           {/* Intelligent Alerts Panel */}
           <SmartActionCenter alerts={metrics.alerts} />
 
-          <section className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-1 h-4 bg-emerald-500 rounded-full" />
-              Attendance
-            </h3>
-            <OperationsRollup metrics={metrics} />
-          </section>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Main Content Area */}
+            <div className="lg:col-span-2 space-y-8">
+              <section className="space-y-4">
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <span className="w-1 h-4 bg-emerald-500 rounded-full" />
+                  Attendance
+                </h3>
+                <OperationsRollup metrics={metrics} />
+              </section>
 
-          <section className="space-y-4">
-            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <span className="w-1 h-4 bg-amber-500 rounded-full" />
-              Students
-            </h3>
-            <DemographicsAnalytics metrics={metrics.demographics} />
-          </section>
+              <section className="space-y-4">
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <span className="w-1 h-4 bg-amber-500 rounded-full" />
+                  Students
+                </h3>
+                <DemographicsAnalytics metrics={metrics.demographics} />
+              </section>
+            </div>
+
+            {/* Right Sidebar - Daily Log */}
+            <div id="daily-log-section" className="lg:col-span-1 scroll-mt-20">
+              <section className="space-y-4 h-full">
+                <DailyLog />
+              </section>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="academic" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">

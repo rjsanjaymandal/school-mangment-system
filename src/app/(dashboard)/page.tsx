@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { getDashboardMetrics } from "@/app/actions/dashboard-metrics";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { QuickSearch } from "@/components/dashboard/QuickSearch";
 
 export default async function DashboardPage() {
   // Single, unified data fetch for the entire dashboard
@@ -13,7 +14,7 @@ export default async function DashboardPage() {
   return (
     <div className="p-6 space-y-8 max-w-[1600px] mx-auto">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
         <div className="flex items-center gap-5">
           <div className="p-4 bg-white/50 backdrop-blur-xl rounded-2xl border border-slate-200/60 shadow-xl futuristic-card">
             <BarChart3 className="h-8 w-8 text-emerald-600" />

@@ -10,19 +10,7 @@ interface SmartActionCenterProps {
 
 export function SmartActionCenter({ alerts }: SmartActionCenterProps) {
   if (!alerts || alerts.length === 0) {
-    return (
-      <div className="glass futuristic-card rounded-2xl p-5 border border-slate-200/60 bg-emerald-50/10 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center border border-emerald-200">
-            <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          </div>
-          <div>
-            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-tight">System Healthy</h4>
-            <p className="text-[10px] text-slate-500 uppercase font-medium tracking-wider">All institutional parameters are within normal range</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
