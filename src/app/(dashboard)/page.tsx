@@ -153,15 +153,10 @@ export default async function DashboardPage() {
             <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase">
               School <span className="text-emerald-600 font-light">Dashboard</span>
             </h1>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1 flex items-center gap-2">
-              <span className="h-1 w-1 rounded-full bg-emerald-500" />
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">
               Daily Overview of Students & Staff
             </p>
           </div>
-        </div>
-        <div className="flex items-center gap-3 px-5 py-2.5 glass rounded-2xl border border-emerald-100/50 shadow-sm futuristic-card">
-          <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
-          <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">System Status: Active</span>
         </div>
       </div>
 

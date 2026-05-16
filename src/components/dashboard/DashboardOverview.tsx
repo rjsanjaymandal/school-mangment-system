@@ -62,13 +62,6 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
               <span className="hidden sm:inline">Smart Analysis</span>
             </TabsTrigger>
           </TabsList>
-
-          <div className="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-200/50">
-            {isFetching && <Loader2 className="h-3 w-3 text-emerald-600 animate-spin" />}
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-              {isFetching ? "Updating Data..." : "Live Snapshot"}
-            </span>
-          </div>
         </div>
 
         <TabsContent value="ops" className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500 outline-none">
