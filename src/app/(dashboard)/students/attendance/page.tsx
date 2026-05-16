@@ -31,7 +31,7 @@ export default function StudentAttendancePage() {
     });
     const classes = classesData || [];
 
-    const { data: studentsData, isLoading, refetch } = useQuery({
+    const { data: studentsData, isLoading } = useQuery({
         queryKey: ['students-attendance', selectedClassId],
         queryFn: async () => {
             if (!selectedClassId) return [];
@@ -49,7 +49,6 @@ export default function StudentAttendancePage() {
         },
         enabled: !!selectedClassId
     });
-    const students = studentsData || [];
 
     const { data: existingAttendanceData } = useQuery({
         queryKey: ['attendance-check', selectedClassId, selectedDate],
@@ -64,27 +63,41 @@ export default function StudentAttendancePage() {
         },
         enabled: !!selectedClassId && !!selectedDate
     });
+
+    const students = studentsData || [];
     const existingAttendance = existingAttendanceData || [];
 
     const [attendance, setAttendance] = useState<Record<string, string>>({});
 
     // Initialize attendance only when data arrives or class changes
     useEffect(() => {
+        // Guard: If we don't have students yet, just clear and wait
+        if (students.length === 0) {
+            setAttendance({});
+            return;
+        }
+
         if (existingAttendance.length > 0) {
             const mapped = Object.fromEntries(existingAttendance.map((a: any) => [a.student_id, a.status]));
-            setAttendance(mapped);
-        } else if (students.length > 0) {
-            // Only set default "present" if attendance is currently empty
-            // This prevents the infinite loop and preserves manual changes
+            // Only update if the new data is different from current state
             setAttendance(prev => {
-                const hasExistingData = Object.keys(prev).length > 0;
-                if (hasExistingData) return prev;
-                return Object.fromEntries(students.map((s: any) => [s.id, "present"]));
+                const isDifferent = JSON.stringify(prev) !== JSON.stringify(mapped);
+                return isDifferent ? mapped : prev;
             });
         } else {
-            setAttendance({});
+            // No existing records, set default "present" for everyone
+            setAttendance(prev => {
+                const keys = Object.keys(prev);
+                const allPresent = Object.fromEntries(students.map((s: any) => [s.id, "present"]));
+                
+                // If we already have the right number of students and they are initialized, don't reset
+                if (keys.length === students.length && students.every(s => keys.includes(s.id))) {
+                    return prev;
+                }
+                return allPresent;
+            });
         }
-    }, [existingAttendance, students, selectedClassId, selectedDate]);
+    }, [existingAttendanceData, studentsData, selectedClassId, selectedDate]);
 
     useEffect(() => {
         if (classes.length > 0 && !selectedClassId) {
