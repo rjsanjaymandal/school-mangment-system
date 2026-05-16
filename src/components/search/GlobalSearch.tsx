@@ -1,183 +1,233 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { Search, X, FileText, Users, BookOpen, Calendar, GraduationCap, CreditCard, Bell, Settings, ArrowRight } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import * as React from "react";
+import { 
+  Calendar, 
+  CreditCard, 
+  Search, 
+  Settings, 
+  User, 
+  Users,
+  GraduationCap,
+  Library,
+  Bus,
+  Clock,
+  FileText,
+  ShieldCheck,
+  ChevronRight
+} from "lucide-react";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/components/ui/command";
 import { useRouter } from "next/navigation";
-
-interface SearchResult {
-  title: string;
-  description?: string;
-  href: string;
-  icon: any;
-  category: string;
-}
-
-const QUICK_LINKS: SearchResult[] = [
-  { title: "Timetable", description: "Class schedule & teacher allocation", href: "/timetable", icon: Calendar, category: "Academics" },
-  { title: "Student List", description: "Manage all students", href: "/students", icon: GraduationCap, category: "Students" },
-  { title: "Staff Directory", description: "Manage teachers & staff", href: "/hr/directory", icon: Users, category: "HR" },
-  { title: "Fee Collection", description: "Collect and manage fees", href: "/fees", icon: CreditCard, category: "Finance" },
-  { title: "Exams", description: "Manage exams and results", href: "/exams", icon: FileText, category: "Academics" },
-  { title: "Attendance", description: "Track student attendance", href: "/attendance", icon: Users, category: "Students" },
-  { title: "Notifications", description: "View all notifications", href: "/notifications", icon: Bell, category: "System" },
-  { title: "Analytics", description: "View reports and insights", href: "/analytics", icon: Settings, category: "System" },
-  { title: "Library", description: "Book management", href: "/library", icon: BookOpen, category: "Academics" },
-  { title: "Transport", description: "Fleet and routes", href: "/transport", icon: Settings, category: "Admin" },
-];
-
-const DEFAULT_RESULTS = QUICK_LINKS.slice(0, 6);
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function GlobalSearch() {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const results = useMemo(() => {
-    if (!query.trim()) return DEFAULT_RESULTS;
-    return QUICK_LINKS.filter(
-      (item) =>
-        item.title.toLowerCase().includes(query.toLowerCase()) ||
-        item.description?.toLowerCase().includes(query.toLowerCase()) ||
-        item.category.toLowerCase().includes(query.toLowerCase())
-    );
-  }, [query]);
+  const [open, setOpen] = React.useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen(true);
-      }
-      if (e.key === "Escape") {
-        setOpen(false);
+        setOpen((open) => !open);
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const handleSelect = (href: string) => {
+  const runCommand = React.useCallback((command: () => void) => {
     setOpen(false);
-    router.push(href);
-  };
-
-  const categories = [...new Set(results.map((r) => r.category))];
+    command();
+  }, [router]);
 
   return (
     <>
+      {/* Navbar Trigger Button */}
       <Button
         variant="outline"
-        className="h-9 w-56 justify-between text-muted-foreground border-slate-200 hover:bg-slate-50 hover:border-slate-300 bg-slate-50/50"
+        className="h-9 w-56 justify-between text-muted-foreground border-slate-200 hover:bg-slate-50 hover:border-slate-300 bg-slate-50/50 hidden md:flex"
         onClick={() => setOpen(true)}
       >
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-slate-400" />
-          <span className="text-sm text-slate-500">Search...</span>
+          <span className="text-sm text-slate-500">Search School...</span>
         </div>
         <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded bg-white border border-slate-200 px-1.5 font-mono text-[10px] font-medium text-slate-400">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg p-0 gap-0 bg-white rounded-xl shadow-2xl border border-slate-200">
-          <DialogHeader className="p-0">
-            <DialogTitle className="sr-only">Global Search</DialogTitle>
-          </DialogHeader>
-          <div className="p-4 border-b border-slate-100">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-              <Input
-                placeholder="Search pages, actions, students..."
-                className="pl-12 pr-10 h-12 border-0 focus-visible:ring-0 text-base bg-transparent placeholder:text-slate-400"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                autoFocus
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-slate-100 rounded-full"
-                onClick={() => setOpen(false)}
-              >
-                <X className="h-4 w-4 text-slate-400" />
-              </Button>
+      {/* Unified Command Palette */}
+      <CommandDialog 
+        open={open} 
+        onOpenChange={setOpen} 
+        title="School Command Center" 
+        description="Search students, staff, or take quick actions."
+        showCloseButton={false}
+      >
+        <div className="p-2 border-b border-slate-100 bg-slate-50/50">
+          <CommandInput placeholder="Search students, staff, or actions..." className="border-none focus:ring-0" />
+        </div>
+        <CommandList className="p-2 max-h-[450px]">
+          <CommandEmpty className="py-10 text-center">
+            <div className="flex flex-col items-center gap-2">
+              <Search className="h-8 w-8 text-slate-200" />
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No matching records</p>
             </div>
+          </CommandEmpty>
+
+          <CommandGroup heading="INSTITUTIONAL LOGS">
+            <SearchItem 
+              icon={Clock} 
+              title="Daily Log" 
+              subtitle="View real-time school activity and events" 
+              color="amber"
+              onSelect={() => runCommand(() => {
+                const el = document.getElementById('daily-log-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else router.push("/"); // If not on home, go home first
+              })}
+            />
+            <SearchItem 
+              icon={FileText} 
+              title="Academic Reports" 
+              subtitle="Generate and download student report cards" 
+              color="blue"
+              onSelect={() => runCommand(() => router.push("/reports"))}
+            />
+          </CommandGroup>
+
+          <CommandSeparator className="my-2" />
+
+          <CommandGroup heading="PEOPLE DIRECTORY">
+            <SearchItem 
+              icon={Users} 
+              title="Student Directory" 
+              subtitle="Browse all enrolled students and profiles" 
+              color="emerald"
+              onSelect={() => runCommand(() => router.push("/students"))}
+            />
+            <SearchItem 
+              icon={User} 
+              title="Staff Directory" 
+              subtitle="View and manage teachers and administrators" 
+              color="indigo"
+              onSelect={() => runCommand(() => router.push("/teachers"))}
+            />
+          </CommandGroup>
+
+          <CommandSeparator className="my-2" />
+
+          <CommandGroup heading="QUICK ACTIONS">
+            <SearchItem 
+              icon={Calendar} 
+              title="Mark Attendance" 
+              subtitle="Record daily presence for any class" 
+              color="rose"
+              onSelect={() => runCommand(() => router.push("/students/attendance"))}
+            />
+            <SearchItem 
+              icon={CreditCard} 
+              title="Collect Fees" 
+              subtitle="Process new student fee payments" 
+              color="emerald"
+              onSelect={() => runCommand(() => router.push("/fees"))}
+            />
+            <SearchItem 
+              icon={Library} 
+              title="Library Services" 
+              subtitle="Issue books or manage returns" 
+              color="purple"
+              onSelect={() => runCommand(() => router.push("/library"))}
+            />
+          </CommandGroup>
+
+          <CommandSeparator className="my-2" />
+
+          <CommandGroup heading="ADMINISTRATION">
+            <SearchItem 
+              icon={GraduationCap} 
+              title="Class Management" 
+              subtitle="Organize classes, sections, and subjects" 
+              color="blue"
+              onSelect={() => runCommand(() => router.push("/academics/classes"))}
+            />
+            <SearchItem 
+              icon={Bus} 
+              title="Transport Fleet" 
+              subtitle="Manage vehicles, routes, and drivers" 
+              color="amber"
+              onSelect={() => runCommand(() => router.push("/transport"))}
+            />
+            <SearchItem 
+              icon={Settings} 
+              title="School Settings" 
+              subtitle="Update institutional info and preferences" 
+              color="slate"
+              onSelect={() => runCommand(() => router.push("/settings"))}
+            />
+          </CommandGroup>
+        </CommandList>
+        <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex gap-4 text-slate-400">
+            <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 px-1 rounded text-slate-900 font-mono">↑↓</kbd> Navigate</span>
+            <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 px-1 rounded text-slate-900 font-mono">↵</kbd> Select</span>
           </div>
-
-          <div className="max-h-[400px] overflow-y-auto">
-            {query && (
-              <div className="px-4 py-3 text-xs text-slate-500 border-b border-slate-100">
-                Press <kbd className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">Enter</kbd> to go directly
-              </div>
-            )}
-
-            {!query && (
-              <div className="px-4 py-3 border-b border-slate-100">
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quick Navigation</p>
-              </div>
-            )}
-
-            {categories.map((category) => (
-              <div key={category} className="mb-1">
-                <div className="px-4 py-2">
-                  <Badge variant="outline" className="text-[10px] font-semibold uppercase bg-slate-50 border-slate-200 text-slate-600">
-                    {category}
-                  </Badge>
-                </div>
-                {results
-                  .filter((r) => r.category === category)
-                  .map((result, idx) => (
-                    <button
-                      key={idx}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 text-left group transition-colors"
-                      onClick={() => handleSelect(result.href)}
-                    >
-                      <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center">
-                        <result.icon className="h-4 w-4 text-emerald-600" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-sm text-slate-900">{result.title}</div>
-                        {result.description && (
-                          <div className="text-xs text-muted-foreground">{result.description}</div>
-                        )}
-                      </div>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-                  ))}
-              </div>
-            ))}
-
-            {results.length === 0 && query && (
-              <div className="text-center py-12 text-slate-400">
-                <Search className="h-10 w-10 mx-auto mb-3 opacity-30" />
-                <p className="text-sm font-medium">No results found for "{query}"</p>
-                <p className="text-xs mt-1">Try searching for students, staff, or pages</p>
-              </div>
-            )}
-          </div>
-
-          <div className="p-3 border-t bg-slate-50 flex items-center justify-between text-xs text-slate-500 rounded-b-xl">
-            <div className="flex items-center gap-2">
-              <kbd className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">↑↓</kbd>
-              <span>Navigate</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <kbd className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">Enter</kbd>
-              <span>Select</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <kbd className="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-slate-600">Esc</kbd>
-              <span>Close</span>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          <span className="flex items-center gap-1 text-emerald-600/70"><ShieldCheck className="h-3 w-3" /> Secure Access</span>
+        </div>
+      </CommandDialog>
     </>
+  );
+}
+
+function SearchItem({ 
+  icon: Icon, 
+  title, 
+  subtitle, 
+  color, 
+  onSelect 
+}: { 
+  icon: React.ElementType, 
+  title: string, 
+  subtitle: string, 
+  color: string, 
+  onSelect: () => void 
+}) {
+  const colors: Record<string, string> = {
+    emerald: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    blue: "bg-blue-50 text-blue-600 border-blue-100",
+    amber: "bg-amber-50 text-amber-600 border-amber-100",
+    indigo: "bg-indigo-50 text-indigo-600 border-indigo-100",
+    rose: "bg-rose-50 text-rose-600 border-rose-100",
+    purple: "bg-purple-50 text-purple-600 border-purple-100",
+    slate: "bg-slate-50 text-slate-600 border-slate-100",
+  };
+
+  return (
+    <CommandItem 
+      onSelect={onSelect}
+      className="flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all data-[selected=true]:bg-slate-100 group"
+    >
+      <div className={cn("p-2 rounded-xl border shrink-0 transition-transform group-hover:scale-110", colors[color])}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-bold text-slate-900 uppercase tracking-tight">{title}</h4>
+          <ChevronRight className="h-3 w-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+        <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">{subtitle}</p>
+      </div>
+    </CommandItem>
   );
 }
