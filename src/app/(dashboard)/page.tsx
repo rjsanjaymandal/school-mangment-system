@@ -7,6 +7,8 @@ import { PredictiveAnalytics } from "@/components/dashboard/PredictiveAnalytics"
 import { ERPCard } from "@/components/ui/erp-card";
 import { Users, BarChart3, GraduationCap, UserSquare2, Library, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getDashboardMetrics } from "@/app/actions/dashboard-metrics";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -160,28 +162,28 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Grid - 4 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <StatCard
-          title="Total Students"
+          title="Students"
           value={studentCount || 0}
           icon={GraduationCap}
           color="emerald"
         />
         <StatCard
-          title="Active Teachers"
+          title="Teachers"
           value={teacherCount || 0}
           icon={UserSquare2}
           color="blue"
         />
         <StatCard
-          title="Library Asset Index"
+          title="Books"
           value={totalBooks || 0}
           icon={Library}
           color="purple"
         />
         <StatCard
-          title="Asset Circulation"
+          title="Loans"
           value={activeLoans || 0}
           icon={BookOpen}
           color="amber"
@@ -193,9 +195,6 @@ export default async function DashboardPage() {
     </div>
   );
 }
-
-import { getDashboardMetrics } from "@/app/actions/dashboard-metrics";
-import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 
 // Stat Card Component
 function StatCard({ 
