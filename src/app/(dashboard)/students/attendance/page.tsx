@@ -16,12 +16,16 @@ import {
     Search,
     Activity,
     Download,
-    ShieldCheck
+    ShieldCheck,
+    TrendingUp,
+    PieChart as PieChartIcon
 } from "lucide-react";
 import { 
     BarChart, Bar, 
+    PieChart, Pie, Cell,
     ResponsiveContainer, Tooltip, 
-    XAxis, YAxis, CartesianGrid 
+    XAxis, YAxis, CartesianGrid,
+    Legend
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -197,6 +201,13 @@ export default function StudentAttendancePage() {
         { name: "Fri", Present: 47, Absent: 3 },
     ];
 
+    const distributionData = [
+        { name: 'Present', value: stats.present, color: '#10b981' },
+        { name: 'Absent', value: stats.absent, color: '#f43f5e' },
+        { name: 'Late', value: stats.late, color: '#f59e0b' },
+        { name: 'Leave', value: stats.excused, color: '#3b82f6' },
+    ].filter(d => d.value > 0);
+
     return (
         <div className="p-6 space-y-8">
             {/* Page Header */}
@@ -256,7 +267,7 @@ export default function StudentAttendancePage() {
                         <Calendar className="w-4 h-4 mr-2" /> History
                     </TabsTrigger>
                     <TabsTrigger value="charts" className="px-6 py-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm text-[10px] font-black uppercase tracking-[0.1em]">
-                        <BarChart3 className="w-4 h-4 mr-2" /> Trends
+                        <TrendingUp className="w-4 h-4 mr-2" /> Trends
                     </TabsTrigger>
                 </TabsList>
 
@@ -397,48 +408,116 @@ export default function StudentAttendancePage() {
 
                 {/* --- TAB: TRENDS --- */}
                 <TabsContent value="charts" className="space-y-6 outline-none">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Weekly Trend Radar */}
                         <ERPCard
-                            title="Trends"
+                            title="Weekly Radar"
                             icon={<Activity className="h-5 w-5" />}
                             color="amber"
-                            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden p-8"
+                            className="lg:col-span-2 glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden p-8"
                         >
-                            <div className="h-[280px] w-full mt-6">
+                            <div className="h-[300px] w-full mt-6">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={chartData}>
+                                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 800, fill: '#94a3b8' }} />
+                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#94a3b8' }} />
                                         <Tooltip 
                                             cursor={{ fill: '#f8fafc' }}
-                                            contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'none', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase' }}
+                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase' }}
                                         />
-                                        <Bar dataKey="Present" fill="#10b981" radius={[4, 4, 0, 0]} />
-                                        <Bar dataKey="Absent" fill="#f43f5e" radius={[4, 4, 0, 0]} />
+                                        <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', paddingTop: '20px' }} />
+                                        <Bar dataKey="Present" fill="#10b981" radius={[6, 6, 0, 0]} barSize={30} />
+                                        <Bar dataKey="Absent" fill="#f43f5e" radius={[6, 6, 0, 0]} barSize={30} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </div>
                         </ERPCard>
 
-                        <div className="space-y-6">
+                        {/* Distribution Breakdown */}
+                        <ERPCard
+                            title="Distribution"
+                            icon={<PieChartIcon className="h-5 w-5" />}
+                            color="blue"
+                            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden p-8"
+                        >
+                            <div className="h-[200px] w-full mt-4 relative">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={distributionData}
+                                            innerRadius={60}
+                                            outerRadius={80}
+                                            paddingAngle={8}
+                                            dataKey="value"
+                                        >
+                                            {distributionData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip 
+                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '10px', fontWeight: '900' }}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span className="text-xl font-black text-slate-900">{stats.total}</span>
+                                    <span className="text-[8px] font-black text-slate-400 uppercase">Total</span>
+                                </div>
+                            </div>
+                            <div className="mt-6 space-y-2">
+                                {distributionData.map((d) => (
+                                    <div key={d.name} className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.color }} />
+                                            <span className="text-[10px] font-black text-slate-500 uppercase">{d.name}</span>
+                                        </div>
+                                        <span className="text-xs font-black text-slate-900">{Math.round((d.value / stats.total) * 100)}%</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </ERPCard>
+
+                        {/* Growth & Flags */}
+                        <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <ERPCard
                                 title="Growth"
                                 color="emerald"
-                                className="glass futuristic-card border-none shadow-2xl rounded-2xl overflow-hidden p-8"
+                                className="glass futuristic-card border-none shadow-2xl rounded-2xl overflow-hidden p-8 group hover:scale-[1.02] transition-transform"
                             >
-                                <p className="text-4xl font-black text-slate-900 tracking-tighter">92% <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest ml-2">↑ Up</span></p>
-                                <div className="mt-6 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-4xl font-black text-slate-900 tracking-tighter">92%</p>
+                                        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mt-1 flex items-center gap-1">
+                                            <TrendingUp className="h-3 w-3" /> ↑ 4% Progress
+                                        </p>
+                                    </div>
+                                    <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 group-hover:rotate-12 transition-transform">
+                                        <TrendingUp className="h-8 w-8 text-emerald-600" />
+                                    </div>
+                                </div>
+                                <div className="mt-6 h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
                                     <div className="h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]" style={{ width: '92%' }} />
                                 </div>
                             </ERPCard>
+                            
                             <ERPCard
                                 title="Flags"
                                 color="red"
-                                className="glass futuristic-card border-none shadow-2xl rounded-2xl overflow-hidden p-8"
+                                className="glass futuristic-card border-none shadow-2xl rounded-2xl overflow-hidden p-8 group hover:scale-[1.02] transition-transform"
                             >
-                                <p className="text-4xl font-black text-slate-900 tracking-tighter">3 <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest ml-2">Alerts</span></p>
-                                <p className="text-[10px] text-slate-500 mt-3 font-bold uppercase tracking-tight leading-relaxed">Students with consecutive absence flagged.</p>
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-4xl font-black text-slate-900 tracking-tighter">3</p>
+                                        <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mt-1">Alerts Detected</p>
+                                    </div>
+                                    <div className="p-4 bg-rose-50 rounded-2xl border border-rose-100 group-hover:shake transition-transform">
+                                        <XCircle className="h-8 w-8 text-rose-600" />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] text-slate-500 mt-4 font-bold uppercase tracking-tight leading-relaxed">
+                                    Critical anomalies detected in consecutive absence density.
+                                </p>
                             </ERPCard>
                         </div>
                     </div>
