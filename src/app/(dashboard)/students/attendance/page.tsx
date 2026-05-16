@@ -109,7 +109,7 @@ export default function StudentAttendancePage() {
             }));
 
             for (const record of attendanceData) {
-                await supabase.from("attendance").upsert(record, { onConflict: 'student_id,class_id,date' });
+                await supabase.from("attendance").upsert(record, { onConflict: 'student_id,date' });
             }
 
             toast.success("Attendance Saved", {

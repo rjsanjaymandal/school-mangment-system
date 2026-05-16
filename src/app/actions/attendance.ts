@@ -31,6 +31,7 @@ export async function markAttendance(data: {
         if (error) throw error;
 
         revalidatePath("/attendance");
+        revalidatePath("/students/attendance");
         return { success: true };
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";

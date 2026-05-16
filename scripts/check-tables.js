@@ -8,12 +8,13 @@ async function testConnection() {
     await client.connect();
     
     const res = await client.query(`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_schema = 'public' 
-      AND table_name = 'staff_attendance'
+      SELECT * FROM timetables LIMIT 5;
     `);
-    console.log('Staff Attendance Columns:', res.rows);
+    console.log('Timetable Rows:', res.rows);
+    const slotsRes = await client.query(`
+      SELECT * FROM timetable_slots LIMIT 5;
+    `);
+    console.log('Slot Rows:', slotsRes.rows);
   } catch (err) {
     console.error('Error:', err.message);
   } finally {

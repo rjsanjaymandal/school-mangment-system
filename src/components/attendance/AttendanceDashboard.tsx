@@ -196,10 +196,16 @@ export function AttendanceDashboard({
     const handleSave = async () => {
         if (!selectedClass) return;
         setLoading(true);
-        const records = Object.entries(studentRecords).map(([studentId, status]) => ({
-            student_id: studentId,
-            status,
-        }));
+        
+        // Only send records for students in the current class to avoid data pollution
+        const currentClassStudentIds = new Set(classStudents.map(s => s.id));
+        const records = Object.entries(studentRecords)
+            .filter(([studentId]) => currentClassStudentIds.has(studentId))
+            .map(([studentId, status]) => ({
+                student_id: studentId,
+                status,
+            }));
+
         const result = await markAttendance({
             class_id: selectedClass,
             date: selectedDate,

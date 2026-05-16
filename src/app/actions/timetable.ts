@@ -246,7 +246,7 @@ export async function getTimetableByClass(classId: string, academicYearId: strin
             .from("timetables")
             .select(`
         *,
-        slots:timetable_slots(*, subject:subjects(*), teacher:teachers(*, profile:profiles(*)))
+        slots:timetable_slots(*, subject:subjects(*), teacher:staff(*, profile:profiles(*)))
       `)
             .eq("class_id", classId)
             .eq("academic_year_id", academicYearId);
