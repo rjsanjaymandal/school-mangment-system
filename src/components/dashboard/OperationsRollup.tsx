@@ -84,8 +84,8 @@ export function OperationsRollup({ metrics }: { metrics: any }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <ERPCard 
-        title="Student Attendance Snap" 
-        description="Daily enrollment vs presence" 
+        title="Student Attendance" 
+        description="Daily presence of students" 
         icon={<Users className="h-4 w-4" />}
         color="emerald"
         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -99,8 +99,8 @@ export function OperationsRollup({ metrics }: { metrics: any }) {
       </ERPCard>
       
       <ERPCard 
-        title="Staff Attendance Snap" 
-        description="Daily substitution availability" 
+        title="Staff Attendance" 
+        description="Daily presence of staff members" 
         icon={<UserSquare2 className="h-4 w-4" />}
         color="blue"
         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"

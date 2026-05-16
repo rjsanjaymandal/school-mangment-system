@@ -32,10 +32,10 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
           <Building2 className="h-6 w-6 text-emerald-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Academic Footprint</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Classes</p>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-2xl font-black text-slate-900 tracking-tighter">{safeMetrics.classes}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Classes</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Departments</p>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-2xl font-black text-slate-900 tracking-tighter">{safeMetrics.departments}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Units</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Total</span>
           </div>
         </div>
       </div>
@@ -59,10 +59,10 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
           <Bus className="h-6 w-6 text-amber-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Transport Fleet</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">School Buses</p>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-2xl font-black text-slate-900 tracking-tighter">{transport.vehicles}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Vehicles</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
           </div>
         </div>
       </div>
@@ -72,10 +72,10 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
           <Route className="h-6 w-6 text-purple-600" />
         </div>
         <div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Service Routes</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Bus Routes</p>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-2xl font-black text-slate-900 tracking-tighter">{transport.routes}</span>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Routes</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
           </div>
         </div>
       </div>
