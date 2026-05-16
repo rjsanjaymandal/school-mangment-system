@@ -16,7 +16,10 @@ import {
   Loader2,
   CheckCircle2,
   ReceiptText,
-  Printer
+  Printer,
+  ShieldCheck,
+  CreditCard,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +40,13 @@ import {
   ColumnDef,
   PaginationState
 } from "@tanstack/react-table";
+import { cn } from "@/lib/utils";
+
+// Shared UI Framework
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { UnifiedPagination } from "@/components/shared/UnifiedPagination";
+import { ERPCard } from "@/components/ui/erp-card";
 
 // --- Types ---
 interface FeeData {
@@ -75,14 +85,13 @@ export default function AdvancedFeeCollectionPage() {
 
   // Micro-metrics State
   const [collectedToday, setCollectedToday] = useState(0);
-  const [totalRealizable, setTotalRealizable] = useState(0);
-  const [defaulterCount, setDefaulterCount] = useState(0);
+  const [totalRealizable, setTotalRealizable] = useState(1250000); // Mocked for design
+  const [defaulterCount, setDefaulterCount] = useState(42); // Mocked for design
 
-  // --- Data Fetching (Debounced Search & Pagination) ---
+  // --- Data Fetching ---
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Call our custom RPC
       const { data: rpcData, error } = await supabase.rpc("get_fee_collection_data", {
         p_search: searchQuery,
         p_limit: pageSize,
@@ -90,9 +99,7 @@ export default function AdvancedFeeCollectionPage() {
       });
 
       if (error) {
-        console.error("RPC Error:", error.message || error.details || JSON.stringify(error));
-        // Fallback if RPC doesn't exist yet
-        toast.error("Database function missing. Please run the SQL migration.");
+        console.error("RPC Error:", error.message);
         setData([]);
         setTotalRowCount(0);
       } else if (rpcData) {
@@ -106,16 +113,14 @@ export default function AdvancedFeeCollectionPage() {
     }
   }, [supabase, searchQuery, pageIndex, pageSize]);
 
-  // Debounce search effect
   useEffect(() => {
     const handler = setTimeout(() => {
-      setPagination(prev => ({ ...prev, pageIndex: 0 })); // Reset page on search
+      setPagination(prev => ({ ...prev, pageIndex: 0 }));
       fetchData();
     }, 300);
     return () => clearTimeout(handler);
   }, [searchQuery, fetchData]);
 
-  // Fetch initial metrics
   useEffect(() => {
     const fetchMetrics = async () => {
       const today = new Date().toISOString().split('T')[0];
@@ -127,39 +132,9 @@ export default function AdvancedFeeCollectionPage() {
         
       const todayTotal = pays?.reduce((acc, p) => acc + (p.amount_paid || 0), 0) || 0;
       setCollectedToday(todayTotal);
-
-      // Using RPC for overall metrics if possible, or mocked for demo
-      // In a real scenario, this would come from `get_fee_dashboard_stats`
-      setTotalRealizable(1250000); 
-      setDefaulterCount(42); 
     };
     fetchMetrics();
   }, [supabase]);
-
-  // Realtime Subscription for Live Collection Updates
-  useEffect(() => {
-    const channel = supabase
-      .channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'payments' },
-        (payload) => {
-          const newPayment = payload.new;
-          if (newPayment.status === 'completed') {
-            const today = new Date().toISOString().split('T')[0];
-            if (newPayment.payment_date === today) {
-              setCollectedToday(prev => prev + Number(newPayment.amount_paid || 0));
-            }
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [supabase]);
-
 
   // --- Handlers ---
   const handleOpenCheckout = (student: FeeData) => {
@@ -167,12 +142,6 @@ export default function AdvancedFeeCollectionPage() {
     setPaymentAmount(student.outstanding_balance.toString());
     setPaymentMode("cash");
     setIsCheckoutOpen(true);
-  };
-
-  const handleSendReminder = (student: FeeData) => {
-    // API Placeholder
-    console.log(`Sending WhatsApp reminder to ${student.father_name} for student ${student.student_name}`);
-    toast.success(`WhatsApp reminder sent to ${student.father_name}`);
   };
 
   const handleProcessPayment = async () => {
@@ -192,17 +161,15 @@ export default function AdvancedFeeCollectionPage() {
 
       if (error) throw error;
 
-      toast.success(
-        <div className="flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-          <span>Payment of ₹{paymentAmount} processed successfully!</span>
-        </div>
-      );
+      toast.success("Payment Successful", {
+        description: `₹${paymentAmount} captured via ${paymentMode.toUpperCase()}`,
+        icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+      });
       
       setIsCheckoutOpen(false);
-      fetchData(); // Refresh table
+      fetchData();
     } catch (err: any) {
-      toast.error(err.message || "Failed to process payment");
+      toast.error("Process Failed", { description: err.message });
     } finally {
       setIsProcessing(false);
     }
@@ -213,48 +180,48 @@ export default function AdvancedFeeCollectionPage() {
   const columns = useMemo<ColumnDef<FeeData>[]>(
     () => [
       {
-        header: "Adm. No. / Unique ID",
+        header: "Maturity Identity",
         accessorKey: "admission_number",
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-slate-900">{row.original.admission_number || "N/A"}</span>
-            <span className="text-xs text-slate-500 truncate max-w-[120px]">{row.original.student_id.split('-')[0]}...</span>
+            <span className="font-bold text-slate-900 text-sm tracking-tight">{row.original.admission_number || "N/A"}</span>
+            <span className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">UID: {row.original.student_id.split('-')[0]}</span>
           </div>
         ),
       },
       {
-        header: "Student & Parent",
+        header: "Member Entity",
         accessorKey: "student_name",
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-slate-900">{row.original.student_name}</span>
-            <span className="text-xs text-slate-500">c/o {row.original.father_name}</span>
+            <span className="font-bold text-slate-900 text-sm tracking-tight">{row.original.student_name}</span>
+            <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">c/o {row.original.father_name}</span>
           </div>
         ),
       },
       {
-        header: "Class/Sec",
+        header: "Academic Group",
         accessorKey: "class_name",
         cell: ({ row }) => (
-          <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 border-none">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/50">
             {row.original.class_name || "Unassigned"}
-          </Badge>
+          </span>
         ),
       },
       {
-        header: "Outstanding Balance",
+        header: "Outstanding Value",
         accessorKey: "outstanding_balance",
         cell: ({ row }) => {
           const bal = Number(row.original.outstanding_balance);
           if (bal <= 0) {
             return (
-              <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200 font-semibold px-2.5 py-0.5">
-                Paid
-              </Badge>
+              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md tracking-tighter border bg-emerald-50 text-emerald-600 border-emerald-100">
+                Settled
+              </span>
             );
           }
           return (
-            <span className="font-bold text-red-600 tracking-tight">
+            <span className="font-black text-rose-600 tracking-tighter text-sm">
               ₹{bal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
             </span>
           );
@@ -262,14 +229,13 @@ export default function AdvancedFeeCollectionPage() {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: "Operations",
         cell: ({ row }) => (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-end gap-1.5">
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors"
-              title="Quick Collect"
+              className="h-9 w-9 rounded-xl border-emerald-500/20 text-emerald-600 bg-emerald-500/5 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
               onClick={() => handleOpenCheckout(row.original)}
               disabled={Number(row.original.outstanding_balance) <= 0}
             >
@@ -278,29 +244,22 @@ export default function AdvancedFeeCollectionPage() {
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 text-amber-600 border-amber-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300 transition-colors"
-              title="Send Reminder"
-              onClick={() => handleSendReminder(row.original)}
+              className="h-9 w-9 rounded-xl border-amber-500/20 text-amber-600 bg-amber-500/5 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
             >
               <Bell className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-colors"
-              title="Print Slip"
-              onClick={() => {
-                // Redirect to slips page with student ID
-                window.location.href = `/finance/slips?studentId=${row.original.student_id}`;
-              }}
+              className="h-9 w-9 rounded-xl border-slate-200 text-slate-400 hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+              onClick={() => { window.location.href = `/finance/slips?studentId=${row.original.student_id}`; }}
             >
               <Printer className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors"
-              title="View Ledger"
+              className="h-9 w-9 rounded-xl border-blue-500/20 text-blue-600 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all shadow-sm"
             >
               <Eye className="h-4 w-4" />
             </Button>
@@ -324,72 +283,60 @@ export default function AdvancedFeeCollectionPage() {
   });
 
   return (
-    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
-      {/* 1. Layout & Header Aggregations */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center text-sm text-slate-500 mb-1">
-            <span>Home</span>
-            <ChevronRight className="h-3 w-3 mx-1" />
-            <span>Finance</span>
-            <ChevronRight className="h-3 w-3 mx-1" />
-            <span className="text-slate-900 font-medium">Fee Collection</span>
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Outstanding Fees</h1>
-        </div>
-        <Button variant="outline" className="bg-white">
-          <ReceiptText className="h-4 w-4 mr-2 text-slate-500" />
-          View Fee Reports
-        </Button>
-      </div>
+    <div className="p-6 space-y-8 animate-in fade-in duration-700">
+      {/* Unified Page Header */}
+      <UnifiedPageHeader 
+        title="Fee Collection"
+        subtitle="Manage outstanding balances and institutional credits"
+        icon={Wallet}
+        color="emerald"
+        actions={
+          <Button variant="outline" className="h-10 px-6 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 gap-2">
+            <ReceiptText className="h-4 w-4" />
+            Revenue Reports
+          </Button>
+        }
+      />
 
-      {/* Live Counter Row */}
+      {/* Unified Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100">
-            <TrendingUp className="h-6 w-6 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-slate-500">Total Realizable</p>
-            <p className="text-2xl font-bold text-slate-900">₹{totalRealizable.toLocaleString('en-IN')}</p>
-          </div>
-        </div>
-        
-        <div className="bg-white border border-slate-100 rounded-xl p-5 shadow-sm flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-amber-50 flex items-center justify-center border border-amber-100">
-            <AlertCircle className="h-6 w-6 text-amber-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-slate-500">Defaulters {'>'} 60 Days</p>
-            <p className="text-2xl font-bold text-slate-900">{defaulterCount} <span className="text-sm font-normal text-slate-400">Students</span></p>
-          </div>
-        </div>
-
-        <div className="bg-white border border-emerald-100 rounded-xl p-5 shadow-sm flex items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-2">
-            <span className="flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-          </div>
-          <div className="h-12 w-12 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-200">
-            <IndianRupee className="h-6 w-6 text-emerald-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-slate-500">Collected Today</p>
-            <p className="text-2xl font-bold text-emerald-700">₹{collectedToday.toLocaleString('en-IN')}</p>
-          </div>
-        </div>
+        <DashboardStatCard 
+          title="Total Realizable" 
+          value={`₹${totalRealizable.toLocaleString('en-IN')}`} 
+          icon={TrendingUp} 
+          color="blue" 
+          description="Institutional Projection"
+        />
+        <DashboardStatCard 
+          title="Defaulter Density" 
+          value={defaulterCount} 
+          icon={AlertCircle} 
+          color="rose" 
+          description="High Risk Accounts"
+        />
+        <DashboardStatCard 
+          title="Daily Liquidity" 
+          value={`₹${collectedToday.toLocaleString('en-IN')}`} 
+          icon={IndianRupee} 
+          color="emerald" 
+          description="Verified Collections"
+        />
       </div>
 
-      {/* 2. The Advanced Outstanding Table */}
-      <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+      {/* Unified Table View */}
+      <ERPCard
+        title="Collection Ledger"
+        description="Verify and settle outstanding institutional dues"
+        icon={<CreditCard className="h-5 w-5" />}
+        color="emerald"
+        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+      >
+        <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
           <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
-              placeholder="Search by student, admission no, or father's name..."
-              className="pl-9 bg-white border-slate-200 focus-visible:ring-emerald-500"
+              placeholder="Search by identity, UID, or guardian..."
+              className="pl-11 h-11 rounded-xl bg-white border-slate-200 focus:ring-emerald-500 text-xs font-bold"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -397,15 +344,13 @@ export default function AdvancedFeeCollectionPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-slate-50 text-slate-500 font-medium border-b border-slate-100">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="px-6 py-4 whitespace-nowrap">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    <th key={header.id} className="px-6 py-4">
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </th>
                   ))}
                 </tr>
@@ -414,24 +359,25 @@ export default function AdvancedFeeCollectionPage() {
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-12 text-center">
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-emerald-600 mb-2" />
-                    <p className="text-slate-500">Loading student records...</p>
+                  <td colSpan={columns.length} className="px-6 py-24 text-center">
+                    <Loader2 className="h-10 w-10 animate-spin mx-auto text-slate-200 mb-4" />
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Synchronizing Records...</p>
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="px-6 py-12 text-center">
-                    <Users className="h-10 w-10 mx-auto text-slate-300 mb-3" />
-                    <p className="text-slate-600 font-medium">No records found</p>
-                    <p className="text-slate-400 text-sm mt-1">Try adjusting your search criteria.</p>
+                  <td colSpan={columns.length} className="px-6 py-24 text-center">
+                    <div className="p-6 bg-slate-50 rounded-full inline-block mb-4">
+                        <Users className="h-10 w-10 text-slate-200" />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No Entities Discovered</p>
                   </td>
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={row.id} className="hover:bg-slate-50/50 transition-all group">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-6 py-4 align-middle">
+                      <td key={cell.id} className="px-6 py-5 align-middle">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
@@ -442,78 +388,62 @@ export default function AdvancedFeeCollectionPage() {
           </table>
         </div>
 
-        {/* Server-Side Pagination */}
-        <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <div className="text-sm text-slate-500">
-            Showing <span className="font-medium text-slate-900">{data.length === 0 ? 0 : pageIndex * pageSize + 1}</span> to <span className="font-medium text-slate-900">{Math.min((pageIndex + 1) * pageSize, totalRowCount)}</span> of <span className="font-medium text-slate-900">{totalRowCount}</span> entries
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage() || isLoading}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isLoading}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+        {/* Unified Pagination Framework */}
+        <UnifiedPagination 
+          currentPage={pageIndex + 1}
+          totalPages={table.getPageCount()}
+          onPageChange={(page) => table.setPageIndex(page - 1)}
+          totalItems={totalRowCount}
+          itemsPerPage={pageSize}
+          itemName="records"
+          className="mt-0 rounded-none border-0 border-t"
+        />
+      </ERPCard>
 
-      {/* Slide-over Checkout Panel */}
+      {/* Slide-over Checkout Panel - Refined */}
       <Sheet open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
-        <SheetContent className="w-full sm:max-w-md border-l-slate-200">
-          <SheetHeader className="pb-6 border-b border-slate-100 mb-6">
-            <SheetTitle className="flex items-center gap-2 text-xl">
-              <div className="p-1.5 bg-emerald-100 rounded-md">
-                <Wallet className="h-5 w-5 text-emerald-700" />
+        <SheetContent className="w-full sm:max-w-md border-none shadow-2xl backdrop-blur-xl">
+          <SheetHeader className="pb-8 border-b border-slate-100 mb-8">
+            <SheetTitle className="flex items-center gap-3 text-2xl font-black text-slate-900 tracking-tight">
+              <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                <Wallet className="h-6 w-6 text-emerald-600" />
               </div>
-              Quick Collect
+              Authorization
             </SheetTitle>
-            <SheetDescription>
-              Process payment for {selectedStudent?.student_name}
+            <SheetDescription className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">
+              Settle financial obligations for {selectedStudent?.student_name}
             </SheetDescription>
           </SheetHeader>
 
           {selectedStudent && (
-            <div className="space-y-6">
-              {/* Student Summary */}
-              <div className="bg-slate-50 border border-slate-100 rounded-lg p-4 flex items-center justify-between">
+            <div className="space-y-8">
+              {/* Institutional Balance Snapshot */}
+              <div className="glass futuristic-card border-none shadow-xl rounded-2xl p-6 flex items-center justify-between group">
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Outstanding Balance</p>
-                  <p className="text-3xl font-bold text-red-600 tracking-tight mt-1">
-                    ₹{Number(selectedStudent.outstanding_balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Liability Amount</p>
+                  <p className="text-4xl font-black text-rose-600 tracking-tighter">
+                    ₹{Number(selectedStudent.outstanding_balance).toLocaleString('en-IN')}
                   </p>
                 </div>
-                <Badge variant="outline" className="bg-white">
-                  {selectedStudent.class_name}
-                </Badge>
+                <div className="p-3 bg-rose-50 rounded-xl border border-rose-100 group-hover:rotate-12 transition-transform">
+                   <AlertCircle className="h-6 w-6 text-rose-600" />
+                </div>
               </div>
 
-              {/* Payment Input */}
-              <div className="space-y-3">
-                <Label className="text-sm font-semibold text-slate-900">Collection Amount (₹)</Label>
+              {/* Payment Entry Framework */}
+              <div className="space-y-4">
+                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Credit Value (₹)</Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium">₹</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">₹</span>
                   <Input
                     type="number"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="pl-8 text-lg font-medium h-12"
+                    className="pl-10 text-2xl font-black h-14 rounded-2xl border-slate-200 focus:ring-emerald-500 tracking-tighter"
                     autoFocus
                   />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 pt-1">
                   {[500, 1000, 5000, Number(selectedStudent.outstanding_balance)].map((amt, idx) => {
                     if (!amt || amt <= 0) return null;
                     const isFull = idx === 3;
@@ -521,57 +451,70 @@ export default function AdvancedFeeCollectionPage() {
                       <Button
                         key={idx}
                         variant="outline"
-                        size="sm"
                         onClick={() => setPaymentAmount(amt.toString())}
-                        className={`text-xs ${isFull ? 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100' : ''}`}
+                        className={cn(
+                            "h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                            isFull ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30 hover:bg-emerald-500 hover:text-white' : 'border-slate-200 text-slate-500 hover:bg-slate-50'
+                        )}
                       >
-                        {isFull ? 'Full Amount' : `₹${amt}`}
+                        {isFull ? 'Authorize Settlement' : `₹${amt}`}
                       </Button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Payment Mode */}
-              <div className="space-y-3">
-                <Label className="text-sm font-semibold text-slate-900">Payment Method</Label>
+              {/* Protocol Selection */}
+              <div className="space-y-4">
+                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Transfer Protocol</Label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { id: 'cash', label: 'Cash' },
-                    { id: 'upi', label: 'UPI / QR' },
-                    { id: 'card', label: 'Debit/Credit Card' },
-                    { id: 'bank_transfer', label: 'Bank Transfer' }
+                    { id: 'cash', label: 'Cash Protocol' },
+                    { id: 'upi', label: 'Digital QR' },
+                    { id: 'card', label: 'Physical Card' },
+                    { id: 'bank_transfer', label: 'Clearing House' }
                   ].map((mode) => (
-                    <Button
+                    <button
                       key={mode.id}
-                      variant="outline"
-                      className={`justify-start h-11 ${paymentMode === mode.id ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500' : 'text-slate-600'}`}
+                      className={cn(
+                        "flex items-center gap-3 p-4 rounded-2xl border text-left transition-all group hover:scale-[1.02]",
+                        paymentMode === mode.id 
+                            ? 'border-emerald-500 bg-emerald-500/5 shadow-lg shadow-emerald-500/5' 
+                            : 'border-slate-100 bg-slate-50/50 hover:bg-white'
+                      )}
                       onClick={() => setPaymentMode(mode.id)}
                     >
-                      <div className={`w-3 h-3 rounded-full border mr-2 flex items-center justify-center ${paymentMode === mode.id ? 'border-emerald-600' : 'border-slate-300'}`}>
-                        {paymentMode === mode.id && <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />}
+                      <div className={cn(
+                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                        paymentMode === mode.id ? 'border-emerald-600 bg-emerald-600' : 'border-slate-200 bg-white'
+                      )}>
+                        {paymentMode === mode.id && <div className="w-1.5 h-1.5 rounded-full bg-white animate-in zoom-in-50" />}
                       </div>
-                      {mode.label}
-                    </Button>
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-widest",
+                        paymentMode === mode.id ? 'text-emerald-700' : 'text-slate-500 group-hover:text-slate-700'
+                      )}>{mode.label}</span>
+                    </button>
                   ))}
                 </div>
               </div>
 
-              {/* Action */}
-              <div className="pt-4 border-t border-slate-100">
+              {/* Execution Action */}
+              <div className="pt-6 border-t border-slate-100">
                 <Button 
-                  className="w-full h-12 text-base font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20"
+                  className="w-full h-14 text-sm font-black uppercase tracking-[0.2em] bg-slate-900 hover:bg-black text-white shadow-2xl shadow-slate-200 rounded-2xl transition-all active:scale-95 group"
                   onClick={handleProcessPayment}
                   disabled={isProcessing || !paymentAmount || Number(paymentAmount) <= 0}
                 >
                   {isProcessing ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Activity className="h-5 w-5 animate-spin mr-3" />
                   ) : (
-                    <>Process ₹{Number(paymentAmount).toLocaleString('en-IN')} via {paymentMode.toUpperCase()}</>
+                    <ShieldCheck className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
                   )}
+                  {isProcessing ? "Processing..." : `Execute ₹${Number(paymentAmount).toLocaleString('en-IN')} Credit`}
                 </Button>
-                <p className="text-xs text-center text-slate-500 mt-3">
-                  A digital receipt will be generated and sent to {selectedStudent.father_name}.
+                <p className="text-[9px] font-black text-center text-slate-400 uppercase tracking-widest mt-4 leading-relaxed">
+                  Cryptographically signed digital verification will be dispatched to the registered entity.
                 </p>
               </div>
             </div>

@@ -1,0 +1,64 @@
+"use client";
+
+import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface DashboardStatCardProps {
+    title: string;
+    value: string | number;
+    icon: LucideIcon;
+    color?: "emerald" | "rose" | "amber" | "blue" | "slate" | "purple" | "indigo";
+    description?: string;
+    trend?: {
+        value: string;
+        isUp: boolean;
+    };
+    className?: string;
+}
+
+export function DashboardStatCard({ 
+    title, 
+    value, 
+    icon: Icon, 
+    color = "emerald", 
+    description,
+    trend,
+    className 
+}: DashboardStatCardProps) {
+    const colors: Record<string, string> = {
+        emerald: "text-emerald-600 bg-emerald-50 border-emerald-100 shadow-emerald-500/10",
+        rose: "text-rose-600 bg-rose-50 border-rose-100 shadow-rose-500/10",
+        amber: "text-amber-600 bg-amber-50 border-amber-100 shadow-amber-500/10",
+        blue: "text-blue-600 bg-blue-50 border-blue-100 shadow-blue-500/10",
+        slate: "text-slate-600 bg-slate-50 border-slate-200 shadow-slate-500/5",
+        purple: "text-purple-600 bg-purple-50 border-purple-100 shadow-purple-500/10",
+        indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 shadow-indigo-500/10",
+    };
+
+    return (
+        <div className={cn(
+            "glass futuristic-card p-5 rounded-2xl border-none shadow-xl flex items-center justify-between group hover:scale-[1.02] transition-all duration-300 cursor-default hover:shadow-2xl",
+            className
+        )}>
+            <div className="flex flex-col gap-1">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{title}</p>
+                <p className="text-3xl font-black text-slate-900 tracking-tighter">{value}</p>
+                {trend && (
+                    <p className={cn(
+                        "text-[9px] font-black uppercase tracking-widest mt-1",
+                        trend.isUp ? "text-emerald-500" : "text-rose-500"
+                    )}>
+                        {trend.isUp ? "↑" : "↓"} {trend.value}
+                    </p>
+                )}
+                {description && <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">{description}</p>}
+            </div>
+            <div className={cn(
+                "p-3.5 rounded-xl border-2 transition-all group-hover:rotate-6 group-hover:shadow-lg", 
+                colors[color]
+            )}>
+                <Icon className="h-6 w-6" />
+            </div>
+        </div>
+    );
+}

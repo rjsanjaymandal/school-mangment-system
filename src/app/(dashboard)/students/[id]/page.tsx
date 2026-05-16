@@ -2,11 +2,12 @@ import { InstitutionalService } from "@/lib/services/institutional";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, User, Edit3 } from "lucide-react";
 import Link from "next/link";
 import { getStudentResults } from "@/app/actions/exams";
 import { getStudentAttendance } from "@/app/actions/attendance";
 import { StudentProfileTabs } from "@/components/students/StudentProfileTabs";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
 export default async function StudentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -24,33 +25,30 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
     const attendance = attendanceResponse.success ? attendanceResponse.data : [];
 
     return (
-        <div className="p-4 md:p-6">
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="outline" size="icon" asChild className="h-10 w-10 rounded-md">
+        <div className="p-6 space-y-8 animate-in fade-in duration-700">
+            {/* Unified Page Header */}
+            <UnifiedPageHeader 
+                title={`${student.profile?.first_name} ${student.profile?.last_name}`}
+                subtitle={`Institutional Record: ${student.admission_number || id.slice(0, 8)}`}
+                icon={User}
+                color="emerald"
+                actions={
+                    <>
                         <Link href="/students">
-                            <ArrowLeft className="h-4 w-4" />
+                            <Button variant="outline" className="h-10 px-4 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 gap-2">
+                                <ArrowLeft className="h-4 w-4" />
+                                Back to Directory
+                            </Button>
                         </Link>
-                    </Button>
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">
-                                Student ID: {id.slice(0, 8)}
-                            </span>
-                        </div>
-                        <h1 className="text-2xl font-bold">
-                            {student.profile?.first_name} {student.profile?.last_name}
-                        </h1>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" className="rounded-md gap-2" asChild>
                         <Link href={`/students/${id}/edit`}>
-                            Edit Profile
+                            <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
+                                <Edit3 className="h-4 w-4" />
+                                Modify Profile
+                            </Button>
                         </Link>
-                    </Button>
-                </div>
-            </div>
+                    </>
+                }
+            />
 
             <StudentProfileTabs student={student} grades={grades} attendance={attendance} />
         </div>

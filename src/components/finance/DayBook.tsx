@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BookOpen, Calendar, Filter, Download, 
-  ArrowUpRight, ArrowDownRight, Wallet, Building
+  ArrowUpRight, ArrowDownRight, Wallet, Building,
+  Search, BarChart3, Activity
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
+import { ERPCard } from "@/components/ui/erp-card";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { cn } from "@/lib/utils";
 
 export function DayBook() {
   const supabase = createClient();
@@ -67,7 +69,6 @@ export function DayBook() {
 
   const netBalance = totalIncome - totalExpense;
 
-  // Cash vs Bank
   const cashTotal = transactions
     ?.filter(t => t.mode === "cash")
     ?.reduce((sum, t) => sum + (t.type === "income" || t.type === "fee_collection" ? t.amount : -t.amount), 0) || 0;
@@ -77,203 +78,123 @@ export function DayBook() {
     ?.reduce((sum, t) => sum + (t.type === "income" || t.type === "fee_collection" ? t.amount : -t.amount), 0) || 0;
 
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <Card className="shadow-sm">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-slate-500" />
-              <Input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="w-36"
-              />
-              <span className="text-slate-400">to</span>
-              <Input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="w-36"
-              />
-            </div>
-            
-            <select
-              value={transactionType}
-              onChange={(e) => setTransactionType(e.target.value)}
-              className="h-10 px-3 rounded-md border"
-            >
-              <option value="all">All Types</option>
-              <option value="fee_collection">Fee Collection</option>
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-              <option value="salary">Salary</option>
-            </select>
-
-            <select
-              value={paymentMode}
-              onChange={(e) => setPaymentMode(e.target.value)}
-              className="h-10 px-3 rounded-md border"
-            >
-              <option value="all">All Modes</option>
-              <option value="cash">Cash</option>
-              <option value="bank">Bank Transfer</option>
-              <option value="upi">UPI</option>
-              <option value="card">Card</option>
-            </select>
-
-            <Button variant="outline" className="ml-auto">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Total Income</p>
-                <p className="text-xl font-bold text-emerald-600">₹{totalIncome.toLocaleString()}</p>
-              </div>
-              <ArrowUpRight className="h-5 w-5 text-emerald-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-red-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Total Expense</p>
-                <p className="text-xl font-bold text-red-600">₹{totalExpense.toLocaleString()}</p>
-              </div>
-              <ArrowDownRight className="h-5 w-5 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-purple-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Net Balance</p>
-                <p className={`text-xl font-bold ${netBalance >= 0 ? "text-purple-600" : "text-red-600"}`}>
-                  ₹{netBalance.toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-blue-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Cash in Hand</p>
-                <p className="text-xl font-bold text-blue-600">₹{cashTotal.toLocaleString()}</p>
-              </div>
-              <Wallet className="h-5 w-5 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-amber-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Bank Balance</p>
-                <p className="text-xl font-bold text-amber-600">₹{bankTotal.toLocaleString()}</p>
-              </div>
-              <Building className="h-5 w-5 text-amber-500" />
-            </div>
-          </CardContent>
-        </Card>
+    <div className="space-y-8">
+      {/* Unified Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <DashboardStatCard title="Income Flow" value={`₹${totalIncome.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
+        <DashboardStatCard title="Expense Flow" value={`₹${totalExpense.toLocaleString()}`} icon={ArrowDownRight} color="rose" />
+        <DashboardStatCard title="Net Liquidity" value={`₹${netBalance.toLocaleString()}`} icon={Activity} color="purple" />
+        <DashboardStatCard title="Cash Reserve" value={`₹${cashTotal.toLocaleString()}`} icon={Wallet} color="blue" />
+        <DashboardStatCard title="Bank Reserve" value={`₹${bankTotal.toLocaleString()}`} icon={Building} color="amber" />
       </div>
 
-      {/* Transactions Table */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
-          <CardTitle className="text-base flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-slate-500" />
-            Day Book - Transactions Ledger
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Voucher No.</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Particulars</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Mode</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Income</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Expense</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
-                      Loading transactions...
-                    </td>
-                  </tr>
-                ) : transactions?.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
-                      No transactions found for selected date range
-                    </td>
-                  </tr>
-                ) : (
-                  transactions?.map((txn, index) => {
-                    const isIncome = txn.type === "income" || txn.type === "fee_collection";
-                    const runningBalance = transactions
-                      .slice(index)
-                      .reduce((sum, t) => sum + ((t.type === "income" || t.type === "fee_collection") ? t.amount : -t.amount), 0);
+      {/* Unified Action Bar */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="flex flex-1 flex-col lg:flex-row gap-4 w-full">
+            <div className="flex items-center bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-1 gap-2">
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
+              <span className="text-slate-300 font-black">→</span>
+              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
+            </div>
+            
+            <div className="flex gap-3">
+              <select value={transactionType} onChange={(e) => setTransactionType(e.target.value)} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
+                <option value="all">All Channels</option>
+                <option value="fee_collection">Revenue Stream</option>
+                <option value="income">Direct Income</option>
+                <option value="expense">Operational Expense</option>
+                <option value="salary">Payroll</option>
+              </select>
 
-                    return (
-                      <tr key={txn.id} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-slate-600">{txn.date}</td>
-                        <td className="px-4 py-3 font-mono text-slate-500 text-xs">{txn.voucher_no || "-"}</td>
-                        <td className="px-4 py-3">
-                          <span className="font-medium text-slate-900">{txn.description || txn.category}</span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge className={
-                            isIncome ? "bg-emerald-100 text-emerald-700" :
-                            "bg-red-100 text-red-700"
-                          }>
-                            {txn.category}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant="outline" className="capitalize">{txn.mode}</Badge>
-                        </td>
-                        <td className="px-4 py-3 text-right text-emerald-600 font-medium">
-                          {isIncome ? `₹${txn.amount.toLocaleString()}` : "-"}
-                        </td>
-                        <td className="px-4 py-3 text-right text-red-600 font-medium">
-                          {!isIncome ? `₹${txn.amount.toLocaleString()}` : "-"}
-                        </td>
-                        <td className="px-4 py-3 text-right font-medium text-slate-700">
-                          ₹{runningBalance.toLocaleString()}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+              <select value={paymentMode} onChange={(e) => setPaymentMode(e.target.value)} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
+                <option value="all">All Protocols</option>
+                <option value="cash">Cash Protocol</option>
+                <option value="bank">Digital Clearing</option>
+              </select>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <Button variant="outline" className="h-11 px-6 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all active:scale-95">
+            <Download className="h-4 w-4 mr-2" /> Export Logs
+          </Button>
+        </div>
+      </div>
+
+      {/* Institutional Ledger */}
+      <ERPCard
+        title="Transaction Ledger"
+        description="Chronological verification of institutional flows"
+        icon={<BookOpen className="h-5 w-5" />}
+        color="purple"
+        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+              <tr>
+                <th className="px-6 py-4">Maturity</th>
+                <th className="px-6 py-4">Voucher</th>
+                <th className="px-6 py-4">Particulars</th>
+                <th className="px-6 py-4">Domain</th>
+                <th className="px-6 py-4 text-center">Protocol</th>
+                <th className="px-6 py-4 text-right">Income</th>
+                <th className="px-6 py-4 text-right">Expense</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-20 text-center animate-pulse">
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Synchronizing Archive...</p>
+                  </td>
+                </tr>
+              ) : transactions?.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-20 text-center">
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No Records Discovered</p>
+                  </td>
+                </tr>
+              ) : (
+                transactions?.map((txn) => {
+                  const isIncome = txn.type === "income" || txn.type === "fee_collection";
+                  return (
+                    <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="px-6 py-5 text-slate-400 font-mono text-[10px] font-bold">{txn.date}</td>
+                      <td className="px-6 py-5">
+                        <span className="text-[9px] font-black uppercase text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/50 tracking-tighter">
+                          {txn.voucher_no || "SYS-GEN"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className="text-sm font-bold text-slate-900 tracking-tight">{txn.description || txn.category}</span>
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className={cn(
+                          "text-[9px] font-black uppercase px-2 py-1 rounded-md",
+                          isIncome ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"
+                        )}>{txn.category}</span>
+                      </td>
+                      <td className="px-6 py-5 text-center">
+                        <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 px-2.5 py-1 rounded-md tracking-tighter shadow-sm bg-white capitalize">
+                          {txn.mode}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5 text-right font-black text-emerald-600 text-sm">
+                        {isIncome ? `₹${txn.amount.toLocaleString()}` : "—"}
+                      </td>
+                      <td className="px-6 py-5 text-right font-black text-rose-600 text-sm">
+                        {!isIncome ? `₹${txn.amount.toLocaleString()}` : "—"}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </ERPCard>
     </div>
   );
 }

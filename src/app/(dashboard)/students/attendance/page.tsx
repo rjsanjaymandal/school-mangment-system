@@ -39,6 +39,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { markAttendance, getAttendanceByClassAndDate } from "@/app/actions/attendance";
 import { ERPCard } from "@/components/ui/erp-card";
 
+// Shared UI Framework
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+
 export default function StudentAttendancePage() {
     const supabase = createClient();
     const queryClient = useQueryClient();
@@ -221,50 +225,44 @@ export default function StudentAttendancePage() {
 
     return (
         <div className="p-6 space-y-8 animate-in fade-in duration-700">
-            {/* Page Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 shadow-sm shadow-emerald-500/5">
-                        <ClipboardCheck className="h-6 w-6 text-emerald-600" />
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Attendance</h1>
-                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">
-                            {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                        </p>
-                    </div>
-                </div>
+            {/* Unified Page Header */}
+            <UnifiedPageHeader 
+                title="Attendance"
+                subtitle={new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                icon={ClipboardCheck}
+                color="emerald"
+                actions={
+                    <>
+                        <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+                            <SelectTrigger className="w-full md:w-44 h-10 rounded-xl bg-white/80 backdrop-blur-sm border-slate-200 shadow-sm transition-all">
+                                <SelectValue placeholder="Class" />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                                {classes.map(c => (<SelectItem key={c.id} value={c.id} className="rounded-lg">{c.name}</SelectItem>))}
+                            </SelectContent>
+                        </Select>
+                        <div className="flex items-center bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <Button variant="ghost" size="icon" className="h-10 w-9" onClick={() => {
+                                const d = new Date(selectedDate); d.setDate(d.getDate() - 1); setSelectedDate(d.toISOString().split('T')[0]);
+                            }}>
+                                <ChevronLeft className="h-4 w-4 text-slate-500" />
+                            </Button>
+                            <Input type="date" className="border-0 bg-transparent w-32 h-10 text-center text-[10px] font-black uppercase tracking-tighter" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                            <Button variant="ghost" size="icon" className="h-10 w-9" onClick={() => {
+                                const d = new Date(selectedDate); d.setDate(d.getDate() + 1); setSelectedDate(d.toISOString().split('T')[0]);
+                            }}>
+                                <ChevronRight className="h-4 w-4 text-slate-500" />
+                            </Button>
+                        </div>
+                    </>
+                }
+            />
 
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                    <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                        <SelectTrigger className="w-full md:w-44 h-10 rounded-xl bg-white/80 backdrop-blur-sm border-slate-200 shadow-sm transition-all">
-                            <SelectValue placeholder="Class" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                            {classes.map(c => (<SelectItem key={c.id} value={c.id} className="rounded-lg">{c.name}</SelectItem>))}
-                        </SelectContent>
-                    </Select>
-                    <div className="flex items-center bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                        <Button variant="ghost" size="icon" className="h-10 w-9" onClick={() => {
-                            const d = new Date(selectedDate); d.setDate(d.getDate() - 1); setSelectedDate(d.toISOString().split('T')[0]);
-                        }}>
-                            <ChevronLeft className="h-4 w-4 text-slate-500" />
-                        </Button>
-                        <Input type="date" className="border-0 bg-transparent w-32 h-10 text-center text-[10px] font-black uppercase tracking-tighter" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
-                        <Button variant="ghost" size="icon" className="h-10 w-9" onClick={() => {
-                            const d = new Date(selectedDate); d.setDate(d.getDate() + 1); setSelectedDate(d.toISOString().split('T')[0]);
-                        }}>
-                            <ChevronRight className="h-4 w-4 text-slate-500" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Stats Grid */}
+            {/* Stats Grid - Using Shared Component */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-                <DashboardStatCard title="Total Students" value={stats.total} icon={Users} color="emerald" />
-                <DashboardStatCard title="Present Today" value={stats.present} icon={CheckCircle2} color="emerald" />
-                <DashboardStatCard title="Absent Today" value={stats.absent} icon={XCircle} color="rose" />
+                <DashboardStatCard title="Enrollment" value={stats.total} icon={Users} color="emerald" />
+                <DashboardStatCard title="Present" value={stats.present} icon={CheckCircle2} color="emerald" />
+                <DashboardStatCard title="Absent" value={stats.absent} icon={XCircle} color="rose" />
                 <DashboardStatCard title="Late" value={stats.late} icon={Clock} color="amber" />
                 <DashboardStatCard title="Leave" value={stats.excused} icon={ShieldCheck} color="blue" />
             </div>
@@ -555,28 +553,6 @@ export default function StudentAttendancePage() {
 }
 
 // --- SUB-COMPONENTS ---
-
-function DashboardStatCard({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) {
-    const colors: Record<string, string> = {
-        emerald: "text-emerald-600 bg-emerald-50 border-emerald-100",
-        rose: "text-rose-600 bg-rose-50 border-rose-100",
-        amber: "text-amber-600 bg-amber-50 border-amber-100",
-        blue: "text-blue-600 bg-blue-50 border-blue-100",
-        slate: "text-slate-600 bg-slate-50 border-slate-200",
-    };
-
-    return (
-        <div className="glass futuristic-card p-6 rounded-2xl border-none shadow-xl flex items-center justify-between group hover:scale-[1.05] transition-all duration-300 cursor-pointer hover:shadow-2xl">
-            <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">{title}</p>
-                <p className="text-3xl font-black text-slate-900 tracking-tight">{value}</p>
-            </div>
-            <div className={cn("p-3 rounded-xl border-2 transition-all group-hover:rotate-12", colors[color])}>
-                <Icon className="h-6 w-6" />
-            </div>
-        </div>
-    );
-}
 
 function HistoryStatMini({ label, value, color }: { label: string; value: number; color: string }) {
     const colors: Record<string, string> = {

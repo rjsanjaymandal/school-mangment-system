@@ -8,6 +8,7 @@ import { Users, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ERPCard } from "@/components/ui/erp-card";
 import Link from "next/link";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
 export default async function StudentsPage() {
   const supabase = await createClient();
@@ -19,40 +20,32 @@ export default async function StudentsPage() {
   ]);
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      {/* Page Title with Action */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-emerald-50 rounded-md">
-            <Users className="h-6 w-6 text-emerald-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Students</h1>
-            <p className="text-sm text-slate-500">{students?.length || 0} total records</p>
-          </div>
-        </div>
-        <Link href="/students/enroll">
-          <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
-            <UserPlus className="h-4 w-4" />
-            Enroll New Student
-          </Button>
-        </Link>
-      </div>
-
-      {/* Student List Card */}
-      <ERPCard
-        title="Student Directory"
-        description="Manage student records and academic profiles"
-        icon={<Users className="h-5 w-5" />}
+    <div className="p-6 space-y-8 animate-in fade-in duration-700">
+      {/* Unified Page Header */}
+      <UnifiedPageHeader 
+        title="Students"
+        subtitle={`${students?.length || 0} total records registered`}
+        icon={Users}
         color="emerald"
-      >
+        actions={
+          <Link href="/students/enroll">
+            <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
+              <UserPlus className="h-4 w-4" />
+              Enroll New Student
+            </Button>
+          </Link>
+        }
+      />
+
+      {/* Student List Component - Pass classes and year */}
+      <div className="animate-in slide-in-from-bottom-4 duration-700 delay-150">
         <StudentList 
           initialData={students || []} 
           classes={classes || []}
           currentAcademicYearId={currentAcademicYear?.id}
           userRole={role} 
         />
-      </ERPCard>
+      </div>
     </div>
   );
 }
