@@ -250,7 +250,7 @@ export default function ActivitiesDashboard({
                 )}
             </div>
 
-            {/* --- Analytics Layer: Institutional Activity Intelligence --- */}
+            {/* --- Analytics Layer: Activity Analytics --- */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1 w-full relative z-10 mt-10">
                 <div className="md:col-span-8 bg-card border border-border p-10 rounded-xl relative overflow-hidden group">
                     <div className="relative z-10 h-full flex flex-col">
@@ -260,7 +260,7 @@ export default function ActivitiesDashboard({
                                     Participation <span className="text-primary italic">Matrix</span>
                                 </h3>
                                 <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic flex items-center gap-2">
-                                    Temporal Institutional Engagement Flow
+                                    Engagement Over Time
                                 </p>
                             </div>
                             <ActivityIcon className="h-6 w-6 text-primary opacity-20 group-hover:opacity-100 transition-all" />
@@ -302,7 +302,7 @@ export default function ActivitiesDashboard({
                         <h3 className="text-2xl font-black italic uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
                             House <span className="text-primary tracking-normal not-italic px-1">/</span> Performance
                         </h3>
-                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Spectral Competency distribution</p>
+                        <p className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-foreground/30 mt-3 italic text-center">Competency Distribution</p>
                     </div>
                     <div className="h-[280px] relative z-10">
                         <ResponsiveContainer width="100%" height="100%">

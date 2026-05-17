@@ -127,7 +127,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                             </div>
                         </ERPCard>
 
-                        {/* Analytic Dossier */}
+                        {/* Analytics */}
                         <div className="lg:col-span-3 space-y-8">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <DashboardStatCard 

@@ -309,7 +309,7 @@ export function PayrollDashboard({
                 <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform opacity-30" />
               </Button>
               <Button className="w-full h-14 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-between px-6 rounded-2xl transition-all group/btn">
-                <span>Export Tax Ledger</span>
+                <span>Export Tax Report</span>
                 <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform opacity-30" />
               </Button>
             </div>

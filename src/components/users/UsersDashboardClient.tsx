@@ -64,7 +64,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
     return (
         <div className="space-y-12 animate-in fade-in transition-all duration-1000 relative reveal-1">
             
-            {/* Header Architecture */}
+            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-primary/10 pb-12 relative z-10">
                 <div className="flex items-center gap-x-8">
                     <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-sm group hover:bg-primary hover:text-primary-foreground transition-all duration-300 emerald-glow-sm">
@@ -135,7 +135,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                 </div>
             </div>
 
-            {/* Registry Surface */}
+            {/* User List */}
             <div className="space-y-6 reveal-3">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-6 border border-border bg-card/50 rounded-lg">
                     <h3 className="text-lg font-semibold text-foreground flex items-center gap-x-3">
@@ -247,7 +247,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                 </div>
             </div>
             
-            {/* System Status Node */}
+            {/* Security Section */}
             <div className="p-8 rounded-sm border border-border bg-card/40 backdrop-blur-sm relative overflow-hidden group reveal-3">
                 <div className="absolute inset-0 bg-primary/5 opacity-50" />
                 <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">

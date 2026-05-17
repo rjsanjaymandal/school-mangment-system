@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
   Users,
@@ -28,6 +29,9 @@ import {
   History,
   IndianRupee,
   BookMarked,
+  ArrowRight,
+  Sparkles,
+  Search
 } from "lucide-react";
 
 interface NavItem {
@@ -36,6 +40,7 @@ interface NavItem {
   icon: any;
   roles?: string[];
   description?: string;
+  isNew?: boolean;
 }
 
 interface NavGroup {
@@ -48,82 +53,81 @@ const navigation: NavGroup[] = [
   {
     group: "Dashboard",
     items: [
-      { name: "Home", href: "/", icon: LayoutDashboard, description: "Main dashboard" },
-      { name: "Teacher Dashboard", href: "/teacher/dashboard", icon: Users, roles: ["teacher"], description: "Teacher's personal dashboard" },
+      { name: "Main Dashboard", href: "/", icon: LayoutDashboard, description: "Institutional overview and stats" },
+      { name: "Teacher Dashboard", href: "/teacher/dashboard", icon: Users, roles: ["teacher"], description: "Manage your classes and students" },
     ],
   },
   {
     group: "Students",
     items: [
-      { name: "Students", href: "/students", icon: GraduationCap, description: "Manage student profiles" },
-      { name: "Enroll New", href: "/students/enroll", icon: GraduationCap, description: "Add new student" },
-      { name: "Attendance", href: "/students/attendance", icon: ClipboardCheck, description: "Track daily attendance" },
-      { name: "Documents", href: "/students/documents", icon: FileText, description: "Student documents" },
-      { name: "Conduct", href: "/conduct", icon: ShieldCheck, description: "Student behavior records" },
-      { name: "Health", href: "/health", icon: Stethoscope, description: "Health profiles & medical" },
+      { name: "Student List", href: "/students", icon: GraduationCap, description: "View and manage student profiles" },
+      { name: "Enroll Student", href: "/students/enroll", icon: UserSquare2, description: "Register new students" },
+      { name: "Attendance", href: "/students/attendance", icon: ClipboardCheck, description: "Track student daily attendance" },
+      { name: "Documents", href: "/students/documents", icon: FileText, description: "Manage student certificates and files" },
+      { name: "Behavior", href: "/conduct", icon: ShieldCheck, description: "Track student conduct and discipline" },
+      { name: "Health", href: "/health", icon: Stethoscope, description: "Student health records and medical logs", isNew: true },
     ],
   },
   {
-    group: "Staff",
+    group: "Staff & HR",
     roles: ["admin", "teacher"],
     items: [
-      { name: "Staff Directory", href: "/hr/directory", icon: UserSquare2, roles: ["admin"], description: "All staff members" },
-      { name: "Teachers", href: "/teachers", icon: Users, roles: ["admin"], description: "Teacher list" },
-      { name: "Add Staff", href: "/hr/add-staff", icon: UserSquare2, roles: ["admin"], description: "Add new staff" },
-      { name: "Role & Permissions", href: "/hr/roles", icon: ShieldCheck, roles: ["admin"], description: "Manage roles" },
-      { name: "Staff Attendance", href: "/hr/attendance", icon: ClipboardCheck, roles: ["admin"], description: "Staff attendance" },
-      { name: "Download Center", href: "/hr/download-center", icon: Package, roles: ["admin"], description: "ID cards, certificates" },
+      { name: "Staff List", href: "/hr/directory", icon: UserSquare2, roles: ["admin"], description: "Directory of all school staff" },
+      { name: "Add Staff", href: "/hr/add-staff", icon: UserSquare2, roles: ["admin"], description: "Register new staff members" },
+      { name: "Roles", href: "/hr/roles", icon: ShieldCheck, roles: ["admin"], description: "Manage user roles and permissions" },
+      { name: "Staff Attendance", href: "/hr/attendance", icon: ClipboardCheck, roles: ["admin"], description: "Track staff attendance" },
+      { name: "ID Cards", href: "/hr/download-center", icon: Package, roles: ["admin"], description: "Generate ID cards and certificates" },
     ],
   },
   {
     group: "Academics",
     items: [
-      { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"], description: "Class sections" },
-      { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"], description: "Curriculum" },
-      { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"], description: "Exam schedules" },
-      { name: "Online Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"], description: "Online exam portal" },
-      { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck, description: "Student marks" },
-      { name: "Timetable", href: "/timetable", icon: Calendar, description: "School schedule" },
-      { name: "Certificates", href: "/certificates", icon: Award, description: "Generate certificates" },
+      { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"], description: "Manage class sections and levels" },
+      { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"], description: "Manage school curriculum" },
+      { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"], description: "Manage exam schedules and results" },
+      { name: "Online Exams", href: "/exams/online", icon: Globe, roles: ["admin", "teacher"], description: "Online examination portal" },
+      { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck, description: "Student marks and progress reports" },
+      { name: "Timetable", href: "/timetable", icon: Calendar, description: "School schedule and time management" },
+      { name: "Certificates", href: "/certificates", icon: Award, description: "Generate student certificates" },
     ],
   },
   {
     group: "Finance",
     items: [
-      { name: "Dashboard", href: "/finance/dashboard", icon: IndianRupee, description: "Financial overview" },
-      { name: "Collect Fees", href: "/finance/collect", icon: IndianRupee, description: "Fee collection" },
-      { name: "Fee Structure", href: "/finance/structure", icon: IndianRupee, description: "Manage fee types" },
-      { name: "Print Slip", href: "/finance/slips", icon: FileText, description: "Print fee receipts" },
-      { name: "Daily Report", href: "/finance/daily", icon: BarChart3, description: "Daily collection" },
-      { name: "Accounts", href: "/finance/day-book", icon: BookMarked, roles: ["admin"], description: "Day book" },
-      { name: "Payroll", href: "/finance/process-salary", icon: IndianRupee, roles: ["admin"], description: "Process salary" },
+      { name: "Finance Dashboard", href: "/finance/dashboard", icon: IndianRupee, description: "Financial reports and overview" },
+      { name: "Collect Fees", href: "/finance/collect", icon: IndianRupee, description: "Process student fee payments" },
+      { name: "Fee Structure", href: "/finance/structure", icon: Settings, description: "Define school fee types" },
+      { name: "Print Slips", href: "/finance/slips", icon: FileText, description: "Generate and print fee receipts" },
+      { name: "Daily Report", href: "/finance/daily", icon: BarChart3, description: "Daily fee collection summary" },
+      { name: "Day Book", href: "/finance/day-book", icon: BookMarked, roles: ["admin"], description: "Daily financial records" },
+      { name: "Payroll", href: "/finance/process-salary", icon: IndianRupee, roles: ["admin"], description: "Manage and process staff salaries" },
     ],
   },
   {
     group: "Operations",
     items: [
-      { name: "Library", href: "/library", icon: Library, description: "Books & issues" },
-      { name: "Transport", href: "/transport", icon: Bus, description: "Bus routes" },
-      { name: "Messages", href: "/messages", icon: MessageSquare, description: "Announcements" },
-      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Inventory management" },
+      { name: "Library", href: "/library", icon: Library, description: "Track books and student issues" },
+      { name: "Transport", href: "/transport", icon: Bus, description: "Manage bus routes and fleets" },
+      { name: "Messages", href: "/messages", icon: MessageSquare, description: "Send school announcements" },
+      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"], description: "Manage school assets and stock" },
     ],
   },
   {
     group: "Reports",
     items: [
-      { name: "Analytics", href: "/analytics", icon: BarChart3, description: "Performance analytics" },
-      { name: "Reports", href: "/reports", icon: FileBarChart, roles: ["admin"], description: "Generate reports" },
+      { name: "Analytics", href: "/analytics", icon: BarChart3, description: "View school performance charts" },
+      { name: "System Reports", href: "/reports", icon: FileBarChart, roles: ["admin"], description: "Download school data reports" },
     ],
   },
   {
-    group: "System",
+    group: "System Settings",
     roles: ["admin"],
     items: [
-      { name: "Notifications", href: "/notifications", icon: MessageSquare, description: "System notifications" },
-      { name: "Users", href: "/users", icon: UserCheck, description: "User accounts" },
-      { name: "Settings", href: "/settings", icon: Settings, description: "School configuration" },
-      { name: "Enterprise", href: "/settings/enterprise", icon: Trophy, description: "Enterprise features" },
-      { name: "Audit Logs", href: "/audit", icon: History, description: "System activity" },
+      { name: "Notifications", href: "/notifications", icon: MessageSquare, description: "Manage system notifications" },
+      { name: "User Accounts", href: "/users", icon: UserCheck, description: "Manage system user accounts" },
+      { name: "General Settings", href: "/settings", icon: Settings, description: "General school configuration" },
+      { name: "Enterprise", href: "/settings/enterprise", icon: Trophy, description: "Manage enterprise features" },
+      { name: "Audit Logs", href: "/audit", icon: History, description: "Track system activity and changes" },
     ],
   },
 ];
@@ -150,50 +154,75 @@ export function Launchpad({
 
   if (filteredNavigation.length === 0 && searchQuery) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-300">
-        <div className="bg-slate-100 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-6 shadow-sm">
-          <LayoutDashboard className="h-12 w-12 text-slate-400 dark:text-slate-500" />
+      <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in zoom-in duration-500">
+        <div className="h-20 w-20 bg-slate-100 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 mb-8 flex items-center justify-center shadow-sm">
+          <Search className="h-8 w-8 text-slate-300" />
         </div>
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No modules found</h3>
-        <p className="text-base text-slate-500 dark:text-slate-400 max-w-sm">We couldn't find any modules matching "{searchQuery}". Try a different search term.</p>
+        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Intelligence Failure</h3>
+        <p className="text-base text-slate-500 dark:text-slate-400 max-w-sm font-medium">We couldn't locate any modules matching your query. Please refine your parameters.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-12 pb-12">
-      {filteredNavigation.map((group) => (
-        <div key={group.group} className="space-y-6 animate-in slide-in-from-bottom-4 fade-in duration-700 fill-mode-both" style={{ animationDelay: `${filteredNavigation.indexOf(group) * 100}ms` }}>
-          <div className="flex items-center gap-4">
-            <h3 className="text-sm font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase bg-white dark:bg-slate-900 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm">
-              {group.group}
-            </h3>
+    <div className="space-y-16 pb-20">
+      {filteredNavigation.map((group, groupIdx) => (
+        <div 
+          key={group.group} 
+          className="space-y-8 animate-in slide-in-from-bottom-8 fade-in duration-1000 fill-mode-both"
+          style={{ animationDelay: `${groupIdx * 150}ms` }}
+        >
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col">
+                <h3 className="text-[10px] font-black tracking-[0.25em] text-slate-400 dark:text-slate-500 uppercase leading-none mb-2">
+                    Module Cluster
+                </h3>
+                <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+                    {group.group}
+                </h2>
+            </div>
             <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent" />
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-            {group.items.map((item) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {group.items.map((item, itemIdx) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex flex-col p-5 bg-white dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200/80 dark:border-slate-800/80 rounded-2xl hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgba(16,185,129,0.05)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+                className="group relative flex flex-col p-6 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/5 overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-emerald-500/0 to-emerald-500/5 dark:to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="flex flex-col gap-4 relative z-10">
-                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 group-hover:scale-110 shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 group-hover:ring-emerald-500">
-                    <item.icon className="h-6 w-6 stroke-[1.5]" />
+                {/* Background Sparkle Effect */}
+                <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-20 transition-opacity">
+                    <Sparkles className="h-20 w-20 text-emerald-500 -mr-10 -mt-10 rotate-12" />
+                </div>
+
+                <div className="flex flex-col gap-6 relative z-10">
+                  <div className="flex items-start justify-between">
+                    <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 group-hover:ring-emerald-500">
+                        <item.icon className="h-7 w-7 stroke-[1.5]" />
+                    </div>
+                    {item.isNew && (
+                        <Badge className="bg-emerald-500 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border-none shadow-lg shadow-emerald-500/20 animate-bounce">
+                            New Ops
+                        </Badge>
+                    )}
                   </div>
 
-                  <div className="space-y-1.5">
-                    <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                        <h3 className="font-black text-slate-900 dark:text-white text-base tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                            {item.name}
+                        </h3>
+                        <ArrowRight className="h-3 w-3 opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-emerald-500" />
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-bold tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">
                       {item.description}
                     </p>
                   </div>
                 </div>
+                
+                {/* Decorative Bottom Bar */}
+                <div className="absolute bottom-0 left-0 h-1 w-0 bg-emerald-500 group-hover:w-full transition-all duration-700 delay-100" />
               </Link>
             ))}
           </div>
@@ -201,4 +230,4 @@ export function Launchpad({
       ))}
     </div>
   );
-}
+}

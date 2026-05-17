@@ -121,36 +121,36 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
 
     return (
         <div className="space-y-8">
-            {/* Stats Sentinel */}
+            {/* Stats Overview */}
             <div className="grid gap-6 md:grid-cols-3">
                 <DashboardStatCard 
                     title="Total Medical Visits"
                     value={infirmaryLogs.length}
                     icon={Activity}
                     color="blue"
-                    description="Total cumulative logs"
+                    description="Total recorded visits"
                 />
                 <DashboardStatCard 
                     title="Under Observation"
                     value={activeVisits.length}
                     icon={ShieldAlert}
                     color="rose"
-                    description="Current active infirmary cases"
+                    description="Current active cases"
                 />
                 <DashboardStatCard 
                     title="Health Profiles"
                     value={healthProfiles.length}
                     icon={HeartPulse}
                     color="emerald"
-                    description="Preserved medical dossiers"
+                    description="Student medical records"
                 />
             </div>
 
             {/* Diagnostics Overview */}
             <div className="grid md:grid-cols-12 gap-8">
                 <ERPCard 
-                    title="Temporal Analytics" 
-                    description="Visits frequency over the academic cycle"
+                    title="Visit Trends" 
+                    description="Visits frequency over the academic year"
                     accentColor="indigo" 
                     icon={<History className="h-4 w-4" />}
                     className="md:col-span-8 glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -217,10 +217,10 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                 </ERPCard>
             </div>
 
-            {/* Infirmary Ledger */}
+            {/* Infirmary Records */}
             <ERPCard 
-                title="Infirmary Transaction Ledger" 
-                description="Live medical visit synchronization"
+                title="Recent Medical Visits" 
+                description="Latest student visits to the infirmary"
                 accentColor="rose" 
                 icon={<HeartPulse className="h-4 w-4" />}
                 className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
@@ -229,10 +229,10 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-slate-50/50 border-y border-slate-100">
-                                <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Student Identity</th>
+                                <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Student</th>
                                 <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Reason / Diagnosis</th>
-                                <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Telemetry</th>
-                                <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Status Sentinel</th>
+                                <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Vitals</th>
+                                <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
                                 <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Actions</th>
                             </tr>
                         </thead>

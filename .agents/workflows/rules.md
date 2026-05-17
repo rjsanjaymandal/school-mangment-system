@@ -11,6 +11,7 @@ The AI must follow these rules when generating code to guarantee robust, senior-
 - **Relative & Absolute Imports**: Prefer absolute imports (`@/components/...`) over long relative paths.
 - **DRY Principle**: Extract shared UI into components and shared logic into utility functions. Only write a piece of complex logic once.
 - **Clean Naming**: Variables and functions must have descriptive, verb-based names (e.g., `fetchRecentStudents`, `handleFeePayment`).
+- **Simple UI Language**: NEVER use complex, technical, or "enterprise" jargon in user-facing UI (e.g., avoid "Sentinel", "Telemetry", "Dossier"). Use direct, plain English (e.g., "Users", "Analytics", "Records").
 
 ## Performance & Rendering
 

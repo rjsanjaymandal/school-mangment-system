@@ -120,9 +120,9 @@ export function GlobalSearch() {
             <SearchItem 
               icon={User} 
               title="Staff Directory" 
-              subtitle="View and manage teachers and administrators" 
+              subtitle="View and manage school staff and faculty" 
               color="indigo"
-              onSelect={() => runCommand(() => router.push("/teachers"))}
+              onSelect={() => runCommand(() => router.push("/hr/directory"))}
             />
           </CommandGroup>
 

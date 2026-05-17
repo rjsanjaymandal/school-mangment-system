@@ -34,7 +34,7 @@ export function ImpersonationBanner({
         </div>
         <div className="flex flex-col">
           <p className="text-[10px] font-black uppercase tracking-widest text-white/50 leading-none italic">
-            Shadow Mode Active
+            Impersonation Active
           </p>
           <div className="flex items-center gap-x-2 mt-0.5">
             <span className="text-sm font-bold tracking-tight">

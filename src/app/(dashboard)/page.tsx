@@ -16,19 +16,10 @@ export default async function DashboardPage() {
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
       {/* Unified Page Header */}
       <UnifiedPageHeader 
-        title="Institutional Dashboard"
+        title="Main Dashboard"
         subtitle="Daily Overview of Students, Staff & Operations"
         icon={Activity}
         color="emerald"
-        actions={
-          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">System Operational</span>
-          </div>
-        }
       />
 
       {/* Unified Stats Grid */}

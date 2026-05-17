@@ -32,6 +32,11 @@ This document acts as the core "Skill" for AI agents working on the EduFox proje
 
 The EduFox system relies on a **Premium Glassmorphic** layout. When designing new components (`Dashboard`, `Forms`, etc.), you MUST follow these patterns:
 
+### Simple Naming Conventions (Strict)
+- **Use Simple Language**: Avoid complex, technical, or overly academic wording (e.g., avoid "Institutional Ledger", "Telemetry", "Sentinel", "Dossier", "System Operational").
+- **Clear & Direct UI**: Use direct, everyday terminology (e.g., use "Staff Records", "Analytics", "Users", "Visit Trends", "Security & Logs").
+- **No Complex Jargon**: Never use jargon where a simple word suffices. The dashboard must be accessible to standard administrative users without requiring technical knowledge.
+
 ### Master Layout & Animation
 - **Wrapper**: `div className="space-y-8 animate-in fade-in duration-700"`
 

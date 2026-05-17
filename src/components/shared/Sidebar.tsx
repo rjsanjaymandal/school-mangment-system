@@ -91,7 +91,7 @@ const navigation: NavGroup[] = [
           { name: "Attendance", href: "/hr/attendance" },
         ]
       },
-      { name: "Faculty Desk", href: "/teacher/dashboard", icon: Users, roles: ["teacher"] },
+      { name: "Teacher Dashboard", href: "/teacher/dashboard", icon: Users, roles: ["teacher"] },
     ],
   },
   {
@@ -101,7 +101,7 @@ const navigation: NavGroup[] = [
       { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"] },
       { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"] },
       { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"] },
-      { name: "Digital Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"] },
+      { name: "Online Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"] },
       { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck },
       { name: "Timetable", href: "/timetable", icon: Calendar },
       { name: "Reports", href: "/reports", icon: BarChart3 },

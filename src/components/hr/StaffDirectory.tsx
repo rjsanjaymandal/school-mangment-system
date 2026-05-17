@@ -124,7 +124,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
             {viewMode === "table" ? (
                 <ERPCard
                     title="Staff List"
-                    description="Complete faculty and employee ledger"
+                    description="Complete staff and employee records"
                     icon={<Users className="h-5 w-5" />}
                     color="emerald"
                     className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"

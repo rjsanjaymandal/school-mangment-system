@@ -18,9 +18,9 @@ export function ImpersonationButton({ userId, userName }: ImpersonationButtonPro
         setIsLoading(true);
         try {
             await startImpersonation(userId);
-            toast.success(`Shadowing ${userName}`);
+            toast.success(`Logged in as ${userName}`);
         } catch (error: any) {
-            toast.error(error.message || "Failed to start shadow session");
+            toast.error(error.message || "Failed to log in as user");
         } finally {
             setIsLoading(false);
         }
@@ -39,7 +39,7 @@ export function ImpersonationButton({ userId, userName }: ImpersonationButtonPro
             ) : (
                 <Eye className="h-3.5 w-3.5" />
             )}
-            {isLoading ? "Joining..." : "Shadow"}
+            {isLoading ? "Joining..." : "Log In As"}
         </Button>
     );
 }
