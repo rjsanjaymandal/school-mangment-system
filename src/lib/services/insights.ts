@@ -2,12 +2,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { handleServiceError } from "../error-handler";
 
 /**
- * Oracle Service (Intelligence Layer)
+ * Insights Service
  * Provides predictive analytics for student performance and institutional health using real system telemetry.
  */
-export const OracleService = {
+export const InsightsService = {
   /**
-   * Generates high-level system metrics to power the Oracle Dashboard.
+   * Generates high-level system metrics to power the Insights Dashboard.
    */
   async getSystemMetrics() {
     try {
@@ -48,33 +48,80 @@ export const OracleService = {
         metrics: [
           {
             id: "1",
-            title: "Attrition Risk (Current)",
+            title: "Student Risk",
             value: `${studentAttritionRisk.toFixed(1)}%`,
-            status: studentAttritionRisk > 3 ? "Waitlist" : "Stable",
+            status: studentAttritionRisk > 3 ? "High Risk" : "Stable",
             trend: studentAttritionRisk > 2 ? "up" : "down",
             confidence: "94%",
           },
           {
             id: "2",
-            title: "Recorded Revenue",
+            title: "Total Revenue",
             value: `₹${(totalRevenue / 1000).toFixed(1)}K`,
-            status: totalRevenue > 1000 ? "Bullish" : "Stable",
+            status: totalRevenue > 1000 ? "Active" : "Stable",
             trend: "up",
             confidence: "88%",
           },
           {
             id: "3",
-            title: "Faculty Load Balance",
+            title: "Teacher Workload",
             value: `${Math.min(100, Math.max(0, facultyLoad)).toFixed(0)}%`,
-            status: facultyLoad > 95 ? "Overloaded" : facultyLoad < 60 ? "Underutilized" : "Optimal",
+            status: facultyLoad > 95 ? "High" : facultyLoad < 60 ? "Low" : "Optimal",
             trend: "stable",
             confidence: "91%",
           },
         ]
       };
     } catch (error) {
-      console.error("Oracle getSystemMetrics error:", error);
+      console.error("Insights getSystemMetrics error:", error);
       return handleServiceError(error);
+    }
+  },
+
+  /**
+   * Identifies the top at-risk students based on dynamic dropout risk calculations.
+   */
+  async getAtRiskStudents() {
+    try {
+      const supabase = createAdminClient();
+      
+      const { data: students, error } = await supabase
+        .from("students")
+        .select(`
+          id,
+          roll_number,
+          profile:profiles (
+            full_name
+          ),
+          class:classes (
+            name
+          )
+        `)
+        .limit(10);
+
+      if (error) {
+        console.error("Error fetching students for risk profiling:", error.message || error, error.details || "", error.hint || "");
+        return [];
+      }
+
+      const profiled = await Promise.all((students || []).map(async (s: any) => {
+        const risk = await this.predictDropoutRisk(s.id);
+        return {
+          id: s.id,
+          name: s.profile?.full_name || "Student Record",
+          rollNumber: s.roll_number || "N/A",
+          className: s.class ? s.class.name : "Unassigned",
+          riskScore: (risk as any).risk_score || 0,
+          status: (risk as any).status || "Stable",
+          recommendation: (risk as any).recommendation || "Standard monitoring"
+        };
+      }));
+
+      // Sort by highest risk score first
+      return profiled.sort((a, b) => b.riskScore - a.riskScore).slice(0, 5);
+    } catch (e) {
+      console.error("Insights getAtRiskStudents error:", e);
+      return [];
     }
   },
 
