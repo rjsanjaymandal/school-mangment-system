@@ -251,25 +251,6 @@ export default function StaffAttendancePage() {
         </div>
 
         <div className="space-y-8">
-          {/* Substitution Intelligence */}
-          <div className="bg-slate-900 rounded-3xl p-8 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform">
-                <ShieldCheck className="h-24 w-24 text-white" />
-            </div>
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6 flex items-center gap-3">
-                <MapPin className="h-4 w-4 text-emerald-500" />
-                Intelligence
-            </h3>
-            <div className="relative z-10 space-y-4">
-              <p className="text-lg font-black text-white tracking-tight leading-tight">Auto-Substitution Active</p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase leading-relaxed tracking-wider">
-                When a teacher is marked absent, the system automatically assigns matching proxies to maintain timetable integrity.
-              </p>
-              <div className="pt-4">
-                <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest">System Monitoring</Badge>
-              </div>
-            </div>
-          </div>
 
           <div className="glass futuristic-card p-8 rounded-3xl border-none shadow-xl">
              <div className="flex items-center gap-3 mb-6">
