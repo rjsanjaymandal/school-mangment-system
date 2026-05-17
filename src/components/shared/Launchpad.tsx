@@ -158,8 +158,8 @@ export function Launchpad({
         <div className="h-20 w-20 bg-slate-100 dark:bg-slate-900/50 rounded-3xl border border-slate-200 dark:border-slate-800 mb-8 flex items-center justify-center shadow-sm">
           <Search className="h-8 w-8 text-slate-300" />
         </div>
-        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Intelligence Failure</h3>
-        <p className="text-base text-slate-500 dark:text-slate-400 max-w-sm font-medium">We couldn't locate any modules matching your query. Please refine your parameters.</p>
+        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">No Results Found</h3>
+        <p className="text-base text-slate-500 dark:text-slate-400 max-w-sm font-medium">We couldn't find anything matching your search. Please try different keywords.</p>
       </div>
     );
   }
@@ -175,7 +175,7 @@ export function Launchpad({
           <div className="flex items-center gap-6">
             <div className="flex flex-col">
                 <h3 className="text-[10px] font-black tracking-[0.25em] text-slate-400 dark:text-slate-500 uppercase leading-none mb-2">
-                    Module Cluster
+                    Category
                 </h3>
                 <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
                     {group.group}
@@ -203,7 +203,7 @@ export function Launchpad({
                     </div>
                     {item.isNew && (
                         <Badge className="bg-emerald-500 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border-none shadow-lg shadow-emerald-500/20 animate-bounce">
-                            New Ops
+                            New
                         </Badge>
                     )}
                   </div>

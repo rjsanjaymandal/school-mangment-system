@@ -166,104 +166,87 @@ export default function StaffAttendancePage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <ERPCard 
-            title="Attendance Registry" 
-            description={`Daily status log for ${new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`} 
-            color="emerald" 
-            icon={<CheckCircle className="h-5 w-5" />}
-            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
-          >
-            {loading ? (
-              <div className="p-20 text-center flex flex-col items-center">
-                <div className="h-10 w-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin mb-4" />
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Scanning staff database...</p>
-              </div>
-            ) : staffList.length === 0 ? (
-              <div className="p-20 text-center flex flex-col items-center">
-                <Users className="h-12 w-12 text-slate-200 mb-4" />
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No active faculty found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
-                {staffList.map((staff: any) => {
-                  const currentStatus = currentDayAttendance[staff.id];
-                  return (
-                    <div 
-                      key={staff.id} 
-                      className="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-emerald-500/30 transition-all shadow-sm hover:shadow-md"
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="h-11 w-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-emerald-500/20 group-hover:rotate-3 transition-transform">
-                          {staff.first_name[0]}{staff.last_name?.[0]}
-                        </div>
-                        <div>
-                          <p className="font-bold text-slate-900 tracking-tight text-sm">{staff.first_name} {staff.last_name}</p>
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-0.5">{staff.designations?.name || "Teacher"}</p>
-                        </div>
+      <div className="space-y-8">
+        <ERPCard 
+          title="Attendance Registry" 
+          description={`Daily status log for ${new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`} 
+          color="emerald" 
+          icon={<CheckCircle className="h-5 w-5" />}
+          className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+        >
+          {loading ? (
+            <div className="p-20 text-center flex flex-col items-center">
+              <div className="h-10 w-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin mb-4" />
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Scanning staff database...</p>
+            </div>
+          ) : staffList.length === 0 ? (
+            <div className="p-20 text-center flex flex-col items-center">
+              <Users className="h-12 w-12 text-slate-200 mb-4" />
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No active faculty found</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+              {staffList.map((staff: any) => {
+                const currentStatus = currentDayAttendance[staff.id];
+                return (
+                  <div 
+                    key={staff.id} 
+                    className="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-emerald-500/30 transition-all shadow-sm hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-11 w-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-emerald-500/20 group-hover:rotate-3 transition-transform">
+                        {staff.first_name[0]}{staff.last_name?.[0]}
                       </div>
+                      <div>
+                        <p className="font-bold text-slate-900 tracking-tight text-sm">{staff.first_name} {staff.last_name}</p>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-0.5">{staff.designations?.name || "Teacher"}</p>
+                      </div>
+                    </div>
 
-                      {currentStatus ? (
-                        <div className="flex gap-2">
-                          <div className={cn(
-                            "flex-1 px-3 py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest border shadow-sm",
-                            STATUS_OPTIONS.find(s => s.value === currentStatus)?.color || "bg-slate-100 text-slate-500 border-slate-200"
-                          )}>
-                            {STATUS_OPTIONS.find(s => s.value === currentStatus)?.label || currentStatus}
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-10 w-10 rounded-xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
-                            onClick={() => markAttendance(staff.id, "")}
+                    {currentStatus ? (
+                      <div className="flex gap-2">
+                        <div className={cn(
+                          "flex-1 px-3 py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest border shadow-sm",
+                          STATUS_OPTIONS.find(s => s.value === currentStatus)?.color || "bg-slate-100 text-slate-500 border-slate-200"
+                        )}>
+                          {STATUS_OPTIONS.find(s => s.value === currentStatus)?.label || currentStatus}
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-10 w-10 rounded-xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                          onClick={() => markAttendance(staff.id, "")}
+                          disabled={saving}
+                        >
+                          <XCircle className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {STATUS_OPTIONS.slice(0, 3).map((option) => (
+                          <Button
+                            key={option.value}
+                            variant="outline"
+                            className={cn(
+                              "flex-1 h-10 px-0 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-slate-100",
+                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200" :
+                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" :
+                              "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200"
+                            )}
+                            onClick={() => markAttendance(staff.id, option.value)}
                             disabled={saving}
                           >
-                            <XCircle className="h-4 w-4" />
+                            {option.label}
                           </Button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-wrap gap-2">
-                          {STATUS_OPTIONS.slice(0, 3).map((option) => (
-                            <Button
-                              key={option.value}
-                              variant="outline"
-                              className={cn(
-                                "flex-1 h-10 px-0 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-slate-100",
-                                option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200" :
-                                option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" :
-                                "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200"
-                              )}
-                              onClick={() => markAttendance(staff.id, option.value)}
-                              disabled={saving}
-                            >
-                              {option.label}
-                            </Button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </ERPCard>
-        </div>
-
-        <div className="space-y-8">
-
-          <div className="glass futuristic-card p-8 rounded-3xl border-none shadow-xl">
-             <div className="flex items-center gap-3 mb-6">
-                <div className="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
-                    <Activity className="h-5 w-5" />
-                </div>
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quick Insight</h3>
-             </div>
-             <p className="text-sm font-bold text-slate-900 leading-relaxed">
-                Faculty attendance is currently at <span className="text-emerald-600">92%</span> for this week.
-             </p>
-          </div>
-        </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </ERPCard>
       </div>
     </div>
   );
