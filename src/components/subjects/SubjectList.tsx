@@ -144,7 +144,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
+        <DialogContent className="sm:max-w-2xl p-0 overflow-y-auto max-h-[90vh] rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
           <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -156,7 +156,7 @@ export function SubjectList({ initialData }: SubjectListProps) {
             </DialogHeader>
           </div>
           
-          <div className="p-8 bg-white/30 dark:bg-slate-900/30">
+          <div className="p-6 bg-white/30 dark:bg-slate-900/30">
             <SubjectForm
               initialData={editingSubject}
               onSuccess={() => setIsOpen(false)}

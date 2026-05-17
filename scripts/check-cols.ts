@@ -3,7 +3,7 @@ import { Client } from "pg";
 async function checkCols() {
   const client = new Client({
     user: "postgres",
-    password: "Ev?9ZLqUfi@PJM&",
+    password: "njgeagyQ2tIfVpF9",
     host: "db.syppmhoshwxzhjpqzvaz.supabase.co",
     port: 5432,
     database: "postgres",
@@ -15,7 +15,7 @@ async function checkCols() {
     const res = await client.query(`
         SELECT column_name, data_type 
         FROM information_schema.columns 
-        WHERE table_name = 'staff_attendance'
+        WHERE table_name = 'staff'
         AND table_schema = 'public';
     `);
     console.log(res.rows);

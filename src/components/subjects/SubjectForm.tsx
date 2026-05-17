@@ -71,7 +71,7 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-10 bg-card relative">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
           <div className="col-span-1">
             <FormField<SubjectFormValues>
