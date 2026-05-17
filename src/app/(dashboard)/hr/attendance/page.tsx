@@ -166,47 +166,58 @@ export default function StaffAttendancePage() {
         />
       </div>
 
-      <div className="space-y-8">
-        <ERPCard 
-          title="Attendance Registry" 
-          description={`Daily status log for ${new Date(selectedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`} 
-          color="emerald" 
-          icon={<CheckCircle className="h-5 w-5" />}
-          className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
-        >
-          {loading ? (
-            <div className="p-20 text-center flex flex-col items-center">
-              <div className="h-10 w-10 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin mb-4" />
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Scanning staff database...</p>
+      <div className="space-y-8 pb-20">
+        <div className="flex items-center gap-6 mb-8">
+            <div className="flex flex-col">
+                <h3 className="text-[10px] font-black tracking-[0.25em] text-slate-400 dark:text-slate-500 uppercase leading-none mb-2">
+                    Daily Roster
+                </h3>
+                <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+                    Attendance Registry
+                </h2>
             </div>
-          ) : staffList.length === 0 ? (
-            <div className="p-20 text-center flex flex-col items-center">
-              <Users className="h-12 w-12 text-slate-200 mb-4" />
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No active faculty found</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-              {staffList.map((staff: any) => {
-                const currentStatus = currentDayAttendance[staff.id];
-                return (
-                  <div 
-                    key={staff.id} 
-                    className="group bg-white rounded-2xl border border-slate-100 p-5 hover:border-emerald-500/30 transition-all shadow-sm hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="h-11 w-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-emerald-500/20 group-hover:rotate-3 transition-transform">
-                        {staff.first_name[0]}{staff.last_name?.[0]}
-                      </div>
-                      <div>
-                        <p className="font-bold text-slate-900 tracking-tight text-sm">{staff.first_name} {staff.last_name}</p>
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-0.5">{staff.designations?.name || "Teacher"}</p>
-                      </div>
-                    </div>
+            <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent" />
+        </div>
 
+        {loading ? (
+          <div className="p-24 text-center flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem]">
+            <div className="h-12 w-12 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin mb-6" />
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Scanning staff database...</p>
+          </div>
+        ) : staffList.length === 0 ? (
+          <div className="p-24 text-center flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem]">
+            <Users className="h-16 w-16 text-slate-200 dark:text-slate-700 mb-6" />
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No active faculty found</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {staffList.map((staff: any, idx: number) => {
+              const currentStatus = currentDayAttendance[staff.id];
+              return (
+                <div 
+                  key={staff.id} 
+                  className="group relative flex flex-col p-6 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/5 overflow-hidden animate-in slide-in-from-bottom-8 fade-in fill-mode-both"
+                  style={{ animationDelay: `${idx * 50}ms` }}
+                >
+                  <div className="flex items-center gap-4 mb-6 relative z-10">
+                    <div className="h-14 w-14 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 flex items-center justify-center font-black text-lg shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 group-hover:bg-emerald-500 group-hover:text-white group-hover:ring-emerald-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                      {staff.first_name[0]}{staff.last_name?.[0]}
+                    </div>
+                    <div>
+                      <h3 className="font-black text-slate-900 dark:text-white text-base tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        {staff.first_name} {staff.last_name}
+                      </h3>
+                      <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                        {staff.designations?.name || "Teacher"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="relative z-10 mt-auto">
                     {currentStatus ? (
                       <div className="flex gap-2">
                         <div className={cn(
-                          "flex-1 px-3 py-2 rounded-xl text-center text-[10px] font-black uppercase tracking-widest border shadow-sm",
+                          "flex-1 px-4 py-3 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all duration-500",
                           STATUS_OPTIONS.find(s => s.value === currentStatus)?.color || "bg-slate-100 text-slate-500 border-slate-200"
                         )}>
                           {STATUS_OPTIONS.find(s => s.value === currentStatus)?.label || currentStatus}
@@ -214,7 +225,7 @@ export default function StaffAttendancePage() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-10 w-10 rounded-xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                          className="h-[38px] w-[38px] rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
                           onClick={() => markAttendance(staff.id, "")}
                           disabled={saving}
                         >
@@ -228,10 +239,10 @@ export default function StaffAttendancePage() {
                             key={option.value}
                             variant="outline"
                             className={cn(
-                              "flex-1 h-10 px-0 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-slate-100",
-                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200" :
-                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" :
-                              "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200"
+                              "flex-1 h-10 px-0 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-slate-200/60 dark:border-slate-800",
+                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 dark:hover:bg-emerald-500/10 dark:hover:border-emerald-500/30" :
+                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-500/10 dark:hover:border-rose-500/30" :
+                              "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 dark:hover:bg-amber-500/10 dark:hover:border-amber-500/30"
                             )}
                             onClick={() => markAttendance(staff.id, option.value)}
                             disabled={saving}
@@ -242,11 +253,21 @@ export default function StaffAttendancePage() {
                       </div>
                     )}
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </ERPCard>
+                  
+                  {/* Decorative Bottom Bar */}
+                  <div className={cn(
+                    "absolute bottom-0 left-0 h-1 transition-all duration-700 delay-100",
+                    currentStatus ? "w-full" : "w-0 group-hover:w-full",
+                    currentStatus === "present" ? "bg-emerald-500" :
+                    currentStatus === "absent" ? "bg-rose-500" :
+                    currentStatus === "on_leave" ? "bg-amber-500" :
+                    "bg-slate-200"
+                  )} />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
