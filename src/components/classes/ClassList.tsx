@@ -45,6 +45,7 @@ import { deleteClass } from "@/app/actions/classes";
 import { addSubjectToClass, getClassSubjects, removeSubjectFromClass } from "@/app/actions/class-subjects";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 interface ClassListProps {
     initialData: Class[];
@@ -103,10 +104,10 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
     };
 
     const onDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to permanently delete this institutional node?")) return;
+        if (!confirm("Are you sure you want to permanently delete this class?")) return;
         const res = await deleteClass(id);
         if (res.success) {
-            toast.success("Institutional node purged successfully");
+            toast.success("Class deleted successfully");
             router.refresh();
             setData(data.filter(c => c.id !== id));
         } else {
@@ -155,144 +156,162 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
         <div className="space-y-6">
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                    { label: "Total Classes", value: data.length, icon: School, color: "bg-blue-100 text-blue-600", sub: "Active sections" },
-                    { label: "Total Capacity", value: totalCapacity, icon: Users, color: "bg-emerald-100 text-emerald-600", sub: "Allocated seats" },
-                    { label: "Allocated Rooms", value: uniqueRooms, icon: DoorOpen, color: "bg-indigo-100 text-indigo-600", sub: "Institutional space" },
-                ].map((stat, i) => (
-                    <Card key={i} className="border-l-4 border-l-emerald-500 shadow-sm p-6">
-                        <div className="flex items-center justify-between">
-                            <div className={`h-10 w-10 rounded-md ${stat.color} flex items-center justify-center`}>
-                                <stat.icon className="h-5 w-5" />
-                            </div>
-                            <p className="text-xs font-medium text-slate-500">
-                                {stat.label}
-                            </p>
-                        </div>
-                        <div className="mt-4">
-                            <p className="text-2xl font-bold text-slate-900">
-                                {stat.value}
-                            </p>
-                            <p className="text-xs text-slate-500 mt-1">
-                                {stat.sub}
-                            </p>
-                        </div>
-                    </Card>
-                ))}
+                <DashboardStatCard 
+                    title="Total Classes" 
+                    value={data.length} 
+                    icon={School} 
+                    color="blue" 
+                    description="Active sections" 
+                />
+                <DashboardStatCard 
+                    title="Total Capacity" 
+                    value={totalCapacity} 
+                    icon={Users} 
+                    color="emerald" 
+                    description="Total Seats" 
+                />
+                <DashboardStatCard 
+                    title="Allocated Rooms" 
+                    value={uniqueRooms} 
+                    icon={DoorOpen} 
+                    color="indigo" 
+                    description="Assigned Rooms" 
+                />
             </div>
 
             <div className="space-y-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="relative flex-1 w-full md:max-w-md">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                         <Input
                             placeholder="Search by class name or room..."
-                            className="h-10 pl-10 rounded-md"
+                            className="h-12 pl-12 rounded-[1.5rem] bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-slate-200/60 dark:border-slate-800/60 focus-visible:ring-emerald-500/50 shadow-sm"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
 
                     {isAdminOrTeacher && (
-                        <Button onClick={onAdd} className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
+                        <Button onClick={onAdd} className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold uppercase tracking-widest text-[10px] gap-2 px-6 h-12 transition-all active:scale-95 shadow-lg shadow-emerald-600/20">
                             <Plus className="h-4 w-4" /> Add Class
                         </Button>
                     )}
                 </div>
 
-                <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="bg-slate-50 border-b">
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Class Name</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Capacity</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Room No.</th>
-                                    <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">Class Teacher</th>
-                                    {isAdminOrTeacher && <th className="px-4 py-3 text-right text-sm font-medium text-slate-600">Actions</th>}
-                                </tr>
-                            </thead>
-<tbody className="divide-y divide-slate-100">
-                                {filteredData.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={isAdminOrTeacher ? 5 : 4} className="py-12 text-center">
-                                            <div className="flex flex-col items-center">
-                                                <School className="h-10 w-10 mb-3 text-slate-300" />
-                                                <p className="text-sm text-slate-500">No classes found</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredData.length === 0 ? (
+                        <div className="col-span-full p-24 text-center flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem]">
+                            <School className="h-16 w-16 text-slate-200 dark:text-slate-700 mb-6" />
+                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No classes found</p>
+                        </div>
+                    ) : (
+                        filteredData.map((cls, idx) => (
+                            <div 
+                                key={cls.id} 
+                                className="group relative flex flex-col p-6 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/5 overflow-hidden animate-in slide-in-from-bottom-8 fade-in fill-mode-both"
+                                style={{ animationDelay: `${idx * 50}ms` }}
+                            >
+                                <div className="flex justify-between items-start mb-6 relative z-10">
+                                    <div className="h-14 w-14 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 flex items-center justify-center font-black text-lg shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 group-hover:bg-emerald-500 group-hover:text-white group-hover:ring-emerald-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                        <School className="h-6 w-6 stroke-[1.5]" />
+                                    </div>
+                                    
+                                    {isAdminOrTeacher && (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="w-48 rounded-2xl border-slate-200/60 shadow-xl overflow-hidden p-1">
+                                                <DropdownMenuLabel className="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onClick={() => onEdit(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 focus:bg-slate-50 focus:text-emerald-600 p-3">
+                                                    <Pencil className="h-4 w-4" /> Edit
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => onManageSubjects(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 focus:bg-slate-50 focus:text-blue-600 p-3">
+                                                    <BookOpen className="h-4 w-4" /> Manage Subjects
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator className="bg-slate-100 my-1" />
+                                                <DropdownMenuItem onClick={() => onDelete(cls.id)} className="flex items-center gap-3 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 rounded-xl font-bold text-xs p-3">
+                                                    <Trash2 className="h-4 w-4" /> Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    )}
+                                </div>
+
+                                <div className="space-y-4 relative z-10 flex-1">
+                                    <div>
+                                        <h3 className="font-black text-slate-900 dark:text-white text-xl tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                            {cls.name}
+                                        </h3>
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
+                                                <DoorOpen className="h-3 w-3 text-slate-400" />
+                                                {cls.room_number || "No Room"}
                                             </div>
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredData.map((cls) => (
-                                        <tr key={cls.id} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-4 py-3 font-medium text-slate-900">
-                                                {cls.name}
-                                            </td>
-                                            <td className="px-4 py-3 text-slate-600">
-                                                <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100">
-                                                    <Users className="h-3 w-3 mr-1" />
-                                                    {cls.capacity || "N/A"}
-                                                </Badge>
-                                            </td>
-                                            <td className="px-4 py-3 text-slate-500">
-                                                {cls.room_number || "Not assigned"}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 text-sm font-medium">
-                                                        {((cls as any).teacher?.full_name?.[0] || 'U')}
-                                                    </div>
-                                                    <span className="text-slate-700 text-sm">
-                                                        {(cls as any).teacher?.full_name || "Not Assigned"}
+                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-600 uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-lg">
+                                                <Users className="h-3 w-3" />
+                                                {cls.capacity || "N/A"} Seats
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Subjects List */}
+                                    {((cls as any).assignedSubjects?.length > 0) && (
+                                        <div className="pt-2">
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Subjects</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {((cls as any).assignedSubjects).slice(0, 3).map((sub: any) => (
+                                                    <span key={sub.id} className="text-[9px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-700/60">
+                                                        {sub.name}
                                                     </span>
-                                                </div>
-                                            </td>
-                                            {isAdminOrTeacher && (
-                                                <td className="px-4 py-3 text-right">
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-md">
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-48 rounded-md">
-                                                            <DropdownMenuLabel className="text-xs font-medium text-slate-500">Actions</DropdownMenuLabel>
-                                                            <DropdownMenuItem onClick={() => onEdit(cls)} className="flex items-center gap-2 cursor-pointer rounded-md">
-                                                                <Pencil className="h-4 w-4" /> Edit
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem onClick={() => onManageSubjects(cls)} className="flex items-center gap-2 cursor-pointer rounded-md">
-                                                                <BookOpen className="h-4 w-4" /> Manage Subjects
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuSeparator />
-                                                            <DropdownMenuItem onClick={() => onDelete(cls.id)} className="flex items-center gap-2 cursor-pointer text-red-600 rounded-md">
-                                                                <Trash2 className="h-4 w-4" /> Delete
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </td>
-                                            )}
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </Card>
+                                                ))}
+                                                {((cls as any).assignedSubjects).length > 3 && (
+                                                    <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-2 py-0.5 rounded-md border border-slate-200/60 dark:border-slate-800/60">
+                                                        +{(cls as any).assignedSubjects.length - 3} more
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 relative z-10 flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 font-black text-xs shadow-inner">
+                                        {((cls as any).teacher?.full_name?.[0] || '?')}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                                            {(cls as any).teacher?.full_name || "Unassigned"}
+                                        </p>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                                            Class Teacher
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                {/* Decorative Bottom Bar */}
+                                <div className="absolute bottom-0 left-0 h-1 w-0 bg-emerald-500 group-hover:w-full transition-all duration-700 delay-100" />
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
 
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden rounded-md">
-                    <div className="p-6 border-b bg-slate-50">
+                <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
+                    <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
                         <DialogHeader>
-                            <DialogTitle className="text-lg font-semibold">
+                            <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                                 {editingClass ? "Edit Class" : "Add New Class"}
                             </DialogTitle>
-                            <DialogDescription className="text-sm text-slate-500">
+                            <DialogDescription className="text-sm font-medium text-slate-500">
                                 {editingClass ? "Update class details" : "Create a new class"}
                             </DialogDescription>
                         </DialogHeader>
                     </div>
-                    <div className="p-6">
+                    <div className="p-8">
                         <ClassForm
                             initialData={editingClass}
                             teachers={teachers}
@@ -303,14 +322,14 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
             </Dialog>
 
             <Dialog open={isSubjectsOpen} onOpenChange={setIsSubjectsOpen}>
-                <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-md">
-                    <div className="p-6 border-b bg-slate-50">
-                        <DialogTitle className="text-lg font-semibold">Manage Subjects</DialogTitle>
-                        <DialogDescription className="text-sm text-slate-500">
-                            Add subjects to <span className="text-blue-600 font-medium">{subjectClass?.name}</span>
+                <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
+                    <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
+                        <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Manage Subjects</DialogTitle>
+                        <DialogDescription className="text-sm font-medium text-slate-500 mt-1">
+                            Add subjects to <span className="text-blue-600 font-bold">{subjectClass?.name}</span>
                         </DialogDescription>
                     </div>
-                    <div className="p-6 space-y-4">
+                    <div className="p-8 space-y-6">
                         <div className="flex gap-4">
                             <Select value={selectedSubjectId} onValueChange={setSelectedSubjectId}>
                                 <SelectTrigger className="h-10 rounded-md flex-1">
@@ -331,24 +350,24 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                             <Button onClick={handleAddSubject} className="rounded-md bg-emerald-600 hover:bg-emerald-700">Add</Button>
                         </div>
 
-                        <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                        <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                             {classSubjectRecords.length === 0 ? (
-                                <div className="border border-dashed border-slate-200 p-8 text-sm text-slate-500 text-center rounded-md">
+                                <div className="border-2 border-dashed border-slate-200/60 dark:border-slate-800/60 p-12 text-sm text-slate-500 font-medium text-center rounded-[2rem]">
                                     No subjects assigned yet.
                                 </div>
                             ) : (
                                 classSubjectRecords.map((record) => (
-                                    <div key={record.id} className="flex items-center justify-between border border-slate-200 p-4 rounded-md hover:bg-slate-50 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                          <div className="h-8 w-8 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-medium">
+                                    <div key={record.id} className="flex items-center justify-between border border-slate-200/60 dark:border-slate-800/60 p-4 rounded-2xl hover:border-emerald-500/30 transition-all bg-white/50 dark:bg-slate-900/50">
+                                        <div className="flex items-center gap-4">
+                                          <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm font-black shadow-sm ring-1 ring-blue-100 dark:ring-blue-500/20">
                                             {record.subject?.name?.[0] || 'S'}
                                           </div>
                                           <div>
-                                              <p className="font-medium text-slate-900">{record.subject?.name}</p>
-                                              <p className="text-xs text-slate-500">{record.subject?.code || ""}</p>
+                                              <p className="font-bold text-slate-900 dark:text-white">{record.subject?.name}</p>
+                                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{record.subject?.code || "NO CODE"}</p>
                                           </div>
                                         </div>
-                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 rounded-md" onClick={() => handleRemoveSubject(record.id)}>
+                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors" onClick={() => handleRemoveSubject(record.id)}>
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </div>
