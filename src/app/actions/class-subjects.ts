@@ -28,9 +28,9 @@ export async function addSubjectToClass(
             throw error;
         }
 
-        revalidatePath("/classes");
-        revalidatePath("/subjects");
-        revalidatePath("/timetable");
+        revalidatePath("/academics/classes");
+        revalidatePath("/academics/subjects");
+        revalidatePath("/academics/timetable");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -51,9 +51,9 @@ export async function removeSubjectFromClass(classSubjectId: string) {
 
         if (error) throw error;
 
-        revalidatePath("/classes");
-        revalidatePath("/subjects");
-        revalidatePath("/timetable");
+        revalidatePath("/academics/classes");
+        revalidatePath("/academics/subjects");
+        revalidatePath("/academics/timetable");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -115,9 +115,9 @@ export async function bulkAddSubjectsToClass(
 
         if (error) throw error;
 
-        revalidatePath("/classes");
-        revalidatePath("/subjects");
-        revalidatePath("/timetable");
+        revalidatePath("/academics/classes");
+        revalidatePath("/academics/subjects");
+        revalidatePath("/academics/timetable");
         return { success: true, assignedCount: subjectIds.length };
     } catch (error: any) {
         return { success: false, error: error.message };

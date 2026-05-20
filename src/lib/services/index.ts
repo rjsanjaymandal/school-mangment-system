@@ -14,6 +14,7 @@ export { InstitutionalService } from "./institutional";
 export { InventoryService } from "./inventory";
 export { LibraryService } from "./library";
 export { MessagesService } from "./messages";
+export { NotificationsService } from "./notifications";
 export { InsightsService } from "./insights";
 export { PayrollService } from "./payroll";
 export { ReportsService } from "./reports";

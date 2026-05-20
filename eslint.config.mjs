@@ -25,6 +25,8 @@ const eslintConfig = defineConfig([
     "lint_errors_final.log",
     "lint_fix_report.json",
     "lint_errors.json",
+    "scratch/**",
+    "scripts/**",
   ]),
 ]);
 

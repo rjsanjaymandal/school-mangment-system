@@ -23,7 +23,7 @@ export async function createActivity(data: {
             .insert(data);
 
         if (error) throw error;
-        revalidatePath("/activities");
+        revalidatePath("/academics/activities");
         return { success: true, message: "Activity protocol initialized" };
     } catch (error: any) {
         return { success: false, message: error.message };
@@ -59,7 +59,7 @@ export async function enrollInActivity(activityId: string, studentId: string) {
             });
 
         if (error) throw error;
-        revalidatePath("/activities");
+        revalidatePath("/academics/activities");
         return { success: true, message: "Student successfully enrolled in activity node" };
     } catch (error: any) {
         return { success: false, message: error.message };

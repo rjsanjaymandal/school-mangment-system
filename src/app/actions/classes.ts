@@ -19,7 +19,7 @@ export async function createClass(data: {
         const supabase = createAdminClient();
         const { error } = await supabase.from("classes").insert(data);
         if (error) throw error;
-        revalidatePath("/classes");
+        revalidatePath("/academics/classes");
         return { success: true };
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";
@@ -41,7 +41,7 @@ export async function updateClass(id: string, data: Partial<{
         const supabase = createAdminClient();
         const { error } = await supabase.from("classes").update(data).eq("id", id);
         if (error) throw error;
-        revalidatePath("/classes");
+        revalidatePath("/academics/classes");
         return { success: true };
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";
@@ -57,7 +57,7 @@ export async function deleteClass(id: string) {
         const supabase = createAdminClient();
         const { error } = await supabase.from("classes").delete().eq("id", id);
         if (error) throw error;
-        revalidatePath("/classes");
+        revalidatePath("/academics/classes");
         return { success: true };
     } catch (error) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred.";

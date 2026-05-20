@@ -2,21 +2,33 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-    MessageSquare, Send, Search, Plus, Inbox, SendHorizonal, Mail, MailOpen, Clock, User,
-    MoreVertical, Phone, Video, Info, Paperclip, Smile, ShieldCheck, CheckCheck
+    MessageSquare,
+    Send,
+    Search,
+    Plus,
+    SendHorizontal,
+    Paperclip,
+    Smile,
+    CheckCheck,
+    Inbox,
+    Mail,
+    ArrowLeft,
+    MoreVertical,
+    Phone,
+    Video
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 import { sendMessage, markMessageRead } from "@/app/actions/modules";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { MessagesService } from "@/lib/services/messages";
+import { format, isToday, isYesterday } from "date-fns";
 
 interface MessagesDashboardProps {
     initialConversations: any[];
@@ -26,17 +38,21 @@ interface MessagesDashboardProps {
 
 export function MessagesDashboard({ initialConversations, contacts, currentUserId }: MessagesDashboardProps) {
     const router = useRouter();
-    const [isComposeOpen, setIsComposeOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [selectedConversation, setSelectedConversation] = useState<any>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
-    const [composeForm, setComposeForm] = useState({ receiver_id: "", subject: "", body: "" });
+    const [sentMessages, setSentMessages] = useState<any[]>([]);
+    
+    const [composeForm, setComposeForm] = useState({ 
+        receiver_id: "", 
+        subject: "", 
+        body: ""
+    });
+    const [sending, setSending] = useState(false);
     
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Auto-scroll to bottom of chat
     useEffect(() => {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -47,7 +63,6 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
         const result = await MessagesService.getConversationMessages(currentUserId, contactId);
         if (result.data) {
             setMessages(result.data);
-            // Mark last message as read if it's for us
             const lastMsg = result.data[result.data.length - 1];
             if (lastMsg && !lastMsg.is_read && lastMsg.receiver_id === currentUserId) {
                 await markMessageRead(lastMsg.id);
@@ -55,288 +70,347 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
         }
     }, [currentUserId]);
 
-    // Load messages when conversation is selected
     useEffect(() => {
-        let active = true;
-
         if (selectedConversation) {
-            const sync = async () => {
-                await loadConversation(selectedConversation.contact.id);
-            };
-            void sync();
+            void loadConversation(selectedConversation.contact.id);
         }
-
-        return () => {
-            active = false;
-        };
     }, [selectedConversation, loadConversation]);
+
+    useEffect(() => {
+        const loadSent = async () => {
+            const result = await MessagesService.getAllMessages({ sender_id: currentUserId });
+            if (result.data) setSentMessages(result.data);
+        };
+        loadSent();
+    }, [currentUserId]);
 
     const handleSend = async () => {
         if (!newMessage.trim() || !selectedConversation) return;
         
-        const msgData = {
-            receiver_id: selectedConversation.contact.id,
-            subject: selectedConversation.last_message?.subject || "Direct Message",
-            body: newMessage
-        };
-
         const optimisticMsg = {
             id: Date.now().toString(),
             sender_id: currentUserId,
             receiver_id: selectedConversation.contact.id,
+            content: newMessage,
             body: newMessage,
             created_at: new Date().toISOString(),
-            is_read: false,
+            is_read: true,
             sender: { full_name: "You" }
         };
 
         setMessages(prev => [...prev, optimisticMsg]);
         setNewMessage("");
 
-        const result = await sendMessage(msgData);
+        const result = await sendMessage({
+            receiver_id: selectedConversation.contact.id,
+            subject: selectedConversation.last_message?.subject || "Direct Message",
+            body: newMessage
+        });
+        
         if (result.success) {
-            loadConversation(selectedConversation.contact.id);
+            toast.success("Message sent");
             router.refresh();
+        } else {
+            toast.error("Failed to send");
         }
     };
 
     const handleCompose = async () => {
-        if (!composeForm.receiver_id || !composeForm.body) return;
-        setLoading(true);
-        const result = await sendMessage(composeForm);
-        setLoading(false);
+        if (!composeForm.receiver_id || !composeForm.body) {
+            toast.error("Fill recipient and message");
+            return;
+        }
+        setSending(true);
+        const result = await sendMessage({
+            receiver_id: composeForm.receiver_id,
+            subject: composeForm.subject,
+            body: composeForm.body
+        });
+        setSending(false);
         if (result.success) {
-            setIsComposeOpen(false);
+            toast.success("Message sent");
             setComposeForm({ receiver_id: "", subject: "", body: "" });
             router.refresh();
-            // find and select the new conversation
+        } else {
+            toast.error("Failed to send");
         }
+    };
+
+    const formatTime = (date: string) => {
+        const d = new Date(date);
+        if (isToday(d)) return format(d, "HH:mm");
+        if (isYesterday(d)) return "Yesterday";
+        return format(d, "MMM d");
     };
 
     const filteredConversations = initialConversations.filter(c => 
         c.contact?.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const totalUnread = initialConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+
     return (
-        <div className="h-[calc(100vh-140px)] flex gap-x-0 overflow-hidden rounded-3xl border border-white/20 bg-white/40 backdrop-blur-3xl shadow-2xl animate-in fade-in duration-700">
-            
-            {/* Conversations Sidebar */}
-            <div className="w-96 border-r border-slate-200 flex flex-col bg-white/60 backdrop-blur-md">
-                <div className="p-6 border-b border-slate-100 shrink-0">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-black italic uppercase tracking-tighter text-foreground flex items-center gap-x-2">
-                            <MessageSquare className="h-5 w-5 text-blue-500" /> Matrix-Chat
-                        </h2>
-                        <Dialog open={isComposeOpen} onOpenChange={setIsComposeOpen}>
-                            <DialogTrigger asChild>
-                                <Button size="icon" className="h-10 w-10 p-0 rounded-xl bg-slate-900 border-none hover:scale-105 transition-transform">
-                                    <Plus className="h-5 w-5 text-white" />
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="glass border-none">
-                                <DialogHeader><DialogTitle className="font-black text-2xl uppercase italic">Initiate Signal</DialogTitle></DialogHeader>
-                                <div className="space-y-4 pt-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest italic">Recipient Node</Label>
-                                        <Select value={composeForm.receiver_id} onValueChange={(v) => setComposeForm({ ...composeForm, receiver_id: v })}>
-                                            <SelectTrigger className="rounded-xl border-slate-200"><SelectValue placeholder="Select target..." /></SelectTrigger>
-                                            <SelectContent>
-                                                {contacts.map(c => (
-                                                    <SelectItem key={c.id} value={c.id} className="text-xs font-bold uppercase italic">
-                                                        {c.full_name} <span className="text-[8px] opacity-40 ml-2">({c.role})</span>
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest italic">Signal Subject</Label>
-                                        <Input 
-                                            value={composeForm.subject} 
-                                            onChange={(e) => setComposeForm({ ...composeForm, subject: e.target.value })} 
-                                            placeholder="MISSION_PARAMETER..." 
-                                            className="rounded-xl border-slate-200 uppercase text-[10px] font-bold tracking-widest"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest italic">Data Payload</Label>
-                                        <textarea
-                                            value={composeForm.body}
-                                            onChange={(e) => setComposeForm({ ...composeForm, body: e.target.value })}
-                                            placeholder="Enter message details..."
-                                            className="w-full h-32 rounded-xl border border-slate-200 p-4 text-sm font-medium resize-none focus:outline-none focus:ring-2 focus:ring-slate-900"
-                                        />
-                                    </div>
-                                    <Button onClick={handleCompose} disabled={loading} className="w-full rounded-2xl py-6 bg-slate-900 text-white font-black uppercase tracking-[0.2em] italic transition-all active:scale-95">
-                                        <Send className="h-4 w-4 mr-2" />
-                                        {loading ? "Syncing..." : "Transmit Signal"}
-                                    </Button>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
-                    <div className="relative group">
-                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-blue-500 transition-colors" />
-                        <Input 
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search operatives..." 
-                            className="pl-10 h-10 rounded-xl bg-slate-100/50 border-transparent focus:bg-white focus:border-slate-200 transition-all text-xs font-bold uppercase tracking-widest"
-                        />
-                    </div>
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Tabs defaultValue="inbox" className="w-full">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <TabsList className="bg-muted/80 backdrop-blur-sm p-1 h-auto border border-border/50 rounded-xl">
+                        <TabsTrigger value="inbox" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2.5 gap-2 text-xs font-semibold">
+                            <Inbox className="w-4 h-4" />
+                            <span>Inbox</span>
+                            {totalUnread > 0 && (
+                                <Badge className="ml-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                                    {totalUnread}
+                                </Badge>
+                            )}
+                        </TabsTrigger>
+                        <TabsTrigger value="sent" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2.5 gap-2 text-xs font-semibold">
+                            <Send className="w-4 h-4" />
+                            <span>Sent</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="compose" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2.5 gap-2 text-xs font-semibold">
+                            <Plus className="w-4 h-4" />
+                            <span>New Message</span>
+                        </TabsTrigger>
+                    </TabsList>
                 </div>
 
-                <ScrollArea className="flex-1">
-                    <div className="p-2 space-y-1">
-                        {filteredConversations.map((conv) => {
-                            const isSelected = selectedConversation?.contact?.id === conv.contact.id;
-                            return (
-                                <button
-                                    key={conv.contact.id}
-                                    onClick={() => setSelectedConversation(conv)}
-                                    className={cn(
-                                        "w-full flex items-center gap-x-4 p-4 text-left transition-all rounded-2xl group relative",
-                                        isSelected ? "bg-slate-900 shadow-xl" : "hover:bg-white/80"
-                                    )}
-                                >
-                                    <div className="relative shrink-0">
-                                        <div className={cn(
-                                            "h-12 w-12 rounded-xl flex items-center justify-center font-black text-lg shadow-sm transition-all",
-                                            isSelected ? "bg-white text-slate-900 scale-95" : "bg-card text-white group-hover:neon-blue"
-                                        )}>
-                                            {conv.contact.full_name?.[0]}
-                                        </div>
-                                        {conv.unread_count > 0 && (
-                                            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-blue-500 text-white border-2 border-white rounded-full text-[9px] font-black">
-                                                {conv.unread_count}
-                                            </Badge>
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex justify-between items-baseline mb-0.5">
-                                            <span className={cn("text-xs font-black truncate uppercase tracking-tight italic", isSelected ? "text-white" : "text-slate-800")}>
-                                                {conv.contact.full_name}
-                                            </span>
-                                            <span className={cn("text-[9px] font-bold shrink-0 opacity-40", isSelected ? "text-slate-400" : "text-muted-foreground")}>
-                                                {new Date(conv.last_message?.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        </div>
-                                        <p className={cn("text-[10px] font-bold truncate tracking-wide", isSelected ? "text-slate-400" : "text-muted-foreground")}>
-                                            {conv.last_message?.body || "Start conversation..."}
-                                        </p>
-                                    </div>
-                                    {isSelected && <div className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-2 h-8 bg-blue-500 rounded-full" />}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </ScrollArea>
-            </div>
-
-            {/* Chat Panel */}
-            <div className="flex-1 flex flex-col bg-white/20 backdrop-blur-sm relative">
-                {selectedConversation ? (
-                    <>
-                        {/* Chat Header */}
-                        <div className="p-6 border-bottom border-slate-200 bg-white/40 backdrop-blur-md flex items-center justify-between z-10">
-                            <div className="flex items-center gap-x-4">
-                                <div className="h-10 w-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm">
-                                    {selectedConversation.contact.full_name[0]}
-                                </div>
-                                <div>
-                                    <h3 className="font-black text-sm text-foreground uppercase tracking-tight italic flex items-center gap-x-2">
-                                        {selectedConversation.contact.full_name}
-                                        <Badge className="bg-emerald-500/10 text-emerald-600 border-none text-[8px] font-black tracking-[0.2em] px-2 h-4">ACTIVE</Badge>
-                                    </h3>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-50 tracking-widest">{selectedConversation.contact.role} Node</p>
+                <TabsContent value="inbox" className="outline-none">
+                    <div className="glass futuristic-card rounded-2xl overflow-hidden flex h-[calc(100vh-280px)]">
+                        {/* Conversation List */}
+                        <div className={cn(
+                            "w-80 border-r border-slate-200/60 flex flex-col bg-white/40",
+                            selectedConversation ? "hidden md:flex" : "w-full"
+                        )}>
+                            <div className="p-4 border-b border-slate-200/60">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input 
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        placeholder="Search..." 
+                                        className="pl-10 h-9 rounded-lg bg-muted/50 border-transparent focus:bg-white"
+                                    />
                                 </div>
                             </div>
-                            <div className="flex items-center gap-x-2">
-                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-slate-900 hover:bg-white"><Phone className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-slate-900 hover:bg-white"><Video className="h-4 w-4" /></Button>
-                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-slate-900 hover:bg-white"><Info className="h-4 w-4" /></Button>
-                                <div className="w-[1px] h-6 bg-slate-200 mx-2" />
-                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-slate-900 hover:bg-white"><MoreVertical className="h-4 w-4" /></Button>
-                            </div>
+                            <ScrollArea className="flex-1">
+                                {filteredConversations.length === 0 ? (
+                                    <div className="p-8 text-center">
+                                        <Mail className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                                        <p className="text-sm text-muted-foreground">No messages</p>
+                                    </div>
+                                ) : (
+                                    filteredConversations.map((conv) => {
+                                        const isSelected = selectedConversation?.contact?.id === conv.contact.id;
+                                        const hasUnread = conv.unread_count > 0;
+                                        return (
+                                            <button
+                                                key={conv.contact.id}
+                                                onClick={() => setSelectedConversation(conv)}
+                                                className={cn(
+                                                    "w-full flex items-center gap-3 p-4 text-left border-b border-slate-100/50 transition-all",
+                                                    isSelected ? "bg-blue-500 text-white" : hasUnread ? "bg-blue-50/50" : "hover:bg-slate-50"
+                                                )}
+                                            >
+                                                <div className={cn(
+                                                    "h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
+                                                    isSelected ? "bg-white text-blue-500" : hasUnread ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-600"
+                                                )}>
+                                                    {conv.contact.full_name?.[0] || "?"}
+                                                </div>
+                                                <div className="flex-1 min-w-0 text-left">
+                                                    <div className="flex justify-between items-center mb-0.5">
+                                                        <span className={cn("text-sm font-semibold truncate", isSelected ? "text-white" : "text-slate-900")}>
+                                                            {conv.contact.full_name}
+                                                        </span>
+                                                        <span className={cn("text-[10px]", isSelected ? "text-white/60" : "text-muted-foreground")}>
+                                                            {conv.last_message?.created_at ? formatTime(conv.last_message.created_at) : ""}
+                                                        </span>
+                                                    </div>
+                                                    <p className={cn("text-xs truncate", isSelected ? "text-white/60" : "text-muted-foreground")}>
+                                                        {conv.last_message?.subject || "Direct message"}
+                                                    </p>
+                                                </div>
+                                                {hasUnread && !isSelected && (
+                                                    <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
+                                                )}
+                                            </button>
+                                        );
+                                    })
+                                )}
+                            </ScrollArea>
                         </div>
 
-                        {/* Messages Thread */}
-                        <ScrollArea className="flex-1 p-8" viewportRef={scrollRef}>
-                            <div className="space-y-6 max-w-4xl mx-auto">
-                                <div className="text-center py-8">
-                                    <div className="h-[1px] w-full bg-slate-100 flex items-center justify-center">
-                                        <span className="bg-white/20 px-4 text-[9px] font-black uppercase text-slate-400 tracking-[0.4em] italic">Encrypted Secure Line</span>
-                                    </div>
-                                </div>
-
-                                {messages.map((msg, idx) => {
-                                    const isMe = msg.sender_id === currentUserId;
-                                    const showAvatar = idx === 0 || messages[idx-1].sender_id !== msg.sender_id;
-                                    
-                                    return (
-                                        <div key={msg.id} className={cn("flex items-end gap-x-3", isMe ? "flex-row-reverse" : "flex-row")}>
-                                            <div className="flex flex-col gap-y-1 max-w-[70%]">
-                                                <div className={cn(
-                                                    "px-5 py-3 rounded-2xl text-xs font-semibold leading-relaxed shadow-sm relative group",
-                                                    isMe ? "bg-slate-900 text-white rounded-br-none" : "bg-white text-slate-700 rounded-bl-none border border-white"
-                                                )}>
-                                                    {msg.body}
-                                                    <div className={cn(
-                                                        "absolute bottom-2 right-2 flex items-center gap-x-1 opacity-40 text-[8px] font-black group-hover:opacity-100 transition-opacity",
-                                                        isMe ? "text-slate-400" : "text-slate-400"
-                                                    )}>
-                                                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        {isMe && <CheckCheck className="h-2.5 w-2.5 text-blue-400" />}
-                                                    </div>
-                                                </div>
+                        {/* Chat Area */}
+                        <div className={cn("flex-1 flex flex-col bg-white/20", !selectedConversation ? "hidden md:flex" : "flex")}>
+                            {selectedConversation ? (
+                                <>
+                                    <div className="p-4 border-b border-slate-200/60 bg-white/50 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => setSelectedConversation(null)}>
+                                                <ArrowLeft className="h-4 w-4" />
+                                            </Button>
+                                            <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+                                                {selectedConversation.contact.full_name[0]}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-sm">{selectedConversation.contact.full_name}</p>
+                                                <p className="text-xs text-muted-foreground capitalize">{selectedConversation.contact.role}</p>
                                             </div>
                                         </div>
-                                    );
-                                })}
-                            </div>
-                        </ScrollArea>
+                                        <div className="flex gap-1">
+                                            <Button variant="ghost" size="icon" className="h-9 w-9"><Phone className="h-4 w-4" /></Button>
+                                            <Button variant="ghost" size="icon" className="h-9 w-9"><Video className="h-4 w-4" /></Button>
+                                            <Button variant="ghost" size="icon" className="h-9 w-9"><MoreVertical className="h-4 w-4" /></Button>
+                                        </div>
+                                    </div>
 
-                        {/* Input Area */}
-                        <div className="p-6 bg-white/40 backdrop-blur-md border-t border-slate-200 shrink-0">
-                            <div className="max-w-4xl mx-auto flex items-center gap-x-4 bg-white p-2 pl-4 rounded-2xl shadow-xl shadow-slate-200/50 border border-white">
-                                <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-blue-500 rounded-xl"><Plus className="h-5 w-5" /></Button>
-                                <Input 
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                                    placeholder="Execute signal transmission..." 
-                                    className="flex-1 bg-transparent border-none focus-visible:ring-0 text-xs font-bold uppercase tracking-widest placeholder:opacity-30"
-                                />
-                                <div className="flex items-center gap-x-1">
-                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-amber-500 rounded-xl"><Smile className="h-5 w-5" /></Button>
-                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-400 hover:text-blue-500 rounded-xl"><Paperclip className="h-5 w-5" /></Button>
-                                    <Button 
-                                        onClick={handleSend}
-                                        className="h-10 w-10 p-0 rounded-xl bg-blue-500 hover:bg-blue-600 text-white shadow-lg neon-blue active:scale-90 transition-all"
-                                    >
-                                        <SendHorizonal className="h-5 w-5" />
-                                    </Button>
+                                    <ScrollArea className="flex-1 p-6" viewportRef={scrollRef}>
+                                        <div className="space-y-4 max-w-2xl mx-auto">
+                                            {messages.map((msg) => {
+                                                const isMe = msg.sender_id === currentUserId;
+                                                return (
+                                                    <div key={msg.id} className={cn("flex items-end gap-2", isMe ? "justify-end" : "justify-start")}>
+                                                        {!isMe && (
+                                                            <div className="h-7 w-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
+                                                                {msg.sender?.full_name?.[0] || "?"}
+                                                            </div>
+                                                        )}
+                                                        <div className={cn(
+                                                            "px-4 py-2.5 rounded-2xl text-sm max-w-[70%]",
+                                                            isMe ? "bg-blue-500 text-white rounded-br-md" : "bg-white text-slate-700 border border-slate-100 rounded-bl-md"
+                                                        )}>
+                                                            {msg.subject && <p className="text-xs font-semibold mb-1 opacity-60">{msg.subject}</p>}
+                                                            <p className="whitespace-pre-wrap">{msg.content || msg.body}</p>
+                                                            <p className={cn("text-[10px] mt-1", isMe ? "text-white/50" : "text-slate-400")}>
+                                                                {format(new Date(msg.created_at), "HH:mm")}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </ScrollArea>
+
+                                    <div className="p-4 bg-white/50 border-t border-slate-200/60">
+                                        <div className="max-w-2xl mx-auto flex items-center gap-2">
+                                            <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0"><Paperclip className="h-4 w-4" /></Button>
+                                            <Input 
+                                                value={newMessage}
+                                                onChange={(e) => setNewMessage(e.target.value)}
+                                                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                                placeholder="Type a message..." 
+                                                className="flex-1 rounded-lg"
+                                            />
+                                            <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0"><Smile className="h-4 w-4" /></Button>
+                                            <Button onClick={handleSend} disabled={!newMessage.trim()} className="h-9 w-9 p-0 bg-blue-500 hover:bg-blue-600 shrink-0">
+                                                <SendHorizontal className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex-1 flex items-center justify-center">
+                                    <div className="text-center">
+                                        <MessageSquare className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+                                        <p className="font-semibold">Select a conversation</p>
+                                        <p className="text-sm text-muted-foreground mt-1">Choose from the list to start chatting</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="text-center mt-3">
-                                <p className="text-[8px] font-black uppercase text-muted-foreground tracking-[0.3em] italic flex items-center justify-center gap-x-2">
-                                    <ShieldCheck className="h-2.5 w-2.5 text-emerald-500" /> End-to-End Quantum Encryption Active
-                                </p>
-                            </div>
+                            )}
                         </div>
-                    </>
-                ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center p-20 text-center opacity-30 group">
-                        <div className="h-32 w-32 rounded-[2.5rem] bg-slate-900 text-white flex items-center justify-center shadow-2xl mb-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700">
-                             <MessageSquare className="h-16 w-16" />
-                        </div>
-                        <h3 className="font-black text-4xl text-slate-900 uppercase italic tracking-tighter">Cipher Deck</h3>
-                        <p className="max-w-xs mt-4 text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 leading-relaxed">
-                            No signal active. Select a target operatives to begin secure communication protocols.
-                        </p>
                     </div>
-                )}
-            </div>
+                </TabsContent>
+
+                <TabsContent value="sent" className="outline-none">
+                    <div className="glass futuristic-card rounded-2xl overflow-hidden">
+                        <div className="p-4 border-b border-slate-200/60">
+                            <h3 className="text-sm font-semibold flex items-center gap-2">
+                                <span className="w-1 h-4 bg-emerald-500 rounded-full" />
+                                Sent Messages
+                            </h3>
+                        </div>
+                        <ScrollArea className="h-[calc(100vh-340px)]">
+                            {sentMessages.length === 0 ? (
+                                <div className="p-8 text-center">
+                                    <Send className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
+                                    <p className="text-sm text-muted-foreground">No sent messages</p>
+                                </div>
+                            ) : (
+                                sentMessages.map((msg) => (
+                                    <div key={msg.id} className="p-4 border-b border-slate-100/50">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
+                                                    {msg.receiver?.full_name?.[0] || "?"}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-semibold">{msg.receiver?.full_name || "Unknown"}</p>
+                                                    <p className="text-xs text-muted-foreground">{msg.receiver?.role}</p>
+                                                </div>
+                                            </div>
+                                            <span className="text-[10px] text-muted-foreground">
+                                                {format(new Date(msg.created_at), "MMM d, HH:mm")}
+                                            </span>
+                                        </div>
+                                        {msg.subject && <p className="text-xs font-semibold text-slate-700 mb-1">{msg.subject}</p>}
+                                        <p className="text-sm text-slate-500">{msg.content || msg.body}</p>
+                                    </div>
+                                ))
+                            )}
+                        </ScrollArea>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="compose" className="outline-none">
+                    <div className="glass futuristic-card rounded-2xl p-6">
+                        <h3 className="text-sm font-semibold flex items-center gap-2 mb-6">
+                            <span className="w-1 h-4 bg-blue-500 rounded-full" />
+                            New Message
+                        </h3>
+                        <div className="max-w-xl space-y-4">
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold text-muted-foreground">To</Label>
+                                <select 
+                                    value={composeForm.receiver_id}
+                                    onChange={(e) => setComposeForm({ ...composeForm, receiver_id: e.target.value })}
+                                    className="w-full h-11 rounded-lg border border-slate-200 px-3 text-sm"
+                                >
+                                    <option value="">Select recipient...</option>
+                                    {contacts.map(c => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.full_name} ({c.role})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold text-muted-foreground">Subject</Label>
+                                <Input 
+                                    value={composeForm.subject}
+                                    onChange={(e) => setComposeForm({ ...composeForm, subject: e.target.value })}
+                                    placeholder="Enter subject..."
+                                    className="rounded-lg"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs font-semibold text-muted-foreground">Message</Label>
+                                <textarea
+                                    value={composeForm.body}
+                                    onChange={(e) => setComposeForm({ ...composeForm, body: e.target.value })}
+                                    placeholder="Write your message..."
+                                    className="w-full h-40 rounded-lg border border-slate-200 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div className="flex justify-end">
+                                <Button onClick={handleCompose} disabled={sending || !composeForm.receiver_id || !composeForm.body} className="bg-blue-500 hover:bg-blue-600">
+                                    <Send className="h-4 w-4 mr-2" />
+                                    {sending ? "Sending..." : "Send Message"}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

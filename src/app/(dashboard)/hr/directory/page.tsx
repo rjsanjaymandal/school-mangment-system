@@ -17,8 +17,8 @@ export default async function StaffDirectoryPage() {
         <div className="p-6 space-y-8 animate-in fade-in duration-700">
             {/* Unified Page Header */}
             <UnifiedPageHeader 
-                title="Staff"
-                subtitle="Directory"
+                title="Staff List"
+                subtitle="Complete staff directory and management"
                 icon={Users}
                 color="emerald"
                 actions={

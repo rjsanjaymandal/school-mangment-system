@@ -22,7 +22,7 @@ export async function sendMessage(data: {
             sender_id: user.id,
             receiver_id: data.receiver_id,
             subject: data.subject || null,
-            body: data.body,
+            content: data.body,
             priority: data.priority || "normal",
         });
         if (error) throw error;
@@ -38,10 +38,29 @@ export async function getInbox(userId: string) {
         const supabase = createAdminClient();
         const { data, error } = await supabase
             .from("messages")
-            .select("*, sender:profiles!sender_id(*)")
+            .select("*")
             .eq("receiver_id", userId)
             .order("created_at", { ascending: false });
         if (error) throw error;
+        
+        // Fetch sender profiles
+        if (data && data.length > 0) {
+            const senderIds = data.map(m => m.sender_id);
+            const { data: profiles } = await supabase
+                .from("profiles")
+                .select("id, full_name, avatar_url, role")
+                .in("id", senderIds);
+            
+            const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+            
+            const enriched = data.map(msg => ({
+                ...msg,
+                sender: profileMap.get(msg.sender_id) || { full_name: "Unknown", role: "student" }
+            }));
+            
+            return { success: true, data: enriched };
+        }
+        
         return { success: true, data: data || [] };
     } catch (error: any) {
         return { success: false, error: error.message, data: [] };
@@ -78,7 +97,7 @@ export async function createInventoryItem(data: {
         const supabase = createAdminClient();
         const { error } = await supabase.from("inventory_items").insert(data);
         if (error) throw error;
-        revalidatePath("/inventory");
+        revalidatePath("/services/inventory");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -99,7 +118,7 @@ export async function updateInventoryItem(id: string, data: Partial<{
         const supabase = createAdminClient();
         const { error } = await supabase.from("inventory_items").update(data).eq("id", id);
         if (error) throw error;
-        revalidatePath("/inventory");
+        revalidatePath("/services/inventory");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -111,7 +130,7 @@ export async function deleteInventoryItem(id: string) {
         const supabase = createAdminClient();
         const { error } = await supabase.from("inventory_items").delete().eq("id", id);
         if (error) throw error;
-        revalidatePath("/inventory");
+        revalidatePath("/services/inventory");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -153,7 +172,7 @@ export async function linkGuardian(data: {
             .from("guardian_students")
             .upsert(data, { onConflict: "guardian_id,student_id" });
         if (error) throw error;
-        revalidatePath("/guardian");
+        revalidatePath("/students/guardians");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

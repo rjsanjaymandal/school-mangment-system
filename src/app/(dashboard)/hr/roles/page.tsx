@@ -296,8 +296,8 @@ async function loadStaff() {
             <Shield className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Role Assignment & Security</h1>
-            <p className="text-blue-100 text-sm">Manage user roles and login permissions</p>
+            <h1 className="text-2xl font-bold">Permissions</h1>
+            <p className="text-blue-100 text-sm">Manage user roles and login access</p>
           </div>
         </div>
       </div>

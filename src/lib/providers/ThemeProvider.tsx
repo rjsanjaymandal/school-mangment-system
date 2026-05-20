@@ -17,12 +17,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem("theme") as Theme;
-    if (stored) {
-      setThemeState(stored);
-      document.documentElement.classList.toggle("dark", stored === "dark");
-    }
+    const handle = requestAnimationFrame(() => {
+      setMounted(true);
+      const stored = localStorage.getItem("theme") as Theme;
+      if (stored) {
+        setThemeState(stored);
+        document.documentElement.classList.toggle("dark", stored === "dark");
+      }
+    });
+    return () => cancelAnimationFrame(handle);
   }, []);
 
   const toggleTheme = () => {

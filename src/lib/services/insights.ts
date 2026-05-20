@@ -57,7 +57,7 @@ export const InsightsService = {
           {
             id: "2",
             title: "Total Revenue",
-            value: `₹${(totalRevenue / 1000).toFixed(1)}K`,
+            value: `₹${(totalRevenue / 100000).toFixed(1)}L`,
             status: totalRevenue > 1000 ? "Active" : "Stable",
             trend: "up",
             confidence: "88%",

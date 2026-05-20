@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -77,13 +78,13 @@ const navigation: NavGroup[] = [
         subItems: [
           { name: "Student List", href: "/students/list" },
           { name: "Enroll", href: "/students/enroll" },
-          { name: "Guardians", href: "/guardian" },
+          { name: "Guardians", href: "/students/guardians" },
           { name: "Documents", href: "/students/documents" },
         ]
       },
       { name: "Attendance", href: "/students/attendance", icon: ClipboardCheck },
-      { name: "Conduct", href: "/conduct", icon: UserCheck },
-      { name: "Health", href: "/health", icon: Stethoscope },
+      { name: "Conduct", href: "/students/conduct", icon: UserCheck },
+      { name: "Health", href: "/students/health", icon: Stethoscope },
     ],
   },
   {
@@ -108,14 +109,22 @@ const navigation: NavGroup[] = [
     group: "Academics",
     roles: ["admin", "teacher", "student"],
     items: [
-      { name: "Classes", href: "/classes", icon: Users, roles: ["admin", "teacher"] },
-      { name: "Subjects", href: "/subjects", icon: BookOpen, roles: ["admin", "teacher"] },
-      { name: "Timetable", href: "/timetable", icon: Calendar },
-      { name: "Exams", href: "/exams", icon: FileText, roles: ["admin", "teacher"] },
-      { name: "Online Exams", href: "/exams/online", icon: FileText, roles: ["admin", "teacher"] },
-      { name: "Gradebook", href: "/gradebook", icon: ClipboardCheck },
-      { name: "Activities", href: "/activities", icon: Trophy },
-      { name: "Certificates", href: "/certificates", icon: Award },
+      { name: "Classes", href: "/academics/classes", icon: Users, roles: ["admin", "teacher"] },
+      { name: "Subjects", href: "/academics/subjects", icon: BookOpen, roles: ["admin", "teacher"] },
+      { name: "Timetable", href: "/academics/timetable", icon: Calendar },
+      {
+        name: "Exams",
+        href: "/academics/exams",
+        icon: FileText,
+        roles: ["admin", "teacher"],
+        subItems: [
+          { name: "Exam List", href: "/academics/exams" },
+          { name: "Online Exams", href: "/academics/exams/online" },
+          { name: "Gradebook", href: "/academics/gradebook" },
+        ]
+      },
+      { name: "Activities", href: "/academics/activities", icon: Trophy },
+      { name: "Certificates", href: "/academics/certificates", icon: Award },
     ],
   },
   {
@@ -129,18 +138,18 @@ const navigation: NavGroup[] = [
           { name: "Fees Dashboard", href: "/finance/dashboard" },
           { name: "Collect Fees", href: "/finance/collect-fees" },
           { name: "Fee Setup", href: "/finance/structure" },
-          { name: "Payment Gateways", href: "/gateways" },
+          { name: "Payment Gateways", href: "/finance/gateways" },
           { name: "Daily Log", href: "/finance/daily" },
           { name: "Print Slips", href: "/finance/slips" },
         ]
       },
       {
         name: "Payroll",
-        href: "/payroll",
+        href: "/finance/payroll",
         icon: Wallet,
         roles: ["admin"],
         subItems: [
-          { name: "Payroll Dashboard", href: "/payroll" },
+          { name: "Payroll Dashboard", href: "/finance/payroll" },
           { name: "Process Salary", href: "/finance/process-salary" },
           { name: "Day Book", href: "/finance/day-book" },
           { name: "Salary Settings", href: "/finance/salary-settings" },
@@ -151,10 +160,10 @@ const navigation: NavGroup[] = [
   {
     group: "Services",
     items: [
-      { name: "Library", href: "/library", icon: Library },
-      { name: "Transport", href: "/transport", icon: Bus },
-      { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin"] },
-      { name: "Alumni", href: "/heritage", icon: Award },
+      { name: "Library", href: "/services/library", icon: Library },
+      { name: "Transport", href: "/services/transport", icon: Bus },
+      { name: "Inventory", href: "/services/inventory", icon: Package, roles: ["admin"] },
+      { name: "Alumni", href: "/services/alumni", icon: Award },
     ],
   },
   {
@@ -216,7 +225,10 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
       )
       .map(g => g.group);
     
-    setExpandedGroups(prev => [...new Set([...prev, ...groupsToExpand])]);
+    const handle = requestAnimationFrame(() => {
+      setExpandedGroups(prev => [...new Set([...prev, ...groupsToExpand])]);
+    });
+    return () => cancelAnimationFrame(handle);
   }, [pathname]);
 
   const toggleGroup = (group: string) => {
@@ -267,13 +279,21 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
         </div>
       )}
       {/* Brand Logo */}
-      <div className="p-6 flex items-center gap-3">
-        <div className="h-10 w-10 bg-emerald-500 rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
-          <Shield className="h-6 w-6 text-white" />
+      <div className="p-5 pb-2 flex items-center gap-3">
+        <div className="h-12 w-12 rounded-full overflow-hidden shrink-0 shadow-xl shadow-emerald-500/30 ring-2 ring-emerald-500/50 relative bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+          <Image 
+            src="/icon-rounded-v2.png" 
+            alt="Edu Maysan Logo" 
+            fill
+            className="object-cover rounded-full"
+            sizes="48px"
+            priority
+          />
         </div>
         {!isCollapsed && (
           <div className="animate-in fade-in slide-in-from-left-2 duration-500">
-            <h1 className="text-xl font-black text-white tracking-tighter">Edu Maysan</h1>
+            <h1 className="text-lg font-black text-white tracking-tight leading-tight">Edu Maysan</h1>
+            <p className="text-[10px] text-emerald-400/70 font-medium tracking-wider uppercase">School Management</p>
           </div>
         )}
       </div>

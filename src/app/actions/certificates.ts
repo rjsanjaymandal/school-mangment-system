@@ -33,7 +33,7 @@ export async function issueCertificate(data: {
             });
 
         if (error) throw error;
-        revalidatePath("/certificates");
+        revalidatePath("/academics/certificates");
         return { success: true, message: `Digital Certificate ${refNumber} issued successfully` };
     } catch (error: any) {
         return { success: false, message: error.message };
@@ -52,7 +52,7 @@ export async function revokeCertificate(id: string, remarks?: string) {
             .eq("id", id);
 
         if (error) throw error;
-        revalidatePath("/certificates");
+        revalidatePath("/academics/certificates");
         return { success: true, message: "Certificate revoked from digital registry" };
     } catch (error: any) {
         return { success: false, message: error.message };

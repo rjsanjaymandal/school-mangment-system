@@ -111,8 +111,8 @@ export default function StaffAttendancePage() {
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
       {/* Unified Page Header */}
       <UnifiedPageHeader 
-        title="Staff Attendance"
-        subtitle="Track daily faculty attendance and manage substitutions"
+        title="Attendance"
+        subtitle="Track daily staff attendance and manage substitutions"
         icon={Users}
         color="emerald"
         actions={

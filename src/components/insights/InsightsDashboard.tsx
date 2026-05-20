@@ -4,426 +4,354 @@ import { useState } from "react";
 import {
     BrainCircuit,
     TrendingUp,
+    TrendingDown,
     AlertTriangle,
-    Zap,
-    ShieldCheck,
+    AlertCircle,
+    CheckCircle,
+    Users,
+    BookOpen,
+    IndianRupee,
+    Award,
+    Activity,
+    BarChart3,
+    RefreshCw,
     Search,
-    Plus,
-    Filter,
     ArrowUpRight,
     ArrowDownRight,
-    Activity,
-    LineChart,
-    RefreshCw,
-    UserCheck,
-    ChevronRight,
-    CheckCircle2
+    Download,
+    Clock,
+    Target,
+    FileText,
+    GraduationCap
 } from "lucide-react";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardFooter,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-export default function InsightsDashboard({ 
-    systemMetrics, 
-    atRiskStudents = [] 
-}: { 
-    systemMetrics: any; 
-    atRiskStudents?: any[]; 
-}) {
-    const [isRecalculating, setIsRecalculating] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [currentMetrics, setCurrentMetrics] = useState(systemMetrics?.metrics || []);
-    const [studentList, setStudentList] = useState(atRiskStudents);
+interface InsightsDashboardProps {
+    systemMetrics: any;
+    atRiskStudents?: any[];
+}
 
-    // Dynamic Recalculation simulation with gorgeous visual spinners and triggers
-    const handleRecalculate = () => {
-        setIsRecalculating(true);
-        setTimeout(() => {
-            setIsRecalculating(false);
-            // Slightly jitter the metrics to show active recalculated values
-            if (systemMetrics?.metrics) {
-                const jittered = systemMetrics.metrics.map((m: any) => {
-                    if (m.title.includes("Risk")) {
-                        const val = parseFloat(m.value) + (Math.random() * 0.4 - 0.2);
-                        return { ...m, value: `${Math.max(0.1, val).toFixed(1)}%` };
-                    }
-                    return m;
-                });
-                setCurrentMetrics(jittered);
-            }
-        }, 1500);
+export default function InsightsDashboard({ systemMetrics, atRiskStudents = [] }: InsightsDashboardProps) {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const metrics = systemMetrics?.metrics || [];
+    const studentCount = systemMetrics?.studentCount || 0;
+    const teacherCount = systemMetrics?.teacherCount || 0;
+    const totalRevenue = systemMetrics?.totalRevenue || 0;
+
+    const handleRefresh = () => {
+        setIsLoading(true);
+        setTimeout(() => setIsLoading(false), 1500);
     };
 
-    // Filter students by search query
-    const filteredStudents = studentList.filter(s => 
-        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.className.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.rollNumber.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const forecasts = [
+        { id: 1, title: "Enrollment", desc: "15% increase expected next month", icon: Users, color: "blue", trend: "up" },
+        { id: 2, title: "Attendance", desc: "Class 9-B may drop below 75%", icon: Activity, color: "amber", trend: "down" },
+        { id: 3, title: "Revenue", desc: "₹12.5L expected next week", icon: IndianRupee, color: "emerald", trend: "up" },
+        { id: 4, title: "Academic", desc: "3 students at risk of failing", icon: Award, color: "rose", trend: "down" }
+    ];
+
+    const anomalies = [
+        { id: 1, title: "Payment Pattern", desc: "Student #1042 has irregular history", time: "2 hours", severity: "high" },
+        { id: 2, title: "Attendance Spike", desc: "Class 10-A shows 95% absence on Friday", time: "1 day", severity: "medium" },
+        { id: 3, title: "Grade Discrepancy", desc: "Math marks deviation >20%", time: "3 days", severity: "low" }
+    ];
+
+    const actions = [
+        { id: 1, title: "Send Reminders", count: 23, icon: Activity, color: "blue" },
+        { id: 2, title: "Schedule Tutoring", count: 15, icon: BookOpen, color: "emerald" },
+        { id: 3, title: "Review Attendance", count: 2, icon: AlertCircle, color: "amber" }
+    ];
+
+    const colorMap: Record<string, { bg: string; text: string; border: string }> = {
+        blue: { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-200" },
+        emerald: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200" },
+        amber: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
+        rose: { bg: "bg-rose-50", text: "text-rose-600", border: "border-rose-200" }
+    };
+
+    const severityMap: Record<string, { bg: string; text: string; border: string }> = {
+        high: { bg: "bg-rose-50", text: "text-rose-600", border: "border-rose-200" },
+        medium: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
+        low: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200" }
+    };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700 pb-12 relative">
-            {/* Loading Blocker for Recalculation */}
-            {isRecalculating && (
-                <div className="fixed inset-0 bg-slate-900/10 dark:bg-slate-950/20 backdrop-blur-sm z-[100] flex items-center justify-center transition-all duration-300">
-                    <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 p-6 rounded-2xl shadow-2xl flex flex-col items-center gap-4 animate-in zoom-in-95 duration-200">
-                        <RefreshCw className="h-10 w-10 text-emerald-500 animate-spin" />
-                        <div className="text-center">
-                            <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Recalculating Telemetry</h4>
-                            <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Re-evaluating attendance & grade records...</p>
-                        </div>
-                    </div>
-                </div>
-            )}
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Tabs defaultValue="overview" className="w-full">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <TabsList className="bg-muted/80 backdrop-blur-sm p-1 h-auto border border-border/50 rounded-xl">
+                        <TabsTrigger value="overview" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2 gap-2 text-xs font-semibold">
+                            <BarChart3 className="w-4 h-4" />
+                            <span>Overview</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="forecasts" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2 gap-2 text-xs font-semibold">
+                            <BrainCircuit className="w-4 h-4" />
+                            <span>Forecasts</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="alerts" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2 gap-2 text-xs font-semibold">
+                            <AlertTriangle className="w-4 h-4" />
+                            <span>Alerts</span>
+                        </TabsTrigger>
+                    </TabsList>
 
-            {/* Header section with custom title / sub-label */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-x-4">
-                    <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shadow-sm shrink-0">
-                        <BrainCircuit className="h-6 w-6" />
-                    </div>
-                    <div>
-                        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-none">
-                            System Insights
-                        </h2>
-                        <p className="text-slate-400 dark:text-slate-500 font-black tracking-widest uppercase text-[9px] mt-1.5">
-                            Real-time statistics & predictive analytics
-                        </p>
-                    </div>
-                </div>
-                
-                <div className="flex gap-x-3 shrink-0">
-                    <Button
-                        variant="outline"
-                        className="rounded-xl font-bold gap-x-2 text-slate-500 dark:text-slate-400 hover:text-emerald-500 border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md transition-all shadow-sm active:scale-95"
-                    >
-                        <Activity className="h-4 w-4" />
-                        System Health
-                    </Button>
-                    <Button 
-                        onClick={handleRecalculate}
-                        className="rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black gap-x-2 px-6 shadow-md uppercase tracking-wider text-[9px] hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white transition-all active:scale-95"
-                    >
-                        <Zap className="h-4 w-4" />
-                        Recalculate
-                    </Button>
-                </div>
-            </div>
-
-            {/* Three key telemetry cards */}
-            <div className="grid gap-6 md:grid-cols-3">
-                {currentMetrics.map((p: any) => {
-                    const isRisk = p.title.toLowerCase().includes("risk");
-                    const isRevenue = p.title.toLowerCase().includes("revenue");
-                    
-                    return (
-                        <Card
-                            key={p.id}
-                            className="border-slate-200/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md p-6 overflow-hidden relative group rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.01)] hover:border-emerald-500/40 hover:shadow-lg transition-all duration-300"
-                        >
-                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-300">
-                                {isRisk ? <AlertTriangle className="h-16 w-16 text-rose-500" /> :
-                                 isRevenue ? <TrendingUp className="h-16 w-16 text-emerald-500" /> :
-                                 <BrainCircuit className="h-16 w-16 text-blue-500" />}
-                            </div>
-
-                            <div className="flex justify-between items-start mb-4">
-                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-                                    {p.title}
-                                </p>
-                                <Badge
-                                    className={cn(
-                                        "text-[8px] font-black border border-transparent rounded-lg uppercase tracking-widest px-2 py-0.5 shadow-sm transition-all",
-                                        p.status === "Active" || p.status === "Optimal" || p.status === "Stable"
-                                            ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/10"
-                                            : "bg-rose-500/10 text-rose-600 border-rose-500/10",
-                                    )}
-                                >
-                                    {p.status}
-                                </Badge>
-                            </div>
-
-                            <div className="flex items-baseline gap-x-2">
-                                <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{p.value}</h3>
-                                <div
-                                    className={cn(
-                                        "flex items-center text-[9px] font-black uppercase tracking-wider",
-                                        p.trend === "up" ? "text-emerald-500" : "text-rose-500",
-                                    )}
-                                >
-                                    {p.trend === "up" ? (
-                                        <ArrowUpRight className="h-3 w-3 mr-0.5 shrink-0" />
-                                    ) : (
-                                        <ArrowDownRight className="h-3 w-3 mr-0.5 shrink-0" />
-                                    )}
-                                    {p.trend}
-                                </div>
-                            </div>
-
-                            <div className="mt-6 flex items-center justify-between text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                                <span>Confidence Rating</span>
-                                <span className="text-emerald-500 font-black">{p.confidence}</span>
-                            </div>
-                            
-                            <div className="relative h-1.5 w-full bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden mt-2 border border-slate-200/20 dark:border-slate-800/20">
-                                <div 
-                                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-1000"
-                                    style={{ width: p.confidence }}
-                                />
-                            </div>
-                        </Card>
-                    );
-                })}
-            </div>
-
-            {/* Performance charts & details */}
-            <div className="grid gap-8 lg:grid-cols-3">
-                {/* Academic trends block */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 flex items-center gap-x-2">
-                            <TrendingUp className="h-4 w-4 text-emerald-500" />
-                            Academic Grade Progress
-                        </h3>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="rounded-lg h-8 font-black text-[9px] uppercase tracking-wider text-slate-400 hover:text-emerald-500 transition-all hover:bg-slate-100 dark:hover:bg-slate-900"
-                        >
-                            Sync Details
+                    <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="gap-2 text-xs">
+                            <Download className="h-3 w-3" />
+                            Export
+                        </Button>
+                        <Button onClick={handleRefresh} size="sm" className="gap-2 text-xs bg-blue-500 hover:bg-blue-600">
+                            {isLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                            Refresh
                         </Button>
                     </div>
+                </div>
 
-                    <Card className="border-slate-200/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 shadow-sm overflow-hidden relative">
-                        <div className="h-[300px] flex items-end gap-x-3 sm:gap-x-4 relative z-10">
-                            {[65, 42, 88, 35, 76, 54, 95, 62].map((h, i) => (
-                                <div
-                                    key={i}
-                                    className="flex-1 flex flex-col items-center gap-y-3 group/p"
-                                >
-                                    <div className="relative w-full h-[240px] flex items-end">
-                                        <div className="absolute inset-0 bg-slate-100/50 dark:bg-slate-900/50 rounded-xl border border-slate-200/10 dark:border-slate-800/10 overflow-hidden" />
-                                        <div
-                                            className="relative w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-xl transition-all duration-1000 group-hover/p:from-emerald-400 group-hover/p:to-teal-300"
-                                            style={{ height: `${h}%` }}
-                                        >
-                                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-950 text-white text-[9px] font-black tracking-wider px-2.5 py-1 rounded-lg opacity-0 group-hover/p:opacity-100 transition-all shadow-md border border-slate-800">
-                                                {h}%
+                <TabsContent value="overview" className="space-y-6 outline-none">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="glass futuristic-card rounded-2xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+                                    <GraduationCap className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Students</span>
+                            </div>
+                            <p className="text-3xl font-bold text-slate-900">{studentCount}</p>
+                            <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600">
+                                <ArrowUpRight className="h-3 w-3" /> +12 this month
+                            </div>
+                        </div>
+
+                        <div className="glass futuristic-card rounded-2xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600">
+                                    <IndianRupee className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Revenue</span>
+                            </div>
+                            <p className="text-3xl font-bold text-slate-900">₹{(totalRevenue / 100000).toFixed(1)}L</p>
+                            <div className="flex items-center gap-1 mt-2 text-xs text-emerald-600">
+                                <ArrowUpRight className="h-3 w-3" /> +8% this month
+                            </div>
+                        </div>
+
+                        <div className="glass futuristic-card rounded-2xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 rounded-lg bg-purple-50 text-purple-600">
+                                    <Users className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Teachers</span>
+                            </div>
+                            <p className="text-3xl font-bold text-slate-900">{teacherCount}</p>
+                            <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
+                                <Target className="h-3 w-3" /> 1:15 ratio
+                            </div>
+                        </div>
+
+                        <div className="glass futuristic-card rounded-2xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 rounded-lg bg-rose-50 text-rose-600">
+                                    <AlertTriangle className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">At Risk</span>
+                            </div>
+                            <p className="text-3xl font-bold text-slate-900">{atRiskStudents.length}</p>
+                            <Badge className={cn("mt-2 text-[10px]", atRiskStudents.length > 5 ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700")}>
+                                {atRiskStudents.length > 5 ? "High" : "Normal"}
+                            </Badge>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 glass futuristic-card rounded-2xl p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-sm font-semibold flex items-center gap-2">
+                                    <span className="w-1 h-4 bg-emerald-500 rounded-full" />
+                                    Class Performance
+                                </h3>
+                                <Button variant="ghost" size="sm" className="text-xs">View All</Button>
+                            </div>
+                            <div className="h-[200px] flex items-end gap-3">
+                                {["65", "72", "88", "45", "76", "54", "95", "62"].map((h, i) => (
+                                    <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                                        <div className="w-full h-full flex items-end">
+                                            <div
+                                                className="w-full bg-gradient-to-t from-emerald-500 to-emerald-400 rounded-t-lg transition-all hover:from-emerald-400"
+                                                style={{ height: `${h}%` }}
+                                            />
+                                        </div>
+                                        <span className="text-[10px] text-muted-foreground">Class {i + 1}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="glass futuristic-card rounded-2xl p-5">
+                                <h4 className="text-sm font-semibold mb-4">Summary</h4>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between p-2 rounded-lg bg-slate-50">
+                                        <span className="text-xs">Students</span>
+                                        <span className="text-xs font-bold">{studentCount}</span>
+                                    </div>
+                                    <div className="flex justify-between p-2 rounded-lg bg-slate-50">
+                                        <span className="text-xs">Teachers</span>
+                                        <span className="text-xs font-bold">{teacherCount}</span>
+                                    </div>
+                                    <div className="flex justify-between p-2 rounded-lg bg-slate-50">
+                                        <span className="text-xs">Revenue</span>
+                                        <span className="text-xs font-bold">₹{(totalRevenue / 100000).toFixed(1)}L</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="forecasts" className="space-y-6 outline-none">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="glass futuristic-card rounded-2xl p-6">
+                            <h3 className="text-sm font-semibold flex items-center gap-2 mb-5">
+                                <span className="w-1 h-4 bg-blue-500 rounded-full" />
+                                Forecasts
+                            </h3>
+                            <div className="space-y-4">
+                                {forecasts.map((f) => {
+                                    const colors = colorMap[f.color];
+                                    return (
+                                        <div key={f.id} className="flex items-start gap-3 p-4 rounded-xl bg-slate-50/80">
+                                            <div className={cn("p-2.5 rounded-lg shrink-0", colors.bg)}>
+                                                <f.icon className={cn("h-4 w-4", colors.text)} />
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex justify-between items-center">
+                                                    <p className="text-sm font-semibold">{f.title}</p>
+                                                    <div className="flex items-center gap-1 text-[10px]">
+                                                        {f.trend === "up" ? <TrendingUp className="h-3 w-3 text-emerald-600" /> : <TrendingDown className="h-3 w-3 text-rose-600" />}
+                                                        <span className={f.trend === "up" ? "text-emerald-600" : "text-rose-600"}>{f.trend}</span>
+                                                    </div>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground mt-1">{f.desc}</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    <span className="text-[8px] font-black text-slate-400/80 dark:text-slate-500 uppercase tracking-widest leading-none">
-                                        SEC 0{i + 1}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        <div className="mt-8 p-4 rounded-xl bg-slate-50/80 dark:bg-slate-900/40 border border-slate-200/30 dark:border-slate-800/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[9px] font-black text-slate-400 dark:text-slate-500 relative z-10">
-                            <p className="uppercase tracking-[0.15em]">
-                                Calculated system progress score
-                            </p>
-                            <div className="flex gap-x-4 tracking-[0.15em] shrink-0">
-                                <span className="flex items-center gap-x-1.5">
-                                    <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />{" "}
-                                    FORECASTED
-                                </span>
-                                <span className="flex items-center gap-x-1.5">
-                                    <div className="h-2 w-2 rounded-full bg-slate-200 dark:bg-slate-800" />{" "}
-                                    ACTUAL
-                                </span>
+                                    );
+                                })}
                             </div>
                         </div>
-                    </Card>
-                </div>
 
-                {/* Right hand details cards */}
-                <div className="space-y-6">
-                    {/* Roster overview */}
-                    <Card className="border-slate-200/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md rounded-2xl p-6 sm:p-8 relative overflow-hidden group shadow-sm">
-                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-300">
-                            <ShieldCheck className="h-16 w-16 text-emerald-500" />
-                        </div>
-                        <h4 className="text-lg font-black tracking-tight mb-2 uppercase text-slate-900 dark:text-white leading-none">
-                            Roster Summary
-                        </h4>
-                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-[0.15em] leading-relaxed">
-                            Currently tracking {systemMetrics?.studentCount} students and {systemMetrics?.teacherCount} staff members. 
-                            Ratios are verified to be inside healthy operational levels.
-                        </p>
-                        
-                        <div className="mt-6 space-y-3">
-                            <Button className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white font-black rounded-xl shadow-md uppercase tracking-wider text-[9px] py-5 transition-all duration-200 active:scale-95">
-                                View Staff Details
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                className="w-full text-slate-400 hover:text-slate-900 dark:hover:text-white font-black text-[9px] uppercase tracking-[0.2em] transition-all underline underline-offset-4 hover:no-underline"
-                            >
-                                Detailed Report →
-                            </Button>
-                        </div>
-                    </Card>
-
-                    {/* Revenue alert cards */}
-                    <Card className="border-rose-500/10 dark:border-rose-500/5 bg-rose-500/5 rounded-2xl p-6 shadow-sm border">
-                        <div className="flex items-center gap-x-3 mb-4">
-                            <div className="h-10 w-10 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center border border-rose-500/10 shrink-0">
-                                <AlertTriangle className="h-5 w-5" />
-                            </div>
-                            <div>
-                                <h5 className="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em] leading-none">
-                                    Financials
-                                </h5>
-                                <p className="text-sm font-black text-slate-950 dark:text-white uppercase tracking-tight mt-1">
-                                    Revenue Status
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-[0.15em] leading-relaxed mb-6">
-                            Total collected revenue is current at: ₹{(systemMetrics?.totalRevenue || 0).toLocaleString("en-IN")}.
-                        </p>
-                        
-                        <div className="p-4 rounded-xl bg-white/70 dark:bg-slate-900/60 border border-slate-200/50 dark:border-slate-800/50 transition-all hover:border-rose-500/30">
-                            <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest mb-2 leading-none">
-                                Suggested Action
-                            </p>
-                            <div className="flex justify-between items-center gap-4">
-                                <span className="text-[9px] font-black text-slate-900 dark:text-white uppercase tracking-wider leading-none">
-                                    Review Fee Structures
-                                </span>
-                                <Badge variant="destructive" className="border-none text-[8px] font-black rounded-lg tracking-wider px-2 py-0.5">
-                                    ROUTINE
-                                </Badge>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-
-            {/* Dynamic Active Student Dropout Risk Roster Table */}
-            <div className="space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 flex items-center gap-x-2">
-                        <AlertTriangle className="h-4 w-4 text-rose-500 animate-pulse" />
-                        At-Risk Student Telemetry
-                    </h3>
-                    
-                    {/* Search Field */}
-                    <div className="relative w-full sm:w-72">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <input
-                            type="text"
-                            placeholder="Filter by name, class, roll..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800/60 rounded-xl py-2 pl-10 pr-4 text-xs font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500/50 shadow-sm"
-                        />
-                    </div>
-                </div>
-
-                <Card className="border-slate-200/50 dark:border-slate-800/50 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-slate-100 dark:border-slate-900 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                                    <th className="p-4 pl-6">Student</th>
-                                    <th className="p-4">Roll Number</th>
-                                    <th className="p-4">Current Class</th>
-                                    <th className="p-4 text-center">Calculated Score</th>
-                                    <th className="p-4">Condition Status</th>
-                                    <th className="p-4 pr-6">Action Intervention Recommendation</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredStudents.length > 0 ? (
-                                    filteredStudents.map((s, index) => (
-                                        <tr 
-                                            key={s.id}
-                                            className={cn(
-                                                "border-b border-slate-100/50 dark:border-slate-900/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-all",
-                                                index === filteredStudents.length - 1 && "border-none"
-                                            )}
-                                        >
-                                            <td className="p-4 pl-6">
+                        <div className="glass futuristic-card rounded-2xl p-6">
+                            <h3 className="text-sm font-semibold flex items-center gap-2 mb-5">
+                                <span className="w-1 h-4 bg-emerald-500 rounded-full" />
+                                Actions
+                            </h3>
+                            <div className="space-y-4">
+                                {actions.map((a) => {
+                                    const colors = colorMap[a.color];
+                                    return (
+                                        <div key={a.id} className={cn("p-4 rounded-xl border", colors.border)}>
+                                            <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-black uppercase text-[10px] flex items-center justify-center border border-slate-200/20 dark:border-slate-800/20">
-                                                        {s.name.charAt(0)}
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs font-black text-slate-900 dark:text-white leading-none">{s.name}</p>
-                                                        <span className="text-[8px] text-slate-400 uppercase tracking-widest mt-1 inline-block">Active Record</span>
-                                                    </div>
+                                                    <a.icon className={cn("h-5 w-5", colors.text)} />
+                                                    <span className="text-sm font-semibold">{a.title}</span>
                                                 </div>
-                                            </td>
-                                            <td className="p-4 text-xs font-bold text-slate-500 dark:text-slate-400">
-                                                {s.rollNumber}
-                                            </td>
-                                            <td className="p-4 text-xs font-bold text-slate-900 dark:text-white">
-                                                {s.className}
-                                            </td>
-                                            <td className="p-4 text-center">
-                                                <div className="flex flex-col items-center gap-1 justify-center">
-                                                    <span className="text-xs font-black text-slate-900 dark:text-white">{s.riskScore}%</span>
-                                                    <div className="w-16 h-1 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
-                                                        <div 
-                                                            className={cn(
-                                                                "h-full rounded-full",
-                                                                s.riskScore > 60 ? "bg-rose-500" : s.riskScore > 30 ? "bg-amber-500" : "bg-emerald-500"
-                                                            )}
-                                                            style={{ width: `${s.riskScore}%` }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <Badge
-                                                    className={cn(
-                                                        "text-[8px] font-black border border-transparent rounded-lg uppercase tracking-wider px-2.5 py-0.5",
-                                                        s.status === "High Risk" 
-                                                            ? "bg-rose-500/10 text-rose-600 border-rose-500/10" 
-                                                            : s.status === "Needs Monitoring" 
-                                                            ? "bg-amber-500/10 text-amber-600 border-amber-500/10" 
-                                                            : "bg-emerald-500/10 text-emerald-600 border-emerald-500/10"
-                                                    )}
-                                                >
-                                                    {s.status}
-                                                </Badge>
-                                            </td>
-                                            <td className="p-4 pr-6 text-xs font-bold text-slate-500 dark:text-slate-400">
-                                                <div className="flex items-center justify-between gap-4">
-                                                    <span className="truncate max-w-xs">{s.recommendation}</span>
-                                                    <Button 
-                                                        variant="ghost" 
-                                                        size="sm" 
-                                                        className="h-7 rounded-lg text-[8px] font-black tracking-widest uppercase hover:bg-emerald-500 hover:text-white text-emerald-600 shrink-0 border border-emerald-500/10 transition-all duration-200 active:scale-95"
-                                                    >
-                                                        Review Case
-                                                    </Button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={6} className="p-8 text-center text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                                            No flagged at-risk students found matching filters
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                                <Badge className="bg-white">{a.count}</Badge>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     </div>
-                </Card>
-            </div>
+                </TabsContent>
+
+                <TabsContent value="alerts" className="space-y-6 outline-none">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="glass futuristic-card rounded-2xl p-6">
+                            <h3 className="text-sm font-semibold flex items-center gap-2 mb-5">
+                                <span className="w-1 h-4 bg-amber-500 rounded-full" />
+                                Issues
+                            </h3>
+                            <div className="space-y-4">
+                                {anomalies.map((a) => {
+                                    const colors = severityMap[a.severity];
+                                    return (
+                                        <div key={a.id} className={cn("p-4 rounded-xl border bg-white", colors.border)}>
+                                            <div className="flex items-start gap-3">
+                                                <div className={cn("p-2 rounded-full shrink-0", colors.bg)}>
+                                                    <AlertTriangle className={cn("h-4 w-4", colors.text)} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between">
+                                                        <p className="text-sm font-semibold">{a.title}</p>
+                                                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                                            <Clock className="h-3 w-3" />{a.time}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground mt-1">{a.desc}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="glass futuristic-card rounded-2xl p-6">
+                            <div className="flex items-center justify-between mb-5">
+                                <h3 className="text-sm font-semibold flex items-center gap-2">
+                                    <span className="w-1 h-4 bg-rose-500 rounded-full" />
+                                    At Risk Students
+                                </h3>
+                                <div className="relative w-40">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                                    <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search" className="pl-8 h-8 text-xs" />
+                                </div>
+                            </div>
+                            <ScrollArea className="h-[350px]">
+                                <div className="space-y-3">
+                                    {atRiskStudents.length === 0 ? (
+                                        <div className="text-center py-8">
+                                            <CheckCircle className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
+                                            <p className="text-sm text-muted-foreground">All students doing well</p>
+                                        </div>
+                                    ) : (
+                                        atRiskStudents.map((s: any) => (
+                                            <div key={s.id} className="p-4 rounded-xl border border-slate-100">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-9 w-9 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center text-sm">
+                                                        {s.name?.[0] || "?"}
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between">
+                                                            <p className="text-sm font-semibold">{s.name}</p>
+                                                            <Badge className={cn("text-[10px]", s.riskScore > 60 ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700")}>
+                                                                {s.status}
+                                                            </Badge>
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground">{s.className} • Roll: {s.rollNumber}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full">
+                                                        <div className={cn("h-full rounded-full", s.riskScore > 60 ? "bg-rose-500" : "bg-amber-500")} style={{ width: `${s.riskScore}%` }} />
+                                                    </div>
+                                                    <span className="text-xs font-semibold">{s.riskScore}%</span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </ScrollArea>
+                        </div>
+                    </div>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

@@ -31,7 +31,7 @@ export async function addConductRecord(data: {
 
         const { error } = await supabase.from("student_conduct").insert(recordData);
         if (error) throw error;
-        revalidatePath("/conduct");
+        revalidatePath("/students/conduct");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -63,7 +63,7 @@ export async function updateConductRecord(id: string, data: {
             .eq("id", id);
         
         if (error) throw error;
-        revalidatePath("/conduct");
+        revalidatePath("/students/conduct");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -82,7 +82,7 @@ export async function deleteConductRecord(id: string) {
             .eq("id", id);
         
         if (error) throw error;
-        revalidatePath("/conduct");
+        revalidatePath("/students/conduct");
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

@@ -12,6 +12,9 @@ import {
   Clock, CheckCircle, XCircle, AlertTriangle
 } from "lucide-react";
 
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+
 interface AttendanceStats {
   present: number;
   absent: number;
@@ -94,97 +97,50 @@ export default async function AttendanceTelemetryPage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Page Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
-          <Calendar className="h-5 w-5 text-emerald-600" />
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900">Attendance Telemetry</h1>
-          <p className="text-sm text-slate-500">Real-time attendance monitoring and analytics</p>
-        </div>
-      </div>
+      <UnifiedPageHeader 
+        title="Attendance Telemetry"
+        subtitle="Real-time attendance monitoring and analytics"
+        icon={Calendar}
+        color="emerald"
+      />
 
       {/* 4-Card Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Today's Attendance</p>
-                <p className="text-2xl font-semibold text-slate-900">
-                  {todayStats.total > 0 
-                    ? Math.round((todayStats.present / todayStats.total) * 100) 
-                    : 0}%
-                </p>
-                <p className="text-xs text-slate-400">
-                  {todayStats.present} / {totalStudents || 0} present
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-emerald-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <DashboardStatCard 
+          title="Today's Attendance"
+          value={`${todayStats.total > 0 ? Math.round((todayStats.present / todayStats.total) * 100) : 0}%`}
+          description={`${todayStats.present} / ${totalStudents || 0} present`}
+          icon={CheckCircle}
+          color="emerald"
+        />
 
-        <Card className="border-l-4 border-l-red-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Absent Today</p>
-                <p className="text-2xl font-semibold text-slate-900">{todayStats.absent}</p>
-                <p className="text-xs text-slate-400">Students absent</p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                <XCircle className="h-5 w-5 text-red-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <DashboardStatCard 
+          title="Absent Today"
+          value={todayStats.absent}
+          description="Students absent"
+          icon={XCircle}
+          color="rose"
+        />
 
-        <Card className="border-l-4 border-l-blue-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Weekly Average</p>
-                <p className="text-2xl font-semibold text-slate-900">{weeklyPercentage}%</p>
-                <p className="text-xs text-slate-400 flex items-center gap-1">
-                  {weeklyPercentage >= 75 ? (
-                    <>
-                      <TrendingUp className="h-3 w-3 text-emerald-500" />
-                      <span className="text-emerald-600">On track</span>
-                    </>
-                  ) : (
-                    <>
-                      <TrendingDown className="h-3 w-3 text-red-500" />
-                      <span className="text-red-600">Needs attention</span>
-                    </>
-                  )}
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-blue-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <DashboardStatCard 
+          title="Weekly Average"
+          value={`${weeklyPercentage}%`}
+          description={weeklyPercentage >= 75 ? "On track" : "Needs attention"}
+          trend={{
+            value: weeklyPercentage >= 75 ? "On track" : "Needs attention",
+            isUp: weeklyPercentage >= 75
+          }}
+          icon={Clock}
+          color="blue"
+        />
 
-        <Card className="border-l-4 border-l-purple-500 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">Monthly Average</p>
-                <p className="text-2xl font-semibold text-slate-900">{monthlyPercentage}%</p>
-                <p className="text-xs text-slate-400">
-                  {monthlyPresent} / {monthlyTotal} present
-                </p>
-              </div>
-              <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                <Users className="h-5 w-5 text-purple-600" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <DashboardStatCard 
+          title="Monthly Average"
+          value={`${monthlyPercentage}%`}
+          description={`${monthlyPresent} / ${monthlyTotal} present`}
+          icon={Users}
+          color="purple"
+        />
       </div>
 
       {/* Main Content */}

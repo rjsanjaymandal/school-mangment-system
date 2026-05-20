@@ -47,7 +47,7 @@ export async function createGateway(data: GatewayPayload) {
 
         if (error) throw error;
 
-        revalidatePath("/gateways");
+        revalidatePath("/finance/gateways");
         revalidatePath("/settings");
         return { success: true };
     } catch (error: any) {
@@ -73,7 +73,7 @@ export async function updateGateway(id: string, data: Partial<GatewayPayload>) {
 
         if (error) throw error;
 
-        revalidatePath("/gateways");
+        revalidatePath("/finance/gateways");
         revalidatePath("/settings");
         return { success: true };
     } catch (error: any) {
@@ -99,7 +99,7 @@ export async function updateGatewayStatus(id: string, is_active: boolean) {
 
         if (error) throw error;
 
-        revalidatePath("/gateways");
+        revalidatePath("/finance/gateways");
         revalidatePath("/settings");
         return { success: true };
     } catch (error: any) {
@@ -122,7 +122,7 @@ export async function deleteGateway(id: string) {
 
         if (error) throw error;
 
-        revalidatePath("/gateways");
+        revalidatePath("/finance/gateways");
         revalidatePath("/settings");
         return { success: true };
     } catch (error: any) {

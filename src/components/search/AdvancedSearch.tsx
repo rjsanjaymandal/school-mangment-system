@@ -37,9 +37,20 @@ export function AdvancedSearch() {
   const [showFilters, setShowFilters] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
+  const handleQueryChange = (val: string) => {
+    setQuery(val);
+    if (val.length < 2) {
+      setResults([]);
+    }
+  };
+
+  const handleClear = () => {
+    setQuery("");
+    setResults([]);
+  };
+
   useEffect(() => {
     if (query.length < 2) {
-      setResults([]);
       return;
     }
 
@@ -168,11 +179,11 @@ export function AdvancedSearch() {
           placeholder="Search students, staff, classes, subjects..."
           className="pl-10 pr-20 h-10"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => handleQueryChange(e.target.value)}
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {query && (
-            <button onClick={() => setQuery("")} className="p-1 hover:bg-slate-100 rounded">
+            <button onClick={handleClear} className="p-1 hover:bg-slate-100 rounded">
               <X className="h-3 w-3" />
             </button>
           )}

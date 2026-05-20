@@ -10,8 +10,13 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
   const [isResizing, setIsResizing] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const handle = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(handle);
+  }, []);
 
+  useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
       // Check if clicking near the sidebar edge
       if (e.clientX >= width - 10 && e.clientX <= width + 10) {
