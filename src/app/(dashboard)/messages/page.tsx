@@ -18,13 +18,26 @@ export default async function MessagesPage() {
     redirect("/login");
   }
 
-  const { data: conversations } = await MessagesService.getConversations(user.id);
+  let conversations: any[] = [];
+  let contacts: any[] = [];
 
-  const { data: contacts } = await supabase
-    .from("profiles")
-    .select("id, full_name, role, avatar_url")
-    .neq("id", user.id)
-    .order("full_name");
+  try {
+    const { data } = await MessagesService.getConversations(user.id);
+    conversations = data || [];
+  } catch (error) {
+    console.warn("[MESSAGES] Failed to load conversations:", error);
+  }
+
+  try {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, full_name, role, avatar_url")
+      .neq("id", user.id)
+      .order("full_name");
+    contacts = data || [];
+  } catch (error) {
+    console.warn("[MESSAGES] Failed to load contacts:", error);
+  }
 
   return (
     <div className="p-6 space-y-0 animate-in fade-in duration-700">
@@ -36,8 +49,8 @@ export default async function MessagesPage() {
       />
 
       <MessagesDashboard
-        initialConversations={conversations || []}
-        contacts={contacts || []}
+        initialConversations={conversations}
+        contacts={contacts}
         currentUserId={user.id}
       />
     </div>
