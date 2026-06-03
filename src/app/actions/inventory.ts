@@ -56,6 +56,31 @@ export async function createInventoryItem(data: {
     }
 }
 
+export async function updateInventoryItem(id: string, data: {
+    name?: string;
+    category?: string;
+    quantity_in_stock?: number;
+    unit_price?: number;
+    sku?: string;
+    min_stock_level?: number;
+}) {
+    try {
+        const supabase = createAdminClient();
+        const { error } = await supabase
+            .from("inventory_items")
+            .update(data)
+            .eq("id", id);
+
+        if (error) throw error;
+
+        revalidatePath("/inventory");
+        return { success: true };
+    } catch (error) {
+        console.error(`Error updating inventory item ${id}:`, error);
+        return { error: "Failed to update item" };
+    }
+}
+
 export async function updateStock(id: string, quantity_in_stock: number) {
     try {
         const supabase = createAdminClient();
