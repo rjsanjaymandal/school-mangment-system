@@ -63,7 +63,7 @@ const navigation: NavGroup[] = [
     items: [
       { name: "Dashboard", href: "/", icon: LayoutDashboard },
       { name: "Insights", href: "/insights", icon: Sparkles, roles: ["admin", "teacher", "student"] },
-      { name: "Inbox", href: "/notifications", icon: Bell },
+      { name: "Notification", href: "/notifications", icon: Bell },
       { name: "Messages", href: "/messages", icon: MessageSquare },
     ],
   },
