@@ -48,8 +48,8 @@ export function MarksEntryForm({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const form = useForm<MarkFormValues>({
-    resolver: zodResolver(markSchema),
+  const form = useForm<MarkFormValues, any, MarkFormValues>({
+    resolver: zodResolver(markSchema) as any,
     defaultValues: {
       marks: (students || []).reduce(
         (acc, student) => ({

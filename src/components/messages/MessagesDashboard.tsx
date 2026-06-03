@@ -70,11 +70,12 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
         }
     }, [currentUserId]);
 
-    useEffect(() => {
-        if (selectedConversation) {
-            void loadConversation(selectedConversation.contact.id);
+    const handleSelectConversation = useCallback((conv: any) => {
+        setSelectedConversation(conv);
+        if (conv) {
+            void loadConversation(conv.contact.id);
         }
-    }, [selectedConversation, loadConversation]);
+    }, [loadConversation]);
 
     useEffect(() => {
         const loadSent = async () => {
@@ -205,7 +206,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                                         return (
                                             <button
                                                 key={conv.contact.id}
-                                                onClick={() => setSelectedConversation(conv)}
+                                                onClick={() => handleSelectConversation(conv)}
                                                 className={cn(
                                                     "w-full flex items-center gap-3 p-4 text-left border-b border-slate-100/50 transition-all",
                                                     isSelected ? "bg-blue-500 text-white" : hasUnread ? "bg-blue-50/50" : "hover:bg-slate-50"
@@ -246,7 +247,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                                 <>
                                     <div className="p-4 border-b border-slate-200/60 bg-white/50 flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => setSelectedConversation(null)}>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => handleSelectConversation(null)}>
                                                 <ArrowLeft className="h-4 w-4" />
                                             </Button>
                                             <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">

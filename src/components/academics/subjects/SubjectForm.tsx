@@ -37,8 +37,8 @@ interface SubjectFormProps {
 
 export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
   const router = useRouter();
-  const form = useForm<SubjectFormValues>({
-    resolver: zodResolver(subjectSchema),
+  const form = useForm<SubjectFormValues, any, SubjectFormValues>({
+    resolver: zodResolver(subjectSchema) as any,
     defaultValues: {
       name: initialData?.name || "",
       code: initialData?.code || "",

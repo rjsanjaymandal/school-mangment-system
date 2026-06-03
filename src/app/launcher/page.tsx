@@ -53,7 +53,7 @@ export default function LauncherPage() {
 
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [router]);
 
   const handleSignOut = async () => {
     const supabase = createClient();

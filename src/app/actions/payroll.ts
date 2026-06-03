@@ -96,7 +96,7 @@ export async function updateLeaveStatus(id: string, status: "approved" | "reject
 export async function getLeaveRequests(filters?: { staff_id?: string; status?: string }) {
     try {
         const supabase = createAdminClient();
-        let query = supabase.from("leave_requests").select("*, staff:profiles(*)");
+        let query = supabase.from("leave_requests").select("*, staff:profiles!leave_requests_staff_id_fkey(*)");
         if (filters?.staff_id) query = query.eq("staff_id", filters.staff_id);
         if (filters?.status) query = query.eq("status", filters.status);
         const { data, error } = await query.order("created_at", { ascending: false });

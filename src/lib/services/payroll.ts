@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { handleServiceError } from "../error-handler";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export const PayrollService = {
   async getAllPayrolls(filters?: { 
@@ -8,9 +9,9 @@ export const PayrollService = {
     month?: number; 
     year?: number;
     status?: string;
-  }) {
+  }, client?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = client || createClient();
       let query = supabase
         .from("staff_payrolls")
         .select(`
@@ -29,7 +30,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data: data || [], error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.getAllPayrolls error:", error instanceof Error ? error.message : error);
+      return { data: [], error };
     }
   },
 
@@ -48,7 +50,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.getPayrollById error:", error);
+      return { data: null, error };
     }
   },
 
@@ -76,7 +79,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.createPayroll error:", error);
+      return { data: null, error };
     }
   },
 
@@ -98,7 +102,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.updatePayroll error:", error);
+      return { data: null, error };
     }
   },
 
@@ -118,7 +123,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.processPayment error:", error);
+      return { data: null, error };
     }
   },
 
@@ -129,7 +135,8 @@ export const PayrollService = {
       if (error) throw error;
       return { error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.deletePayroll error:", error);
+      return { error };
     }
   },
 
@@ -146,13 +153,14 @@ export const PayrollService = {
       if (error) throw error;
       return { data: data || [], error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.getStaffPayrollHistory error:", error);
+      return { data: [], error };
     }
   },
 
-  async getPayrollSummary(year: number) {
+  async getPayrollSummary(year: number, client?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = client || createClient();
       
       const { data: payrolls } = await supabase
         .from("staff_payrolls")
@@ -178,22 +186,29 @@ export const PayrollService = {
         error: null
       };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.getPayrollSummary error:", error);
+      return { data: {
+        total_payroll: 0,
+        total_bonuses: 0,
+        total_deductions: 0,
+        total_net_pay: 0,
+        paid_count: 0,
+        pending_count: 0
+      }, error };
     }
   },
 
   async getLeaveRequests(filters?: { 
     staff_id?: string; 
     status?: string;
-  }) {
+  }, client?: SupabaseClient) {
     try {
-      const supabase = createClient();
+      const supabase = client || createClient();
       let query = supabase
         .from("leave_requests")
         .select(`
-          *,
-          staff:profiles(full_name, phone, role),
-          approver:profiles!approved_by(full_name)
+          id, staff_id, leave_type, start_date, end_date, reason, status, created_at,
+          staff:profiles!leave_requests_staff_id_fkey(full_name, phone, role)
         `)
         .order("created_at", { ascending: false });
 
@@ -204,7 +219,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data: data || [], error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.getLeaveRequests error:", error instanceof Error ? error.message : error);
+      return { data: [], error };
     }
   },
 
@@ -229,7 +245,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.createLeaveRequest error:", error);
+      return { data: null, error };
     }
   },
 
@@ -249,7 +266,8 @@ export const PayrollService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.updateLeaveStatus error:", error);
+      return { data: null, error };
     }
   },
 
@@ -261,7 +279,8 @@ export const PayrollService = {
         .from("leave_requests")
         .select("leave_type, start_date, end_date, status")
         .eq("staff_id", staffId)
-        .eq("year", year)
+        .gte("start_date", `${year}-01-01`)
+        .lt("start_date", `${year + 1}-01-01`)
         .eq("status", "approved");
 
       const leaveTypes = ['sick', 'casual', 'earned', 'maternity', 'paternity', 'unpaid'];
@@ -281,7 +300,8 @@ export const PayrollService = {
 
       return { data: balance, error: null };
     } catch (error) {
-      return handleServiceError(error);
+      console.error("PayrollService.getLeaveBalance error:", error);
+      return { data: {}, error };
     }
   }
 };

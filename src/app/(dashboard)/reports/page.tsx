@@ -128,7 +128,11 @@ export default function ReportCardsPage() {
 
   const toggleSelect = (id: string) => {
     const newSelected = new Set(selectedCards);
-    newSelected.has(id) ? newSelected.delete(id) : newSelected.add(id);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
     setSelectedCards(newSelected);
   };
 

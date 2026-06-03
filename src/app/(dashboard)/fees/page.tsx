@@ -84,7 +84,7 @@ export default async function FeesPage() {
 
     const { data: allLeaveRequests } = await supabase
       .from("leave_requests")
-      .select("*, staff:profiles(*)")
+      .select("*, staff:profiles!leave_requests_staff_id_fkey(*)")
       .order("created_at", { ascending: false })
       .limit(20);
     leaveRequests = allLeaveRequests || [];
