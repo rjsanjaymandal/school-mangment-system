@@ -5,9 +5,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
-export default async function EditStaffPage({ params }: { params: { id: string } }) {
+export default async function EditStaffPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
+    // Basic UUID format validation to prevent DB syntax errors
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+        notFound();
+    }
+
     const [{ data: staff }, { data: departments }, { data: designations }] = await Promise.all([
-        getStaffById(params.id),
+        getStaffById(id),
         getDepartments(),
         getDesignations(),
     ]);
@@ -25,7 +33,7 @@ export default async function EditStaffPage({ params }: { params: { id: string }
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href={`/hr/staff/${params.id}`}>
+                    <Link href={`/hr/staff/${id}`}>
                         <Button variant="ghost" size="icon" className="rounded-full">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { updateStudent } from "@/app/actions/students";
 import { ArrowLeft, Save, User, Users, MapPin, Contact, Heart, CheckCircle, AlertCircle } from "lucide-react";
@@ -41,6 +41,8 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
   const [formData, setFormData] = useState<any>({});
   const [formDataSet, setFormDataSet] = useState(false);
 
+  const [isValidUuid, setIsValidUuid] = useState(true);
+
   const { data: student, isLoading } = useQuery({
     queryKey: ['student-edit', studentId],
     queryFn: async () => {
@@ -64,8 +66,19 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
   });
 
   useEffect(() => {
-    params.then(p => setStudentId(p.id));
+    params.then(p => {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(p.id)) {
+        setIsValidUuid(false);
+      } else {
+        setStudentId(p.id);
+      }
+    });
   }, [params]);
+
+  if (!isValidUuid) {
+    notFound();
+  }
 
   useEffect(() => {
     if (student && !formDataSet) {

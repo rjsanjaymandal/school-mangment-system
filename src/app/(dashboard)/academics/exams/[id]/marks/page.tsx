@@ -3,6 +3,7 @@ import { MarksEntryForm } from "@/components/academics/exams/MarksEntryForm";
 import { ArrowLeft, BookOpen, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { notFound } from "next/navigation";
 
 export default async function MarksPage({
   params,
@@ -10,6 +11,13 @@ export default async function MarksPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: examId } = await params;
+
+  // Basic UUID format validation to prevent DB syntax errors
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(examId)) {
+    notFound();
+  }
+
   const supabase = await createClient();
 
   // 1. Fetch Exam Details

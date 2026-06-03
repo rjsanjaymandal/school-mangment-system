@@ -21,10 +21,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { notFound } from "next/navigation";
 
-export default async function StaffProfilePage({ params }: { params: { id: string } }) {
+export default async function StaffProfilePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    
+    // Basic UUID format validation to prevent DB syntax errors
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+        notFound();
+    }
+
     const role = await getSessionRole();
     const isAdmin = role === "admin";
-    const { data: staff } = await getStaffById(params.id);
+    const { data: staff } = await getStaffById(id);
 
     if (!staff) {
         notFound();
@@ -53,7 +61,7 @@ export default async function StaffProfilePage({ params }: { params: { id: strin
                         <IdCard className="h-4 w-4" />
                         Print ID Card
                     </Button>
-                    <Link href={`/hr/staff/${params.id}/edit`}>
+                    <Link href={`/hr/staff/${id}/edit`}>
                         <Button className="bg-emerald-600 hover:bg-emerald-700 rounded-md gap-2">
                             <Edit className="h-4 w-4" />
                             Edit Profile

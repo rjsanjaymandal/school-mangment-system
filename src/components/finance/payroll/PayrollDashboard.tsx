@@ -44,13 +44,15 @@ interface PayrollDashboardProps {
   pendingLeaveRequests: any[];
   yearlyStats: any;
   staffMembers: any[];
+  currentUserId: string;
 }
 
 export function PayrollDashboard({ 
   initialPayrolls, 
   pendingLeaveRequests, 
   yearlyStats,
-  staffMembers 
+  staffMembers,
+  currentUserId
 }: PayrollDashboardProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -73,7 +75,7 @@ export function PayrollDashboard({
   };
 
   const handleLeaveAction = async (id: string, status: 'approved' | 'rejected') => {
-    const result = await updateLeaveStatus(id, status, 'admin');
+    const result = await updateLeaveStatus(id, status, currentUserId);
     if (result.success) {
       toast.success(`Leave request ${status}`);
       router.refresh();

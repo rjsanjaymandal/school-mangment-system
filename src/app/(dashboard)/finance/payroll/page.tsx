@@ -53,6 +53,7 @@ export default async function PayrollPage() {
       pendingLeaveRequests={leaveData}
       yearlyStats={statsData}
       staffMembers={staffData}
+      currentUserId={user.id}
     />
   );
 }

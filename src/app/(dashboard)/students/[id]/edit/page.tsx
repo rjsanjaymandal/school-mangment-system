@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, notFound } from "next/navigation";
 import { 
     GraduationCap, Save, ArrowLeft, Info, 
     Users, MapPin, Contact, FileText, CheckCircle2,
@@ -26,6 +26,13 @@ import { cn } from "@/lib/utils";
 export default function EditStudentPage() {
     const params = useParams();
     const id = params.id as string;
+    
+    // Basic UUID format validation to prevent DB syntax errors
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (id && !uuidRegex.test(id)) {
+        notFound();
+    }
+
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
