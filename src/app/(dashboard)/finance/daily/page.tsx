@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { IndianRupee, Calendar, Clock, CreditCard, CheckCircle, TrendingUp, BarChart3, Activity } from "lucide-react";
 import { ERPCard } from "@/components/ui/erp-card";
-import { Badge } from "@/components/ui/badge";
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 import { cn } from "@/lib/utils";
@@ -78,7 +77,7 @@ export default async function DailyCollectionPage() {
             description="Breakdown of how students paid" 
             color="emerald"
             icon={<BarChart3 className="h-5 w-5" />}
-            className="glass futuristic-card border-none shadow-xl rounded-2xl p-6"
+            className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6"
           >
             <div className="space-y-5 mt-4">
               {Object.entries(modeData).map(([mode, amount]) => {
@@ -115,17 +114,17 @@ export default async function DailyCollectionPage() {
             description="Recent payments received today" 
             color="blue" 
             icon={<CheckCircle className="h-5 w-5" />}
-            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+            className="bg-white border border-slate-200 rounded-xl overflow-hidden"
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500">
                   <tr>
-                    <th className="px-6 py-4">Time</th>
-                    <th className="px-6 py-4">Student</th>
-                    <th className="px-6 py-4">Class</th>
-                    <th className="px-6 py-4">Mode</th>
-                    <th className="px-6 py-4 text-right">Amount</th>
+                    <th className="py-4 px-4">Time</th>
+                    <th className="py-4 px-4">Student</th>
+                    <th className="py-4 px-4">Class</th>
+                    <th className="py-4 px-4">Mode</th>
+                    <th className="py-4 px-4 text-right">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -137,22 +136,22 @@ export default async function DailyCollectionPage() {
                     </tr>
                   ) : (
                     todayPayments?.map((payment: any, i: number) => (
-                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-6 py-5 text-slate-400 font-mono text-[10px] font-bold">
+                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group border-b border-slate-100">
+                        <td className="py-4 px-4 text-slate-400 font-mono text-[10px] font-bold">
                           {payment.payment_date?.substring(11, 16) || "--:--"}
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="py-4 px-4">
                           <span className="text-sm font-bold text-slate-900 tracking-tight">{payment.student?.profile?.full_name || "N/A"}</span>
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="py-4 px-4">
                            <span className="text-[9px] font-black uppercase text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{payment.student?.class?.name || "N/A"}</span>
                         </td>
-                        <td className="px-6 py-5">
+                        <td className="py-4 px-4">
                           <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 px-2.5 py-1 rounded-md tracking-tighter shadow-sm bg-white capitalize">
                             {payment.payment_mode?.replace('_', ' ')}
                           </span>
                         </td>
-                        <td className="px-6 py-5 text-right font-black text-emerald-600 text-sm">
+                        <td className="py-4 px-4 text-right font-black text-emerald-600 text-sm">
                           ₹{payment.amount_paid?.toLocaleString()}
                         </td>
                       </tr>

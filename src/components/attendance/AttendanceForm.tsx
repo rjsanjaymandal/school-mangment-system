@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import { Check, X, Search, Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Class, Student } from "@/types/database";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { Class } from "@/types/database";
 import { AttendanceService } from "@/lib/services/attendance";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -28,16 +21,6 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
   const fetchStudents = async (classId: string) => {
     setLoading(true);
     try {
-      // The instruction provided a snippet that included both a service call and a direct supabase call.
-      // Assuming the intent is to use the service for fetching students for a class.
-      // If AttendanceService.getStudentsByClass is not available, the direct supabase call is kept.
-      // For now, I'll use the direct supabase call as provided in the instruction's snippet,
-      // while acknowledging the `AttendanceService.getAttendanceHistory` call is unused in the snippet.
-      // If the service should handle this, the service method would be called here.
-
-      // Original instruction snippet:
-      // const data = await AttendanceService.getAttendanceHistory(classId); // Or a getStudentsByClass if added
-      // Re-using common profile fetching logic
       const supabase = createClient();
       const { data: studentsData, error } = await supabase
         .from("students")
@@ -101,120 +84,98 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <Card variant="glass" className="border-none shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-slate-800">
-            Select Class & Date
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-4 items-end">
-          <div className="space-y-2 flex-1 min-w-[200px]">
-            <label className="text-sm font-medium text-foreground/70">Class</label>
-            <Select onValueChange={handleClassChange}>
-              <SelectTrigger className="bg-slate-50 border-none">
-                <SelectValue placeholder="Select a class" />
-              </SelectTrigger>
-              <SelectContent>
-                {classes.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <div className="animate-in fade-in duration-700 space-y-6">
+      <div className="bg-white border border-slate-200 rounded-xl p-5">
+        <div className="p-5 border-b border-slate-100 -mx-5 -mt-5 mb-5">
+          <h3 className="text-lg font-black tracking-tight text-slate-900">Select Class & Date</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+            <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+              <option value="" disabled>Select a class</option>
+              {classes.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
           </div>
-          <div className="space-y-2 flex-1 min-w-[200px]">
-            <label className="text-sm font-medium text-foreground/70">Date</label>
-            <Button
-              variant="outline"
-              className="w-full justify-start text-left font-normal bg-slate-50 border-none"
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
+            <div className="h-11 rounded-xl border border-slate-200 px-3 flex items-center gap-2 text-sm font-bold text-slate-700 bg-white">
+              <CalendarIcon className="h-4 w-4 text-slate-400" />
               {new Date().toLocaleDateString()}
-            </Button>
+            </div>
           </div>
-          <Button
-            disabled={loading || !selectedClass}
-            variant="neon"
-            className="gap-x-2"
-          >
-            <Search className="h-4 w-4" />
-            Check List
-          </Button>
-        </CardContent>
-      </Card>
+          <div className="md:col-span-2">
+            <button
+              disabled={loading || !selectedClass}
+              className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
+            >
+              <Search className="h-4 w-4" />
+              Check List
+            </button>
+          </div>
+        </div>
+      </div>
 
       {students.length > 0 && (
-        <Card className="border-none shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-semibold text-slate-800">
-              Student List (
-              {students.filter((s) => s.status === "present").length}/
-              {students.length} Present)
-            </CardTitle>
-            <Button variant="neon" onClick={handleSave} size="sm">
-              Save Attendance
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="divide-y">
-              {students.map((student) => (
-                <div
-                  key={student.id}
-                  className="py-4 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-x-3">
-                    <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-muted-foreground">
-                      {student.profile?.first_name[0]}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-foreground">
-                        {student.profile?.first_name}{" "}
-                        {student.profile?.last_name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Roll No: {student.roll_number || "N/A"}
-                      </p>
-                    </div>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden animate-in fade-in duration-700">
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="text-lg font-black tracking-tight text-slate-900">
+              Student List ({students.filter((s) => s.status === "present").length}/{students.length} Present)
+            </h3>
+            <button onClick={handleSave} disabled={loading} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
+              {loading ? "Saving..." : "Save Attendance"}
+            </button>
+          </div>
+          <div className="p-5 divide-y divide-slate-100">
+            {students.map((student) => (
+              <div
+                key={student.id}
+                className="py-4 flex items-center justify-between first:pt-0 last:pb-0"
+              >
+                <div className="flex items-center gap-x-3">
+                  <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-sm">
+                    {student.profile?.first_name?.[0] || "?"}
                   </div>
-                  <div className="flex items-center gap-x-2">
-                    <Button
-                      size="sm"
-                      variant={
-                        student.status === "present" ? "default" : "outline"
-                      }
-                      className={
-                        student.status === "present"
-                          ? "bg-green-600 hover:bg-green-700"
-                          : "text-muted-foreground"
-                      }
-                      onClick={() => toggleStatus(student.id)}
-                    >
-                      <Check className="h-4 w-4 mr-1" /> Present
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={
-                        student.status === "absent" ? "default" : "outline"
-                      }
-                      className={
-                        student.status === "absent"
-                          ? "bg-red-600 hover:bg-red-700"
-                          : "text-muted-foreground"
-                      }
-                      onClick={() => toggleStatus(student.id)}
-                    >
-                      <X className="h-4 w-4 mr-1" /> Absent
-                    </Button>
+                  <div>
+                    <p className="font-bold text-slate-700 text-sm">
+                      {student.profile?.first_name} {student.profile?.last_name}
+                    </p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      Roll No: {student.roll_number || "N/A"}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex items-center gap-x-2">
+                  <button
+                    onClick={() => toggleStatus(student.id)}
+                    className={cn(
+                      "h-10 rounded-xl font-black text-[10px] uppercase tracking-widest px-4 transition-all flex items-center gap-2",
+                      student.status === "present"
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                        : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                    )}
+                  >
+                    <Check className="h-4 w-4" /> Present
+                  </button>
+                  <button
+                    onClick={() => toggleStatus(student.id)}
+                    className={cn(
+                      "h-10 rounded-xl font-black text-[10px] uppercase tracking-widest px-4 transition-all flex items-center gap-2",
+                      student.status === "absent"
+                        ? "bg-red-600 hover:bg-red-700 text-white shadow-lg"
+                        : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                    )}
+                  >
+                    <X className="h-4 w-4" /> Absent
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
 }
-

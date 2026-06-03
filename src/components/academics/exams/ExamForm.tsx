@@ -8,18 +8,9 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import { createExam, updateExam } from "@/app/actions/exams";
 import { useRouter } from "next/navigation";
@@ -78,17 +69,17 @@ export function ExamForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Exam Name</FormLabel>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Name</label>
               <FormControl>
-                <Input placeholder="Midterm Examination 2024" {...field} />
+                <Input placeholder="Midterm Examination 2024" {...field} className="rounded-xl border-slate-200 h-11" />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-[10px] font-bold text-rose-500" />
             </FormItem>
           )}
         />
@@ -97,27 +88,23 @@ export function ExamForm({
           name="academic_year_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Academic Year</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select academic year" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Academic Year</label>
+              <FormControl>
+                <select
+                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                >
+                  <option value="" disabled>Select academic year</option>
                   {academicYears.map((year) => (
-                    <SelectItem key={year.id} value={year.id}>
-                      {year.name}
-                    </SelectItem>
+                    <option key={year.id} value={year.id}>{year.name}</option>
                   ))}
                   {academicYears.length === 0 && (
-                    <SelectItem value="none" disabled>
-                      No years available
-                    </SelectItem>
+                    <option value="none" disabled>No years available</option>
                   )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
+                </select>
+              </FormControl>
+              <FormMessage className="text-[10px] font-bold text-rose-500" />
             </FormItem>
           )}
         />
@@ -127,11 +114,11 @@ export function ExamForm({
             name="start_date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Date</FormLabel>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Start Date</label>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} className="rounded-xl border-slate-200 h-11" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[10px] font-bold text-rose-500" />
               </FormItem>
             )}
           />
@@ -140,25 +127,31 @@ export function ExamForm({
             name="end_date"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>End Date</FormLabel>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">End Date</label>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Input type="date" {...field} className="rounded-xl border-slate-200 h-11" />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-[10px] font-bold text-rose-500" />
               </FormItem>
             )}
           />
         </div>
         <div className="flex justify-end gap-x-2 pt-4">
-          <Button variant="outline" type="button" onClick={() => onSuccess()}>
+          <button
+            type="button"
+            onClick={() => onSuccess()}
+            className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all"
+          >
             Cancel
-          </Button>
-          <Button type="submit">
+          </button>
+          <button
+            type="submit"
+            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
+          >
             {initialData ? "Save Changes" : "Schedule Exam"}
-          </Button>
+          </button>
         </div>
       </form>
     </Form>
   );
 }
-

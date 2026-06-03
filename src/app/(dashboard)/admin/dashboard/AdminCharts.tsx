@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 
 const activityData = [
@@ -24,13 +23,11 @@ const performanceData = [
 export function AdminCharts() {
     return (
         <div className="grid gap-6 lg:grid-cols-2">
-            <Card className="border-none glass futuristic-card bg-white/40 p-2">
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                        Platform Engagement (6 Months)
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="h-[300px] w-full pt-4">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 pb-2">
+                    Platform Engagement (6 Months)
+                </p>
+                <div className="h-[300px] w-full pt-4">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={activityData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                             <defs>
@@ -46,30 +43,28 @@ export function AdminCharts() {
                             <XAxis dataKey="name" stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
                             <YAxis stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
                             <Tooltip
-                                contentStyle={{ borderRadius: '12px', border: 'none', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' }}
+                                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
                                 itemStyle={{ fontWeight: 'bold' }}
                             />
                             <Area type="monotone" dataKey="activeUsers" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
                             <Area type="monotone" dataKey="logins" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorLogins)" />
                         </AreaChart>
                     </ResponsiveContainer>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
-            <Card className="border-none glass futuristic-card bg-white/40 p-2">
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                        Academic Performance Index
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="h-[300px] w-full pt-4">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 pb-2">
+                    Academic Performance Index
+                </p>
+                <div className="h-[300px] w-full pt-4">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={performanceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                             <XAxis dataKey="subject" stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
                             <YAxis stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
                             <Tooltip
                                 cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
-                                contentStyle={{ borderRadius: '12px', border: 'none', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
+                                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
                                 itemStyle={{ fontWeight: 'bold' }}
                             />
                             <Legend wrapperStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }} />
@@ -77,9 +72,8 @@ export function AdminCharts() {
                             <Bar dataKey="avgScore" name="Avg Score" fill="#0f172a" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 }
-

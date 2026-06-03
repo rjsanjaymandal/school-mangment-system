@@ -25,20 +25,11 @@ import {
     Users
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { addStaff, updateStaff } from "@/app/actions/hr";
-import { AddDepartmentModal } from "./AddDepartmentModal";
-import { AddDesignationModal } from "./AddDesignationModal";
 import { createClient } from "@/lib/supabase/client";
-
-// Shared UI Framework
-import { ERPCard } from "@/components/ui/erp-card";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
     staff_type: z.enum(["teaching", "non_teaching"]),
@@ -70,6 +61,34 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const iconColors: Record<string, string> = {
+    emerald: "bg-emerald-50 text-emerald-600",
+    blue: "bg-blue-50 text-blue-600",
+    amber: "bg-amber-50 text-amber-600",
+    purple: "bg-purple-50 text-purple-600",
+};
+
+function FormCard({ title, description, icon, color = "emerald", children, className }: { 
+    title: string; description: string; icon: React.ReactNode; color?: string; children: React.ReactNode; className?: string 
+}) {
+    return (
+        <div className={cn("bg-white border border-slate-200 rounded-xl overflow-hidden", className)}>
+            <div className="border-b border-slate-100 p-5">
+                <div className="flex items-center gap-3">
+                    <div className={cn("p-2 rounded-lg", iconColors[color])}>
+                        {icon}
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-black tracking-tight text-slate-900">{title}</h3>
+                        <p className="text-[10px] text-slate-500 font-bold">{description}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="p-5">{children}</div>
+        </div>
+    );
+}
 
 export function AddStaffForm({ departments, designations, onRefreshLists, initialData }: { 
     departments: any[], 
@@ -115,7 +134,7 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
             if (photoFile) {
                 const supabase = createClient();
                 const fileExt = photoFile.name.split('.').pop();
-                const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                const fileName = `${crypto.randomUUID()}.${fileExt}`;
                 const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('staff-photos')
                     .upload(fileName, photoFile);
@@ -150,68 +169,53 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Employment Details */}
-                <ERPCard 
+                <FormCard 
                     title="Employment Details" 
                     description="Official role and department" 
                     icon={<Briefcase className="h-5 w-5" />}
                     color="emerald"
-                    className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Staff ID</Label>
-                            <Input disabled value={initialData?.staff_id || "Auto-generated"} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono bg-slate-50" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Staff ID</label>
+                            <Input disabled value={initialData?.staff_id || "Auto-generated"} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono bg-slate-50" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Staff Type</Label>
-                            <Select onValueChange={(val) => form.setValue("staff_type", val as any)} defaultValue={form.getValues("staff_type")}>
-                                <SelectTrigger className="h-12 rounded-xl border-slate-200 text-xs font-bold bg-white">
-                                    <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    <SelectItem value="teaching" className="rounded-lg">Teaching Faculty</SelectItem>
-                                    <SelectItem value="non_teaching" className="rounded-lg">Non-Teaching Staff</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Staff Type</label>
+                            <select {...form.register("staff_type")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                <option value="teaching">Teaching Faculty</option>
+                                <option value="non_teaching">Non-Teaching Staff</option>
+                            </select>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Department</Label>
-                            <Select onValueChange={(val) => form.setValue("department_id", val)} defaultValue={form.getValues("department_id")}>
-                                <SelectTrigger className="h-12 rounded-xl border-slate-200 text-xs font-bold bg-white">
-                                    <SelectValue placeholder="Select department" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    {departments.map(d => (<SelectItem key={d.id} value={d.id} className="rounded-lg">{d.name}</SelectItem>))}
-                                </SelectContent>
-                            </Select>
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Department</label>
+                            <select {...form.register("department_id")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                <option value="">Select department</option>
+                                {departments.map(d => (<option key={d.id} value={d.id}>{d.name}</option>))}
+                            </select>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Designation</Label>
-                            <Select onValueChange={(val) => form.setValue("designation_id", val)} defaultValue={form.getValues("designation_id")}>
-                                <SelectTrigger className="h-12 rounded-xl border-slate-200 text-xs font-bold bg-white">
-                                    <SelectValue placeholder="Select designation" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    {designations.map(d => (<SelectItem key={d.id} value={d.id} className="rounded-lg">{d.name}</SelectItem>))}
-                                </SelectContent>
-                            </Select>
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Designation</label>
+                            <select {...form.register("designation_id")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                <option value="">Select designation</option>
+                                {designations.map(d => (<option key={d.id} value={d.id}>{d.name}</option>))}
+                            </select>
                         </div>
                     </div>
-                </ERPCard>
+                </FormCard>
 
                 {/* Photo Upload */}
-                <ERPCard 
+                <FormCard 
                     title="Profile Photo" 
                     description="Recent passport sized photograph" 
                     icon={<ImageIcon className="h-5 w-5" />}
                     color="blue"
-                    className="glass futuristic-card border-none shadow-xl rounded-2xl p-8"
                 >
-                    <div className="flex flex-col items-center justify-center h-full mt-6 space-y-6">
+                    <div className="flex flex-col items-center justify-center space-y-6">
                         <div className="relative group">
-                            <div className="h-32 w-32 rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-400 shadow-inner">
+                            <div className="h-32 w-32 rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-400 shadow-inner">
                                 {photoPreview ? (
                                     <img src={photoPreview} alt="Preview" className="h-full w-full object-cover" />
                                 ) : (
@@ -227,125 +231,115 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
                             Upload a clear photo for the institutional ID card
                         </p>
                     </div>
-                </ERPCard>
+                </FormCard>
 
                 {/* Personal Information */}
-                <ERPCard 
+                <FormCard 
                     title="Personal Information" 
                     description="Basic identity details" 
                     icon={<User className="h-5 w-5" />}
                     color="purple"
-                    className="glass futuristic-card border-none shadow-xl rounded-2xl p-8 lg:col-span-2"
+                    className="lg:col-span-2"
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">First Name</Label>
-                            <Input {...form.register("first_name")} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">First Name</label>
+                            <Input {...form.register("first_name")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Last Name</Label>
-                            <Input {...form.register("last_name")} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Last Name</label>
+                            <Input {...form.register("last_name")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Father's Name</Label>
-                            <Input {...form.register("father_name")} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Father's Name</label>
+                            <Input {...form.register("father_name")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date of Birth</Label>
-                            <Input type="date" {...form.register("date_of_birth")} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date of Birth</label>
+                            <Input type="date" {...form.register("date_of_birth")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Gender</Label>
-                            <Select onValueChange={(val) => form.setValue("gender", val as any)} defaultValue={form.getValues("gender")}>
-                                <SelectTrigger className="h-12 rounded-xl border-slate-200 text-xs font-bold bg-white">
-                                    <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    <SelectItem value="male" className="rounded-lg">Male</SelectItem>
-                                    <SelectItem value="female" className="rounded-lg">Female</SelectItem>
-                                    <SelectItem value="other" className="rounded-lg">Other</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Gender</label>
+                            <select {...form.register("gender")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Marital Status</Label>
-                            <Select onValueChange={(val) => form.setValue("marital_status", val as any)} defaultValue={form.getValues("marital_status")}>
-                                <SelectTrigger className="h-12 rounded-xl border-slate-200 text-xs font-bold bg-white">
-                                    <SelectValue placeholder="Select" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl">
-                                    <SelectItem value="single" className="rounded-lg">Single</SelectItem>
-                                    <SelectItem value="married" className="rounded-lg">Married</SelectItem>
-                                    <SelectItem value="divorced" className="rounded-lg">Divorced</SelectItem>
-                                    <SelectItem value="widowed" className="rounded-lg">Widowed</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Marital Status</label>
+                            <select {...form.register("marital_status")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                <option value="single">Single</option>
+                                <option value="married">Married</option>
+                                <option value="divorced">Divorced</option>
+                                <option value="widowed">Widowed</option>
+                            </select>
                         </div>
                     </div>
-                </ERPCard>
+                </FormCard>
 
-                {/* Professional & Contact */}
-                <ERPCard 
+                {/* Contact & Skills */}
+                <FormCard 
                     title="Contact & Skills" 
                     description="Communication and qualifications" 
                     icon={<ShieldCheck className="h-5 w-5" />}
                     color="amber"
-                    className="glass futuristic-card border-none shadow-xl rounded-2xl p-8 lg:col-span-2"
+                    className="lg:col-span-2"
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mobile Number</Label>
-                            <Input {...form.register("mobile")} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Mobile Number</label>
+                            <Input {...form.register("mobile")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</Label>
-                            <Input {...form.register("email")} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Email Address</label>
+                            <Input {...form.register("email")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Joining Date</Label>
-                            <Input type="date" {...form.register("date_of_joining")} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Joining Date</label>
+                            <Input type="date" {...form.register("date_of_joining")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Qualification</Label>
-                            <Input {...form.register("highest_qualification")} placeholder="e.g. M.Sc, PhD" className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Primary Qualification</label>
+                            <Input {...form.register("highest_qualification")} placeholder="e.g. M.Sc, PhD" className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Language</Label>
-                            <Input {...form.register("mother_tongue")} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Primary Language</label>
+                            <Input {...form.register("mother_tongue")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Other Languages</Label>
-                            <Input {...form.register("languages_known")} className="h-12 rounded-xl border-slate-200 text-xs font-bold" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Other Languages</label>
+                            <Input {...form.register("languages_known")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
                         </div>
-                        <div className="md:col-span-3 space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Address</Label>
-                            <Textarea {...form.register("address")} className="rounded-xl border-slate-200 text-xs font-bold resize-none" rows={3} />
+                        <div className="md:col-span-3">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Full Address</label>
+                            <textarea {...form.register("address")} className="w-full h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest ml-1">Monthly Pay (₹)</Label>
-                            <Input type="number" {...form.register("monthly_salary")} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 block mb-1.5">Monthly Pay (₹)</label>
+                            <Input type="number" {...form.register("monthly_salary")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Aadhar Number</Label>
-                            <Input {...form.register("aadhar_number")} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Aadhar Number</label>
+                            <Input {...form.register("aadhar_number")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">PAN Number</Label>
-                            <Input {...form.register("pan_number")} className="h-12 rounded-xl border-slate-200 text-xs font-black font-mono uppercase" />
+                        <div>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">PAN Number</label>
+                            <Input {...form.register("pan_number")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono uppercase" />
                         </div>
                     </div>
-                </ERPCard>
+                </FormCard>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-4 p-6 bg-white/80 backdrop-blur-md rounded-3xl border border-slate-200 shadow-2xl sticky bottom-8 z-50 animate-in slide-in-from-bottom-10 duration-1000">
-                <Button type="button" variant="ghost" onClick={() => router.back()} className="h-12 px-8 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600">
+            <div className="flex items-center justify-end gap-4 p-6 bg-white/80 backdrop-blur-md rounded-xl border border-slate-200 shadow-xl sticky bottom-8 z-50 animate-in slide-in-from-bottom-10 duration-1000">
+                <button type="button" onClick={() => router.back()} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">
                     Cancel
-                </Button>
-                <Button type="submit" disabled={isSubmitting} className="h-12 px-12 rounded-xl bg-slate-900 text-white hover:bg-black font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
+                </button>
+                <button type="submit" disabled={isSubmitting} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2">
                     {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     {isEdit ? "Update Staff" : "Add Staff Member"}
-                </Button>
+                </button>
             </div>
         </form>
     );

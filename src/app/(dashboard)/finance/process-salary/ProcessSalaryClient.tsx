@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 import { 
   Calculator, Download, Send, ChevronDown, ChevronUp,
   IndianRupee, Calendar, Users, CheckCircle, AlertCircle
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 
@@ -144,14 +141,14 @@ export function ProcessSalaryClient() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* Header Controls */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(Number(e.target.value))}
-            className="h-10 px-3 rounded-md border"
+            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -162,7 +159,7 @@ export function ProcessSalaryClient() {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="h-10 px-3 rounded-md border"
+            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
           >
             {[2024, 2025, 2026].map(year => (
               <option key={year} value={year}>{year}</option>
@@ -170,64 +167,64 @@ export function ProcessSalaryClient() {
           </select>
         </div>
         <div className="flex gap-2">
-          <Button
+          <button
             onClick={() => processSalary.mutate()}
             disabled={processing || payrollLoading}
-            className="bg-emerald-600"
+            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
           >
-            <Calculator className="h-4 w-4 mr-2" />
+            <Calculator className="h-4 w-4" />
             {processing ? "Processing..." : "Generate Salary"}
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-blue-500 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Total Staff</p>
-            <p className="text-2xl font-bold text-slate-900">{staff?.length || 0}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Processed</p>
-            <p className="text-2xl font-bold text-emerald-600">{processedCount}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-l-4 border-l-amber-500 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Total Deductions</p>
-            <p className="text-2xl font-bold text-amber-600">₹{totalDeductions.toLocaleString()}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-l-4 border-l-purple-500 shadow-sm">
-          <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Net Payable</p>
-            <p className="text-2xl font-bold text-purple-600">₹{totalNet.toLocaleString()}</p>
-          </CardContent>
-        </Card>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total Staff</p>
+            <p className="text-lg font-black tracking-tight text-slate-900 mt-2">{staff?.length || 0}</p>
+          </div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Processed</p>
+            <p className="text-lg font-black tracking-tight text-emerald-600 mt-2">{processedCount}</p>
+          </div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total Deductions</p>
+            <p className="text-lg font-black tracking-tight text-amber-600 mt-2">₹{totalDeductions.toLocaleString()}</p>
+          </div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Net Payable</p>
+            <p className="text-lg font-black tracking-tight text-purple-600 mt-2">₹{totalNet.toLocaleString()}</p>
+          </div>
+        </div>
       </div>
 
       {/* Staff List */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Users className="h-4 w-4 text-slate-500" />
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+            <Users className="h-4 w-4 text-slate-400" />
             Staff Salary Details
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
+          </h3>
+        </div>
+        <div className="p-0">
           {payrollLoading || staffLoading ? (
             <div className="p-8 text-center text-slate-500">Loading...</div>
           ) : payrollData?.length === 0 ? (
             <div className="p-8 text-center text-slate-500">
               <AlertCircle className="h-8 w-8 mx-auto mb-2 text-amber-500" />
               <p>No payroll data generated for this month.</p>
-              <p className="text-sm mt-1">Click "Generate Salary" to process.</p>
+              <p className="text-sm mt-1">Click &quot;Generate Salary&quot; to process.</p>
             </div>
           ) : (
-            <div className="divide-y">
+            <div className="divide-y divide-slate-100">
               {staff?.map((member: any) => {
                 const payroll = payrollData?.find(p => p.staff_id === member.id);
                 const isExpanded = expandedStaff.includes(member.id);
@@ -236,22 +233,22 @@ export function ProcessSalaryClient() {
                 return (
                   <div key={member.id}>
                     <div 
-                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50"
+                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/50"
                       onClick={() => payroll && toggleExpand(member.id)}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-medium">
+                        <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 font-black">
                           {staffName.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-medium text-slate-900">{staffName}</p>
-                          <p className="text-xs text-slate-500">{member.designation?.name || "Staff"}</p>
+                          <p className="font-bold text-slate-900 text-sm">{staffName}</p>
+                          <p className="text-sm text-slate-500">{member.designation?.name || "Staff"}</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-6">
                         <div className="text-right">
-                          <p className="font-medium text-slate-900">
+                          <p className="font-bold text-slate-900 text-sm">
                             ₹{(() => {
                               if (!payroll) return (member.base_salary || 0);
                               const deductions = (payroll.absence_deduction || 0) + (payroll.leave_deduction || 0) + (payroll.late_deduction || 0) + (payroll.other_deductions || 0);
@@ -259,23 +256,24 @@ export function ProcessSalaryClient() {
                               return (payroll.base_salary || 0) + additions - deductions;
                             })().toLocaleString()}
                           </p>
-                          <p className="text-xs text-slate-500">Net Pay</p>
+                          <p className="text-sm text-slate-500">Net Pay</p>
                         </div>
                         
                         {payroll ? (
-                          <Badge className={
-                            payroll.status === "approved" ? "bg-emerald-100 text-emerald-700" :
-                            payroll.status === "paid" ? "bg-blue-100 text-blue-700" :
-                            "bg-amber-100 text-amber-700"
-                          }>
+                          <span className={cn(
+                            "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                            payroll.status === "approved" ? "bg-emerald-50 text-emerald-600" :
+                            payroll.status === "paid" ? "bg-blue-50 text-blue-600" :
+                            "bg-amber-50 text-amber-600"
+                          )}>
                             {payroll.status}
-                          </Badge>
+                          </span>
                         ) : (
-                          <Badge variant="outline">Not Processed</Badge>
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 text-slate-500">Not Processed</span>
                         )}
                         
                         {payroll && (
-                          isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                          isExpanded ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />
                         )}
                       </div>
                     </div>
@@ -286,48 +284,47 @@ export function ProcessSalaryClient() {
                         <div className="grid grid-cols-4 gap-4 text-sm">
                           <div>
                             <p className="text-slate-500">Base Salary</p>
-                            <p className="font-medium">₹{payroll.base_salary?.toLocaleString() || 0}</p>
+                            <p className="font-bold">₹{payroll.base_salary?.toLocaleString() || 0}</p>
                           </div>
                           <div>
                             <p className="text-slate-500">Working Days</p>
-                            <p className="font-medium">{payroll.working_days || 0}</p>
+                            <p className="font-bold">{payroll.working_days || 0}</p>
                           </div>
                           <div>
                             <p className="text-slate-500">Present/Absent</p>
-                            <p className="font-medium">
+                            <p className="font-bold">
                               {payroll.days_present || 0} / {payroll.days_absent || 0}
                             </p>
                           </div>
                           <div>
                             <p className="text-slate-500">Deductions</p>
-                            <p className="font-medium text-red-600">
+                            <p className="font-bold text-red-600">
                               -₹{((payroll.absence_deduction || 0) + (payroll.leave_deduction || 0) + (payroll.late_deduction || 0) + (payroll.other_deductions || 0)).toLocaleString()}
                             </p>
                           </div>
                           <div>
                             <p className="text-slate-500">Bonus</p>
-                            <p className="font-medium text-emerald-600">
+                            <p className="font-bold text-emerald-600">
                               +₹{(payroll.bonus || 0).toLocaleString()}
                             </p>
                           </div>
                           <div className="col-span-2 flex gap-2 mt-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline"
+                            <button 
                               disabled={payroll.status === "approved"}
                               onClick={() => approvePayroll.mutate(member.id)}
+                              className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2"
                             >
-                              <CheckCircle className="h-3 w-3 mr-1" />
+                              <CheckCircle className="h-3 w-3" />
                               Approve
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Download className="h-3 w-3 mr-1" />
+                            </button>
+                            <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-2">
+                              <Download className="h-3 w-3" />
                               Slip
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              <Send className="h-3 w-3 mr-1" />
+                            </button>
+                            <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-2">
+                              <Send className="h-3 w-3" />
                               WhatsApp
-                            </Button>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -337,8 +334,9 @@ export function ProcessSalaryClient() {
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
+

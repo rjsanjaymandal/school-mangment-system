@@ -2,14 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Book, Search, Plus, User, Calendar, CheckCircle, XCircle, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Book, Search, CheckCircle, Clock, SearchCode } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ERPCard } from "@/components/ui/erp-card";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 interface Book {
   id: string;
@@ -36,7 +34,7 @@ interface Transaction {
 
 export default function LibraryPage() {
   const supabase = createClient();
-  const [activeTab, setActiveTab] = useState<"books" | "circulation" | "search">("books");
+  const [activeTab, setActiveTab] = useState<"books" | "circulation">("books");
   const [books, setBooks] = useState<Book[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,165 +85,155 @@ export default function LibraryPage() {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Library Management</h1>
-          <p className="text-muted-foreground">Books and circulation management</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant={activeTab === "books" ? "default" : "outline"} onClick={() => setActiveTab("books")}>
-            <Book className="h-4 w-4 mr-2" />
-            Books
-          </Button>
-          <Button variant={activeTab === "circulation" ? "default" : "outline"} onClick={() => setActiveTab("circulation")}>
-            <User className="h-4 w-4 mr-2" />
-            Circulation
-          </Button>
-        </div>
+    <div className="p-4 md:p-6 space-y-6 animate-in fade-in duration-700">
+      <UnifiedPageHeader
+        title="Library Management"
+        subtitle="Books and circulation management"
+        icon={Book}
+        actions={
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab("books")}
+              className={cn(
+                "h-10 rounded-xl px-6 font-black text-[10px] uppercase tracking-widest transition-all",
+                activeTab === "books"
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                  : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              <Book className="h-4 w-4 inline mr-2" />
+              Books
+            </button>
+            <button
+              onClick={() => setActiveTab("circulation")}
+              className={cn(
+                "h-10 rounded-xl px-6 font-black text-[10px] uppercase tracking-widest transition-all",
+                activeTab === "circulation"
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                  : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              <Book className="h-4 w-4 inline mr-2" />
+              Circulation
+            </button>
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <DashboardStatCard title="Total Titles" value={stats.totalBooks} icon={Book} color="blue" description="Unique titles" />
+        <DashboardStatCard title="Total Copies" value={stats.totalCopies} icon={Book} color="blue" description="All copies" />
+        <DashboardStatCard title="Available" value={stats.available} icon={CheckCircle} color="emerald" description="Ready to lend" />
+        <DashboardStatCard title="Issued" value={stats.issued} icon={Clock} color="amber" description="Currently borrowed" />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Book className="h-4 w-4" />
-            Total Titles
-          </div>
-          <p className="text-2xl font-bold mt-1">{stats.totalBooks}</p>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-blue-600">
-            <Book className="h-4 w-4" />
-            Total Copies
-          </div>
-          <p className="text-2xl font-bold text-blue-700 mt-1">{stats.totalCopies}</p>
-        </div>
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-emerald-600">
-            <CheckCircle className="h-4 w-4" />
-            Available
-          </div>
-          <p className="text-2xl font-bold text-emerald-700 mt-1">{stats.available}</p>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-amber-600">
-            <Clock className="h-4 w-4" />
-            Issued
-          </div>
-          <p className="text-2xl font-bold text-amber-700 mt-1">{stats.issued}</p>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search books by title, author, ISBN..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Content */}
       {activeTab === "books" && (
-        <ERPCard accentColor="blue">
-          <CardHeader className="border-b">
-            <CardTitle>Book Inventory</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="text-left p-4 font-medium">Title</th>
-                    <th className="text-left p-4 font-medium">Author</th>
-                    <th className="text-left p-4 font-medium">ISBN</th>
-                    <th className="text-left p-4 font-medium">Category</th>
-                    <th className="text-center p-4 font-medium">Total</th>
-                    <th className="text-center p-4 font-medium">Available</th>
-                    <th className="text-left p-4 font-medium">Shelf</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">Loading...</td></tr>
-                  ) : filteredBooks.length === 0 ? (
-                    <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No books found</td></tr>
-                  ) : (
-                    filteredBooks.map(book => (
-                      <tr key={book.id} className="border-t hover:bg-slate-50">
-                        <td className="p-4 font-medium">{book.title}</td>
-                        <td className="p-4 text-muted-foreground">{book.author}</td>
-                        <td className="p-4 font-mono text-sm">{book.isbn || "-"}</td>
-                        <td className="p-4"><Badge variant="outline">{book.category || "General"}</Badge></td>
-                        <td className="p-4 text-center">{book.total_copies || 0}</td>
-                        <td className="p-4 text-center">
-                          <span className={(book.available_copies || 0) > 0 ? "text-emerald-600" : "text-red-600"}>
-                            {book.available_copies || 0}
-                          </span>
-                        </td>
-                        <td className="p-4 text-muted-foreground">{book.shelf_location || "-"}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex items-center gap-4">
+            <h3 className="text-lg font-black tracking-tight text-slate-900 flex-1">Book Inventory</h3>
+            <div className="relative w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search books by title, author, ISBN..."
+                className="pl-10 rounded-xl border-slate-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-          </CardContent>
-        </ERPCard>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Title</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Author</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">ISBN</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Category</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Total</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Available</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Shelf</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={7} className="p-8 text-center text-sm text-slate-500">Loading...</td></tr>
+                ) : filteredBooks.length === 0 ? (
+                  <tr><td colSpan={7} className="p-16 text-center">
+                    <SearchCode className="h-10 w-10 mx-auto mb-3 text-slate-200" />
+                    <p className="text-sm font-bold text-slate-500">No books found</p>
+                  </td></tr>
+                ) : (
+                  filteredBooks.map(book => (
+                    <tr key={book.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                      <td className="py-4 px-4 font-bold text-sm text-slate-900">{book.title}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500">{book.author}</td>
+                      <td className="py-4 px-4 text-[11px] font-mono font-bold text-slate-500">{book.isbn || "-"}</td>
+                      <td className="py-4 px-4">
+                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-200">{book.category || "General"}</span>
+                      </td>
+                      <td className="py-4 px-4 text-center font-bold text-sm">{book.total_copies || 0}</td>
+                      <td className="py-4 px-4 text-center">
+                        <span className={cn("font-bold text-sm", (book.available_copies || 0) > 0 ? "text-emerald-600" : "text-red-600")}>
+                          {book.available_copies || 0}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-sm text-slate-500">{book.shelf_location || "-"}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       {activeTab === "circulation" && (
-        <ERPCard accentColor="emerald">
-          <CardHeader className="border-b">
-            <CardTitle>Circulation History</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="text-left p-4 font-medium">Book</th>
-                    <th className="text-left p-4 font-medium">Student</th>
-                    <th className="text-left p-4 font-medium">Issue Date</th>
-                    <th className="text-left p-4 font-medium">Due Date</th>
-                    <th className="text-left p-4 font-medium">Return Date</th>
-                    <th className="text-center p-4 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Loading...</td></tr>
-                  ) : transactions.length === 0 ? (
-                    <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No transactions</td></tr>
-                  ) : (
-                    transactions.map(t => (
-                      <tr key={t.id} className="border-t hover:bg-slate-50">
-                        <td className="p-4 font-medium">{t.book_id}</td>
-                        <td className="p-4">{(t as any).students?.full_name || "-"}</td>
-                        <td className="p-4">{t.issue_date ? new Date(t.issue_date).toLocaleDateString() : "-"}</td>
-                        <td className="p-4">{t.due_date ? new Date(t.due_date).toLocaleDateString() : "-"}</td>
-                        <td className="p-4">{t.return_date ? new Date(t.return_date).toLocaleDateString() : "-"}</td>
-                        <td className="p-4 text-center">
-                          {t.return_date ? (
-                            <Badge className="bg-emerald-100 text-emerald-700">Returned</Badge>
-                          ) : (
-                            <Badge className="bg-amber-100 text-amber-700">Issued</Badge>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </ERPCard>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <h3 className="text-lg font-black tracking-tight text-slate-900">Circulation History</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Book</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Student</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Issue Date</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Due Date</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Return Date</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan={6} className="p-8 text-center text-sm text-slate-500">Loading...</td></tr>
+                ) : transactions.length === 0 ? (
+                  <tr><td colSpan={6} className="p-16 text-center">
+                    <Clock className="h-10 w-10 mx-auto mb-3 text-slate-200" />
+                    <p className="text-sm font-bold text-slate-500">No transactions</p>
+                  </td></tr>
+                ) : (
+                  transactions.map(t => (
+                    <tr key={t.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                      <td className="py-4 px-4 font-bold text-sm text-slate-900">{t.book_id}</td>
+                      <td className="py-4 px-4 text-sm text-slate-700">{(t as any).students?.full_name || "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500">{t.issue_date ? new Date(t.issue_date).toLocaleDateString() : "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500">{t.due_date ? new Date(t.due_date).toLocaleDateString() : "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500">{t.return_date ? new Date(t.return_date).toLocaleDateString() : "-"}</td>
+                      <td className="py-4 px-4 text-center">
+                        {t.return_date ? (
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-200">Returned</span>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">Issued</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );

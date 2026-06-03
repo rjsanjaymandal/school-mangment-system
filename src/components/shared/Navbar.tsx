@@ -11,22 +11,12 @@ import { cn } from "@/lib/utils";
 import { User } from "@supabase/supabase-js";
 import { 
   Grid3X3, Sun, Moon, Settings, LogOut, 
-  Search, Home, Bell, MoonIcon, Menu
+  Search, Home, Bell, MoonIcon, Menu, UserCircle
 } from "lucide-react";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useTheme } from "@/lib/providers/ThemeProvider";
 import { LiveCollectionPill } from "@/components/finance/LiveCollectionPill";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 interface NavbarProps {
   user: User | null;
@@ -72,57 +62,63 @@ export function Navbar({ user, userRole }: NavbarProps) {
 
   const [mounted, setMounted] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
   }, []);
+
+  useEffect(() => {
+    const closeDropdown = (e: MouseEvent) => {
+      if (showDropdown) setShowDropdown(false);
+    };
+    document.addEventListener("click", closeDropdown);
+    return () => document.removeEventListener("click", closeDropdown);
+  }, [showDropdown]);
 
   const sidebarWidth = mounted ? (isCollapsed ? 80 : width) : 256;
 
   return (
     <header 
       className={cn(
-        "h-16 border-b border-slate-200/80 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 fixed top-0 right-0 z-50 shadow-sm",
+        "h-16 border-b border-slate-200 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 fixed top-0 right-0 z-50 shadow-sm",
         "transition-all duration-300"
       )}
       style={{ left: sidebarWidth }}
     >
       <div className="flex items-center gap-4">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-9 w-9 rounded-lg md:hidden"
+        <button
+          className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all md:hidden"
           onClick={() => setShowMobileMenu(!showMobileMenu)}
         >
           <Menu className="h-5 w-5" />
-        </Button>
+        </button>
 
         <Link href="/" className="flex items-center gap-3 md:hidden">
-          <div className="h-9 w-9 rounded-full overflow-hidden shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-500/30">
+          <div className="h-9 w-auto rounded-xl overflow-hidden shadow-lg shadow-emerald-500/20">
             <Image 
-              src="/icon-rounded-v2.png" 
+              src="/logo-rounded-v2.png" 
               alt="Edu Maysan" 
-              width={36}
+              width={120}
               height={36}
-              className="object-cover rounded-full"
+              className="object-contain h-full w-auto"
             />
           </div>
-          <span className="font-bold text-slate-900">Edu Maysan</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1.5 text-sm">
-          <Link href="/" className="p-1.5 rounded-md hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors">
+          <Link href="/" className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors">
             <Home className="h-4 w-4" />
           </Link>
           {breadcrumbs.map((crumb, i) => (
             <span key={i} className="flex items-center gap-1.5">
               <span className="text-slate-300">/</span>
               {crumb.href ? (
-                <Link href={crumb.href} className="text-slate-500 hover:text-slate-800 font-medium px-1.5 py-1 rounded-md hover:bg-slate-100 transition-colors">
+                <Link href={crumb.href} className="text-slate-500 hover:text-slate-800 font-bold px-1.5 py-1 rounded-xl hover:bg-slate-100 transition-colors">
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-slate-800 font-medium px-1.5 py-1 bg-slate-100 rounded-md">{crumb.label}</span>
+                <span className="text-slate-800 font-bold px-1.5 py-1 bg-slate-100 rounded-xl">{crumb.label}</span>
               )}
             </span>
           ))}
@@ -137,23 +133,19 @@ export function Navbar({ user, userRole }: NavbarProps) {
         <div className="h-5 w-px bg-slate-200 hidden md:block" />
 
         <div className="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => router.push("/launcher")} 
-            className="h-9 w-9 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+          <button
+            onClick={() => router.push("/launcher")}
+            className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all"
           >
             <Grid3X3 className="h-4 w-4" />
-          </Button>
+          </button>
           
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleTheme} 
-            className="h-9 w-9 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+          <button
+            onClick={toggleTheme}
+            className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all"
           >
             {theme === "light" ? <MoonIcon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </Button>
+          </button>
 
           <div className="hidden sm:block">
             <NotificationBell />
@@ -162,76 +154,73 @@ export function Navbar({ user, userRole }: NavbarProps) {
 
         <div className="h-5 w-px bg-slate-200 hidden md:block" />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
-              <div className="relative">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.user_metadata?.avatar_url || ""} alt={user?.email || "User"} />
-                  <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-sm font-bold">
-                    {user?.email?.[0]?.toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-500 rounded-full border-2 border-white" />
-              </div>
-              <div className="hidden lg:block text-left">
-                <p className="text-xs font-semibold text-slate-900 truncate max-w-[120px]">
-                  {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User"}
-                </p>
-                <Badge variant="outline" className="text-[10px] px-1 py-0 capitalize">{role}</Badge>
-              </div>
-            </button>
-          </DropdownMenuTrigger>
-          
-          <DropdownMenuContent className="w-64 mt-2 rounded-xl p-2 border border-slate-200/80 bg-white shadow-xl shadow-slate-200/20" align="end" sideOffset={8}>
-            <DropdownMenuLabel className="p-3 bg-slate-50 rounded-lg mb-2">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10 rounded-lg">
-                  <AvatarImage src={user?.user_metadata?.avatar_url || ""} />
-                  <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold">
-                    {user?.email?.[0]?.toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    {user?.user_metadata?.full_name || "User"}
-                  </p>
-                  <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+        <div className="relative">
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowDropdown(!showDropdown); }}
+            className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+          >
+            <div className="relative">
+              <Avatar className="h-8 w-8 rounded-xl">
+                <AvatarImage src={user?.user_metadata?.avatar_url || ""} alt={user?.email || "User"} />
+                <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white text-sm font-bold">
+                  {user?.email?.[0]?.toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-500 rounded-full border-2 border-white" />
+            </div>
+            <div className="hidden lg:block text-left">
+              <p className="text-xs font-bold text-slate-900 truncate max-w-[120px]">
+                {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User"}
+              </p>
+              <span className="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 text-slate-500 inline-block mt-0.5">{role}</span>
+            </div>
+          </button>
+
+          {showDropdown && (
+            <div className="absolute right-0 mt-2 w-64 rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/20 p-2 z-50" onClick={(e) => e.stopPropagation()}>
+              <div className="p-3 bg-slate-50 rounded-xl mb-2">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10 rounded-xl">
+                    <AvatarImage src={user?.user_metadata?.avatar_url || ""} />
+                    <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold">
+                      {user?.email?.[0]?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">
+                      {user?.user_metadata?.full_name || "User"}
+                    </p>
+                    <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                  </div>
                 </div>
               </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-slate-100" />
-            
-            <DropdownMenuItem className="rounded-lg p-2.5 cursor-pointer hover:bg-slate-50" onClick={() => router.push("/profile")}>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-blue-100 text-blue-600">
+              <div className="h-px bg-slate-100" />
+              
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 transition-colors" onClick={() => { router.push("/profile"); setShowDropdown(false); }}>
+                <div className="p-1.5 rounded-xl bg-blue-100 text-blue-600">
+                  <UserCircle className="h-3.5 w-3.5" />
+                </div>
+                <span className="text-sm font-bold text-slate-700">My Profile</span>
+              </button>
+              
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 transition-colors" onClick={() => { router.push("/settings"); setShowDropdown(false); }}>
+                <div className="p-1.5 rounded-xl bg-slate-100 text-slate-600">
                   <Settings className="h-3.5 w-3.5" />
                 </div>
-                <span className="text-sm font-medium">My Profile</span>
-              </div>
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem className="rounded-lg p-2.5 cursor-pointer hover:bg-slate-50" onClick={() => router.push("/settings")}>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-slate-100 text-slate-600">
-                  <Settings className="h-3.5 w-3.5" />
-                </div>
-                <span className="text-sm font-medium">Settings</span>
-              </div>
-            </DropdownMenuItem>
-            
-            <DropdownMenuSeparator className="bg-slate-100" />
-            
-            <DropdownMenuItem className="rounded-lg p-2.5 cursor-pointer hover:bg-rose-50 text-rose-600" onClick={handleSignOut}>
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-md bg-rose-100 text-rose-600">
+                <span className="text-sm font-bold text-slate-700">Settings</span>
+              </button>
+              
+              <div className="h-px bg-slate-100" />
+              
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-rose-50 transition-colors text-rose-600" onClick={handleSignOut}>
+                <div className="p-1.5 rounded-xl bg-rose-100 text-rose-600">
                   <LogOut className="h-3.5 w-3.5" />
                 </div>
-                <span className="text-sm font-medium">Sign Out</span>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <span className="text-sm font-bold">Sign Out</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

@@ -2,15 +2,6 @@
 
 import { useState } from "react";
 import { CreditCard, IndianRupee, Wallet, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
@@ -28,104 +19,82 @@ export function PaymentForm() {
   };
 
   return (
-    <Card className="border-none shadow-sm overflow-hidden">
-      <CardHeader className="bg-slate-50/50 py-4">
-        <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-x-2">
-          <CreditCard className="h-5 w-5 text-primary" />
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden animate-in fade-in duration-700">
+      <div className="p-5 border-b border-slate-100">
+        <h3 className="text-lg font-black tracking-tight text-slate-900 flex items-center gap-x-2">
+          <CreditCard className="h-5 w-5 text-emerald-600" />
           Record New Payment
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid gap-6 md:grid-cols-2">
+        </h3>
+      </div>
+      <div className="p-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/70">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
                 Select Student
               </label>
-              <Select>
-                <SelectTrigger className="bg-slate-50 border-none">
-                  <SelectValue placeholder="Search student..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="s1">John Doe (Grade 10-A)</SelectItem>
-                  <SelectItem value="s2">Jane Smith (Grade 10-A)</SelectItem>
-                </SelectContent>
-              </Select>
+              <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                <option value="">Search student...</option>
+                <option value="s1">John Doe (Grade 10-A)</option>
+                <option value="s2">Jane Smith (Grade 10-A)</option>
+              </select>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/70">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
                 Fee Category
               </label>
-              <Select>
-                <SelectTrigger className="bg-slate-50 border-none">
-                  <SelectValue placeholder="Select fee item" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="f1">Annual Tuition (₹2,500)</SelectItem>
-                  <SelectItem value="f2">Laboratory Fee (₹300)</SelectItem>
-                </SelectContent>
-              </Select>
+              <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                <option value="">Select fee item</option>
+                <option value="f1">Annual Tuition (₹2,500)</option>
+                <option value="f2">Laboratory Fee (₹300)</option>
+              </select>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/70">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
                 Amount to Pay
               </label>
               <div className="relative">
-                <IndianRupee className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <IndianRupee className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   placeholder="0.00"
-                  className="pl-9 bg-slate-50 border-none"
+                  className="pl-9 rounded-xl border-slate-200"
                   type="number"
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground/70">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
                 Payment Method
               </label>
-              <Select defaultValue="cash">
-                <SelectTrigger className="bg-slate-50 border-none">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cash">
-                    <div className="flex items-center gap-x-2">
-                      <Wallet className="h-4 w-4" /> Cash
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="online">
-                    <div className="flex items-center gap-x-2">
-                      <CreditCard className="h-4 w-4" /> Online Transfer
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="bank">Bank Deposit</SelectItem>
-                </SelectContent>
-              </Select>
+              <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                <option value="cash">Cash</option>
+                <option value="online">Online Transfer</option>
+                <option value="bank">Bank Deposit</option>
+              </select>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+        <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
+          <div className="text-sm text-slate-500">
             <p>
               Outstanding Balance:{" "}
               <span className="text-red-500 font-bold">₹2,800</span>
             </p>
           </div>
-          <Button
+          <button
             onClick={handlePayment}
             disabled={loading}
-            className="gap-x-2 px-8"
+            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-x-2"
           >
             {loading ? "Processing..." : "Confirm Payment"}
             {!loading && <CheckCircle2 className="h-4 w-4" />}
-          </Button>
+          </button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
-

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { 
   Settings, IndianRupee, Clock, Percent, Save, 
   RotateCcw, Calculator
@@ -26,7 +24,6 @@ export function SalarySettingsClient() {
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>("");
 
-  // Fetch salary settings
   const { data: settings, isLoading } = useQuery({
     queryKey: ["salary-settings"],
     queryFn: async () => {
@@ -38,7 +35,6 @@ export function SalarySettingsClient() {
     },
   });
 
-  // Update setting mutation
   const updateSetting = useMutation({
     mutationFn: async ({ key, value }: { key: string; value: number }) => {
       const { error } = await supabase
@@ -90,48 +86,44 @@ export function SalarySettingsClient() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
-            <Settings className="h-5 w-5 text-emerald-600" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold text-slate-900">Salary Settings</h1>
-            <p className="text-sm text-slate-500">Configure payroll calculation rules</p>
-          </div>
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+          <Settings className="h-5 w-5 text-emerald-600" />
+        </div>
+        <div>
+          <h1 className="text-lg font-black tracking-tight text-slate-900">Salary Settings</h1>
+          <p className="text-sm text-slate-500">Configure payroll calculation rules</p>
         </div>
       </div>
 
-      {/* Settings Groups */}
       {categoryGroups.map((group) => (
-        <Card key={group.title} className="shadow-sm">
-          <CardHeader className="pb-4 border-b bg-slate-50/50">
-            <CardTitle className="text-base flex items-center gap-2">
+        <div key={group.title} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2">
               <group.icon className={`h-4 w-4 ${group.color}`} />
               {group.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
+            </h3>
+          </div>
+          <div className="p-5">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {settings
                 ?.filter((s) => group.keys.includes(s.key))
                 .map((setting) => (
-                  <div
-                    key={setting.key}
-                    className="p-4 border rounded-lg hover:bg-slate-50"
-                  >
+                  <div key={setting.key} className="p-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-medium text-slate-900 capitalize">
+                        <p className="font-bold text-slate-900 capitalize">
                           {setting.key.replace(/_/g, " ")}
                         </p>
                         <p className="text-xs text-slate-500">{setting.description}</p>
                       </div>
-                      <Badge variant={setting.is_active ? "default" : "secondary"}>
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                        setting.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                      )}>
                         {setting.is_active ? "Active" : "Inactive"}
-                      </Badge>
+                      </span>
                     </div>
 
                     {editingKey === setting.key ? (
@@ -140,59 +132,57 @@ export function SalarySettingsClient() {
                           type="number"
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
-                          className="w-24"
+                          className="w-24 rounded-xl border-slate-200"
                         />
-                        <Button
-                          size="sm"
+                        <button
                           onClick={() => saveEdit(setting.key)}
                           disabled={updateSetting.isPending}
+                          className="h-9 w-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center transition-all disabled:opacity-50"
                         >
-                          <Save className="h-3 w-3" />
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={cancelEdit}>
-                          <RotateCcw className="h-3 w-3" />
-                        </Button>
+                          <Save className="h-3.5 w-3.5" />
+                        </button>
+                        <button onClick={cancelEdit} className="h-9 w-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center">
+                          <RotateCcw className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     ) : (
                       <div className="flex items-center justify-between mt-2">
-                        <p className="text-2xl font-bold text-slate-900">
+                        <p className="text-2xl font-black text-slate-900">
                           {setting.key.includes("rate") || setting.key.includes("percentage")
                             ? `${setting.value}%`
                             : `₹${setting.value.toLocaleString()}`}
                         </p>
-                        <Button
-                          size="sm"
-                          variant="ghost"
+                        <button
                           onClick={() => startEdit(setting)}
+                          className="h-8 rounded-xl border border-slate-200 text-slate-600 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 transition-all"
                         >
                           Edit
-                        </Button>
+                        </button>
                       </div>
                     )}
                   </div>
                 ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
 
-      {/* Info Card */}
-      <Card className="shadow-sm border-l-4 border-l-blue-500">
-        <CardContent className="p-4">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-blue-500">
+        <div className="p-5">
           <div className="flex items-start gap-3">
             <Calculator className="h-5 w-5 text-blue-500 mt-0.5" />
             <div>
-              <p className="font-medium text-slate-900">How calculations work</p>
+              <p className="font-bold text-slate-900">How calculations work</p>
               <ul className="text-sm text-slate-600 mt-2 space-y-1">
-                <li>• <strong>Per Day Salary</strong> = Base Salary ÷ Working Days</li>
-                <li>• <strong>Absence Deduction</strong> = Days Absent × Per Day Salary</li>
-                <li>• <strong>Late Coming</strong> = Number of incidents × Late Deduction</li>
+                <li>• <strong>Per Day Salary</strong> = Base Salary / Working Days</li>
+                <li>• <strong>Absence Deduction</strong> = Days Absent x Per Day Salary</li>
+                <li>• <strong>Late Coming</strong> = Number of incidents &times; Late Deduction</li>
                 <li>• <strong>Net Pay</strong> = Base Salary + Bonus - Deductions</li>
               </ul>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

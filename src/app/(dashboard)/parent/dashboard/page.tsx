@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { User, BookOpen, Clock, CheckCircle, AlertCircle, IndianRupee, Calendar, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, BookOpen, CheckCircle, IndianRupee, Calendar, FileText, AlertCircle, Users } from "lucide-react";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 import { ERPCard } from "@/components/ui/erp-card";
 
 interface Student {
@@ -35,17 +33,12 @@ export default function ParentDashboardPage() {
   const [recentAttendance, setRecentAttendance] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadParentData();
-  }, []);
-
-  async function loadParentData() {
+  const loadParentData = useCallback(async () => {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Get parent's linked students
       const { data: studentData } = await supabase
         .from("students")
         .select("id, admission_number, class:classes(name), profile:profiles(full_name, avatar_url)")
@@ -55,7 +48,6 @@ export default function ParentDashboardPage() {
       if (studentData) {
         setStudent(studentData as any);
 
-        // Get fee dues
         const { data: dues } = await supabase
           .from("fee_installments")
           .select("id, amount, due_date, status, fee_type")
@@ -64,7 +56,6 @@ export default function ParentDashboardPage() {
           .order("due_date");
         setFeeDues(dues || []);
 
-        // Get recent attendance
         const { data: attendance } = await supabase
           .from("attendance")
           .select("date, status")
@@ -78,7 +69,12 @@ export default function ParentDashboardPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [supabase]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadParentData();
+  }, [loadParentData]);
 
   const totalDue = feeDues.reduce((sum, f) => sum + (f.amount || 0), 0);
   const presentDays = recentAttendance.filter(a => a.status === "present").length;
@@ -86,138 +82,154 @@ export default function ParentDashboardPage() {
     ? Math.round((presentDays / recentAttendance.length) * 100) 
     : 0;
 
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6 animate-in fade-in duration-700">
+        <div className="h-32 bg-slate-100 rounded-xl animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1,2,3].map(i => <div key={i} className="h-24 bg-slate-100 rounded-xl animate-pulse" />)}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6 space-y-6">
-      {/* Welcome Header */}
+    <div className="p-6 space-y-6 animate-in fade-in duration-700">
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl p-6 text-white">
         <div className="flex items-center gap-4">
           <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center">
             <User className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Welcome to Parent Portal</h1>
-            <p className="text-purple-100">Monitor your child's progress</p>
+            <h1 className="text-lg font-black tracking-tight">Welcome to Parent Portal</h1>
+            <p className="text-purple-200 text-sm">Monitor your child&apos;s progress</p>
           </div>
         </div>
       </div>
 
-      {/* Student Info Card */}
       {student && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="col-span-2">
-            <ERPCard accentColor="blue">
-              <CardHeader>
-                <CardTitle>Student Information</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+              <div className="p-5 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="p-1.5 rounded bg-blue-50">
+                    <User className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-slate-900">Student Information</h3>
+                </div>
+              </div>
+              <div className="p-5">
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
+                  <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xl">
                     {student.profile?.full_name?.charAt(0) || "S"}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold">{student.profile?.full_name}</h3>
-                    <p className="text-sm text-muted-foreground">Adm No: {student.admission_number}</p>
-                    <p className="text-sm text-muted-foreground">Class: {student.class?.name}</p>
+                    <h3 className="text-lg font-black tracking-tight text-slate-900">{student.profile?.full_name}</h3>
+                    <p className="text-sm text-slate-500">Adm No: {student.admission_number}</p>
+                    <p className="text-sm text-slate-500">Class: {student.class?.name}</p>
                   </div>
                 </div>
-              </CardContent>
-            </ERPCard>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-4">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-emerald-700">
-                <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">Attendance</span>
+          <div>
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-5">
+              <div className="flex items-center gap-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-3">
+                <CheckCircle className="h-4 w-4" />
+                Attendance
               </div>
-              <p className="text-2xl font-bold text-emerald-700 mt-1">{attendancePercentage}%</p>
-              <p className="text-xs text-emerald-600">{presentDays}/{recentAttendance.length} days present</p>
+              <p className="text-3xl font-black text-slate-900">{attendancePercentage}%</p>
+              <p className="text-xs text-slate-500">{presentDays}/{recentAttendance.length} days present</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Fee Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-amber-700">
-            <IndianRupee className="h-5 w-5" />
-            <span className="font-medium">Total Due</span>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-5">
+          <div className="flex items-center gap-2 text-amber-600 text-[10px] font-black uppercase tracking-widest mb-3">
+            <IndianRupee className="h-4 w-4" />
+            Total Due
           </div>
-          <p className="text-3xl font-bold text-amber-700 mt-1">₹{totalDue.toLocaleString()}</p>
-          <p className="text-xs text-amber-600">{feeDues.length} pending fees</p>
+          <p className="text-3xl font-black text-slate-900">₹{totalDue.toLocaleString()}</p>
+          <p className="text-xs text-slate-500">{feeDues.length} pending fees</p>
         </div>
         
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-blue-700">
-            <BookOpen className="h-5 w-5" />
-            <span className="font-medium">Academic Status</span>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-5">
+          <div className="flex items-center gap-2 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-3">
+            <BookOpen className="h-4 w-4" />
+            Academic Status
           </div>
-          <p className="text-xl font-bold text-blue-700 mt-1">Active</p>
-          <p className="text-xs text-blue-600">Current Session</p>
+          <p className="text-lg font-black tracking-tight text-slate-900">Active</p>
+          <p className="text-xs text-slate-500">Current Session</p>
         </div>
         
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-purple-700">
-            <Calendar className="h-5 w-5" />
-            <span className="font-medium">Next Event</span>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-5">
+          <div className="flex items-center gap-2 text-purple-600 text-[10px] font-black uppercase tracking-widest mb-3">
+            <Calendar className="h-4 w-4" />
+            Next Event
           </div>
-          <p className="text-xl font-bold text-purple-700 mt-1">Parent-Teacher</p>
-          <p className="text-xs text-purple-600">Contact school for date</p>
+          <p className="text-lg font-black tracking-tight text-slate-900">Parent-Teacher</p>
+          <p className="text-xs text-slate-500">Contact school for date</p>
         </div>
       </div>
 
-      {/* Fee Dues Table */}
       {feeDues.length > 0 && (
-        <ERPCard accentColor="amber">
-          <CardHeader>
-            <CardTitle>Pending Fee Dues</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded bg-amber-50">
+                <IndianRupee className="h-5 w-5 text-amber-600" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900">Pending Fee Dues</h3>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50">
+              <thead className="bg-slate-50/50">
                 <tr>
-                  <th className="text-left p-4 font-medium">Fee Type</th>
-                  <th className="text-left p-4 font-medium">Due Date</th>
-                  <th className="text-right p-4 font-medium">Amount</th>
-                  <th className="text-center p-4 font-medium">Status</th>
+                  <th className="text-left p-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Fee Type</th>
+                  <th className="text-left p-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Due Date</th>
+                  <th className="text-right p-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Amount</th>
+                  <th className="text-center p-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {feeDues.map(fee => (
-                  <tr key={fee.id} className="border-t">
-                    <td className="p-4">{fee.fee_type || "Fee"}</td>
-                    <td className="p-4">{fee.due_date ? new Date(fee.due_date).toLocaleDateString() : "-"}</td>
-                    <td className="p-4 text-right font-medium">₹{fee.amount?.toLocaleString()}</td>
+                  <tr key={fee.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                    <td className="p-4 text-sm font-bold text-slate-700">{fee.fee_type || "Fee"}</td>
+                    <td className="p-4 text-sm text-slate-600">{fee.due_date ? new Date(fee.due_date).toLocaleDateString() : "-"}</td>
+                    <td className="p-4 text-right text-sm font-black text-slate-900">₹{fee.amount?.toLocaleString()}</td>
                     <td className="p-4 text-center">
-                      <Badge className="bg-amber-100 text-amber-700">Pending</Badge>
+                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-50 text-amber-600">Pending</span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </CardContent>
-        </ERPCard>
+          </div>
+        </div>
       )}
 
-      {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2">
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all">
           <FileText className="h-6 w-6 text-blue-600" />
-          <span className="text-sm">View Report Card</span>
-        </Button>
-        <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2">
-          <Calendar className="h-6 w-6 text-green-600" />
-          <span className="text-sm">View Timetable</span>
-        </Button>
-        <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2">
+          <span className="text-sm text-slate-700">View Report Card</span>
+        </button>
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all">
+          <Calendar className="h-6 w-6 text-emerald-600" />
+          <span className="text-sm text-slate-700">View Timetable</span>
+        </button>
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all">
           <IndianRupee className="h-6 w-6 text-amber-600" />
-          <span className="text-sm">Pay Fees</span>
-        </Button>
-        <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2">
+          <span className="text-sm text-slate-700">Pay Fees</span>
+        </button>
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all">
           <AlertCircle className="h-6 w-6 text-purple-600" />
-          <span className="text-sm">Contact Teacher</span>
-        </Button>
+          <span className="text-sm text-slate-700">Contact Teacher</span>
+        </button>
       </div>
     </div>
   );

@@ -103,7 +103,7 @@ export default function StudentDocumentsPage() {
     if (!selectedStudent) return;
     setUploading(docType);
     try {
-      const filePath = `${selectedStudent.id}/${docType}/${Date.now()}_${file.name}`;
+      const filePath = `${selectedStudent.id}/${docType}/${crypto.randomUUID()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from("student-docs").upload(filePath, file);
       if (uploadError) throw uploadError;
       

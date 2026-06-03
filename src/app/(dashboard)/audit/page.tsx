@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Activity, Search, Download, Shield, Clock, Filter, AlertTriangle, ChevronDown, Eye
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { cn } from "@/lib/utils";
 
 interface AuditLog {
   id: string;
@@ -30,11 +30,7 @@ export default function AuditLogsPage() {
   const [selectedModule, setSelectedModule] = useState("all");
   const [dateRange, setDateRange] = useState("7d");
 
-  useEffect(() => {
-    loadAuditLogs();
-  }, []);
-
-  const loadAuditLogs = async () => {
+  const loadAuditLogs = useCallback(async () => {
     setLoading(true);
     try {
       const supabase = createClient();
@@ -66,7 +62,12 @@ export default function AuditLogsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadAuditLogs();
+  }, [loadAuditLogs]);
 
   const filteredLogs = useMemo(() => {
     return logs.filter((log) => {
@@ -86,34 +87,34 @@ export default function AuditLogsPage() {
   }), [logs]);
 
   const getActionBadge = (action: string) => {
-    if (action.includes("CREATE")) return <Badge className="bg-emerald-100 text-emerald-700">Create</Badge>;
-    if (action.includes("UPDATE")) return <Badge className="bg-blue-100 text-blue-700">Update</Badge>;
-    if (action.includes("DELETE")) return <Badge className="bg-rose-100 text-rose-700">Delete</Badge>;
-    if (action.includes("LOGIN")) return <Badge className="bg-violet-100 text-violet-700">Login</Badge>;
-    if (action.includes("LOGOUT")) return <Badge className="bg-slate-100 text-slate-700">Logout</Badge>;
-    if (action.includes("EXPORT")) return <Badge className="bg-amber-100 text-amber-700">Export</Badge>;
-    return <Badge className="bg-slate-100 text-slate-700">{action}</Badge>;
+    if (action.includes("CREATE")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700">Create</span>;
+    if (action.includes("UPDATE")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-100 text-blue-700">Update</span>;
+    if (action.includes("DELETE")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-rose-100 text-rose-700">Delete</span>;
+    if (action.includes("LOGIN")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-violet-100 text-violet-700">Login</span>;
+    if (action.includes("LOGOUT")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">Logout</span>;
+    if (action.includes("EXPORT")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">Export</span>;
+    return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">{action}</span>;
   };
 
   const getStatusBadge = (status?: string) => {
     switch (status) {
-      case "failed": return <Badge className="bg-rose-100 text-rose-700">Failed</Badge>;
-      case "warning": return <Badge className="bg-amber-100 text-amber-700">Warning</Badge>;
-      default: return <Badge className="bg-emerald-100 text-emerald-700">Success</Badge>;
+      case "failed": return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-rose-100 text-rose-700">Failed</span>;
+      case "warning": return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">Warning</span>;
+      default: return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700">Success</span>;
     }
   };
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
-      case "admin": return <Badge className="bg-rose-100 text-rose-700">Admin</Badge>;
-      case "teacher": return <Badge className="bg-blue-100 text-blue-700">Teacher</Badge>;
-      default: return <Badge className="bg-slate-100 text-slate-700">Student</Badge>;
+      case "admin": return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-rose-100 text-rose-700">Admin</span>;
+      case "teacher": return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-100 text-blue-700">Teacher</span>;
+      default: return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">Student</span>;
     }
   };
 
   if (loading) {
     return (
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="animate-in fade-in duration-700 p-4 md:p-6 space-y-6">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
         </div>
@@ -122,42 +123,24 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">Audit Logs</h1>
-          <p className="text-sm text-muted-foreground">Track system activities and security events</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export CSV
-          </Button>
-        </div>
-      </div>
+    <div className="animate-in fade-in duration-700 space-y-8 mt-6">
+      <UnifiedPageHeader title="Audit Logs" subtitle="Track system activities and security events" icon={Shield} color="blue" />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: "Total Activities", value: stats.total, color: "slate" },
-          { label: "Successful", value: stats.success, color: "emerald" },
-          { label: "Failed", value: stats.failed, color: "rose" },
-          { label: "Warnings", value: stats.warnings, color: "amber" },
-        ].map((stat, i) => (
-          <Card key={i} className="p-4 hover:shadow-md transition-shadow">
-            <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-            <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-          </Card>
-        ))}
+        <DashboardStatCard title="Total Activities" value={stats.total} icon={Activity} color="slate" />
+        <DashboardStatCard title="Successful" value={stats.success} icon={Shield} color="emerald" />
+        <DashboardStatCard title="Failed" value={stats.failed} icon={AlertTriangle} color="rose" />
+        <DashboardStatCard title="Warnings" value={stats.warnings} icon={AlertTriangle} color="amber" />
       </div>
 
-      <Card>
-        <div className="p-4 border-b flex flex-col md:flex-row gap-4">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search by user, action, or entity..." className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input placeholder="Search by user, action, or entity..." className="pl-9 rounded-xl border-slate-200" value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <select className="px-3 py-2 border rounded-lg text-sm bg-background" value={selectedAction} onChange={(e) => setSelectedAction(e.target.value)}>
+            <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={selectedAction} onChange={(e) => setSelectedAction(e.target.value)}>
               <option value="all">All Actions</option>
               <option value="CREATE">Create</option>
               <option value="UPDATE">Update</option>
@@ -165,7 +148,7 @@ export default function AuditLogsPage() {
               <option value="LOGIN">Login</option>
               <option value="LOGOUT">Logout</option>
             </select>
-            <select className="px-3 py-2 border rounded-lg text-sm bg-background" value={selectedModule} onChange={(e) => setSelectedModule(e.target.value)}>
+            <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={selectedModule} onChange={(e) => setSelectedModule(e.target.value)}>
               <option value="all">All Modules</option>
               <option value="students">Students</option>
               <option value="profiles">Profiles</option>
@@ -176,49 +159,49 @@ export default function AuditLogsPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full">
             <thead>
-              <tr className="bg-slate-50 border-b">
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">Timestamp</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">User</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">Role</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">Action</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">Module</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">Entity ID</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">IP Address</th>
-                <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
+              <tr className="border-b border-slate-100 bg-slate-50">
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Timestamp</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">User</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Role</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Action</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Module</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Entity ID</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">IP Address</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
               </tr>
             </thead>
             <tbody>
               {filteredLogs.length === 0 ? (
-                <tr><td colSpan={8} className="py-12 text-center text-muted-foreground">No audit logs found</td></tr>
+                <tr><td colSpan={8} className="py-16 text-center text-slate-500">No audit logs found</td></tr>
               ) : (
                 filteredLogs.map((log) => (
-                  <tr key={log.id} className="border-b hover:bg-slate-50/50">
-                    <td className="py-3 px-4">
+                  <tr key={log.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                    <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <Clock className="h-4 w-4 text-slate-400" />
                         <div>
-                          <p className="text-xs font-mono">{new Date(log.created_at).toLocaleDateString()}</p>
-                          <p className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}</p>
+                          <p className="text-xs font-mono text-slate-700">{new Date(log.created_at).toLocaleDateString()}</p>
+                          <p className="text-xs text-slate-500">{formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-xs">{log.actor?.full_name?.[0]?.toUpperCase() || "S"}</div>
                         <div>
-                          <p className="font-medium">{log.actor?.full_name || "SYSTEM"}</p>
-                          <p className="text-xs text-muted-foreground">{log.actor?.email}</p>
+                          <p className="text-sm font-bold text-slate-900">{log.actor?.full_name || "SYSTEM"}</p>
+                          <p className="text-xs text-slate-500">{log.actor?.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4">{getRoleBadge(log.actor?.role)}</td>
-                    <td className="py-3 px-4">{getActionBadge(log.action)}</td>
-                    <td className="py-3 px-4"><span className="font-medium capitalize">{log.entity_type}</span></td>
-                    <td className="py-3 px-4"><code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono">{log.entity_id.substring(0, 12)}...</code></td>
-                    <td className="py-3 px-4"><code className="text-xs font-mono text-muted-foreground">{log.ip_address || "Internal"}</code></td>
-                    <td className="py-3 px-4">{getStatusBadge(log.status)}</td>
+                    <td className="py-4 px-4">{getRoleBadge(log.actor?.role)}</td>
+                    <td className="py-4 px-4">{getActionBadge(log.action)}</td>
+                    <td className="py-4 px-4"><span className="text-sm font-bold text-slate-700 capitalize">{log.entity_type}</span></td>
+                    <td className="py-4 px-4"><code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono text-slate-700">{log.entity_id.substring(0, 12)}...</code></td>
+                    <td className="py-4 px-4"><code className="text-xs font-mono text-slate-500">{log.ip_address || "Internal"}</code></td>
+                    <td className="py-4 px-4">{getStatusBadge(log.status)}</td>
                   </tr>
                 ))
               )}
@@ -226,10 +209,10 @@ export default function AuditLogsPage() {
           </table>
         </div>
 
-        <div className="px-4 py-3 border-t flex items-center justify-between text-sm text-muted-foreground">
+        <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between text-sm text-slate-500">
           <span>Showing {filteredLogs.length} of {logs.length} entries</span>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

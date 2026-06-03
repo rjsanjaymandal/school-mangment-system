@@ -3,14 +3,8 @@
 import { useMemo, useState } from "react";
 import { CreditCard, Globe, Plus, Power, Trash2 } from "lucide-react";
 import { createGateway, deleteGateway, updateGateway, updateGatewayStatus } from "@/app/actions/gateways";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -105,71 +99,123 @@ export function GatewaysDashboardClient({ initialGateways }: { initialGateways: 
     };
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700 pb-12 text-foreground">
+        <div className="space-y-8 animate-in fade-in duration-700 pb-12">
             <div className="flex items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tight uppercase italic">Ecosystem <span className="text-primary">/</span> Hub</h2>
-                    <p className="text-muted-foreground font-black uppercase tracking-widest text-[10px] mt-3">Gateway registry, keys, and activation state</p>
+                    <h2 className="text-lg font-black tracking-tight text-slate-900">Ecosystem / Hub</h2>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">Gateway registry, keys, and activation state</p>
                 </div>
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild><Button onClick={openCreate}><Plus className="h-4 w-4 mr-2" /> Add Gateway</Button></DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                        <DialogHeader><DialogTitle>{editingGateway ? "Edit Gateway" : "Add Gateway"}</DialogTitle></DialogHeader>
-                        <div className="grid gap-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-                                <div className="space-y-2"><Label>Provider</Label><Select value={form.provider} onValueChange={(value) => setForm({ ...form, provider: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="financial">Financial</SelectItem><SelectItem value="lms">LMS</SelectItem><SelectItem value="identity">Identity</SelectItem><SelectItem value="messaging">Messaging</SelectItem></SelectContent></Select></div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>API Key</Label><Input value={form.api_key} onChange={(e) => setForm({ ...form, api_key: e.target.value })} /></div>
-                                <div className="space-y-2"><Label>Webhook Secret</Label><Input value={form.webhook_secret} onChange={(e) => setForm({ ...form, webhook_secret: e.target.value })} /></div>
-                            </div>
-                            <div className="space-y-2"><Label>Secret Key</Label><Input value={form.secret_key} onChange={(e) => setForm({ ...form, secret_key: e.target.value })} /></div>
-                            <div className="space-y-2"><Label>Config JSON</Label><Textarea value={form.config} onChange={(e) => setForm({ ...form, config: e.target.value })} className="min-h-32 font-mono text-xs" /></div>
-                            <Button onClick={handleSave} disabled={loading}>{loading ? "Saving..." : editingGateway ? "Update Gateway" : "Create Gateway"}</Button>
-                        </div>
-                    </DialogContent>
-                </Dialog>
+                <button onClick={openCreate} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-x-2">
+                    <Plus className="h-4 w-4" /> Add Gateway
+                </button>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-4">
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Configured</p><h3 className="text-4xl font-bold mt-2">{initialGateways.length}</h3></Card>
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Active</p><h3 className="text-4xl font-bold mt-2">{activeCount}</h3></Card>
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Financial</p><h3 className="text-4xl font-bold mt-2">{initialGateways.filter((gateway) => gateway.provider === "financial").length}</h3></Card>
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Academic / Other</p><h3 className="text-4xl font-bold mt-2">{initialGateways.filter((gateway) => gateway.provider !== "financial").length}</h3></Card>
+            <div className="grid gap-4 md:grid-cols-4">
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Configured</p>
+                    <h3 className="text-3xl font-black text-slate-900 mt-2">{initialGateways.length}</h3>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Active</p>
+                    <h3 className="text-3xl font-black text-slate-900 mt-2">{activeCount}</h3>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Financial</p>
+                    <h3 className="text-3xl font-black text-slate-900 mt-2">{initialGateways.filter((gateway) => gateway.provider === "financial").length}</h3>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Academic / Other</p>
+                    <h3 className="text-3xl font-black text-slate-900 mt-2">{initialGateways.filter((gateway) => gateway.provider !== "financial").length}</h3>
+                </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {initialGateways.length === 0 ? <Card className="p-10 text-center text-muted-foreground col-span-full">No gateways configured.</Card> : initialGateways.map((gateway) => (
-                    <Card key={gateway.id} className="p-6 border border-border">
+                {initialGateways.length === 0 ? (
+                    <div className="bg-white border border-slate-200 rounded-xl p-10 text-center col-span-full">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No gateways configured.</p>
+                    </div>
+                ) : initialGateways.map((gateway) => (
+                    <div key={gateway.id} className="bg-white border border-slate-200 rounded-xl p-5">
                         <div className="flex items-start justify-between gap-4">
                             <div className="flex items-center gap-3">
-                                <div className={`h-12 w-12 rounded-full border flex items-center justify-center ${gateway.provider === "financial" ? "bg-primary/10 border-primary/20 text-primary" : "bg-muted border-border text-muted-foreground"}`}>
+                                <div className={`h-12 w-12 rounded-xl border flex items-center justify-center ${gateway.provider === "financial" ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-slate-50 border-slate-200 text-slate-500"}`}>
                                     {gateway.provider === "financial" ? <CreditCard className="h-6 w-6" /> : <Globe className="h-6 w-6" />}
                                 </div>
                                 <div>
-                                    <p className="font-semibold">{gateway.name}</p>
+                                    <p className="font-bold text-slate-900">{gateway.name}</p>
                                     <div className="flex items-center gap-2 mt-1">
-                                        <Badge variant="outline">{gateway.provider}</Badge>
-                                        <Badge variant="outline" className={gateway.is_active ? "border-primary/20 text-primary bg-primary/5" : ""}>{gateway.is_active ? "Active" : "Inactive"}</Badge>
+                                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-600">{gateway.provider}</span>
+                                        <span className={cn(
+                                            "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                                            gateway.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                                        )}>{gateway.is_active ? "Active" : "Inactive"}</span>
                                     </div>
                                 </div>
                             </div>
-                            <Button variant="ghost" size="sm" onClick={() => openEdit(gateway)}>Edit</Button>
+                            <button onClick={() => openEdit(gateway)} className="h-8 rounded-xl border border-slate-200 text-slate-600 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 transition-all">Edit</button>
                         </div>
 
-                        <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                        <div className="mt-4 space-y-2 text-sm text-slate-500">
                             <p>API key: {gateway.api_key ? "Configured" : "Not set"}</p>
                             <p>Webhook secret: {gateway.webhook_secret ? "Configured" : "Not set"}</p>
                         </div>
 
                         <div className="mt-6 flex items-center justify-between gap-3">
-                            <Button variant="outline" size="sm" onClick={() => handleToggle(gateway)}><Power className="h-4 w-4 mr-2" /> {gateway.is_active ? "Disable" : "Enable"}</Button>
-                            <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(gateway.id)}><Trash2 className="h-4 w-4" /></Button>
+                            <button onClick={() => handleToggle(gateway)} className="h-8 rounded-xl border border-slate-200 text-slate-700 font-black text-[9px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-x-2"><Power className="h-3.5 w-3.5" /> {gateway.is_active ? "Disable" : "Enable"}</button>
+                            <button onClick={() => handleDelete(gateway.id)} className="h-8 w-8 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 transition-all flex items-center justify-center"><Trash2 className="h-4 w-4" /></button>
                         </div>
-                    </Card>
+                    </div>
                 ))}
             </div>
+
+            {open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-2xl max-w-2xl w-full mx-4">
+                        <div className="p-5 border-b border-slate-100">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">{editingGateway ? "Edit Gateway" : "Add Gateway"}</h3>
+                        </div>
+                        <div className="p-5 space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Name</label>
+                                    <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-xl border-slate-200" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Provider</label>
+                                    <select value={form.provider} onChange={(e) => setForm({ ...form, provider: e.target.value })} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                        <option value="financial">Financial</option>
+                                        <option value="lms">LMS</option>
+                                        <option value="identity">Identity</option>
+                                        <option value="messaging">Messaging</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">API Key</label>
+                                    <Input value={form.api_key} onChange={(e) => setForm({ ...form, api_key: e.target.value })} className="rounded-xl border-slate-200" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Webhook Secret</label>
+                                    <Input value={form.webhook_secret} onChange={(e) => setForm({ ...form, webhook_secret: e.target.value })} className="rounded-xl border-slate-200" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Secret Key</label>
+                                <Input value={form.secret_key} onChange={(e) => setForm({ ...form, secret_key: e.target.value })} className="rounded-xl border-slate-200" />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Config JSON</label>
+                                <textarea value={form.config} onChange={(e) => setForm({ ...form, config: e.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none min-h-32 font-mono" />
+                            </div>
+                            <div className="flex justify-end gap-x-2 pt-2">
+                                <button onClick={() => setOpen(false)} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">Cancel</button>
+                                <button onClick={handleSave} disabled={loading} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">{loading ? "Saving..." : editingGateway ? "Update Gateway" : "Create Gateway"}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

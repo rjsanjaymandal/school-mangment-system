@@ -15,12 +15,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { ERPCard } from "@/components/ui/erp-card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function CertificateCreatorPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -73,23 +71,23 @@ export default function CertificateCreatorPage() {
 
     if (previewMode && selectedStudent) {
         return (
-            <div className="space-y-8">
-                <div className="flex items-center justify-between bg-white p-6 rounded-3xl border border-slate-200 shadow-sm print:hidden">
+            <div className="space-y-8 animate-in fade-in duration-700">
+                <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-slate-200 shadow-sm print:hidden">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" onClick={() => setPreviewMode(false)} className="rounded-xl">
-                            <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                        </Button>
+                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+                            <ArrowLeft className="h-4 w-4" /> Back
+                        </button>
                         <div>
-                            <h2 className="text-xl font-black text-slate-900 tracking-tight italic">Certificate Preview</h2>
+                            <h2 className="text-lg font-black tracking-tight text-slate-900">Certificate Preview</h2>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{certificateType.toUpperCase()} Certificate</p>
                         </div>
                     </div>
-                    <Button onClick={() => window.print()} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 font-bold px-8">
+                    <button onClick={() => window.print()} className="h-10 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
                         <Printer className="h-4 w-4" /> Print Certificate
-                    </Button>
+                    </button>
                 </div>
 
-                <div className="bg-white p-12 min-h-[11in] max-w-[8.5in] mx-auto border-2 border-slate-900 rounded shadow-2xl relative print:border-none print:shadow-none print-area">
+                <div className="bg-white p-12 min-h-[11in] max-w-[8.5in] mx-auto border-2 border-slate-900 rounded-xl shadow-2xl relative print:border-none print:shadow-none print-area">
                     <CertificateTemplate 
                         student={selectedStudent} 
                         type={certificateType} 
@@ -110,25 +108,25 @@ export default function CertificateCreatorPage() {
     }
 
     return (
-        <div className="space-y-8 max-w-4xl mx-auto p-6 pb-20">
+        <div className="space-y-8 max-w-4xl mx-auto p-6 pb-20 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/hr/download-center">
-                        <Button variant="ghost" size="icon" className="rounded-full">
+                        <button className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center">
                             <ArrowLeft className="h-5 w-5" />
-                        </Button>
+                        </button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight italic">Certificate Creator</h1>
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-1">Institutional Credential Generation</p>
+                        <h1 className="text-lg font-black tracking-tight text-slate-900">Certificate Creator</h1>
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Institutional Credential Generation</p>
                     </div>
                 </div>
             </div>
 
             <ERPCard accentColor="amber" className="p-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-slate-600">Search Student</Label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search Student</label>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <Input 
@@ -136,7 +134,7 @@ export default function CertificateCreatorPage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && searchStudents()}
-                                className="pl-10 rounded-xl h-12 border-slate-200"
+                                className="pl-10 rounded-xl border-slate-200 h-11"
                             />
                         </div>
                         {students.length > 0 && (
@@ -159,28 +157,27 @@ export default function CertificateCreatorPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-slate-600">Certificate Type</Label>
-                        <Select onValueChange={setCertificateType} value={certificateType}>
-                            <SelectTrigger className="rounded-xl h-12 border-slate-200">
-                                <SelectValue placeholder="Select Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="transfer">Transfer Certificate (TC)</SelectItem>
-                                <SelectItem value="character">Character Certificate</SelectItem>
-                                <SelectItem value="bonafide">Bonafide Certificate</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Certificate Type</label>
+                        <select 
+                            value={certificateType}
+                            onChange={(e) => setCertificateType(e.target.value)}
+                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                        >
+                            <option value="transfer">Transfer Certificate (TC)</option>
+                            <option value="character">Character Certificate</option>
+                            <option value="bonafide">Bonafide Certificate</option>
+                        </select>
                     </div>
                 </div>
 
                 <div className="mt-12 flex justify-center">
-                    <Button 
+                    <button 
                         onClick={handleGenerate} 
-                        className="bg-amber-600 hover:bg-amber-700 text-white rounded-2xl px-12 h-14 font-black italic tracking-tight gap-3 shadow-xl shadow-amber-600/20"
+                        className="h-12 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-black text-[10px] uppercase tracking-widest px-10 shadow-lg transition-all disabled:opacity-50 flex items-center gap-3"
                     >
                         <ScrollText className="h-5 w-5" />
                         Generate Certificate
-                    </Button>
+                    </button>
                 </div>
             </ERPCard>
         </div>
@@ -192,25 +189,22 @@ function CertificateTemplate({ student, type, settings }: { student: any, type: 
     
     return (
         <div className="flex flex-col h-full items-center p-8 border-8 border-double border-slate-200 relative overflow-hidden">
-            {/* Corner Borders */}
             <div className="absolute top-0 left-0 w-24 h-24 border-t-8 border-l-8 border-amber-600/20" />
             <div className="absolute top-0 right-0 w-24 h-24 border-t-8 border-r-8 border-amber-600/20" />
             <div className="absolute bottom-0 left-0 w-24 h-24 border-b-8 border-l-8 border-amber-600/20" />
             <div className="absolute bottom-0 right-0 w-24 h-24 border-b-8 border-r-8 border-amber-600/20" />
 
-            {/* Header */}
             <div className="text-center space-y-2 mb-12">
-                <h1 className="text-4xl font-black italic text-slate-900 tracking-tighter uppercase">{settings?.school_name || "Edu Maysan Academy"}</h1>
+                <h1 className="text-4xl font-black tracking-tighter uppercase text-slate-900">{settings?.school_name || "Edu Maysan Academy"}</h1>
                 <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">Institutional Excellence & Character</p>
                 <div className="w-48 h-1 bg-amber-600 mx-auto mt-4" />
             </div>
 
             <div className="mt-8 mb-16 text-center">
-                <h2 className="text-5xl font-black italic text-slate-900 tracking-tight border-b-4 border-slate-900 pb-2 mb-2">{title}</h2>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Academic Session 2026-27</p>
+                <h2 className="text-5xl font-black tracking-tight text-slate-900 border-b-4 border-slate-900 pb-2 mb-2">{title}</h2>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Academic Session 2026-27</p>
             </div>
 
-            {/* Body */}
             <div className="flex-1 w-full space-y-10 px-8 text-lg leading-relaxed text-slate-800 text-justify font-serif">
                 <p>
                     This is to certify that <strong>{student.full_name}</strong>, 
@@ -241,28 +235,27 @@ function CertificateTemplate({ student, type, settings }: { student: any, type: 
 
                 <div className="grid grid-cols-1 gap-6 pt-12">
                     <div className="flex justify-between border-b-2 border-dotted border-slate-200 pb-2">
-                        <span className="text-xs font-black uppercase text-slate-400 italic">Date of Issue</span>
+                        <span className="text-xs font-black uppercase text-slate-400">Date of Issue</span>
                         <span className="font-bold">{new Date().toLocaleDateString()}</span>
                     </div>
                     <div className="flex justify-between border-b-2 border-dotted border-slate-200 pb-2">
-                        <span className="text-xs font-black uppercase text-slate-400 italic">Place</span>
+                        <span className="text-xs font-black uppercase text-slate-400">Place</span>
                         <span className="font-bold">Maysan Valley</span>
                     </div>
                 </div>
             </div>
 
-            {/* Footer Signatures */}
             <div className="w-full mt-20 flex justify-between items-end px-8">
                 <div className="text-center space-y-2">
                     <div className="w-32 h-px bg-slate-400" />
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 italic">Prepared By</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">Prepared By</p>
                 </div>
                 <div className="text-center space-y-2 relative">
                     <div className="absolute -top-16 left-1/2 -translate-x-1/2 opacity-20">
                         <Award className="h-24 w-24 text-amber-600" />
                     </div>
                     <div className="w-48 h-px bg-slate-900" />
-                    <p className="text-xs font-black uppercase tracking-widest text-slate-900 italic">Authorized Signatory</p>
+                    <p className="text-xs font-black uppercase tracking-widest text-slate-900">Authorized Signatory</p>
                 </div>
             </div>
         </div>

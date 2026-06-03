@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { addDepartment } from "@/app/actions/hr";
 import { toast } from "sonner";
 
@@ -35,45 +32,55 @@ export function AddDepartmentModal({ onAdd }: { onAdd?: () => void }) {
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1 border-primary/20 text-primary hover:bg-primary/5">
-                    <Plus className="h-3 w-3" />
-                    Dept
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle className="text-xl font-bold tracking-tight">Add Department</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="dept-name">Department Name <span className="text-destructive">*</span></Label>
-                        <Input 
-                            id="dept-name" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                            placeholder="e.g. Science" 
-                            required 
-                        />
+        <>
+            <button
+                onClick={() => setOpen(true)}
+                className="h-8 rounded-xl border border-slate-200 text-slate-700 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 transition-all"
+            >
+                <Plus className="h-3 w-3 inline mr-1" />
+                Dept
+            </button>
+
+            {open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+                        <div className="p-5 border-b border-slate-100">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">Add Department</h3>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
+                                    Department Name <span className="text-red-500">*</span>
+                                </label>
+                                <Input
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="e.g. Science"
+                                    required
+                                    className="rounded-xl border-slate-200"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Department Code</label>
+                                <Input
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    placeholder="e.g. SCI"
+                                    className="rounded-xl border-slate-200"
+                                />
+                            </div>
+                            <div className="flex justify-end pt-2">
+                                <div className="flex gap-3">
+                                    <button type="button" onClick={() => setOpen(false)} className="h-11 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">Cancel</button>
+                                    <button type="submit" disabled={loading || !name} className="h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
+                                        {loading ? "Saving..." : "Save Department"}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="dept-code">Department Code</Label>
-                        <Input 
-                            id="dept-code" 
-                            value={code} 
-                            onChange={(e) => setCode(e.target.value)} 
-                            placeholder="e.g. SCI" 
-                        />
-                    </div>
-                    <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={loading || !name} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                            Save Department
-                        </Button>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+                </div>
+            )}
+        </>
     );
 }

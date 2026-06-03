@@ -1,7 +1,6 @@
 import { InstitutionalService } from "@/lib/services/institutional";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, User, Edit3 } from "lucide-react";
 import Link from "next/link";
 import { getStudentResults } from "@/app/actions/exams";
@@ -14,7 +13,6 @@ import { redirect } from "next/navigation";
 export default async function StudentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     
-    // Basic UUID format validation to prevent DB syntax errors
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(id)) {
         notFound();
@@ -35,7 +33,6 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
 
     return (
         <div className="p-6 space-y-8 animate-in fade-in duration-700">
-            {/* Unified Page Header */}
             <UnifiedPageHeader 
                 title={`${student.profile?.first_name} ${student.profile?.last_name}`}
                 subtitle={`Institutional Record: ${student.admission_number || id.slice(0, 8)}`}
@@ -44,16 +41,16 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
                 actions={
                     <>
                         <Link href="/students/list">
-                            <Button variant="outline" className="h-10 px-4 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-95 gap-2">
+                            <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
                                 <ArrowLeft className="h-4 w-4" />
                                 Back to List
-                            </Button>
+                            </button>
                         </Link>
                         <Link href={`/students/${id}/edit`}>
-                            <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
+                            <button className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
                                 <Edit3 className="h-4 w-4" />
                                 Edit Student
-                            </Button>
+                            </button>
                         </Link>
                     </>
                 }

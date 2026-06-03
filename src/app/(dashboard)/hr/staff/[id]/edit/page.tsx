@@ -1,14 +1,13 @@
 import { getStaffById, getDepartments, getDesignations } from "@/app/actions/hr";
 import { AddStaffForm } from "@/components/hr/AddStaffForm";
-import { UserPlus, ArrowLeft } from "lucide-react";
+import { ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
 export default async function EditStaffPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
-    // Basic UUID format validation to prevent DB syntax errors
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(id)) {
         notFound();
@@ -29,21 +28,21 @@ export default async function EditStaffPage({ params }: { params: Promise<{ id: 
     }
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto pb-12">
-            {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+        <div className="space-y-6 max-w-5xl mx-auto pb-12 animate-in fade-in duration-700">
+            <UnifiedPageHeader 
+                title="Edit Staff Profile"
+                subtitle={`${staff.first_name} ${staff.last_name} • ${staff.staff_id}`}
+                icon={User}
+                color="emerald"
+                actions={
                     <Link href={`/hr/staff/${id}`}>
-                        <Button variant="ghost" size="icon" className="rounded-full">
-                            <ArrowLeft className="h-5 w-5" />
-                        </Button>
+                        <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+                            <ArrowLeft className="h-4 w-4" />
+                            Back
+                        </button>
                     </Link>
-                    <div>
-                        <h1 className="text-xl font-semibold text-slate-900">Edit Staff Profile</h1>
-                        <p className="text-sm text-slate-500 mt-1">{staff.first_name} {staff.last_name} • {staff.staff_id}</p>
-                    </div>
-                </div>
-            </div>
+                }
+            />
 
             <AddStaffForm 
                 departments={departments || []} 

@@ -82,6 +82,7 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     if (student && !formDataSet) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         first_name: student.profile?.first_name || "",
         last_name: student.profile?.last_name || "",

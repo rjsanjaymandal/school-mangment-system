@@ -3,15 +3,9 @@
 import { useState, useMemo } from "react";
 import {
     FileText, Plus, ClipboardCheck, Calendar, Award, BookOpen, Users, BarChart3, Pencil, Trash2,
+    Search, Hash, CheckCircle2, Clock
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar as BigCalendar, dateFnsLocalizer, View } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale/en-US";
@@ -24,8 +18,8 @@ import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
     BarChart, Bar, XAxis, YAxis, CartesianGrid
 } from "recharts";
-import { Search, Filter, Hash, CheckCircle2, Clock } from "lucide-react";
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 interface ExamsDashboardProps {
     exams: any[];
@@ -67,6 +61,7 @@ export function ExamsDashboard({
     const [selectedExam, setSelectedExam] = useState<any>(null);
     const [marks, setMarks] = useState<Record<string, string>>({});
     const [existingMarks, setExistingMarks] = useState<any[]>([]);
+    const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
     const [calendarView, setCalendarView] = useState<View>("month");
 
     // --- Filter State ---
@@ -203,36 +198,49 @@ export function ExamsDashboard({
                 color="rose"
                 actions={
                     (userRole === "admin" || userRole === "teacher") && (
-                        <Button
+                        <button
                             onClick={() => setIsCreateOpen(true)}
-                            className="h-11 px-6 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 hover:scale-102 hover:shadow-xl transition-all duration-300"
+                            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                         >
-                            <span className="flex items-center gap-x-2 uppercase tracking-wider text-[10px] font-black">
+                            <span className="flex items-center gap-x-2">
                                 <Plus className="h-4 w-4" />
                                 Create Exam
                             </span>
-                        </Button>
+                        </button>
                     )
                 }
             />
 
-            <Tabs defaultValue="list" className="w-full">
-                <TabsList className="glass p-1 rounded-2xl h-12 mb-8 flex items-center w-fit gap-2 border border-slate-200/50 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-md">
-                    <TabsTrigger value="list" className="rounded-xl px-5 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-500/20 text-slate-500 dark:text-slate-400 font-bold transition-all duration-300">
-                        <div className="flex items-center gap-x-2">
-                            <ClipboardCheck className="h-4 w-4" />
-                            <span>Exam List</span>
-                        </div>
-                    </TabsTrigger>
-                    <TabsTrigger value="calendar" className="rounded-xl px-5 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-rose-500 data-[state=active]:to-pink-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-rose-500/20 text-slate-500 dark:text-slate-400 font-bold transition-all duration-300">
-                        <div className="flex items-center gap-x-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>Exam Calendar</span>
-                        </div>
-                    </TabsTrigger>
-                </TabsList>
+            <div className="flex w-full mb-8">
+                <div className="inline-flex p-1 rounded-2xl border border-slate-200 bg-white shadow-md">
+                    <button
+                        onClick={() => setViewMode("list")}
+                        className={cn(
+                            "rounded-xl px-5 py-2 font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-x-2",
+                            viewMode === "list"
+                                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+                                : "text-slate-500 hover:text-slate-700"
+                        )}
+                    >
+                        <ClipboardCheck className="h-4 w-4" />
+                        <span>Exam List</span>
+                    </button>
+                    <button
+                        onClick={() => setViewMode("calendar")}
+                        className={cn(
+                            "rounded-xl px-5 py-2 font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-x-2",
+                            viewMode === "calendar"
+                                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
+                                : "text-slate-500 hover:text-slate-700"
+                        )}
+                    >
+                        <Calendar className="h-4 w-4" />
+                        <span>Exam Calendar</span>
+                    </button>
+                </div>
+            </div>
 
-                <TabsContent value="list" className="mt-0 space-y-12">
+            <div className="mt-0 space-y-12">
                     {/* --- Analytics Layer: Institutional Intelligence --- */}
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-2">
                         <div className="md:col-span-8 glass p-6 md:p-8 rounded-[2rem] border border-slate-200/60 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
@@ -334,31 +342,23 @@ export function ExamsDashboard({
                         </div>
 
                         <div className="flex items-center gap-4 w-full md:w-auto">
-                            <Select value={filterClass} onValueChange={setFilterClass}>
-                                <SelectTrigger className="w-[180px] h-11 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 rounded-xl">
-                                    <div className="flex items-center gap-2">
-                                        <Hash className="h-4 w-4 text-rose-500" />
-                                        <SelectValue placeholder="Class" />
-                                    </div>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Classes</SelectItem>
-                                    {classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                            <select
+                                value={filterClass}
+                                onChange={(e) => setFilterClass(e.target.value)}
+                                className="w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 focus:border-blue-300 outline-none"
+                            >
+                                <option value="all">All Classes</option>
+                                {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
 
-                            <Select value={filterSubject} onValueChange={setFilterSubject}>
-                                <SelectTrigger className="w-[180px] h-11 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 rounded-xl">
-                                    <div className="flex items-center gap-2">
-                                        <BookOpen className="h-4 w-4 text-rose-500" />
-                                        <SelectValue placeholder="Subject" />
-                                    </div>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All Subjects</SelectItem>
-                                    {subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                            <select
+                                value={filterSubject}
+                                onChange={(e) => setFilterSubject(e.target.value)}
+                                className="w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 focus:border-blue-300 outline-none"
+                            >
+                                <option value="all">All Subjects</option>
+                                {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                            </select>
                         </div>
                     </div>
 
@@ -448,44 +448,39 @@ export function ExamsDashboard({
                                         </td>
                                         <td className="px-6 py-5 text-center">
                                             {exam.marks?.[0]?.count > 0 ? (
-                                                <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/15 py-1 px-4 rounded-full font-mono font-black text-[9px] uppercase tracking-widest italic flex items-center gap-2 justify-center w-fit mx-auto shadow-sm shadow-emerald-500/5">
+                                                <span className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/15 py-1 px-4 rounded-full font-mono font-black text-[9px] uppercase tracking-widest italic flex items-center gap-2 justify-center w-fit mx-auto shadow-sm shadow-emerald-500/5">
                                                     <CheckCircle2 className="h-3 w-3" /> Evaluated
-                                                </Badge>
+                                                </span>
                                             ) : (
-                                                <Badge variant="outline" className="text-amber-500/80 bg-amber-500/5 border-amber-500/20 py-1 px-4 rounded-full font-mono font-black text-[9px] uppercase tracking-widest italic flex items-center gap-2 justify-center w-fit mx-auto shadow-sm shadow-amber-500/5">
+                                                <span className="text-amber-500/80 bg-amber-500/5 border-amber-500/20 py-1 px-4 rounded-full font-mono font-black text-[9px] uppercase tracking-widest italic flex items-center gap-2 justify-center w-fit mx-auto shadow-sm shadow-amber-500/5">
                                                     <Clock className="h-3 w-3 animate-pulse" /> Scheduled
-                                                </Badge>
+                                                </span>
                                             )}
                                         </td>
                                         <td className="px-6 py-5 text-right">
                                             <div className="flex items-center justify-end gap-x-3">
                                                 {(userRole === "admin" || userRole === "teacher") && (
-                                                    <Button 
+                                                    <button
                                                         onClick={() => handleOpenMarks(exam)}
-                                                        size="sm"
-                                                        className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black uppercase tracking-wider text-[10px] rounded-xl shadow-md shadow-rose-500/10 hover:scale-102 transition-all duration-300 h-9 px-4"
+                                                        className="h-9 rounded-xl bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black uppercase tracking-wider text-[10px] shadow-md shadow-rose-500/10 hover:scale-102 transition-all duration-300 px-4"
                                                     >
                                                         <span className="flex items-center gap-x-2">
                                                             <Plus className="h-3 w-3" /> Enter Results
                                                         </span>
-                                                    </Button>
+                                                    </button>
                                                 )}
-                                                <Button 
-                                                    variant="ghost" 
-                                                    size="icon"
-                                                    className="h-9 w-9 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-slate-200/40 dark:border-slate-800/40 hover:border-rose-500/20 transition-all duration-300"
+                                                <button
+                                                    className="h-9 w-9 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-slate-200/40 dark:border-slate-800/40 hover:border-rose-500/20 transition-all duration-300 flex items-center justify-center"
                                                 >
                                                     <Pencil className="h-4 w-4" />
-                                                </Button>
+                                                </button>
                                                 {(userRole === "admin" || userRole === "teacher") && (
-                                                    <Button 
+                                                    <button
                                                         onClick={() => handleDeleteExam(exam.id)}
-                                                        variant="ghost" 
-                                                        size="icon"
-                                                        className="h-9 w-9 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-slate-200/40 dark:border-slate-800/40 hover:border-rose-500/20 transition-all duration-300"
+                                                        className="h-9 w-9 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-slate-200/40 dark:border-slate-800/40 hover:border-rose-500/20 transition-all duration-300 flex items-center justify-center"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
-                                                    </Button>
+                                                    </button>
                                                 )}
                                             </div>
                                         </td>
@@ -494,10 +489,9 @@ export function ExamsDashboard({
                             </tbody>
                         </table>
                     </div>
-                </TabsContent>
 
-                <TabsContent value="calendar">
-                    <div className="bg-card border border-border p-6 rounded-xl shadow-sm overflow-hidden">
+                {viewMode === "calendar" && (
+                    <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm overflow-hidden">
                         <div className="h-[700px]">
                             <BigCalendar
                                 localizer={localizer}
@@ -510,123 +504,121 @@ export function ExamsDashboard({
                             />
                         </div>
                     </div>
-                </TabsContent>
-            </Tabs>
+                )}
+            </div>
 
-            {/* Create Exam Dialog */}
-            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                <DialogContent className="bg-white/95 dark:bg-slate-900/95 border border-slate-200/60 dark:border-slate-800/60 p-0 overflow-y-auto max-h-[90vh] max-w-2xl rounded-2xl shadow-2xl">
-                    <div className="p-6 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800/40 relative overflow-hidden">
-                        <div className="relative z-10">
-                            <DialogTitle asChild>
-                                <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                                    Schedule New Exam
-                                </h3>
-                            </DialogTitle>
-                            <p className="text-sm font-medium text-slate-400 mt-1">
+            {/* Create Exam Modal */}
+            {isCreateOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsCreateOpen(false)} />
+                    <div className="relative bg-white border border-slate-200 overflow-y-auto max-h-[90vh] max-w-2xl w-full mx-4 rounded-2xl shadow-2xl">
+                        <div className="p-6 bg-slate-50 border-b border-slate-100">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">
+                                Schedule New Exam
+                            </h3>
+                            <p className="text-sm text-slate-500 mt-1">
                                 Setup and publish a new examination or assessment
                             </p>
                         </div>
+                        
+                        <div className="p-8 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Name</label>
+                                    <Input 
+                                        placeholder="e.g. First Term Finals" 
+                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        value={examForm.name} 
+                                        onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} 
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Date</label>
+                                    <Input 
+                                        type="date" 
+                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        value={examForm.date} 
+                                        onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} 
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+                                    <select
+                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                        value={examForm.class_id}
+                                        onChange={(e) => setExamForm({ ...examForm, class_id: e.target.value })}
+                                    >
+                                        <option value="">Select Class</option>
+                                        {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Subject</label>
+                                    <select
+                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                        value={examForm.subject_id}
+                                        onChange={(e) => setExamForm({ ...examForm, subject_id: e.target.value })}
+                                    >
+                                        <option value="">Select Subject</option>
+                                        {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Maximum Marks</label>
+                                    <Input 
+                                        type="number" 
+                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        value={examForm.max_marks} 
+                                        onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} 
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Passing Marks</label>
+                                    <Input 
+                                        type="number" 
+                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        value={examForm.passing_marks} 
+                                        onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} 
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-x-4 pt-6 border-t border-slate-100">
+                                <button
+                                    onClick={() => setIsCreateOpen(false)}
+                                    className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCreateExam}
+                                    disabled={loading}
+                                    className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
+                                >
+                                    {loading ? "Publishing..." : "Publish Exam"}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div className="p-8 space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Exam Name</Label>
-                                <Input 
-                                    placeholder="e.g. First Term Finals" 
-                                    className="h-11 bg-white/50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl focus:border-rose-500/50 focus:ring-rose-500/20"
-                                    value={examForm.name} 
-                                    onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} 
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Exam Date</Label>
-                                <Input 
-                                    type="date" 
-                                    className="h-11 bg-white/50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl focus:border-rose-500/50 focus:ring-rose-500/20"
-                                    value={examForm.date} 
-                                    onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} 
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Class</Label>
-                                <Select onValueChange={(v) => setExamForm({ ...examForm, class_id: v })}>
-                                    <SelectTrigger className="h-11 bg-white/50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl">
-                                        <SelectValue placeholder="Select Class" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Subject</Label>
-                                <Select onValueChange={(v) => setExamForm({ ...examForm, subject_id: v })}>
-                                    <SelectTrigger className="h-11 bg-white/50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl">
-                                        <SelectValue placeholder="Select Subject" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Maximum Marks</Label>
-                                <Input 
-                                    type="number" 
-                                    className="h-11 bg-white/50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl focus:border-rose-500/50 focus:ring-rose-500/20"
-                                    value={examForm.max_marks} 
-                                    onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} 
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Passing Marks</Label>
-                                <Input 
-                                    type="number" 
-                                    className="h-11 bg-white/50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl focus:border-rose-500/50 focus:ring-rose-500/20"
-                                    value={examForm.passing_marks} 
-                                    onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} 
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-end gap-x-4 pt-6 border-t border-slate-100 dark:border-slate-850">
-                            <Button 
-                                variant="ghost"
-                                onClick={() => setIsCreateOpen(false)}
-                                className="h-11 px-5 text-xs font-black uppercase tracking-wider text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
-                            >
-                                Cancel
-                            </Button>
-                            <Button 
-                                onClick={handleCreateExam}
-                                disabled={loading}
-                                className="h-11 px-6 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 hover:scale-102 hover:shadow-xl transition-all duration-300"
-                            >
-                                {loading ? "Publishing..." : "Publish Exam"}
-                            </Button>
-                        </div>
-                    </div>
-                </DialogContent>
-            </Dialog>
+                </div>
+            )}
 
             {/* Marks Assessment Dialog */}
-            <Dialog open={isMarksOpen} onOpenChange={setIsMarksOpen}>
-                <DialogContent className="bg-white/95 dark:bg-slate-900/95 border border-slate-200/60 dark:border-slate-800/60 p-0 overflow-hidden max-w-5xl max-h-[90vh] flex flex-col rounded-2xl shadow-2xl">
-                    <div className="p-6 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800/40 relative overflow-hidden flex-shrink-0">
-                        <div className="relative z-10">
-                            <DialogTitle asChild>
+            {isMarksOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                    <div className="bg-white/95 dark:bg-slate-900/95 border border-slate-200/60 dark:border-slate-800/60 overflow-hidden max-w-5xl max-h-[90vh] flex flex-col rounded-2xl shadow-2xl w-full mx-4">
+                        <div className="p-6 bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800/40 relative overflow-hidden flex-shrink-0">
+                            <div className="relative z-10">
                                 <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                                     Exam Results Entry
                                 </h3>
-                            </DialogTitle>
+                            </div>
                             <div className="flex flex-wrap items-center gap-6 mt-2">
                                 <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
                                     <FileText className="h-4 w-4 text-rose-500" /> Exam: {selectedExam?.name}
@@ -636,95 +628,93 @@ export function ExamsDashboard({
                                 </p>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                        <div className="border border-slate-200/60 dark:border-slate-800/60 rounded-xl mb-10 overflow-hidden shadow-sm">
-                            <table className="w-full text-left border-collapse">
-                                <thead className="bg-slate-50/50 dark:bg-slate-850">
-                                    <tr>
-                                        <th className="h-12 px-6 text-left align-middle font-black text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800/40">Student Name</th>
-                                        <th className="h-12 px-6 text-right align-middle font-black text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800/40">Marks Obtained</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40">
-                                    {examStudents.length === 0 ? (
-                                        <tr><td colSpan={2} className="py-16 text-center text-slate-400/40 font-black uppercase tracking-widest text-xs italic">No student records found</td></tr>
-                                    ) : (
-                                        examStudents.map((student: any) => (
-                                            <tr key={student.id} className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/10 transition-all duration-300">
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-x-4">
-                                                        <div className="h-9 w-9 flex items-center justify-center bg-slate-100 dark:bg-slate-800 font-mono font-bold text-[10px] text-slate-500 border border-slate-200/60 dark:border-slate-700/60 rounded-lg group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">
-                                                            {student.id.slice(0, 3).toUpperCase()}
+                        
+                        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                            <div className="border border-slate-200/60 dark:border-slate-800/60 rounded-xl mb-10 overflow-hidden shadow-sm">
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="bg-slate-50/50 dark:bg-slate-850">
+                                        <tr>
+                                            <th className="h-12 px-6 text-left align-middle font-black text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800/40">Student Name</th>
+                                            <th className="h-12 px-6 text-right align-middle font-black text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800/40">Marks Obtained</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40">
+                                        {examStudents.length === 0 ? (
+                                            <tr><td colSpan={2} className="py-16 text-center text-slate-400/40 font-black uppercase tracking-widest text-xs italic">No student records found</td></tr>
+                                        ) : (
+                                            examStudents.map((student: any) => (
+                                                <tr key={student.id} className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/10 transition-all duration-300">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-x-4">
+                                                            <div className="h-9 w-9 flex items-center justify-center bg-slate-100 dark:bg-slate-800 font-mono font-bold text-[10px] text-slate-500 border border-slate-200/60 dark:border-slate-700/60 rounded-lg group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">
+                                                                {student.id.slice(0, 3).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-bold text-slate-900 dark:text-white uppercase tracking-tight text-sm group-hover:text-rose-500 transition-colors leading-none mb-1.5">
+                                                                    {student.profile?.first_name} {student.profile?.last_name}
+                                                                </p>
+                                                                <p className="text-[9px] font-mono font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Roll No: {student.admission_number || student.id.slice(0, 12)}</p>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <p className="font-bold text-slate-900 dark:text-white uppercase tracking-tight text-sm group-hover:text-rose-500 transition-colors leading-none mb-1.5">
-                                                                {student.profile?.first_name} {student.profile?.last_name}
-                                                            </p>
-                                                            <p className="text-[9px] font-mono font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">Roll No: {student.admission_number || student.id.slice(0, 12)}</p>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <div className="relative inline-block">
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="0"
+                                                                className="w-32 h-10 bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800/60 rounded-xl font-mono font-black text-lg text-right text-rose-500 placeholder:text-rose-500/10 focus:border-rose-500/50 focus:ring-rose-500/20"
+                                                                value={marks[student.id] || ""}
+                                                                onChange={(e) => setMarks({ ...marks, [student.id]: e.target.value })}
+                                                            />
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="relative inline-block">
-                                                        <Input
-                                                            type="number"
-                                                            placeholder="0"
-                                                            className="w-32 h-10 bg-white dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800/60 rounded-xl font-mono font-black text-lg text-right text-rose-500 placeholder:text-rose-500/10 focus:border-rose-500/50 focus:ring-rose-500/20"
-                                                            value={marks[student.id] || ""}
-                                                            onChange={(e) => setMarks({ ...marks, [student.id]: e.target.value })}
-                                                        />
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
- 
-                    {/* --- Progress Protocol Footer --- */}
-                    <div className="p-6 border-t border-slate-150 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 flex flex-col md:flex-row items-center justify-between gap-6 flex-shrink-0 relative">
-                        <div className="flex-1 w-full max-w-md">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
-                                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                                        Evaluation Progress: <span className="font-black text-rose-500">{Object.values(marks).filter(v => v !== "").length}</span> / {examStudents.length}
-                                    </p>
+    
+                        <div className="p-6 border-t border-slate-150 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/40 flex flex-col md:flex-row items-center justify-between gap-6 flex-shrink-0 relative">
+                            <div className="flex-1 w-full max-w-md">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse" />
+                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                                            Evaluation Progress: <span className="font-black text-rose-500">{Object.values(marks).filter(v => v !== "").length}</span> / {examStudents.length}
+                                        </p>
+                                    </div>
+                                    <span className="text-[10px] font-mono font-black text-rose-500">
+                                        {Math.round((Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100)}%
+                                    </span>
                                 </div>
-                                <span className="text-[10px] font-mono font-black text-rose-500">
-                                    {Math.round((Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100)}%
-                                </span>
+                                <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-rose-500 to-pink-500 transition-all duration-700 ease-out"
+                                        style={{ width: `${(Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100}%` }}
+                                    />
+                                </div>
                             </div>
-                            <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                                <div 
-                                    className="h-full bg-gradient-to-r from-rose-500 to-pink-500 transition-all duration-700 ease-out"
-                                    style={{ width: `${(Object.values(marks).filter(v => v !== "").length / (examStudents.length || 1)) * 100}%` }}
-                                />
+                            <div className="flex items-center gap-x-4">
+                                <button
+                                    onClick={() => setIsMarksOpen(false)}
+                                    className="h-11 px-5 text-xs font-black uppercase tracking-wider text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+                                >
+                                    Discard
+                                </button>
+                                <button
+                                    onClick={handleSaveMarks}
+                                    disabled={loading}
+                                    className="h-11 px-6 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 hover:scale-102 hover:shadow-xl transition-all duration-300"
+                                >
+                                    {loading ? "Saving..." : "Save Marks"}
+                                </button>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-x-4">
-                            <Button 
-                                variant="ghost"
-                                onClick={() => setIsMarksOpen(false)}
-                                className="h-11 px-5 text-xs font-black uppercase tracking-wider text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
-                            >
-                                Discard
-                            </Button>
-                            <Button 
-                                onClick={handleSaveMarks}
-                                disabled={loading}
-                                className="h-11 px-6 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg shadow-rose-500/25 hover:scale-102 hover:shadow-xl transition-all duration-300"
-                            >
-                                {loading ? "Saving..." : "Save Marks"}
-                            </Button>
                         </div>
                     </div>
-                </DialogContent>
-            </Dialog>
+                </div>
+            )}
         </div>
     );
 }

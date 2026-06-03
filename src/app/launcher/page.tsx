@@ -99,25 +99,18 @@ export default function LauncherPage() {
       {/* Top Navigation */}
       <header className="relative z-50 flex items-center justify-between px-10 py-6 animate-in slide-in-from-top-4 duration-1000">
         <div className="flex items-center gap-x-4">
-          <div className="h-11 w-11 rounded-full overflow-hidden shadow-xl shadow-emerald-500/20 ring-2 ring-emerald-500/30">
+          <div className="w-auto h-11 rounded-xl overflow-hidden shadow-xl shadow-emerald-500/20">
             <Image 
-              src="/icon-rounded-v2.png" 
+              src="/logo-rounded-v2.png" 
               alt="Edu Maysan" 
-              width={44}
+              width={140}
               height={44}
-              className="object-cover"
+              className="object-contain"
+              style={{ width: 'auto', height: '100%' }}
               priority
             />
           </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-none">
-              Edu Maysan
-            </span>
-            <div className="flex items-center gap-1.5">
-              <div className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-slate-400">School Management</span>
-            </div>
-          </div>
+          <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-slate-400">Edu Maysan</span>
         </div>
 
         <div className="flex items-center gap-4">

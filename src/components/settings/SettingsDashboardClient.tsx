@@ -14,19 +14,7 @@ import {
     Mail,
     ShieldCheck,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { updateSettings } from "@/app/actions/settings";
 import { updateGatewayStatus } from "@/app/actions/gateways";
@@ -83,7 +71,7 @@ export default function SettingsDashboardClient({
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="animate-in fade-in duration-700 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Sidebar Navigation */}
                 <div className="md:col-span-1 space-y-1">
@@ -92,7 +80,7 @@ export default function SettingsDashboardClient({
                             key={item.id}
                             onClick={() => setActiveTab(item.id)}
                             className={cn(
-                                "w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-all text-left",
+                                "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-left",
                                 activeTab === item.id
                                     ? "bg-emerald-50 text-emerald-700 border-l-4 border-emerald-500"
                                     : "text-slate-600 hover:bg-slate-50 border-l-4 border-transparent"
@@ -107,225 +95,224 @@ export default function SettingsDashboardClient({
                 {/* Content Area */}
                 <div className="md:col-span-3 space-y-4">
                     {activeTab === "identity" && (
-                        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4 border-b bg-slate-50/50">
+                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-emerald-500">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <Globe className="h-4 w-4 text-emerald-600" />
                                         School Identity
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
+                                    </h3>
+                                    <button
                                         onClick={() => handleSaveSettings('identity', ['school_name', 'contact_email', 'contact_phone', 'school_address', 'logo_url'])}
                                         disabled={isSaving}
-                                        className="rounded-md bg-emerald-600 hover:bg-emerald-700"
+                                        className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                     >
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <Save className="h-4 w-4 mr-2 inline" />
                                         Save
-                                    </Button>
+                                    </button>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="pt-6 space-y-4">
+                            </div>
+                            <div className="p-5 space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label className="text-sm font-medium">School Name</Label>
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">School Name</label>
                                         <Input
                                             value={settings.school_name || ""}
                                             onChange={(e) => setSettings({ ...settings, school_name: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="Enter school name"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Contact Email</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Contact Email</label>
                                         <Input
                                             type="email"
                                             value={settings.contact_email || ""}
                                             onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="admin@school.com"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Contact Phone</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Contact Phone</label>
                                         <Input
                                             value={settings.contact_phone || ""}
                                             onChange={(e) => setSettings({ ...settings, contact_phone: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="+91 9876543210"
                                         />
                                     </div>
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label className="text-sm font-medium">Address</Label>
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Address</label>
                                         <Input
                                             value={settings.school_address || ""}
                                             onChange={(e) => setSettings({ ...settings, school_address: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="School address"
                                         />
                                     </div>
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label className="text-sm font-medium">Logo URL</Label>
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Logo URL</label>
                                         <Input
                                             value={settings.logo_url || ""}
                                             onChange={(e) => setSettings({ ...settings, logo_url: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="https://example.com/logo.png"
                                         />
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     )}
 
                     {activeTab === "academic" && (
-                        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4 border-b bg-slate-50/50">
+                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-emerald-500">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <GraduationCap className="h-4 w-4 text-emerald-600" />
                                         Academic Settings
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
+                                    </h3>
+                                    <button
                                         onClick={() => handleSaveSettings('academic', ['current_academic_year_id', 'result_visibility'])}
                                         disabled={isSaving}
-                                        className="rounded-md bg-emerald-600 hover:bg-emerald-700"
+                                        className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                     >
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <Save className="h-4 w-4 mr-2 inline" />
                                         Save
-                                    </Button>
+                                    </button>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="pt-6 space-y-6">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-medium">Current Academic Year</Label>
-                                    <Select
+                            </div>
+                            <div className="p-5 space-y-6">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Current Academic Year</label>
+                                    <select
+                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                                         value={settings.current_academic_year_id || ""}
-                                        onValueChange={(val) => setSettings({ ...settings, current_academic_year_id: val })}
+                                        onChange={(e) => setSettings({ ...settings, current_academic_year_id: e.target.value })}
                                     >
-                                        <SelectTrigger className="rounded-md">
-                                            <SelectValue placeholder="Select academic year" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {academicYears.map(year => (
-                                                <SelectItem key={year.id} value={year.id}>
-                                                    {year.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        <option value="">Select academic year</option>
+                                        {academicYears.map((year: any) => (
+                                            <option key={year.id} value={year.id}>{year.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md border">
-                                    <div className="space-y-1">
-                                        <Label className="text-sm font-medium">Publish Results</Label>
+                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1">Publish Results</label>
                                         <p className="text-xs text-slate-500">Allow students and parents to view exam results</p>
                                     </div>
-                                    <Switch
-                                        checked={settings.result_visibility === "true"}
-                                        onCheckedChange={(checked) => setSettings({ ...settings, result_visibility: checked ? "true" : "false" })}
-                                        className="data-[state=checked]:bg-emerald-600"
-                                    />
+                                    <button
+                                        onClick={() => setSettings({ ...settings, result_visibility: settings.result_visibility === "true" ? "false" : "true" })}
+                                        className={cn(
+                                            "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                                            settings.result_visibility === "true" ? "bg-emerald-600" : "bg-slate-300"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                                            settings.result_visibility === "true" ? "translate-x-6" : "translate-x-1"
+                                        )} />
+                                    </button>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     )}
 
                     {activeTab === "financial" && (
-                        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4 border-b bg-slate-50/50">
+                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-emerald-500">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <Banknote className="h-4 w-4 text-emerald-600" />
                                         Financial Settings
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
+                                    </h3>
+                                    <button
                                         onClick={() => handleSaveSettings('finance', ['currency', 'currency_symbol', 'late_fee_per_day', 'tax_label', 'tax_rate'])}
                                         disabled={isSaving}
-                                        className="rounded-md bg-emerald-600 hover:bg-emerald-700"
+                                        className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                     >
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <Save className="h-4 w-4 mr-2 inline" />
                                         Save
-                                    </Button>
+                                    </button>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="pt-6 space-y-4">
+                            </div>
+                            <div className="p-5 space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Currency Code</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Currency Code</label>
                                         <Input
                                             value={settings.currency || ""}
                                             onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="INR"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Currency Symbol</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Currency Symbol</label>
                                         <Input
                                             value={settings.currency_symbol || ""}
                                             onChange={(e) => setSettings({ ...settings, currency_symbol: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="₹"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Late Fee Per Day</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Late Fee Per Day</label>
                                         <Input
                                             type="number"
                                             value={settings.late_fee_per_day || ""}
                                             onChange={(e) => setSettings({ ...settings, late_fee_per_day: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="10"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Tax Label</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Tax Label</label>
                                         <Input
                                             value={settings.tax_label || "VAT"}
                                             onChange={(e) => setSettings({ ...settings, tax_label: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="VAT"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">Tax Rate (%)</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Tax Rate (%)</label>
                                         <Input
                                             type="number"
                                             value={settings.tax_rate || "0"}
                                             onChange={(e) => setSettings({ ...settings, tax_rate: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="0"
                                         />
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     )}
 
                     {activeTab === "gateways" && (
-                        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4 border-b bg-slate-50/50">
-                                <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-emerald-500">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+                                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                     <CreditCard className="h-4 w-4 text-emerald-600" />
                                     Payment Gateways
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="pt-4">
+                                </h3>
+                            </div>
+                            <div className="p-5">
                                 {gateways.length > 0 ? (
                                     <div className="divide-y divide-slate-100">
-                                        {gateways.map((gateway) => (
-                                            <div key={gateway.id} className="py-4 flex items-center justify-between hover:bg-slate-50 rounded-md px-3 -mx-3 transition-colors">
+                                        {gateways.map((gateway: any) => (
+                                            <div key={gateway.id} className="py-4 flex items-center justify-between hover:bg-slate-50 rounded-xl px-3 -mx-3 transition-colors">
                                                 <div className="flex items-center gap-4">
                                                     <div className={cn(
-                                                        "h-10 w-10 rounded-md flex items-center justify-center",
+                                                        "h-10 w-10 rounded-xl flex items-center justify-center",
                                                         gateway.is_active ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 text-slate-400"
                                                     )}>
                                                         <CreditCard className="h-5 w-5" />
                                                     </div>
                                                     <div>
-                                                        <h4 className="font-medium text-slate-900">{gateway.name}</h4>
+                                                        <h4 className="text-sm font-bold text-slate-900">{gateway.name}</h4>
                                                         <p className="text-sm text-slate-500">
                                                             {gateway.provider} • 
                                                             <span className={gateway.is_active ? "text-emerald-600 ml-1" : "text-slate-400 ml-1"}>
@@ -335,14 +322,24 @@ export default function SettingsDashboardClient({
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-3">
-                                                    <Badge variant={gateway.is_active ? "default" : "secondary"} className={gateway.is_active ? "bg-emerald-100 text-emerald-700" : ""}>
+                                                    <span className={cn(
+                                                        "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                                                        gateway.is_active ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"
+                                                    )}>
                                                         {gateway.is_active ? "Active" : "Inactive"}
-                                                    </Badge>
-                                                    <Switch
-                                                        checked={gateway.is_active}
-                                                        onCheckedChange={() => handleToggleGateway(gateway.id, gateway.is_active)}
-                                                        className="data-[state=checked]:bg-emerald-600"
-                                                    />
+                                                    </span>
+                                                    <button
+                                                        onClick={() => handleToggleGateway(gateway.id, gateway.is_active)}
+                                                        className={cn(
+                                                            "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                                                            gateway.is_active ? "bg-emerald-600" : "bg-slate-300"
+                                                        )}
+                                                    >
+                                                        <span className={cn(
+                                                            "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                                                            gateway.is_active ? "translate-x-6" : "translate-x-1"
+                                                        )} />
+                                                    </button>
                                                 </div>
                                             </div>
                                         ))}
@@ -352,117 +349,122 @@ export default function SettingsDashboardClient({
                                         No payment gateways configured
                                     </div>
                                 )}
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     )}
 
                     {activeTab === "communication" && (
-                        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4 border-b bg-slate-50/50">
+                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-emerald-500">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <Mail className="h-4 w-4 text-emerald-600" />
                                         Email Settings (SMTP)
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
+                                    </h3>
+                                    <button
                                         onClick={() => handleSaveSettings('communication', ['smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass'])}
                                         disabled={isSaving}
-                                        className="rounded-md bg-emerald-600 hover:bg-emerald-700"
+                                        className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                     >
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <Save className="h-4 w-4 mr-2 inline" />
                                         Save
-                                    </Button>
+                                    </button>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="pt-6 space-y-4">
+                            </div>
+                            <div className="p-5 space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label className="text-sm font-medium">SMTP Host</Label>
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">SMTP Host</label>
                                         <Input
                                             value={settings.smtp_host || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_host: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="smtp.example.com"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">SMTP Port</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">SMTP Port</label>
                                         <Input
                                             value={settings.smtp_port || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_port: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="587"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-sm font-medium">SMTP Username</Label>
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">SMTP Username</label>
                                         <Input
                                             value={settings.smtp_user || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_user: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="username"
                                         />
                                     </div>
-                                    <div className="space-y-2 md:col-span-2">
-                                        <Label className="text-sm font-medium">SMTP Password</Label>
+                                    <div className="md:col-span-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">SMTP Password</label>
                                         <Input
                                             type="password"
                                             value={settings.smtp_pass || ""}
                                             onChange={(e) => setSettings({ ...settings, smtp_pass: e.target.value })}
-                                            className="rounded-md"
+                                            className="rounded-xl border-slate-200"
                                             placeholder="••••••••"
                                         />
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     )}
 
                     {activeTab === "security" && (
-                        <Card className="border-l-4 border-l-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4 border-b bg-slate-50/50">
+                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-emerald-500">
+                            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
                                 <div className="flex items-center justify-between">
-                                    <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <ShieldCheck className="h-4 w-4 text-emerald-600" />
                                         Security Settings
-                                    </CardTitle>
-                                    <Button
-                                        size="sm"
+                                    </h3>
+                                    <button
                                         onClick={() => handleSaveSettings('security', ['session_timeout', 'password_complexity'])}
                                         disabled={isSaving}
-                                        className="rounded-md bg-emerald-600 hover:bg-emerald-700"
+                                        className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                     >
-                                        <Save className="h-4 w-4 mr-2" />
+                                        <Save className="h-4 w-4 mr-2 inline" />
                                         Save
-                                    </Button>
+                                    </button>
                                 </div>
-                            </CardHeader>
-                            <CardContent className="pt-6 space-y-6">
-                                <div className="space-y-2">
-                                    <Label className="text-sm font-medium">Session Timeout (minutes)</Label>
+                            </div>
+                            <div className="p-5 space-y-6">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Session Timeout (minutes)</label>
                                     <Input
                                         type="number"
                                         value={settings.session_timeout || "60"}
                                         onChange={(e) => setSettings({ ...settings, session_timeout: e.target.value })}
-                                        className="rounded-md max-w-xs"
+                                        className="rounded-xl border-slate-200 max-w-xs"
                                         placeholder="60"
                                     />
-                                    <p className="text-xs text-slate-500">Auto logout after this duration of inactivity</p>
+                                    <p className="text-xs text-slate-500 mt-1">Auto logout after this duration of inactivity</p>
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-md border">
-                                    <div className="space-y-1">
-                                        <Label className="text-sm font-medium">Password Complexity</Label>
+                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1">Password Complexity</label>
                                         <p className="text-xs text-slate-500">Enforce strong passwords with letters, numbers & special chars</p>
                                     </div>
-                                    <Switch
-                                        checked={settings.password_complexity === "true"}
-                                        onCheckedChange={(checked) => setSettings({ ...settings, password_complexity: checked ? "true" : "false" })}
-                                        className="data-[state=checked]:bg-emerald-600"
-                                    />
+                                    <button
+                                        onClick={() => setSettings({ ...settings, password_complexity: settings.password_complexity === "true" ? "false" : "true" })}
+                                        className={cn(
+                                            "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+                                            settings.password_complexity === "true" ? "bg-emerald-600" : "bg-slate-300"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                                            settings.password_complexity === "true" ? "translate-x-6" : "translate-x-1"
+                                        )} />
+                                    </button>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>

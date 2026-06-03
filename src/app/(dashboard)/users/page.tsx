@@ -5,9 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import UsersDashboardClient from "@/components/users/UsersDashboardClient";
 import { isAdmin } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
-import { UserPlus, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ERPCard } from "@/components/ui/erp-card";
 
 export default async function UsersPage() {
   const adminCheck = await isAdmin();
@@ -27,9 +24,8 @@ export default async function UsersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="animate-in fade-in duration-700 space-y-6">
       <UsersDashboardClient users={users || []} />
     </div>
   );
 }
-

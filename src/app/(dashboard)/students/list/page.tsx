@@ -3,7 +3,6 @@ import { StudentList } from "@/components/students/StudentList";
 import { getSessionRole, getAcademicYearId } from "@/lib/auth-utils";
 import { GraduationCap, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
 export default async function StudentDirectoryPage() {
@@ -24,9 +23,9 @@ export default async function StudentDirectoryPage() {
                 color="emerald"
                 actions={
                     <Link href="/students/enroll">
-                        <Button className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2">
+                        <button className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
                             <UserPlus className="h-4 w-4" /> Add Student
-                        </Button>
+                        </button>
                     </Link>
                 }
             />

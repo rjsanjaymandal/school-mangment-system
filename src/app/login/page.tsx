@@ -118,19 +118,18 @@ export default function LoginPage() {
         {/* Animated Brand Header */}
         <div className="flex flex-col items-center justify-center mb-6">
           <Link href="/" className="flex flex-col items-center gap-4 group">
-            <div className="h-24 w-24 rounded-full overflow-hidden shadow-[0_0_60px_rgba(16,185,129,0.3)] ring-4 ring-emerald-500/30 relative bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:ring-emerald-500/50">
+            <div className="w-auto h-24 rounded-xl overflow-hidden shadow-[0_0_60px_rgba(16,185,129,0.3)] relative bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center transition-all duration-300 group-hover:scale-105">
               <Image 
-                src="/icon-rounded-v2.png" 
+                src="/logo-rounded-v2.png" 
                 alt="Edu Maysan" 
-                width={88}
+                width={280}
                 height={88}
-                className="object-cover rounded-full shadow-xl"
+                className="object-contain shadow-xl"
+                style={{ width: 'auto', height: '100%' }}
                 priority
               />
             </div>
-            <span className="text-3xl font-extrabold tracking-tighter text-white uppercase">
-              Edu <span className="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]">Maysan</span>
-            </span>
+            <span className="text-sm font-medium uppercase tracking-[0.2em] text-white/60">Edu Maysan</span>
           </Link>
         </div>
 

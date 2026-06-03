@@ -2,29 +2,12 @@
 
 import { useState } from "react";
 import { MoreHorizontal, Pencil, Trash2, Plus, BookOpen } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Subject } from "@/types/database";
 import { toast } from "sonner";
 import { SubjectForm } from "./SubjectForm";
 import { deleteSubject } from "@/app/actions/subjects";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface SubjectListProps {
   initialData: Subject[];
@@ -58,112 +41,120 @@ export function SubjectList({ initialData }: SubjectListProps) {
     }
   };
 
+  const [menuOpen, setMenuOpen] = useState<string | null>(null);
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white uppercase">Subject Directory</h3>
-        <Button 
-          onClick={onAdd} 
-          className="rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-bold uppercase tracking-widest text-[10px] gap-2 px-6 h-12 transition-all active:scale-95 shadow-lg shadow-emerald-600/20"
+        <h3 className="text-lg font-black tracking-tight text-slate-900 uppercase">Subject Directory</h3>
+        <button
+          onClick={onAdd}
+          className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 inline-flex items-center gap-2"
         >
           <Plus className="h-4 w-4" /> Add Subject
-        </Button>
+        </button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data.length === 0 ? (
-          <div className="col-span-full p-24 text-center flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem]">
-            <BookOpen className="h-16 w-16 text-slate-200 dark:text-slate-700 mb-6" />
+          <div className="col-span-full p-24 text-center flex flex-col items-center justify-center bg-white border border-slate-200 rounded-xl">
+            <BookOpen className="h-16 w-16 text-slate-200 mb-6" />
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No subjects found</p>
           </div>
         ) : (
           data.map((subject, idx) => (
             <div
               key={subject.id}
-              className="group relative flex flex-col p-6 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] hover:border-indigo-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/5 overflow-hidden animate-in slide-in-from-bottom-8 fade-in fill-mode-both"
+              className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-emerald-300 transition-all duration-300 animate-in slide-in-from-bottom-8 fade-in fill-mode-both"
               style={{ animationDelay: `${idx * 50}ms` }}
             >
-              <div className="flex justify-between items-start mb-6 relative z-10">
-                <div className="h-12 px-4 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 flex items-center justify-center font-black text-sm tracking-widest shadow-sm ring-1 ring-indigo-100 dark:ring-indigo-500/20 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-500">
-                  {subject.code || "N/A"}
-                </div>
-                
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors">
+              <div className="p-5">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="h-10 px-3 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-sm tracking-widest">
+                    {subject.code || "N/A"}
+                  </div>
+
+                  <div className="relative">
+                    <button
+                      onClick={() => setMenuOpen(menuOpen === subject.id ? null : subject.id)}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"
+                    >
                       <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 rounded-2xl border-slate-200/60 shadow-xl overflow-hidden p-1">
-                    <DropdownMenuLabel className="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
-                    <DropdownMenuItem
-                      onClick={() => onEdit(subject)}
-                      className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 focus:bg-slate-50 focus:text-indigo-600 p-3"
-                    >
-                      <Pencil className="h-4 w-4" /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-slate-100 my-1" />
-                    <DropdownMenuItem
-                      onClick={() => onDelete(subject.id)}
-                      className="flex items-center gap-3 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 rounded-xl font-bold text-xs p-3"
-                    >
-                      <Trash2 className="h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              <div className="space-y-4 relative z-10 flex-1">
-                <div>
-                  <h4 className="font-black text-slate-900 dark:text-white text-xl tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                    {subject.name}
-                  </h4>
-                  <p className="text-xs font-medium text-slate-500 mt-2 line-clamp-2 leading-relaxed">
-                    {subject.description || "No description provided for this subject."}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 relative z-10 flex items-center justify-between">
-                <div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Credits</p>
-                  <div className="flex items-center gap-1.5 text-sm font-black text-slate-700">
-                     {subject.credits || 0} <span className="text-[10px] text-slate-400">PTS</span>
+                    </button>
+                    {menuOpen === subject.id && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
+                        <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-20 p-1">
+                          <button
+                            onClick={() => { onEdit(subject); setMenuOpen(null); }}
+                            className="flex items-center gap-3 w-full cursor-pointer rounded-lg font-bold text-xs text-slate-600 hover:bg-slate-50 p-3"
+                          >
+                            <Pencil className="h-4 w-4" /> Edit
+                          </button>
+                          <div className="h-px bg-slate-100 my-1" />
+                          <button
+                            onClick={() => { onDelete(subject.id); setMenuOpen(null); }}
+                            className="flex items-center gap-3 w-full cursor-pointer rounded-lg font-bold text-xs text-rose-600 hover:bg-rose-50 p-3"
+                          >
+                            <Trash2 className="h-4 w-4" /> Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-                <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-100 uppercase tracking-widest text-[9px] font-bold px-3 py-1 rounded-lg">
-                  Active
-                </Badge>
+
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="font-black text-slate-900 text-xl tracking-tight">
+                      {subject.name}
+                    </h4>
+                    <p className="text-xs font-bold text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                      {subject.description || "No description provided for this subject."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Credits</p>
+                    <div className="flex items-center gap-1.5 text-sm font-black text-slate-700">
+                      {subject.credits || 0} <span className="text-[10px] text-slate-400">PTS</span>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600">
+                    Active
+                  </span>
+                </div>
               </div>
 
-              {/* Decorative Bottom Bar */}
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-indigo-500 group-hover:w-full transition-all duration-700 delay-100" />
+              <div className="h-0.5 bg-emerald-500 w-0 group-hover:w-full transition-all duration-500" />
             </div>
           ))
         )}
       </div>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-2xl p-0 overflow-y-auto max-h-[90vh] rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
-          <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setIsOpen(false)} />
+          <div className="relative bg-white border border-slate-200 rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-5 border-b border-slate-100">
+              <h3 className="text-lg font-black tracking-tight text-slate-900">
                 {editingSubject ? "Edit Subject" : "Add New Subject"}
-              </DialogTitle>
-              <DialogDescription className="text-sm font-medium text-slate-500">
+              </h3>
+              <p className="text-xs font-bold text-slate-500 mt-1">
                 Create or update a subject
-              </DialogDescription>
-            </DialogHeader>
+              </p>
+            </div>
+            <div className="p-5">
+              <SubjectForm
+                initialData={editingSubject}
+                onSuccess={() => setIsOpen(false)}
+              />
+            </div>
           </div>
-          
-          <div className="p-6 bg-white/30 dark:bg-slate-900/30">
-            <SubjectForm
-              initialData={editingSubject}
-              onSuccess={() => setIsOpen(false)}
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   );
 }

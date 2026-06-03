@@ -12,17 +12,13 @@ import {
     ResponsiveContainer, Tooltip, Legend, 
     XAxis, YAxis, CartesianGrid 
 } from "recharts";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import { markAttendance, getAttendanceByClassAndDate } from "@/app/actions/attendance";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 interface AttendanceDashboardProps {
     classes: any[];
@@ -48,11 +44,12 @@ export function AttendanceDashboard({
     const [studentRecords, setStudentRecords] = useState<Record<string, AttendanceStatus>>({});
     const [studentsLoaded, setStudentsLoaded] = useState(false);
 
-    // History state
     const [historyClass, setHistoryClass] = useState(isStudent && classes.length > 0 ? classes[0].id : "");
     const [historyDate, setHistoryDate] = useState(new Date().toISOString().split("T")[0]);
     const [historyRecords, setHistoryRecords] = useState<any[]>([]);
     const [historyLoading, setHistoryLoading] = useState(false);
+
+    const [activeTab, setActiveTab] = useState(isStudent ? "history" : "mark");
 
     useEffect(() => {
         if (!isStudent || classes.length === 0) return;
@@ -82,7 +79,6 @@ export function AttendanceDashboard({
         };
     }, [classes, historyDate, isStudent, students]);
 
-    // Computed stats
     const weekTotal = weekAttendance.length;
     const weekPresent = weekAttendance.filter(a => a.status === "present").length;
     const weekAbsent = weekAttendance.filter(a => a.status === "absent").length;
@@ -96,7 +92,6 @@ export function AttendanceDashboard({
     const todayExcused = todayAttendance.filter(a => a.status === "excused").length;
     const todayTotal = todayAttendance.length;
 
-    // --- Presence Intelligence Layer ---
     const presenceMatrix = useMemo(() => {
         const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
         const baseline = days.reduce<Record<string, { name: string; Present: number; Absent: number; Late: number; Excused: number }>>((acc, day) => {
@@ -131,13 +126,11 @@ export function AttendanceDashboard({
         ];
     }, [todayPresent, todayAbsent, todayLate, todayExcused]);
 
-    // Filter students by class
     const classStudents = useMemo(() => {
         if (!selectedClass) return [];
         return students.filter(s => s.class_id === selectedClass);
     }, [selectedClass, students]);
 
-    // Filter by search
     const filteredStudents = useMemo(() => {
         if (!searchQuery) return classStudents;
         const q = searchQuery.toLowerCase();
@@ -197,7 +190,6 @@ export function AttendanceDashboard({
         if (!selectedClass) return;
         setLoading(true);
         
-        // Only send records for students in the current class to avoid data pollution
         const currentClassStudentIds = new Set(classStudents.map(s => s.id));
         const records = Object.entries(studentRecords)
             .filter(([studentId]) => currentClassStudentIds.has(studentId))
@@ -261,10 +253,10 @@ export function AttendanceDashboard({
         <button
             onClick={() => setStatus(studentId, status)}
             className={cn(
-                "px-4 py-2 rounded-sm text-xs font-medium transition-all flex items-center gap-x-2 capitalize",
+                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-x-2",
                 studentRecords[studentId] === status
                     ? `${activeClass} text-white shadow-md`
-                    : "bg-muted text-muted-foreground hover:bg-accent border border-transparent hover:border-border"
+                    : "bg-slate-100 text-slate-500 hover:bg-slate-200 border border-slate-200"
             )}
         >
             {icon}
@@ -273,140 +265,53 @@ export function AttendanceDashboard({
     );
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+        <div className="space-y-8 animate-in fade-in duration-700 relative">
 
-            {/* Header */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background via-background to-primary/5 border border-border/50 p-6 md:p-8">
-                <div className="absolute inset-0 bg-grid-slate-100/50 [mask-image:linear-gradient(0deg,white,transparent)]" />
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                
-                <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                    <div className="flex items-center gap-x-5">
-                        <div className="h-14 w-14 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary rounded-2xl shadow-lg shadow-primary/10">
-                            <Users className="h-7 w-7" />
-                        </div>
-                        <div>
-                            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                                Attendance
-                            </h2>
-                            <p className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-                                <Activity className="w-4 h-4 text-primary" /> 
-                                {isStudent ? "Your Attendance Record" : "Student Attendance Board"}
-                            </p>
-                        </div>
-                    </div>
+            <UnifiedPageHeader
+                title="Attendance"
+                subtitle={isStudent ? "Your Attendance Record" : "Student Attendance Board"}
+                icon={Users}
+                color="emerald"
+                actions={isAdminOrTeacher && (
+                    <button onClick={handleExportCSV} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all bg-white">
+                        <Download className="w-4 h-4 mr-2" /> Export
+                    </button>
+                )}
+            />
 
-                    {isAdminOrTeacher && (
-                        <div className="flex items-center gap-3">
-                            <Button variant="outline" onClick={handleExportCSV} className="h-10 px-4 font-medium transition-all group bg-background/80 backdrop-blur-sm border-border/50">
-                                <Download className="w-4 h-4 mr-2 group-hover:text-primary transition-colors" /> Export
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {/* Weekly Rate */}
-                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-primary/20 transition-colors">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl" />
-                    <div className="relative z-10">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Weekly Rate</p>
-                        <h3 className="text-3xl md:text-4xl font-bold text-foreground leading-none">{weekRate}%</h3>
-                        <div className="mt-4 h-2 w-full bg-muted/50 relative overflow-hidden rounded-full">
-                            <div className="absolute inset-0 bg-primary rounded-full transition-all duration-1000" style={{ width: `${weekRate}%` }} />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Present */}
-                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-emerald-500/20 transition-colors">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 rounded-full blur-2xl" />
-                    <div className="relative z-10 flex items-start justify-between">
-                        <div>
-                            <p className="text-xs font-semibold text-muted-foreground mb-2">Present</p>
-                            <h3 className="text-3xl md:text-4xl font-bold text-foreground leading-none">{todayPresent}</h3>
-                        </div>
-                        <div className="p-2 bg-emerald-500/10 rounded-xl">
-                            <UserCheck className="w-5 h-5 text-emerald-500" />
-                        </div>
-                    </div>
-                    <p className="text-xs font-medium text-emerald-600 mt-3 flex items-center gap-1.5">
-                       <Check className="w-3.5 h-3.5" /> Verified
-                    </p>
-                </div>
-
-                {/* Absent */}
-                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-red-500/20 transition-colors">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full blur-2xl" />
-                    <div className="relative z-10 flex items-start justify-between">
-                        <div>
-                            <p className="text-xs font-semibold text-muted-foreground mb-2">Absent</p>
-                            <h3 className="text-3xl md:text-4xl font-bold text-red-500 leading-none">{todayAbsent}</h3>
-                        </div>
-                        <div className="p-2 bg-red-500/10 rounded-xl">
-                            <UserX className="w-5 h-5 text-red-500" />
-                        </div>
-                    </div>
-                    <p className="text-xs font-medium text-red-600 mt-3 flex items-center gap-1.5">
-                       <X className="w-3.5 h-3.5" /> Needs action
-                    </p>
-                </div>
-
-                {/* Late */}
-                <div className="bg-card border border-border/50 rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group hover:border-amber-500/20 transition-colors">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-2xl" />
-                    <div className="relative z-10 flex items-start justify-between">
-                        <div>
-                            <p className="text-xs font-semibold text-muted-foreground mb-2">Late</p>
-                            <h3 className="text-3xl md:text-4xl font-bold text-amber-500 leading-none">{weekLate}</h3>
-                        </div>
-                        <div className="p-2 bg-amber-500/10 rounded-xl">
-                            <Clock className="w-5 h-5 text-amber-500" />
-                        </div>
-                    </div>
-                    <p className="text-xs font-medium text-amber-600 mt-3 flex items-center gap-1.5">
-                       <AlertTriangle className="w-3.5 h-3.5" /> Arrived late
-                    </p>
-                </div>
+                <DashboardStatCard title="Weekly Rate" value={`${weekRate}%`} icon={TrendingUp} color="emerald" />
+                <DashboardStatCard title="Present" value={todayPresent} icon={UserCheck} color="emerald" description="Today" />
+                <DashboardStatCard title="Absent" value={todayAbsent} icon={UserX} color="rose" description="Today" />
+                <DashboardStatCard title="Late" value={weekLate} icon={Clock} color="amber" description="This week" />
             </div>
 
-            <Tabs defaultValue={isStudent ? "history" : "mark"} className="space-y-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <TabsList className="bg-muted/80 backdrop-blur-sm border border-border/50 p-1 rounded-xl h-auto w-fit">
-                        <div className="flex gap-1">
-                            {!isStudent && (
-                                <TabsTrigger value="mark" className="px-5 py-2 rounded-lg text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all focus:ring-0">
-                                    <ClipboardCheck className="w-4 h-4 mr-2" /> Mark
-                                </TabsTrigger>
-                            )}
-                            <TabsTrigger value="history" className="px-5 py-2 rounded-lg text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all focus:ring-0">
-                                <Calendar className="w-4 h-4 mr-2" /> History
-                            </TabsTrigger>
-                            <TabsTrigger value="stats" className="px-5 py-2 rounded-lg text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-lg transition-all focus:ring-0">
-                                <BarChart3 className="w-4 h-4 mr-2" /> Charts
-                            </TabsTrigger>
-                        </div>
-                    </TabsList>
-                </div>
+            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
+                {!isStudent && (
+                    <button onClick={() => setActiveTab("mark")} className={cn("px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2", activeTab === "mark" ? "bg-white text-emerald-600 shadow-sm" : "text-slate-500")}>
+                        <ClipboardCheck className="w-4 h-4" /> Mark
+                    </button>
+                )}
+                <button onClick={() => setActiveTab("history")} className={cn("px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2", activeTab === "history" ? "bg-white text-emerald-600 shadow-sm" : "text-slate-500")}>
+                    <Calendar className="w-4 h-4" /> History
+                </button>
+                <button onClick={() => setActiveTab("stats")} className={cn("px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2", activeTab === "stats" ? "bg-white text-emerald-600 shadow-sm" : "text-slate-500")}>
+                    <BarChart3 className="w-4 h-4" /> Charts
+                </button>
+            </div>
 
-                {/* ANALYTICS TAB CONTENT */}
-                <TabsContent value="stats" className="space-y-8 animate-in slide-in-from-bottom-2 mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 reveal-1 w-full">
-                        <div className="md:col-span-8 border border-border bg-card/40 rounded-sm overflow-hidden group">
-                           <div className="p-6 border-b border-border bg-card/50 flex justify-between items-center">
+            {activeTab === "stats" && (
+                <div className="space-y-8 animate-in fade-in duration-700">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-6 w-full">
+                        <div className="md:col-span-8 bg-white border border-slate-200 rounded-xl overflow-hidden">
+                            <div className="p-5 border-b border-slate-100 flex justify-between items-center">
                                 <div>
-                                    <h3 className="text-lg font-semibold text-foreground">
-                                        Weekly Attendance
-                                    </h3>
-                                    <p className="text-sm font-medium text-muted-foreground mt-1 text-left">
-                                        Daily breakdown of attendance statuses
-                                    </p>
+                                    <h3 className="text-lg font-black tracking-tight text-slate-900">Weekly Attendance</h3>
+                                    <p className="text-sm text-slate-500 mt-1 text-left">Daily breakdown of attendance statuses</p>
                                 </div>
-                                <Activity className="h-5 w-5 text-muted-foreground opacity-40 group-hover:opacity-100 transition-all" />
-                           </div>
-                           <div className="p-6 h-[340px]">
+                                <Activity className="h-5 w-5 text-slate-400" />
+                            </div>
+                            <div className="p-5 h-[340px]">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={presenceMatrix}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#88888810" vertical={false} />
@@ -421,22 +326,20 @@ export function AttendanceDashboard({
                                             cursor={{ fill: "rgba(0,0,0,0.05)" }}
                                             contentStyle={{ backgroundColor: "rgba(10,10,10,0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", fontSize: "12px", color: "#fff" }}
                                         />
-                                        <Legend verticalAlign="top" height={36} formatter={(value) => <span className="text-xs font-semibold text-muted-foreground capitalize">{value}</span>}/>
+                                        <Legend verticalAlign="top" height={36} formatter={(value) => <span className="text-xs font-bold text-slate-500 capitalize">{value}</span>}/>
                                         <Bar dataKey="Present" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
                                         <Bar dataKey="Absent" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={12} />
                                     </BarChart>
                                 </ResponsiveContainer>
-                           </div>
+                            </div>
                         </div>
 
-                        <div className="md:col-span-4 border border-border bg-card/40 rounded-sm overflow-hidden group">
-                            <div className="p-6 border-b border-border bg-card/50 text-center">
-                                <h3 className="text-lg font-semibold text-foreground">
-                                    Today's Status
-                                </h3>
-                                <p className="text-sm font-medium text-muted-foreground mt-1">Distribution of active records</p>
+                        <div className="md:col-span-4 bg-white border border-slate-200 rounded-xl overflow-hidden">
+                            <div className="p-5 border-b border-slate-100 text-center">
+                                <h3 className="text-lg font-black tracking-tight text-slate-900">Today's Status</h3>
+                                <p className="text-sm text-slate-500 mt-1">Distribution of active records</p>
                             </div>
-                            <div className="p-6 h-[340px]">
+                            <div className="p-5 h-[340px]">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <PieChart>
                                         <Pie
@@ -453,42 +356,38 @@ export function AttendanceDashboard({
                                         <Tooltip 
                                             contentStyle={{ backgroundColor: "rgba(10,10,10,0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", fontSize: "12px", color: "#fff" }}
                                         />
-                                        <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-xs font-semibold text-muted-foreground capitalize">{value}</span>}/>
+                                        <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-xs font-bold text-slate-500 capitalize">{value}</span>}/>
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>
                         </div>
                     </div>
-                </TabsContent>
+                </div>
+            )}
 
-                {/* MARK ATTENDANCE TAB */}
-                <TabsContent value="mark" className="space-y-6 animate-in slide-in-from-bottom-2 mt-4">
-                    {/* Filters */}
-                    <div className="border border-border/50 bg-card/50 backdrop-blur-sm p-5 rounded-2xl">
+            {activeTab === "mark" && (
+                <div className="space-y-6 animate-in fade-in duration-700">
+                    <div className="bg-white border border-slate-200 rounded-xl p-5">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Class</Label>
-                                <Select value={selectedClass} onValueChange={handleClassChange}>
-                                    <SelectTrigger className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm">
-                                        <SelectValue placeholder="Select class" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-background border-border/50 rounded-xl">
-                                        {classes.map(c => <SelectItem key={c.id} value={c.id} className="text-sm font-medium">{c.name}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+                                <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                    <option value="" disabled>Select class</option>
+                                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                </select>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Date</Label>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
                                 <div className="relative">
-                                    <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm pl-10" />
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="h-11 rounded-xl border-slate-200 font-bold text-sm pl-10" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Search</Label>
-                                <div className="relative group">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="h-11 pl-10 rounded-xl bg-background/80 border-border/50 font-medium text-sm focus:bg-background transition-all" />
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search</label>
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="h-11 pl-10 rounded-xl border-slate-200 font-bold text-sm" />
                                 </div>
                             </div>
                         </div>
@@ -496,59 +395,58 @@ export function AttendanceDashboard({
 
                     {studentsLoaded && classStudents.length > 0 && (
                         <div className="space-y-5">
-                            {/* Quick Actions */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 p-5 border border-border/50 bg-card/50 backdrop-blur-sm rounded-2xl">
+                            <div className="flex flex-wrap items-center justify-between gap-4 p-5 bg-white border border-slate-200 rounded-xl">
                                 <div className="flex items-center gap-3">
-                                    <Button onClick={markAllPresent} variant="outline" className="h-10 px-4 font-medium transition-all gap-2 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 bg-background/80">
+                                    <button onClick={markAllPresent} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-emerald-50 transition-all">
                                         <Check className="w-4 h-4" /> All Present
-                                    </Button>
-                                    <Button onClick={markAllAbsent} variant="outline" className="h-10 px-4 font-medium transition-all gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 bg-background/80">
+                                    </button>
+                                    <button onClick={markAllAbsent} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-red-50 transition-all">
                                         <X className="w-4 h-4" /> All Absent
-                                    </Button>
+                                    </button>
                                 </div>
-                                <div className="flex items-center gap-6 border-l border-border/50 pl-6">
+                                <div className="flex items-center gap-6 border-l border-slate-200 pl-6">
                                     <div className="flex flex-col items-center">
-                                        <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Present</span>
-                                        <span className="text-xl font-bold text-foreground mt-1 leading-none">{presentCount}</span>
+                                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Present</span>
+                                        <span className="text-xl font-black text-slate-900 mt-1 leading-none">{presentCount}</span>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-[10px] font-semibold text-red-500 uppercase tracking-wider">Absent</span>
-                                        <span className="text-xl font-bold text-foreground mt-1 leading-none">{absentCount}</span>
+                                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Absent</span>
+                                        <span className="text-xl font-black text-slate-900 mt-1 leading-none">{absentCount}</span>
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-[10px] font-semibold text-amber-500 uppercase tracking-wider">Late</span>
-                                        <span className="text-xl font-bold text-foreground mt-1 leading-none">{lateCount}</span>
+                                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Late</span>
+                                        <span className="text-xl font-black text-slate-900 mt-1 leading-none">{lateCount}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="border border-border/50 bg-card/50 rounded-2xl overflow-hidden">
+                            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="border-b border-border/50 bg-muted/30">
-                                                <th className="py-3 px-5 text-sm font-semibold text-muted-foreground">Student</th>
-                                                <th className="py-3 px-5 text-sm font-semibold text-muted-foreground">Adm No</th>
-                                                <th className="py-3 px-5 text-sm font-semibold text-muted-foreground text-center">Status</th>
+                                            <tr className="border-b border-slate-100 bg-slate-50/50">
+                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Student</th>
+                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Adm No</th>
+                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
                                             </tr>
                                         </thead>
-                                        <tbody className="divide-y divide-border/50">
+                                        <tbody>
                                             {filteredStudents.map((student) => (
-                                                <tr key={student.id} className="group hover:bg-muted/30 transition-colors">
-                                                    <td className="py-3.5 px-5">
+                                                <tr key={student.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                                    <td className="py-4 px-4">
                                                         <div className="flex items-center gap-3">
-                                                            <div className="h-9 w-9 flex items-center justify-center font-bold text-white text-xs rounded-xl bg-primary/20 border border-primary/20">
+                                                            <div className="h-9 w-9 flex items-center justify-center font-black text-white text-xs rounded-xl bg-emerald-600">
                                                                 {student.profile?.full_name?.[0] || "?"}
                                                             </div>
-                                                            <div className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                                                            <div className="font-bold text-sm text-slate-700">
                                                                 {student.profile?.full_name}
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="py-3.5 px-5 font-mono text-sm text-muted-foreground font-medium">
+                                                    <td className="py-4 px-4 font-mono text-sm text-slate-500 font-bold">
                                                         {student.admission_number || "N/A"}
                                                     </td>
-                                                    <td className="py-3.5 px-5">
+                                                    <td className="py-4 px-4">
                                                         <div className="flex items-center justify-center gap-1.5">
                                                             {statusButton(student.id, "present", <Check className="w-4 h-4" />, "Present", "bg-emerald-600")}
                                                             {statusButton(student.id, "absent", <X className="w-4 h-4" />, "Absent", "bg-red-600")}
@@ -565,72 +463,85 @@ export function AttendanceDashboard({
 
                             {isAdminOrTeacher && (
                                 <div className="flex justify-end pt-3">
-                                    <Button 
+                                    <button 
                                         onClick={handleSave} 
                                         disabled={loading} 
-                                        className="h-11 px-8 font-medium transition-all shadow-lg hover:shadow-xl"
+                                        className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                     >
                                         <div className="flex items-center gap-2">
                                             {loading ? <Activity className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                                             {loading ? "Saving..." : `Save (${Object.keys(studentRecords).length})`}
                                         </div>
-                                    </Button>
+                                    </button>
                                 </div>
                             )}
                         </div>
                     )}
-                </TabsContent>
 
-                {/* HISTORY TAB */}
-                <TabsContent value="history" className="space-y-6 animate-in slide-in-from-bottom-2 mt-4">
-                    <div className="border border-border/50 bg-card/50 backdrop-blur-sm p-5 rounded-2xl">
+                    {studentsLoaded && classStudents.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-24">
+                            <Search className="h-10 w-10 mb-4 text-slate-300" />
+                            <p className="text-sm font-bold text-slate-500">No students found for this class.</p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {activeTab === "history" && (
+                <div className="space-y-6 animate-in fade-in duration-700">
+                    <div className="bg-white border border-slate-200 rounded-xl p-5">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                             {!isStudent && (
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-semibold text-muted-foreground uppercase">Class</Label>
-                                    <Select value={historyClass} onValueChange={setHistoryClass}>
-                                        <SelectTrigger className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm">
-                                            <SelectValue placeholder="Select class" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-background border-border/50 rounded-xl">
-                                            {classes.map(c => <SelectItem key={c.id} value={c.id} className="text-sm font-medium">{c.name}</SelectItem>)}
-                                        </SelectContent>
-                                    </Select>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+                                    <select value={historyClass} onChange={(e) => setHistoryClass(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                        <option value="" disabled>Select class</option>
+                                        {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    </select>
                                 </div>
                             )}
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground uppercase">Date</Label>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
                                 <div className="relative">
-                                    <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-11 rounded-xl bg-background/80 border-border/50 font-medium text-sm pl-10" />
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-11 rounded-xl border-slate-200 font-bold text-sm pl-10" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 </div>
                             </div>
-                            <Button onClick={fetchHistory} disabled={(!isStudent && !historyClass) || historyLoading} className="h-11 px-6 font-medium transition-all gap-2">
+                            <button onClick={fetchHistory} disabled={(!isStudent && !historyClass) || historyLoading} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2">
                                 {historyLoading ? <Activity className="w-4 h-4 animate-spin" /> : <Filter className="w-4 h-4" />}
                                 {historyLoading ? "Loading..." : "View"}
-                            </Button>
+                            </button>
                         </div>
                     </div>
 
-                    <div className="border border-border bg-card/40 rounded-sm overflow-hidden reveal-5">
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-border bg-muted/50">
-                                        <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">ID</th>
-                                        <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Student Name</th>
-                                        <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Admission No</th>
-                                        <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Status</th>
-                                        <th className="py-3 px-6 text-sm font-semibold text-muted-foreground">Remarks</th>
+                                    <tr className="border-b border-slate-100 bg-slate-50/50">
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">ID</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Student Name</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Admission No</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Remarks</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
-                                    {historyRecords.length === 0 ? (
+                                <tbody>
+                                    {historyLoading ? (
+                                        <tr>
+                                            <td colSpan={5} className="py-24 text-center">
+                                                <div className="flex flex-col items-center justify-center gap-4">
+                                                    <div className="h-8 w-8 rounded-xl bg-slate-200 animate-pulse" />
+                                                    <div className="h-4 w-48 rounded-xl bg-slate-200 animate-pulse" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : historyRecords.length === 0 ? (
                                         <tr>
                                             <td colSpan={5} className="py-24 text-center">
                                                 <div className="flex flex-col items-center">
-                                                    <Search className="h-10 w-10 mb-4 text-muted-foreground opacity-20" />
-                                                    <p className="text-sm font-medium text-muted-foreground">
+                                                    <Search className="h-10 w-10 mb-4 text-slate-300" />
+                                                    <p className="text-sm font-bold text-slate-500">
                                                         No attendance records found for this date.
                                                     </p>
                                                 </div>
@@ -638,39 +549,39 @@ export function AttendanceDashboard({
                                         </tr>
                                     ) : (
                                         historyRecords.map((record, idx) => (
-                                            <tr key={record.id} className="group hover:bg-muted/30 transition-colors">
-                                                <td className="py-4 px-6 font-mono text-sm text-muted-foreground">
+                                            <tr key={record.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                                <td className="py-4 px-4 font-mono text-sm text-slate-500 font-bold">
                                                     {String(idx + 1).padStart(3, '0')}
                                                 </td>
-                                                <td className="py-4 px-6">
+                                                <td className="py-4 px-4">
                                                     <div className="flex items-center gap-4">
                                                         <div className={cn(
-                                                            "h-8 w-8 flex items-center justify-center font-bold text-xs text-white rounded-full",
+                                                            "h-8 w-8 flex items-center justify-center font-black text-xs text-white rounded-xl",
                                                             record.status === "present" ? "bg-emerald-600" :
                                                                 record.status === "absent" ? "bg-red-600" :
                                                                     record.status === "late" ? "bg-amber-500" : "bg-blue-600"
                                                         )}>
                                                             {record.student?.profile?.full_name?.[0] || "?"}
                                                         </div>
-                                                        <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                                                        <span className="font-bold text-sm text-slate-700">
                                                             {record.student?.profile?.full_name}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="py-4 px-6 font-mono text-sm text-muted-foreground font-medium">
+                                                <td className="py-4 px-4 font-mono text-sm text-slate-500 font-bold">
                                                     {record.student?.admission_number || "N/A"}
                                                 </td>
-                                                <td className="py-4 px-6">
-                                                    <div className={cn(
-                                                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize",
-                                                        record.status === "present" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" :
-                                                            record.status === "absent" ? "bg-red-50 text-red-600 border border-red-200" :
-                                                                record.status === "late" ? "bg-amber-50 text-amber-600 border border-amber-200" : "bg-blue-50 text-blue-600 border border-blue-200"
+                                                <td className="py-4 px-4">
+                                                    <span className={cn(
+                                                        "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                                                        record.status === "present" ? "bg-emerald-50 text-emerald-600" :
+                                                            record.status === "absent" ? "bg-red-50 text-red-600" :
+                                                                record.status === "late" ? "bg-amber-50 text-amber-600" : "bg-blue-50 text-blue-600"
                                                     )}>
                                                         {record.status}
-                                                    </div>
+                                                    </span>
                                                 </td>
-                                                <td className="py-4 px-6 text-sm text-muted-foreground">
+                                                <td className="py-4 px-4 text-sm text-slate-500 font-bold">
                                                     {record.remarks || "-"}
                                                 </td>
                                             </tr>
@@ -680,8 +591,8 @@ export function AttendanceDashboard({
                             </table>
                         </div>
                     </div>
-                </TabsContent>
-            </Tabs>
+                </div>
+            )}
         </div>
     );
 }

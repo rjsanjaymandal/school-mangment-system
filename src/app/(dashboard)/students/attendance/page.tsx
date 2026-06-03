@@ -28,10 +28,6 @@ import {
     XAxis, YAxis, CartesianGrid,
     Legend
 } from "recharts";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -112,9 +108,10 @@ export default function StudentAttendancePage() {
 
     const [attendance, setAttendance] = useState<Record<string, string>>({});
 
-    // Sync state with server data
+// Sync state with server data
     useEffect(() => {
         if (students.length === 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setAttendance({});
             return;
         }
@@ -136,9 +133,10 @@ export default function StudentAttendancePage() {
         }
     }, [existingAttendance, students, selectedClassId, selectedDate]);
 
-    // Auto-select first class
+// Auto-select first class
     useEffect(() => {
         if (classes.length > 0 && !selectedClassId) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSelectedClassId(classes[0].id);
         }
     }, [classes, selectedClassId]);
@@ -148,12 +146,14 @@ export default function StudentAttendancePage() {
         s.roll.toLowerCase().includes(searchQuery.toLowerCase())
     ), [students, searchQuery]);
 
-    // Reset pagination pages on filter updates
+// Reset pagination pages on filter updates
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMarkCurrentPage(1);
     }, [selectedClassId, searchQuery]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setHistoryCurrentPage(1);
     }, [selectedClassId, historyDate]);
 
@@ -350,26 +350,26 @@ export default function StudentAttendancePage() {
                 color="emerald"
                 actions={
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
-                        <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                            <SelectTrigger className="w-full sm:w-44 h-10 rounded-xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md font-bold text-slate-700 dark:text-slate-300">
-                                <SelectValue placeholder="Select Class" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
-                                {classes.map(c => (<SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>))}
-                            </SelectContent>
-                        </Select>
-                        <div className="flex items-center bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 rounded-xl overflow-hidden backdrop-blur-md h-10 w-full sm:w-auto">
-                            <Button variant="ghost" size="icon" className="h-10 w-8 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-none" onClick={() => {
+                        <select 
+                            value={selectedClassId} 
+                            onChange={(e) => setSelectedClassId(e.target.value)}
+                            className="w-full sm:w-44 h-10 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                        >
+                            <option value="">Select Class</option>
+                            {classes.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
+                        </select>
+                        <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden h-10 w-full sm:w-auto">
+                            <button onClick={() => {
                                 const d = new Date(selectedDate); d.setDate(d.getDate() - 1); setSelectedDate(d.toISOString().split('T')[0]);
-                            }}>
+                            }} className="h-10 w-8 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-none transition-all">
                                 <ChevronLeft className="h-4 w-4" />
-                            </Button>
-                            <Input type="date" className="border-0 bg-transparent w-28 h-10 text-center text-xs font-bold text-slate-800 dark:text-slate-200 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
-                            <Button variant="ghost" size="icon" className="h-10 w-8 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-none" onClick={() => {
+                            </button>
+                            <Input type="date" className="border-0 bg-transparent w-28 h-10 text-center text-xs font-bold text-slate-800 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                            <button onClick={() => {
                                 const d = new Date(selectedDate); d.setDate(d.getDate() + 1); setSelectedDate(d.toISOString().split('T')[0]);
-                            }}>
+                            }} className="h-10 w-8 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-none transition-all">
                                 <ChevronRight className="h-4 w-4" />
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 }
@@ -431,12 +431,12 @@ export default function StudentAttendancePage() {
                 <TabsContent value="mark" className="space-y-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex gap-2">
-                            <Button variant="outline" size="sm" className="h-10 px-5 rounded-xl bg-white/50 dark:bg-slate-900/50 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-200/60 dark:border-slate-800/60 transition-all font-black uppercase text-[10px] tracking-wider shrink-0 active:scale-95 duration-200 shadow-sm" onClick={() => markAll("present")}>
-                                <CheckCheck className="h-4 w-4 mr-2" /> All Present
-                            </Button>
-                            <Button variant="outline" size="sm" className="h-10 px-5 rounded-xl bg-white/50 dark:bg-slate-900/50 hover:bg-rose-50 hover:text-rose-600 border border-slate-200/60 dark:border-slate-800/60 transition-all font-black uppercase text-[10px] tracking-wider shrink-0 active:scale-95 duration-200 shadow-sm" onClick={() => markAll("absent")}>
-                                <XCircle className="h-4 w-4 mr-2" /> All Absent
-                            </Button>
+                            <button onClick={() => markAll("present")} className="h-10 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 font-black text-[10px] uppercase tracking-wider px-5 transition-all shrink-0 flex items-center gap-2 shadow-sm">
+                                <CheckCheck className="h-4 w-4" /> All Present
+                            </button>
+                            <button onClick={() => markAll("absent")} className="h-10 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-black text-[10px] uppercase tracking-wider px-5 transition-all shrink-0 flex items-center gap-2 shadow-sm">
+                                <XCircle className="h-4 w-4" /> All Absent
+                            </button>
                         </div>
                         <div className="relative w-full md:w-64">
                             <Input placeholder="Search students..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-10 pl-10 rounded-xl border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 focus-visible:ring-emerald-500/50 font-bold" />
@@ -507,18 +507,18 @@ export default function StudentAttendancePage() {
                     </div>
 
                     <div className="flex justify-end">
-                        <Button 
+                        <button 
                             onClick={handleSave} 
                             disabled={isSaving || students.length === 0} 
-                            className="h-11 px-8 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white font-black uppercase tracking-wider text-[10px] shadow-md transition-all active:scale-95 duration-200"
+                            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
                         >
                             {isSaving ? (
-                                <Activity className="h-4 w-4 animate-spin mr-2" />
+                                <Activity className="h-4 w-4 animate-spin" />
                             ) : (
-                                <Save className="h-4 w-4 mr-2" />
+                                <Save className="h-4 w-4" />
                             )}
                             {isSaving ? "Saving..." : "Save Records"}
-                        </Button>
+                        </button>
                     </div>
                 </TabsContent>
 
@@ -530,14 +530,14 @@ export default function StudentAttendancePage() {
                             <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-10 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md focus-visible:ring-emerald-500/50 font-bold px-3" />
                         </div>
                         <div>
-                            <Button variant="outline" className="h-10 rounded-xl w-full border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md gap-2 font-black uppercase text-[10px] tracking-wider text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/35 transition-all duration-200 active:scale-95 shadow-sm">
+                            <button className="h-10 rounded-xl w-full border border-slate-200 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2">
                                 <Download className="h-4 w-4" /> Export CSV
-                            </Button>
+                            </button>
                         </div>
                         <div>
-                            <Button variant="outline" className="h-10 rounded-xl w-full border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md gap-2 font-black uppercase text-[10px] tracking-wider text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/35 transition-all duration-200 active:scale-95 shadow-sm">
+                            <button className="h-10 rounded-xl w-full border border-slate-200 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2">
                                 <Search className="h-4 w-4" /> Filter
-                            </Button>
+                            </button>
                         </div>
                     </div>
 
@@ -611,12 +611,12 @@ export default function StudentAttendancePage() {
                                                         <div className="font-black text-slate-900 dark:text-white text-sm">{studentName}</div>
                                                     </td>
                                                     <td className="px-6 py-4 text-center">
-                                                        <Badge className={cn(
-                                                            "text-[9px] font-black border border-transparent rounded-lg uppercase tracking-wider px-2.5 py-0.5",
-                                                            r.status === "present" ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/10" :
-                                                            r.status === "absent" ? "bg-rose-500/10 text-rose-600 border-rose-500/10" : 
-                                                            r.status === "late" ? "bg-amber-500/10 text-amber-600 border-amber-500/10" : "bg-blue-500/10 text-blue-600 border-blue-500/10"
-                                                        )}>{r.status}</Badge>
+                                                        <span className={cn(
+                                                            "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
+                                                            r.status === "present" ? "bg-emerald-500/10 text-emerald-600" :
+                                                            r.status === "absent" ? "bg-rose-500/10 text-rose-600" : 
+                                                            r.status === "late" ? "bg-amber-500/10 text-amber-600" : "bg-blue-500/10 text-blue-600"
+                                                        )}>{r.status}</span>
                                                     </td>
                                                     <td className="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400">{r.date}</td>
                                                 </tr>

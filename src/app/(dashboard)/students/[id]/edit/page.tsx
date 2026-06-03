@@ -7,14 +7,8 @@ import {
     Users, MapPin, Contact, FileText, CheckCircle2,
     Loader2, X, AlertCircle, Sparkles
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ERPCard } from "@/components/ui/erp-card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { 
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
-} from "@/components/ui/select";
 import { toast } from "sonner";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { createClient } from "@/lib/supabase/client";
@@ -95,6 +89,7 @@ export default function EditStudentPage() {
     }, [id]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchData();
     }, [fetchData]);
 
@@ -154,26 +149,26 @@ export default function EditStudentPage() {
                     color="emerald"
                     actions={
                         <div className="flex items-center gap-3">
-                            <Button variant="outline" asChild className="h-11 rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 transition-all font-bold uppercase text-[10px] tracking-widest active:scale-95">
-                                <Link href={`/students/${id}`}>
-                                    <X className="h-4 w-4 mr-2" /> Cancel
-                                </Link>
-                            </Button>
-                            <Button 
+                            <Link href={`/students/${id}`}>
+                                <button type="button" className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">
+                                    <X className="h-4 w-4 mr-2 inline-block" /> Cancel
+                                </button>
+                            </Link>
+                            <button 
                                 onClick={handleSubmit}
                                 disabled={isSaving}
-                                className="h-11 rounded-xl bg-slate-900 text-white hover:bg-black font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 disabled:opacity-50"
+                                className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                             >
                                 {isSaving ? (
                                     <>
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Committing...
+                                        <Loader2 className="h-4 w-4 mr-2 inline-block animate-spin" /> Committing...
                                     </>
                                 ) : (
                                     <>
-                                        <Save className="h-4 w-4 mr-2" /> Update Record
+                                        <Save className="h-4 w-4 mr-2 inline-block" /> Update Record
                                     </>
                                 )}
-                            </Button>
+                            </button>
                         </div>
                     }
                 />
@@ -191,7 +186,7 @@ export default function EditStudentPage() {
                     >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">Admission Number</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Admission Number</label>
                                 <div className="relative">
                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500/40 group-focus-within:text-emerald-500 transition-colors">
                                         <FileText className="h-4 w-4" />
@@ -204,7 +199,7 @@ export default function EditStudentPage() {
                                 </div>
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">Roll Number</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Roll Number</label>
                                 <Input 
                                     className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/20 transition-all"
                                     value={formData.roll_number}
@@ -212,20 +207,17 @@ export default function EditStudentPage() {
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-emerald-600 transition-colors">Class Stream</Label>
-                                <Select 
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class Stream</label>
+                                <select 
                                     value={formData.class_id}
-                                    onValueChange={(v) => setFormData(p => ({ ...p, class_id: v }))}
+                                    onChange={(e) => setFormData(p => ({ ...p, class_id: e.target.value }))}
+                                    className="w-full h-12 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-emerald-500/20 outline-none"
                                 >
-                                    <SelectTrigger className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/20 transition-all">
-                                        <SelectValue placeholder="Select Class" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl border-slate-100 shadow-2xl">
-                                        {classes.map((c: any) => (
-                                            <SelectItem key={c.id} value={c.id} className="font-bold text-slate-700">{c.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                    <option value="" disabled>Select Class</option>
+                                    {classes.map((c: any) => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                     </ERPCard>
@@ -239,7 +231,7 @@ export default function EditStudentPage() {
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-2">
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-blue-600 transition-colors">First Name</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">First Name</label>
                                 <Input 
                                     className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
                                     value={formData.first_name}
@@ -247,7 +239,7 @@ export default function EditStudentPage() {
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-blue-600 transition-colors">Last Name</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Last Name</label>
                                 <Input 
                                     className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
                                     value={formData.last_name}
@@ -256,40 +248,33 @@ export default function EditStudentPage() {
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2 group">
-                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-blue-600 transition-colors">Gender</Label>
-                                    <Select 
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Gender</label>
+                                    <select 
                                         value={formData.gender}
-                                        onValueChange={(v) => setFormData(p => ({ ...p, gender: v }))}
+                                        onChange={(e) => setFormData(p => ({ ...p, gender: e.target.value }))}
+                                        className="w-full h-12 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-blue-500/20 outline-none"
                                     >
-                                        <SelectTrigger className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all">
-                                            <SelectValue placeholder="Select" />
-                                        </SelectTrigger>
-                                        <SelectContent className="rounded-xl font-bold">
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
                                 </div>
                                 <div className="space-y-2 group">
-                                    <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-blue-600 transition-colors">Blood Group</Label>
-                                    <Select 
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Blood Group</label>
+                                    <select 
                                         value={formData.blood_group}
-                                        onValueChange={(v) => setFormData(p => ({ ...p, blood_group: v }))}
+                                        onChange={(e) => setFormData(p => ({ ...p, blood_group: e.target.value }))}
+                                        className="w-full h-12 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-blue-500/20 outline-none"
                                     >
-                                        <SelectTrigger className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all">
-                                            <SelectValue placeholder="Select" />
-                                        </SelectTrigger>
-                                        <SelectContent className="rounded-xl font-bold">
-                                            {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
-                                                <SelectItem key={bg} value={bg}>{bg}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                        <option value="" disabled>Select</option>
+                                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
+                                            <option key={bg} value={bg}>{bg}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-blue-600 transition-colors">Date of Birth</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date of Birth</label>
                                 <div className="relative">
                                     <Input 
                                         type="date"
@@ -313,24 +298,20 @@ export default function EditStudentPage() {
                     >
                         <div className="space-y-6 p-1">
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-slate-900 transition-colors">Category</Label>
-                                <Select 
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category</label>
+                                <select 
                                     value={formData.category}
-                                    onValueChange={(v) => setFormData(p => ({ ...p, category: v }))}
+                                    onChange={(e) => setFormData(p => ({ ...p, category: e.target.value }))}
+                                    className="w-full h-11 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-slate-500/20 outline-none"
                                 >
-                                    <SelectTrigger className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-slate-500/10 transition-all">
-                                        <SelectValue placeholder="Select" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl font-bold">
-                                        <SelectItem value="General">General</SelectItem>
-                                        <SelectItem value="OBC">OBC</SelectItem>
-                                        <SelectItem value="SC">SC</SelectItem>
-                                        <SelectItem value="ST">ST</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    <option value="General">General</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                </select>
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-slate-900 transition-colors">Religion</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Religion</label>
                                 <Input 
                                     className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-slate-500/10 transition-all"
                                     value={formData.religion}
@@ -338,19 +319,15 @@ export default function EditStudentPage() {
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-slate-900 transition-colors">RTE Protocol</Label>
-                                <Select 
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">RTE Protocol</label>
+                                <select 
                                     value={formData.rte_status}
-                                    onValueChange={(v) => setFormData(p => ({ ...p, rte_status: v }))}
+                                    onChange={(e) => setFormData(p => ({ ...p, rte_status: e.target.value }))}
+                                    className="w-full h-11 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-slate-500/20 outline-none"
                                 >
-                                    <SelectTrigger className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-slate-500/10 transition-all">
-                                        <SelectValue placeholder="Select" />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl font-bold">
-                                        <SelectItem value="true">Active RTE</SelectItem>
-                                        <SelectItem value="false">Non-RTE</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    <option value="true">Active RTE</option>
+                                    <option value="false">Non-RTE</option>
+                                </select>
                             </div>
                         </div>
                     </ERPCard>
@@ -363,7 +340,7 @@ export default function EditStudentPage() {
                     >
                         <div className="space-y-6 p-1">
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-indigo-600 transition-colors">Email Channel</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Email Channel</label>
                                 <div className="relative">
                                     <Input 
                                         className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-indigo-500/10 transition-all"
@@ -374,7 +351,7 @@ export default function EditStudentPage() {
                                 </div>
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-indigo-600 transition-colors">Phone Terminal</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Phone Terminal</label>
                                 <Input 
                                     className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                                     value={formData.phone}
@@ -382,7 +359,7 @@ export default function EditStudentPage() {
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 group-focus-within:text-indigo-600 transition-colors">Residential Coordinates</Label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Residential Coordinates</label>
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-indigo-500/40 group-focus-within:text-indigo-500 transition-colors" />
                                     <textarea 
@@ -403,23 +380,19 @@ export default function EditStudentPage() {
                         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500"
                     >
                         <div className="space-y-4 p-1">
-                            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Archive State</Label>
-                            <Select 
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Archive State</label>
+                            <select 
                                 value={formData.status}
-                                onValueChange={(v) => setFormData(p => ({ ...p, status: v }))}
+                                onChange={(e) => setFormData(p => ({ ...p, status: e.target.value }))}
+                                className={cn(
+                                    "w-full h-14 rounded-xl border-none font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-inner px-3",
+                                    formData.status === 'active' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+                                )}
                             >
-                                <SelectTrigger className={cn(
-                                    "h-14 rounded-xl border-none font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-inner",
-                                    formData.status === 'active' ? "bg-emerald-500 text-white shadow-emerald-200/50" : "bg-rose-500 text-white shadow-rose-200/50"
-                                )}>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-xl border-slate-100 shadow-2xl">
-                                    <SelectItem value="active" className="font-black text-[10px] uppercase text-emerald-600 tracking-widest">Active Member</SelectItem>
-                                    <SelectItem value="inactive" className="font-black text-[10px] uppercase text-rose-600 tracking-widest">Inactive/Archived</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <p className="text-[9px] text-slate-400 font-medium italic text-center px-4">
+                                <option value="active" className="bg-white text-emerald-600">Active Member</option>
+                                <option value="inactive" className="bg-white text-rose-600">Inactive/Archived</option>
+                            </select>
+                            <p className="text-[9px] text-slate-400 font-medium text-center px-4">
                                 {formData.status === 'active' 
                                     ? "Student has full access to institutional resources and academic tracks." 
                                     : "Student record is preserved but access to active portals is restricted."}

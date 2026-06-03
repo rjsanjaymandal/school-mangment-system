@@ -4,9 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { FeesDashboard } from "@/components/fees/FeesDashboard";
 import { getSessionRole } from "@/lib/auth-utils";
 import { getFeeDashboardStats } from "@/app/actions/fees";
-import { CreditCard, IndianRupee } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CreditCard, IndianRupee, TrendingUp } from "lucide-react";
 import { ERPCard } from "@/components/ui/erp-card";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 export default async function FeesPage() {
   const supabase = await createClient();
@@ -37,7 +38,7 @@ export default async function FeesPage() {
         .select("*, class:classes(*)")
         .or(`class_id.eq.${student.class_id},class_id.is.null`)
         .order("created_at", { ascending: false });
-      
+
       fees = filteredFees || [];
 
       const { data: filteredPayments } = await supabase
@@ -45,7 +46,7 @@ export default async function FeesPage() {
         .select("*, fee:fees(*)")
         .eq("student_id", student.id)
         .order("payment_date", { ascending: false });
-      
+
       payments = filteredPayments || [];
       students = [student];
     }
@@ -104,39 +105,25 @@ export default async function FeesPage() {
   const totalPayroll = (staffPayrolls || []).reduce((sum, p) => sum + Number(p.base_salary) + Number(p.bonuses || 0) - Number(p.deductions || 0), 0);
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-emerald-50 rounded-md">
-            <CreditCard className="h-6 w-6 text-emerald-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Fees</h1>
-            <p className="text-sm text-slate-500">Manage payments and transactions</p>
-          </div>
-        </div>
-        <Button className="rounded-md bg-emerald-600 hover:bg-emerald-700 gap-2">
-          <IndianRupee className="h-4 w-4" />
-          Collect Payment
-        </Button>
-      </div>
+    <div className="p-4 md:p-6 space-y-6 animate-in fade-in duration-700">
+      <UnifiedPageHeader
+        title="Fees"
+        subtitle="Manage payments and transactions"
+        icon={CreditCard}
+        color="emerald"
+        actions={
+          <button className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
+            <IndianRupee className="h-4 w-4 inline mr-2" />
+            Collect Payment
+          </button>
+        }
+      />
 
-      {/* Stats Grid */}
       {!isStudent && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
-            <p className="text-xs font-medium text-slate-500 uppercase">Total Revenue</p>
-            <p className="text-2xl font-bold text-emerald-600">₹{totalRevenue.toLocaleString()}</p>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
-            <p className="text-xs font-medium text-slate-500 uppercase">Outstanding</p>
-            <p className="text-2xl font-bold text-amber-600">₹{outstanding.toLocaleString()}</p>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-md p-4 shadow-sm">
-            <p className="text-xs font-medium text-slate-500 uppercase">Staff Payroll</p>
-            <p className="text-2xl font-bold text-slate-900">₹{totalPayroll.toLocaleString()}</p>
-          </div>
+          <DashboardStatCard title="Total Revenue" value={`₹${totalRevenue.toLocaleString()}`} icon={IndianRupee} color="emerald" description="Total collected" />
+          <DashboardStatCard title="Outstanding" value={`₹${outstanding.toLocaleString()}`} icon={CreditCard} color="amber" description="Pending payments" />
+          <DashboardStatCard title="Staff Payroll" value={`₹${totalPayroll.toLocaleString()}`} icon={TrendingUp} color="blue" description="Resource allocation" />
         </div>
       )}
 
@@ -165,4 +152,3 @@ export default async function FeesPage() {
     </div>
   );
 }
-

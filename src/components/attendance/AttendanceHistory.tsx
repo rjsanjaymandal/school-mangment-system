@@ -2,28 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { Filter } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { Filter, Search, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Class } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface AttendanceHistoryProps {
@@ -56,6 +38,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
   );
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
   const fetchHistory = async () => {
     if (!selectedClass || !selectedDate) return;
     setLoading(true);
@@ -93,108 +76,111 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
     };
   }, [selectedClass, selectedDate]);
 
-  return (
-    <div className="space-y-4">
-      <Card
-        variant="glass"
-        className="flex flex-wrap gap-4 items-end p-4 border-none shadow-sm"
-      >
-        <div className="space-y-2 flex-1 min-w-[200px]">
-          <label className="text-sm font-medium text-foreground/70">Class</label>
-          <Select onValueChange={setSelectedClass}>
-            <SelectTrigger className="bg-slate-50 border-none">
-              <SelectValue placeholder="Select a class" />
-            </SelectTrigger>
-            <SelectContent>
-              {classes.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2 flex-1 min-w-[200px]">
-          <label className="text-sm font-medium text-foreground/70">Date</label>
-          <Input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="bg-slate-50 border-none"
-          />
-        </div>
-        <Button
-          variant="neon"
-          onClick={fetchHistory}
-          disabled={!selectedClass}
-          size="sm"
-          className="gap-x-2"
-        >
-          <Filter className="h-4 w-4" />
-          Apply Filters
-        </Button>
-      </Card>
+  const statusBadge = (status: string) => {
+    const styles: Record<string, string> = {
+      present: "bg-emerald-50 text-emerald-600",
+      absent: "bg-red-50 text-red-600",
+      late: "bg-amber-50 text-amber-600",
+      excused: "bg-blue-50 text-blue-600",
+    };
+    return cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", styles[status] || "bg-slate-50 text-slate-600");
+  };
 
-      <Card variant="glass" className="overflow-hidden border-none shadow-sm">
-        <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow>
-              <TableHead>Roll No</TableHead>
-              <TableHead>Student Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Remarks</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
-                  Loading records...
-                </TableCell>
-              </TableRow>
-            ) : records.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  {selectedClass
-                    ? "No records found for this date."
-                    : "Select a class to view history."}
-                </TableCell>
-              </TableRow>
-            ) : (
-              records.map((record) => (
-                <TableRow key={record.id}>
-                  <TableCell className="font-medium">
-                    {record.student?.roll_number || "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    {record.student?.profile?.first_name}{" "}
-                    {record.student?.profile?.last_name}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="futuristic"
-                      className={cn(
-                        record.status === "present"
-                          ? "bg-green-500/10 text-green-500 border-green-500/20"
-                          : "bg-red-500/10 text-red-500 border-red-500/20",
-                      )}
-                    >
-                      {record.status.toUpperCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground italic text-sm">
-                    {record.remarks || "-"}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+  return (
+    <div className="animate-in fade-in duration-700 space-y-6">
+      <div className="bg-white border border-slate-200 rounded-xl p-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+            <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+              <option value="" disabled>Select a class</option>
+              {classes.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
+            <div className="relative">
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="h-11 rounded-xl border-slate-200 font-bold text-sm pl-10"
+              />
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            </div>
+          </div>
+          <button
+            onClick={fetchHistory}
+            disabled={!selectedClass}
+            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Apply Filters
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/50">
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Roll No</th>
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Student Name</th>
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={4} className="py-24 text-center">
+                    <div className="flex flex-col items-center justify-center gap-4">
+                      <div className="h-8 w-8 rounded-xl bg-slate-200 animate-pulse" />
+                      <div className="h-4 w-48 rounded-xl bg-slate-200 animate-pulse" />
+                    </div>
+                  </td>
+                </tr>
+              ) : records.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-24 text-center">
+                    <div className="flex flex-col items-center">
+                      <Search className="h-10 w-10 mb-4 text-slate-300" />
+                      <p className="text-sm font-bold text-slate-500">
+                        {selectedClass
+                          ? "No records found for this date."
+                          : "Select a class to view history."}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                records.map((record) => (
+                  <tr key={record.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                    <td className="py-4 px-4 font-bold text-sm text-slate-700">
+                      {record.student?.roll_number || "N/A"}
+                    </td>
+                    <td className="py-4 px-4 font-bold text-sm text-slate-700">
+                      {record.student?.profile?.first_name}{" "}
+                      {record.student?.profile?.last_name}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={statusBadge(record.status)}>
+                        {record.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-sm text-slate-500 font-bold">
+                      {record.remarks || "-"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
-

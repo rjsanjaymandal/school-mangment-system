@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { BookOpen, Pencil, Plus, Trash2, Hash, Star, FileText, LayoutList } from "lucide-react";
+import { BookOpen, Hash, Star, FileText, LayoutList } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
@@ -9,12 +9,9 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Subject } from "@/types/database";
 import { toast } from "sonner";
 import { createSubject, updateSubject } from "@/app/actions/subjects";
@@ -71,22 +68,22 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-          <div className="col-span-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
             <FormField<SubjectFormValues>
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="space-y-1.5">
-                  <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-700 ml-1">
-                    <BookOpen className="h-4 w-4 text-indigo-500" /> Subject Name
-                  </FormLabel>
+                <FormItem>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-emerald-500" /> Subject Name
+                  </label>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g. Mathematics" 
-                      {...field} 
-                      className="h-12 pl-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/60 focus-visible:ring-indigo-500/50 transition-all focus:bg-white dark:focus:bg-slate-900 shadow-sm font-semibold" 
+                    <Input
+                      placeholder="e.g. Mathematics"
+                      {...field}
+                      className="rounded-xl border-slate-200 h-11"
                     />
                   </FormControl>
                   <FormMessage className="text-[10px] font-bold text-rose-500" />
@@ -94,20 +91,20 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
               )}
             />
           </div>
-          <div className="col-span-1">
+          <div>
             <FormField<SubjectFormValues>
               control={form.control}
               name="code"
               render={({ field }) => (
-                <FormItem className="space-y-1.5">
-                  <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-700 ml-1">
+                <FormItem>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
                     <Hash className="h-4 w-4 text-emerald-500" /> Subject Code
-                  </FormLabel>
+                  </label>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g. MATH-101" 
-                      {...field} 
-                      className="h-12 pl-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/60 focus-visible:ring-indigo-500/50 transition-all focus:bg-white dark:focus:bg-slate-900 shadow-sm font-mono font-bold" 
+                    <Input
+                      placeholder="e.g. MATH-101"
+                      {...field}
+                      className="rounded-xl border-slate-200 h-11 font-mono"
                     />
                   </FormControl>
                   <FormMessage className="text-[10px] font-bold text-rose-500" />
@@ -117,26 +114,26 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-          <div className="col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
             <FormField<SubjectFormValues>
               control={form.control}
               name="credits"
               render={({ field }) => (
-                <FormItem className="space-y-1.5">
-                  <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-700 ml-1">
-                    <Star className="h-4 w-4 text-amber-500" /> Credits
-                  </FormLabel>
+                <FormItem>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                    <Star className="h-4 w-4 text-emerald-500" /> Credits
+                  </label>
                   <FormControl>
                     <div className="relative">
-                      <Input 
-                        type="number" 
-                        min={1} 
-                        max={10} 
-                        {...field} 
-                        className="h-12 pl-4 rounded-xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/60 focus-visible:ring-indigo-500/50 transition-all focus:bg-white dark:focus:bg-slate-900 shadow-sm font-bold text-lg" 
+                      <Input
+                        type="number"
+                        min={1}
+                        max={10}
+                        {...field}
+                        className="rounded-xl border-slate-200 h-11"
                       />
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-[10px] text-slate-400 uppercase tracking-widest pointer-events-none">Points</div>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-[10px] text-slate-400 uppercase tracking-widest pointer-events-none">Points</div>
                     </div>
                   </FormControl>
                   <FormMessage className="text-[10px] font-bold text-rose-500" />
@@ -144,23 +141,21 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
               )}
             />
           </div>
-          <div className="col-span-1 flex items-end">
-          </div>
+          <div />
         </div>
-        
 
         <FormField<SubjectFormValues>
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem className="space-y-1.5 relative z-10">
-              <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-700 ml-1">
-                <FileText className="h-4 w-4 text-blue-500" /> Description
-              </FormLabel>
+            <FormItem>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-emerald-500" /> Description
+              </label>
               <FormControl>
-                <Textarea
+                <textarea
                   placeholder="Enter subject description..."
-                  className="resize-none rounded-xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/60 focus-visible:ring-indigo-500/50 transition-all focus:bg-white dark:focus:bg-slate-900 shadow-sm min-h-[100px] font-medium text-sm py-4 px-4"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -173,14 +168,14 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
           control={form.control}
           name="syllabus"
           render={({ field }) => (
-            <FormItem className="space-y-1.5 relative z-10">
-              <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-700 ml-1">
-                <LayoutList className="h-4 w-4 text-purple-500" /> Syllabus Overview
-              </FormLabel>
+            <FormItem>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                <LayoutList className="h-4 w-4 text-emerald-500" /> Syllabus Overview
+              </label>
               <FormControl>
-                <Textarea
+                <textarea
                   placeholder="Enter syllabus details or curriculum breakdown..."
-                  className="resize-none rounded-xl bg-white/50 dark:bg-slate-900/50 border-slate-200/60 dark:border-slate-800/60 focus-visible:ring-indigo-500/50 transition-all focus:bg-white dark:focus:bg-slate-900 shadow-sm min-h-[160px] font-medium text-sm py-4 px-4"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none min-h-[160px]"
                   {...field}
                 />
               </FormControl>
@@ -189,24 +184,22 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
           )}
         />
 
-        <div className="flex flex-col md:flex-row items-center gap-4 pt-8 relative z-10">
-          <Button 
-            variant="ghost" 
-            type="button" 
-            onClick={() => onSuccess()} 
-            className="w-full md:w-1/3 h-12 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all"
+        <div className="flex flex-col md:flex-row items-center gap-4 pt-4">
+          <button
+            type="button"
+            onClick={() => onSuccess()}
+            className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all w-full md:w-1/3"
           >
             Cancel
-          </Button>
-          <Button 
-            type="submit" 
-            className="w-full md:flex-1 h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-indigo-600/20 transition-all active:scale-95"
+          </button>
+          <button
+            type="submit"
+            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 w-full md:flex-1"
           >
-             {initialData ? "Update Subject" : "Create Subject"}
-          </Button>
+            {initialData ? "Update Subject" : "Create Subject"}
+          </button>
         </div>
       </form>
     </Form>
   );
 }
-

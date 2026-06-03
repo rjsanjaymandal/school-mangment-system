@@ -12,13 +12,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { saveMarks } from "@/app/actions/exams";
 import { useRouter } from "next/navigation";
-import { Save, FileDown, FileUp, Sparkles, BrainCircuit } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Save, FileDown, FileUp, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const markSchema = z.object({
   marks: z.record(z.string(), z.union([z.coerce.number().min(0).max(100), z.literal("")])),
@@ -80,9 +78,7 @@ export function MarksEntryForm({
 
       const result = await saveMarks(rows);
       if (result.success) {
-        toast.success("Marks recorded successfully for all students", {
-          description: "Database synchronized via neural bridge.",
-        });
+        toast.success("Marks recorded successfully for all students");
         router.refresh();
       } else {
         toast.error(result.error || "Failed to sync marks");
@@ -95,15 +91,11 @@ export function MarksEntryForm({
   }
 
   const handleExport = () => {
-    toast.info("Generating CSV...", {
-      description: "Preparing student roll numbers and current marks.",
-    });
+    toast.info("Generating CSV...");
   };
 
   const handleImport = () => {
-    toast.info("Awaiting CSV file...", {
-      description: "Ready to parse bulk scores.",
-    });
+    toast.info("Awaiting CSV file...");
   };
 
   return (
@@ -112,95 +104,80 @@ export function MarksEntryForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 animate-in fade-in duration-700"
       >
-        <Card className="border-none glass futuristic-card overflow-hidden">
-          <CardHeader className="bg-slate-50/30 flex flex-row items-center justify-between py-6 px-8">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex flex-row items-center justify-between">
             <div className="flex flex-col">
-              <CardTitle className="text-xl font-black text-foreground">
-                Performance Registry
-              </CardTitle>
-              <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground mt-1">
+              <h3 className="text-lg font-black tracking-tight text-slate-900">Performance Registry</h3>
+              <p className="text-[10px] uppercase tracking-widest font-black text-slate-500 mt-1">
                 Bulk Score Entry Interface
               </p>
             </div>
             <div className="flex items-center gap-x-2">
-              <Button
+              <button
                 type="button"
-                variant="outline"
-                size="sm"
                 onClick={handleExport}
-                className="hidden md:flex gap-x-2 rounded-xl border-border font-bold bg-white/50 backdrop-blur-sm"
+                className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all hidden md:inline-flex items-center gap-2"
               >
                 <FileDown className="h-4 w-4" />
                 Export
-              </Button>
-              <Button
+              </button>
+              <button
                 type="button"
-                variant="outline"
-                size="sm"
                 onClick={handleImport}
-                className="hidden md:flex gap-x-2 rounded-xl border-border font-bold bg-white/50 backdrop-blur-sm"
+                className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all hidden md:inline-flex items-center gap-2"
               >
                 <FileUp className="h-4 w-4" />
                 Import
-              </Button>
-              <Button
+              </button>
+              <button
                 type="submit"
                 disabled={loading}
-                size="sm"
-                className="gap-x-2 rounded-xl bg-card neon-blue font-bold px-6 py-5"
+                className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 inline-flex items-center gap-2"
               >
                 <Save className="h-4 w-4" />
                 {loading ? "Syncing..." : "Sync All Nodes"}
-              </Button>
+              </button>
             </div>
-          </CardHeader>
-          <CardContent className="p-0">
+          </div>
+          <div className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-50/50 border-y border-border">
-                    <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                      Roll Node
-                    </th>
-                    <th className="text-left py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                      Subject Identity
-                    </th>
-                    <th className="text-center py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground w-40">
-                      Score (Max 100)
-                    </th>
-                    <th className="text-center py-4 px-8 font-black uppercase tracking-widest text-[10px] text-muted-foreground">
-                      System Status
-                    </th>
+                  <tr className="bg-slate-50/50 border-y border-slate-200">
+                    <th className="text-left py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500">Roll Node</th>
+                    <th className="text-left py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500">Subject Identity</th>
+                    <th className="text-center py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500 w-40">Score (Max 100)</th>
+                    <th className="text-center py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500">System Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50">
+                <tbody className="divide-y divide-slate-100">
                   {students.map((student) => (
                     <tr
                       key={student.id}
-                      className="hover:bg-slate-50/50 transition-colors group"
+                      className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group"
                     >
-                      <td className="py-5 px-8">
+                      <td className="py-4 px-4">
                         <div className="flex flex-col">
-                          <span className="font-bold text-foreground">
+                          <span className="font-bold text-slate-900">
                             {student.roll_number || "SYS-0"}
                           </span>
-                          <span className="text-[10px] text-muted-foreground font-mono">
+                          <span className="text-[10px] text-slate-500 font-mono">
                             ID: {student.id.slice(0, 8)}
                           </span>
                         </div>
                       </td>
-                      <td className="py-5 px-8">
+                      <td className="py-4 px-4">
                         <div className="flex flex-col">
-                          <span className="font-bold text-foreground group-hover:text-primary transition-colors">
+                          <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                             {student.profile?.first_name}{" "}
                             {student.profile?.last_name}
                           </span>
-                          <span className="text-[10px] text-muted-foreground font-medium tracking-tight">
-                            {className || "Class not assigned"} • {subjectName || "Subject not assigned"}
+                          <span className="text-[10px] text-slate-500 font-bold tracking-tight">
+                            {className || "Class not assigned"} &bull; {subjectName || "Subject not assigned"}
                           </span>
                         </div>
                       </td>
-                      <td className="py-3 px-8">
+                      <td className="py-3 px-4">
                         <FormField
                           control={form.control}
                           name={`marks.${student.id}`}
@@ -209,7 +186,7 @@ export function MarksEntryForm({
                               <FormControl>
                                 <Input
                                   type="number"
-                                  className="text-center bg-white border-2 border-border rounded-xl font-black text-lg focus-visible:ring-2 focus-visible:ring-blue-100 transition-all h-12"
+                                  className="text-center bg-white border-2 border-slate-200 rounded-xl font-black text-lg focus-visible:ring-2 focus-visible:ring-blue-100 transition-all h-12"
                                   placeholder="00"
                                   {...field}
                                 />
@@ -219,23 +196,20 @@ export function MarksEntryForm({
                           )}
                         />
                       </td>
-                      <td className="py-5 px-8 text-center">
+                      <td className="py-4 px-4 text-center">
                         {Number(form.watch(`marks.${student.id}`)) >= 40 ? (
-                          <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none px-3 font-black text-[10px] tracking-widest">
-                            <Sparkles className="h-3 w-3 mr-1" />
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-green-100 text-green-700">
+                            <Sparkles className="h-3 w-3 mr-1 inline" />
                             PASS
-                          </Badge>
+                          </span>
                         ) : form.watch(`marks.${student.id}`) === "" ? (
-                          <Badge
-                            variant="outline"
-                            className="border-border text-slate-300 font-bold text-[10px] tracking-widest"
-                          >
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 text-slate-400">
                             PENDING
-                          </Badge>
+                          </span>
                         ) : (
-                          <Badge className="bg-red-50 text-red-600 hover:bg-red-50 border-none px-3 font-black text-[10px] tracking-widest">
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-red-50 text-red-600">
                             FAIL
-                          </Badge>
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -243,10 +217,9 @@ export function MarksEntryForm({
                 </tbody>
               </table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </form>
     </Form>
   );
 }
-

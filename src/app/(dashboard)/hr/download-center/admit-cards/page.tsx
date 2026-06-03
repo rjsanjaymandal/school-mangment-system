@@ -15,12 +15,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { ERPCard } from "@/components/ui/erp-card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { getAdmitCardData } from "@/app/actions/hr";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function AdmitCardGeneratorPage() {
     const [classes, setClasses] = useState<any[]>([]);
@@ -67,25 +65,23 @@ export default function AdmitCardGeneratorPage() {
 
     if (previewMode && admitCards) {
         return (
-            <div className="space-y-8">
-                {/* Preview Header - Hidden on Print */}
-                <div className="flex items-center justify-between bg-white p-6 rounded-3xl border border-slate-200 shadow-sm print:hidden">
+            <div className="space-y-8 animate-in fade-in duration-700">
+                <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-slate-200 shadow-sm print:hidden">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" onClick={() => setPreviewMode(false)} className="rounded-xl">
-                            <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                        </Button>
+                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+                            <ArrowLeft className="h-4 w-4" /> Back
+                        </button>
                         <div>
-                            <h2 className="text-xl font-black text-slate-900 tracking-tight italic">Print Preview</h2>
+                            <h2 className="text-lg font-black tracking-tight text-slate-900">Print Preview</h2>
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{admitCards.students.length} Cards Generated</p>
                         </div>
                     </div>
-                    <Button onClick={handlePrint} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 font-bold px-8">
+                    <button onClick={handlePrint} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
                         <Printer className="h-4 w-4" /> Print All Cards
-                    </Button>
+                    </button>
                 </div>
 
-                {/* Admit Card Templates */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:block print:gap-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:block print:gap-0">
                     {admitCards.students.map((student: any, idx: number) => (
                         <AdmitCardTemplate 
                             key={student.id} 
@@ -96,7 +92,6 @@ export default function AdmitCardGeneratorPage() {
                     ))}
                 </div>
 
-                {/* Print Styles */}
                 <style jsx global>{`
                     @media print {
                         body * {
@@ -117,7 +112,6 @@ export default function AdmitCardGeneratorPage() {
                             border: 1px solid #000 !important;
                             visibility: visible !important;
                         }
-                        /* Hide Sidebar/Nav */
                         header, aside, .print-hidden {
                             display: none !important;
                         }
@@ -128,72 +122,70 @@ export default function AdmitCardGeneratorPage() {
     }
 
     return (
-        <div className="space-y-8 max-w-4xl mx-auto p-6 pb-20">
-            {/* Page Header */}
+        <div className="space-y-8 max-w-4xl mx-auto p-6 pb-20 animate-in fade-in duration-700">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/hr/download-center">
-                        <Button variant="ghost" size="icon" className="rounded-full">
+                        <button className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center">
                             <ArrowLeft className="h-5 w-5" />
-                        </Button>
+                        </button>
                     </Link>
                     <div>
-                        <h1 className="text-xl font-semibold text-slate-900">Admit Card Generator</h1>
-                        <p className="text-sm text-slate-500 mt-1">Generate exam hall tickets</p>
+                        <h1 className="text-lg font-black tracking-tight text-slate-900">Admit Card Generator</h1>
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Generate exam hall tickets</p>
                     </div>
                 </div>
             </div>
 
             <ERPCard accentColor="blue" className="p-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-slate-600">Target Class</Label>
-                        <Select onValueChange={setSelectedClass} value={selectedClass}>
-                            <SelectTrigger className="rounded-xl h-12 border-slate-200">
-                                <SelectValue placeholder="Select Class" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {classes.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Target Class</label>
+                        <select 
+                            value={selectedClass}
+                            onChange={(e) => setSelectedClass(e.target.value)}
+                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                        >
+                            <option value="">Select Class</option>
+                            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        </select>
                     </div>
 
                     <div className="space-y-3">
-                        <Label className="text-sm font-medium text-slate-600">Exam Session</Label>
-                        <Select onValueChange={setSelectedExam} value={selectedExam}>
-                            <SelectTrigger className="rounded-xl h-12 border-slate-200">
-                                <SelectValue placeholder="Select Exam" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {exams.map(e => <SelectItem key={e.id} value={e.id}>{e.name} ({new Date(e.date).toLocaleDateString()})</SelectItem>)}
-                            </SelectContent>
-                        </Select>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Session</label>
+                        <select 
+                            value={selectedExam}
+                            onChange={(e) => setSelectedExam(e.target.value)}
+                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                        >
+                            <option value="">Select Exam</option>
+                            {exams.map(e => <option key={e.id} value={e.id}>{e.name} ({new Date(e.date).toLocaleDateString()})</option>)}
+                        </select>
                     </div>
                 </div>
 
                 <div className="mt-12 flex justify-center">
-                    <Button 
+                    <button 
                         onClick={handleGenerate} 
                         disabled={loading}
-                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-12 h-14 font-black italic tracking-tight gap-3 shadow-xl shadow-blue-600/20"
+                        className="h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest px-10 shadow-lg transition-all disabled:opacity-50 flex items-center gap-3"
                     >
                         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UserCheck className="h-5 w-5" />}
                         Generate Hall Tickets
-                    </Button>
+                    </button>
                 </div>
             </ERPCard>
 
-            {/* Help / Info */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
                     { icon: FileText, title: "A4 Layout", desc: "Cards are optimized to fit 2 per A4 sheet." },
                     { icon: CheckCircle2, title: "Verified Data", desc: "Pulls from latest subject & enrollment data." },
                     { icon: Printer, title: "Direct Print", desc: "No download needed. Print directly to thermal or laser." }
                 ].map((item, idx) => (
-                    <div key={idx} className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center text-center">
+                    <div key={idx} className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col items-center text-center">
                         <item.icon className="h-6 w-6 text-slate-400 mb-3" />
                         <h4 className="text-sm font-black uppercase tracking-tight text-slate-900">{item.title}</h4>
-                        <p className="text-xs font-medium text-slate-500 mt-1">{item.desc}</p>
+                        <p className="text-xs font-bold text-slate-500 mt-1">{item.desc}</p>
                     </div>
                 ))}
             </div>
@@ -203,24 +195,21 @@ export default function AdmitCardGeneratorPage() {
 
 function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: any, settings: any }) {
     return (
-        <div className="bg-white border-2 border-slate-900 rounded-lg p-6 flex flex-col gap-4 print-card print-area max-w-md mx-auto h-[480px] relative overflow-hidden">
-            {/* Card Header */}
+        <div className="bg-white border-2 border-slate-900 rounded-xl p-6 flex flex-col gap-4 print-card print-area max-w-md mx-auto h-[480px] relative overflow-hidden">
             <div className="flex items-center gap-3 border-b-2 border-slate-900 pb-3">
-                <div className="h-12 w-12 bg-slate-900 rounded flex items-center justify-center shrink-0">
-                    <span className="text-white font-black text-lg italic">EM</span>
+                <div className="h-12 w-12 bg-slate-900 rounded-xl flex items-center justify-center shrink-0">
+                    <span className="text-white font-black text-lg">EM</span>
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-lg font-black uppercase tracking-tighter italic leading-none">{settings?.school_name || "Edu Maysan Academy"}</h3>
+                    <h3 className="text-lg font-black uppercase tracking-tighter leading-none">{settings?.school_name || "Edu Maysan Academy"}</h3>
                     <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Official Examination Hall Ticket • {(Array.isArray(exam.academic_year) ? exam.academic_year[0] : exam.academic_year)?.name || '2026-27'}</p>
                 </div>
             </div>
 
-            {/* Admit Card Title */}
-            <div className="bg-slate-900 text-white py-1 px-4 self-center rounded-full text-[10px] font-black uppercase tracking-[0.2em] italic">
+            <div className="bg-slate-900 text-white py-1 px-4 self-center rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
                 {exam.name} Admit Card
             </div>
 
-            {/* Student Info */}
             <div className="grid grid-cols-1 gap-3 mt-2">
                 <div className="flex justify-between border-b border-slate-100 pb-1">
                     <span className="text-[10px] font-black uppercase text-slate-400">Student Name</span>
@@ -236,7 +225,6 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
                 </div>
             </div>
 
-            {/* Exam Details */}
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2">
                 <h4 className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-2">Subject Details</h4>
                 <div className="space-y-2">
@@ -255,14 +243,12 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
                 </div>
             </div>
 
-            {/* Signatures */}
             <div className="mt-auto pt-6 flex justify-between items-end">
                 <div className="text-center">
                     <div className="w-24 h-px bg-slate-400 mb-1" />
                     <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Class Teacher</span>
                 </div>
                 <div className="text-center relative">
-                    {/* Placeholder for stamp */}
                     <div className="absolute -top-10 -right-2 h-16 w-16 border-2 border-emerald-600/30 rounded-full flex items-center justify-center rotate-12">
                         <span className="text-[6px] text-emerald-600/50 font-black uppercase text-center leading-none">Edu Maysan<br/>Verified</span>
                     </div>
@@ -271,7 +257,6 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
                 </div>
             </div>
 
-            {/* Decoration */}
             <div className="absolute -bottom-4 -right-4 h-20 w-20 bg-slate-900/5 rotate-45" />
         </div>
     );

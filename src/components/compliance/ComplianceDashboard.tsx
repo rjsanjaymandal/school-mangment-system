@@ -4,15 +4,12 @@ import { useMemo, useState } from "react";
 import { Activity, Calendar, FileText, Lock, Plus, Search, Trash2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from "recharts";
 import { createDocumentArchive, deleteDocumentArchive, updateDocumentArchive } from "@/app/actions/compliance";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { cn } from "@/lib/utils";
 
 const CATEGORIES = ["Legal", "Academic", "HR", "Financial", "Administrative"];
 const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
@@ -90,60 +87,171 @@ export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase italic underline decoration-primary/30 underline-offset-8">School Documents</h2>
-                    <p className="text-primary font-black uppercase text-[10px] tracking-[0.3em] mt-3 bg-primary/10 w-fit px-3 py-1 rounded-sm border border-primary/20">Compliance archives and audit visibility</p>
-                </div>
-                <Dialog open={open} onOpenChange={setOpen}>
-                    <DialogTrigger asChild><Button onClick={() => { setEditingDocument(null); resetForm(); }}><Plus className="h-4 w-4 mr-2" /> Add Document</Button></DialogTrigger>
-                    <DialogContent className="max-w-xl">
-                        <DialogHeader><DialogTitle>{editingDocument ? "Edit Document" : "Add Document"}</DialogTitle></DialogHeader>
-                        <div className="grid gap-4">
-                            <div className="space-y-2"><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>Category</Label><Select value={form.category} onValueChange={(value) => setForm({ ...form, category: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{CATEGORIES.map((category) => <SelectItem key={category} value={category}>{category}</SelectItem>)}</SelectContent></Select></div>
-                                <div className="space-y-2"><Label>Expiry Date</Label><Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} /></div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>File Path</Label><Input value={form.file_path} onChange={(e) => setForm({ ...form, file_path: e.target.value })} placeholder="/docs/policy.pdf" /></div>
-                                <div className="space-y-2"><Label>Version</Label><Input type="number" min="1" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} /></div>
-                            </div>
-                            <div className="space-y-2"><Label>Encryption</Label><Select value={form.is_encrypted} onValueChange={(value) => setForm({ ...form, is_encrypted: value })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="false">Standard</SelectItem><SelectItem value="true">Encrypted</SelectItem></SelectContent></Select></div>
-                            <Button onClick={handleSave} disabled={loading}>{loading ? "Saving..." : editingDocument ? "Update Document" : "Create Document"}</Button>
+            <UnifiedPageHeader
+                title="School Documents"
+                subtitle="Compliance archives and audit visibility"
+                icon={FileText}
+                actions={
+                    <button onClick={() => { setEditingDocument(null); resetForm(); setOpen(true); }} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all">
+                        <Plus className="h-4 w-4 inline mr-2" /> Add Document
+                    </button>
+                }
+            />
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <DashboardStatCard title="Documents" value={documents.length} icon={FileText} color="blue" description="Total archives" />
+                <DashboardStatCard title="Encrypted" value={documents.filter((doc) => doc.is_encrypted).length} icon={Lock} color="emerald" description="Secured" />
+                <DashboardStatCard title="Expiring Soon" value={documents.filter((doc) => doc.expiry_date && new Date(doc.expiry_date) >= new Date()).length} icon={Calendar} color="amber" description="Active expirations" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <div className="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">Audit Activity</h3>
+                            <p className="text-sm text-slate-500">Recent compliance trail by action</p>
                         </div>
-                    </DialogContent>
-                </Dialog>
-            </div>
-
-            <div className="grid md:grid-cols-12 gap-8">
-                <Card className="md:col-span-7 p-8 border border-border"><div className="mb-6 flex items-center justify-between"><div><h3 className="text-xl font-bold">Audit Activity</h3><p className="text-xs text-muted-foreground">Recent compliance trail by action</p></div><Activity className="h-5 w-5 text-primary" /></div><div className="h-[260px]"><ResponsiveContainer width="100%" height="100%"><BarChart data={auditVelocity}><CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} /><XAxis dataKey="name" axisLine={false} tickLine={false} /><YAxis axisLine={false} tickLine={false} /><Tooltip /><Legend /><Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer></div></Card>
-                <Card className="md:col-span-5 p-8 border border-border"><div className="mb-6"><h3 className="text-xl font-bold">Document Distribution</h3><p className="text-xs text-muted-foreground">Archive count by category</p></div><div className="h-[260px]"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={categoryData} dataKey="count" innerRadius={60} outerRadius={90}>{categoryData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}</Pie><Tooltip /><Legend verticalAlign="bottom" height={36} /></PieChart></ResponsiveContainer></div></Card>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Documents</p><h3 className="text-4xl font-bold mt-2">{documents.length}</h3></Card>
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Encrypted</p><h3 className="text-4xl font-bold mt-2">{documents.filter((doc) => doc.is_encrypted).length}</h3></Card>
-                <Card className="p-6 border border-border"><p className="text-xs text-muted-foreground">Expiring Soon</p><h3 className="text-4xl font-bold mt-2">{documents.filter((doc) => doc.expiry_date && new Date(doc.expiry_date) >= new Date()).length}</h3></Card>
-            </div>
-
-            <div className="flex items-center justify-between gap-4">
-                <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" placeholder="Search documents..." />
+                        <Activity className="h-5 w-5 text-slate-300" />
+                    </div>
+                    <div className="h-[250px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={auditVelocity}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 9, fontWeight: "bold" }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 9 }} />
+                                <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px" }} />
+                                <Legend />
+                                <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <div className="mb-4">
+                        <h3 className="text-lg font-black tracking-tight text-slate-900">Document Distribution</h3>
+                        <p className="text-sm text-slate-500">Archive count by category</p>
+                    </div>
+                    <div className="h-[250px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie data={categoryData} dataKey="count" innerRadius={60} outerRadius={90}>
+                                    {categoryData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}
+                                </Pie>
+                                <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px" }} />
+                                <Legend verticalAlign="bottom" height={36} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 
-            <Card className="overflow-hidden border border-border">
+            <div className="relative w-full max-w-sm">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 rounded-xl border-slate-200" placeholder="Search documents..." />
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead className="bg-muted"><tr><th className="p-4 text-left">Title</th><th className="p-4 text-left">Category</th><th className="p-4 text-left">Expiry</th><th className="p-4 text-left">Security</th><th className="p-4 text-right">Actions</th></tr></thead>
-                        <tbody className="divide-y divide-border">
-                            {filteredDocs.length === 0 ? <tr><td colSpan={5} className="p-10 text-center text-muted-foreground">No documents found.</td></tr> : filteredDocs.map((doc) => <tr key={doc.id}><td className="p-4"><div className="font-medium flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /> {doc.title}</div><div className="text-xs text-muted-foreground">{doc.file_path || "Metadata only"}</div></td><td className="p-4">{doc.category}</td><td className="p-4"><div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-muted-foreground" /> {doc.expiry_date || "None"}</div></td><td className="p-4"><Badge variant="outline" className={doc.is_encrypted ? "border-primary/20 text-primary bg-primary/5" : "border-border"}><Lock className="h-3 w-3 mr-1" /> {doc.is_encrypted ? "Encrypted" : "Standard"}</Badge></td><td className="p-4 text-right"><div className="flex justify-end gap-2"><Button variant="ghost" size="sm" onClick={() => handleEdit(doc)}>Edit</Button><Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(doc.id)}><Trash2 className="h-4 w-4" /></Button></div></td></tr>)}
+                    <table className="w-full">
+                        <thead className="bg-slate-50/50 border-b border-slate-100">
+                            <tr>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Title</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Category</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Expiry</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Security</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {filteredDocs.length === 0 ? (
+                                <tr><td colSpan={5} className="p-16 text-center text-sm font-bold text-slate-500">No documents found.</td></tr>
+                            ) : (
+                                filteredDocs.map((doc) => (
+                                    <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors">
+                                        <td className="py-4 px-4">
+                                            <div className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                                                <FileText className="h-4 w-4 text-emerald-600" /> {doc.title}
+                                            </div>
+                                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{doc.file_path || "Metadata only"}</div>
+                                        </td>
+                                        <td className="py-4 px-4 text-sm font-bold text-slate-700">{doc.category}</td>
+                                        <td className="py-4 px-4">
+                                            <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
+                                                <Calendar className="h-4 w-4 text-slate-400" /> {doc.expiry_date || "None"}
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border", doc.is_encrypted ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-50 text-slate-500 border-slate-200")}>
+                                                <Lock className="h-3 w-3 inline mr-1" /> {doc.is_encrypted ? "Encrypted" : "Standard"}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 px-4 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <button onClick={() => handleEdit(doc)} className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-100 transition-all">Edit</button>
+                                                <button onClick={() => handleDelete(doc.id)} className="h-8 w-8 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-50 transition-all"><Trash2 className="h-4 w-4" /></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
-            </Card>
+            </div>
+
+            {/* Add/Edit Document Modal */}
+            {open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+                        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">{editingDocument ? "Edit Document" : "Add Document"}</h3>
+                            <button onClick={() => { setOpen(false); setEditingDocument(null); }} className="h-8 w-8 rounded-xl hover:bg-slate-100 flex items-center justify-center">
+                                <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <div className="p-5 space-y-4">
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Title</label>
+                                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="rounded-xl border-slate-200" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category</label>
+                                    <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
+                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                        {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Expiry Date</label>
+                                    <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} className="rounded-xl border-slate-200" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">File Path</label>
+                                    <Input value={form.file_path} onChange={(e) => setForm({ ...form, file_path: e.target.value })} placeholder="/docs/policy.pdf" className="rounded-xl border-slate-200" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Version</label>
+                                    <Input type="number" min="1" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} className="rounded-xl border-slate-200" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Encryption</label>
+                                <select value={form.is_encrypted} onChange={(e) => setForm({ ...form, is_encrypted: e.target.value })}
+                                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                                    <option value="false">Standard</option>
+                                    <option value="true">Encrypted</option>
+                                </select>
+                            </div>
+                            <button onClick={handleSave} disabled={loading} className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">
+                                {loading ? "Saving..." : editingDocument ? "Update Document" : "Create Document"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

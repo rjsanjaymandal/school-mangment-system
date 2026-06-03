@@ -279,21 +279,35 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
         </div>
       )}
       {/* Brand Logo */}
-      <div className="p-5 pb-2 flex items-center gap-3">
-        <div className="h-12 w-12 rounded-full overflow-hidden shrink-0 shadow-xl shadow-emerald-500/30 ring-2 ring-emerald-500/50 relative bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-          <Image 
-            src="/icon-rounded-v2.png" 
-            alt="Edu Maysan Logo" 
-            fill
-            className="object-cover rounded-full"
-            sizes="48px"
-            priority
-          />
-        </div>
+      <div className="p-5 pb-2 flex items-center gap-3 min-h-[48px]">
+        {isCollapsed ? (
+          <div className="h-10 w-10 rounded-xl overflow-hidden shrink-0 shadow-lg shadow-emerald-500/20 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+            <Image 
+              src="/icon-rounded-v2.png" 
+              alt="Edu Maysan" 
+              width={40}
+              height={40}
+              className="object-contain"
+              priority
+            />
+          </div>
+        ) : (
+          <>
+            <div className="h-10 w-auto rounded-xl overflow-hidden shrink-0 flex items-center">
+              <Image 
+                src="/logo-rounded-v2.png" 
+                alt="Edu Maysan" 
+                width={140}
+                height={40}
+                className="object-contain h-full w-auto"
+                priority
+              />
+            </div>
+          </>
+        )}
         {!isCollapsed && (
           <div className="animate-in fade-in slide-in-from-left-2 duration-500">
-            <h1 className="text-lg font-black text-white tracking-tight leading-tight">Edu Maysan</h1>
-            <p className="text-[10px] text-emerald-400/70 font-medium tracking-wider uppercase">School Management</p>
+            <p className="text-[10px] text-emerald-400/70 font-medium tracking-wider uppercase">Edu Maysan</p>
           </div>
         )}
       </div>

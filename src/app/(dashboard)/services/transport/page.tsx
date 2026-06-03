@@ -2,14 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Bus, MapPin, Users, Clock, Navigation, Plus, Route, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Bus, MapPin, Users, Phone, Route } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ERPCard } from "@/components/ui/erp-card";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 interface Vehicle {
   id: string;
@@ -30,18 +28,9 @@ interface RouteInfo {
   fare: number;
 }
 
-interface StudentTransport {
-  student_id: string;
-  route_id: string;
-  stop_name: string;
-  pickup_time: string;
-  drop_time: string;
-  student?: { full_name: string; admission_number: string; class: { name: string } };
-}
-
 export default function TransportPage() {
   const supabase = createClient();
-  const [activeTab, setActiveTab] = useState<"vehicles" | "routes" | "students">("vehicles");
+  const [activeTab, setActiveTab] = useState<"vehicles" | "routes">("vehicles");
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [routes, setRoutes] = useState<RouteInfo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,100 +58,93 @@ export default function TransportPage() {
     totalVehicles: vehicles.length,
     activeVehicles: vehicles.filter(v => v.status === "active").length,
     totalRoutes: routes.length,
-    activeStudents: 0,
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Transport Management</h1>
-          <p className="text-muted-foreground">Vehicle and route management</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant={activeTab === "vehicles" ? "default" : "outline"} onClick={() => setActiveTab("vehicles")}>
-            <Bus className="h-4 w-4 mr-2" />
-            Vehicles
-          </Button>
-          <Button variant={activeTab === "routes" ? "default" : "outline"} onClick={() => setActiveTab("routes")}>
-            <Route className="h-4 w-4 mr-2" />
-            Routes
-          </Button>
-        </div>
+    <div className="p-4 md:p-6 space-y-6 animate-in fade-in duration-700">
+      <UnifiedPageHeader
+        title="Transport Management"
+        subtitle="Vehicle and route management"
+        icon={Bus}
+        actions={
+          <div className="flex gap-2">
+            <button
+              onClick={() => setActiveTab("vehicles")}
+              className={cn(
+                "h-10 rounded-xl px-6 font-black text-[10px] uppercase tracking-widest transition-all",
+                activeTab === "vehicles"
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                  : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              <Bus className="h-4 w-4 inline mr-2" />
+              Vehicles
+            </button>
+            <button
+              onClick={() => setActiveTab("routes")}
+              className={cn(
+                "h-10 rounded-xl px-6 font-black text-[10px] uppercase tracking-widest transition-all",
+                activeTab === "routes"
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
+                  : "border border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              <Route className="h-4 w-4 inline mr-2" />
+              Routes
+            </button>
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <DashboardStatCard title="Total Vehicles" value={stats.totalVehicles} icon={Bus} color="blue" description="Registered vehicles" />
+        <DashboardStatCard title="Active" value={stats.activeVehicles} icon={Bus} color="emerald" description="Currently active" />
+        <DashboardStatCard title="Routes" value={stats.totalRoutes} icon={Route} color="blue" description="Total routes" />
+        <DashboardStatCard title="Assigned" value={0} icon={Users} color="amber" description="Students assigned" />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white border rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Bus className="h-4 w-4" />
-            Total Vehicles
-          </div>
-          <p className="text-2xl font-bold mt-1">{stats.totalVehicles}</p>
-        </div>
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-emerald-600">
-            <Bus className="h-4 w-4" />
-            Active
-          </div>
-          <p className="text-2xl font-bold text-emerald-700 mt-1">{stats.activeVehicles}</p>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-blue-600">
-            <Route className="h-4 w-4" />
-            Routes
-          </div>
-          <p className="text-2xl font-bold text-blue-700 mt-1">{stats.totalRoutes}</p>
-        </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-sm text-amber-600">
-            <Users className="h-4 w-4" />
-            Assigned
-          </div>
-          <p className="text-2xl font-bold text-amber-700 mt-1">{stats.activeStudents}</p>
-        </div>
-      </div>
-
-      {/* Content */}
       {activeTab === "vehicles" && (
-        <ERPCard accentColor="blue">
-          <CardHeader className="border-b flex flex-row items-center justify-between">
-            <CardTitle>Fleet Management</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <h3 className="text-lg font-black tracking-tight text-slate-900">Fleet Management</h3>
+          </div>
+          <div className="p-5">
             {loading ? (
-              <div className="p-8 text-center text-muted-foreground">Loading...</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-slate-50 rounded-xl p-4 h-32 animate-pulse" />
+                ))}
+              </div>
             ) : vehicles.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground">
-                <Bus className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                <p>No vehicles registered</p>
-                <p className="text-sm">Transport module is ready - add vehicles via database</p>
+              <div className="py-16 text-center">
+                <Bus className="h-12 w-12 mx-auto mb-4 text-slate-200" />
+                <p className="text-sm text-slate-500 font-bold tracking-tight">No vehicles registered</p>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Transport module is ready - add vehicles via database</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {vehicles.map(vehicle => (
-                  <div key={vehicle.id} className="border rounded-lg p-4 hover:shadow-md">
+                  <div key={vehicle.id} className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="p-2 bg-blue-100 rounded-lg">
+                        <div className="p-2 bg-blue-100 rounded-xl">
                           <Bus className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-semibold">{vehicle.vehicle_number}</p>
-                          <p className="text-xs text-muted-foreground">{vehicle.vehicle_type}</p>
+                          <p className="font-bold text-sm text-slate-900">{vehicle.vehicle_number}</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{vehicle.vehicle_type}</p>
                         </div>
                       </div>
-                      <Badge className={vehicle.status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100"}>
+                      <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", vehicle.status === "active" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-50 text-slate-500 border border-slate-200")}>
                         {vehicle.status}
-                      </Badge>
+                      </span>
                     </div>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
                         <Users className="h-4 w-4" />
                         Capacity: {vehicle.capacity}
                       </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
                         <Phone className="h-4 w-4" />
                         {vehicle.driver_name} ({vehicle.driver_phone || "N/A"})
                       </div>
@@ -171,33 +153,39 @@ export default function TransportPage() {
                 ))}
               </div>
             )}
-          </CardContent>
-        </ERPCard>
+          </div>
+        </div>
       )}
 
       {activeTab === "routes" && (
-        <ERPCard accentColor="emerald">
-          <CardHeader className="border-b">
-            <CardTitle>Route Management</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <h3 className="text-lg font-black tracking-tight text-slate-900">Route Management</h3>
+          </div>
+          <div className="p-5">
             {loading ? (
-              <div className="p-8 text-center text-muted-foreground">Loading...</div>
+              <div className="space-y-4">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-slate-50 rounded-xl p-4 h-24 animate-pulse" />
+                ))}
+              </div>
             ) : routes.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground">
-                <Route className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                <p>No routes defined</p>
-                <p className="text-sm">Add routes via database to start</p>
+              <div className="py-16 text-center">
+                <Route className="h-12 w-12 mx-auto mb-4 text-slate-200" />
+                <p className="text-sm text-slate-500 font-bold tracking-tight">No routes defined</p>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Add routes via database to start</p>
               </div>
             ) : (
-              <div className="space-y-4 p-6">
+              <div className="space-y-4">
                 {routes.map(route => (
-                  <div key={route.id} className="border rounded-lg p-4">
+                  <div key={route.id} className="border border-slate-200 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{route.route_name}</h3>
-                      <Badge>₹{route.fare}/month</Badge>
+                      <h3 className="font-bold text-sm text-slate-900">{route.route_name}</h3>
+                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-200">
+                        ₹{route.fare}/month
+                      </span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500">
                       <div className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         {route.start_point}
@@ -212,8 +200,8 @@ export default function TransportPage() {
                 ))}
               </div>
             )}
-          </CardContent>
-        </ERPCard>
+          </div>
+        </div>
       )}
     </div>
   );

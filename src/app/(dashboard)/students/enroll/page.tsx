@@ -82,6 +82,10 @@ export default function StudentEnrollmentPage() {
         fetchClasses();
     }, []);
 
+    const updateForm = (field: string, value: string | boolean) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
     const handleClassChange = useCallback(async (classId: string) => {
         updateForm("class_id", classId);
         if (formData.auto_roll && classId) {
@@ -104,10 +108,6 @@ export default function StudentEnrollmentPage() {
                 toast.error("Failed to generate roll number");
             }
         }
-    };
-
-    const updateForm = (field: string, value: string | boolean) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
     };
 
     const nextStep = () => setCurrentStep(s => Math.min(s + 1, 4));

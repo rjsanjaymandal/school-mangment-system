@@ -9,23 +9,6 @@ import {
   Calendar,
   ArrowUpRight,
 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface FeeListProps {
   initialData: any[];
@@ -35,114 +18,91 @@ export function FeeList({ initialData }: FeeListProps) {
   const [data, setData] = useState<any[]>(initialData);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-700">
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-none shadow-sm bg-blue-600 text-white">
-          <CardContent className="p-6">
+        <div className="bg-blue-600 border border-blue-700 rounded-xl overflow-hidden">
+          <div className="p-5">
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-blue-100 italic">Expected Revenue</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-blue-100">Expected Revenue</p>
               <IndianRupee className="h-5 w-5 text-blue-200" />
             </div>
-            <h2 className="text-3xl font-bold">₹125,000</h2>
-            <p className="text-xs text-blue-200 mt-2">Annual total expected</p>
-          </CardContent>
-        </Card>
-        <Card className="border-none shadow-sm bg-green-600 text-white">
-          <CardContent className="p-6">
+            <h2 className="text-3xl font-black text-white tracking-tight">₹125,000</h2>
+            <p className="text-[10px] font-bold text-blue-200 mt-2">Annual total expected</p>
+          </div>
+        </div>
+        <div className="bg-green-600 border border-green-700 rounded-xl overflow-hidden">
+          <div className="p-5">
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-green-100 italic">Collected</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-green-100">Collected</p>
               <ArrowUpRight className="h-5 w-5 text-green-200" />
             </div>
-            <h2 className="text-3xl font-bold">₹98,450</h2>
-            <p className="text-xs text-green-200 mt-2">78.7% collection rate</p>
-          </CardContent>
-        </Card>
-        <Card className="border-none shadow-sm bg-red-600 text-white">
-          <CardContent className="p-6">
+            <h2 className="text-3xl font-black text-white tracking-tight">₹98,450</h2>
+            <p className="text-[10px] font-bold text-green-200 mt-2">78.7% collection rate</p>
+          </div>
+        </div>
+        <div className="bg-red-600 border border-red-700 rounded-xl overflow-hidden">
+          <div className="p-5">
             <div className="flex justify-between items-center mb-2">
-              <p className="text-sm text-red-100 italic">Outstanding</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-100">Outstanding</p>
               <CreditCard className="h-5 w-5 text-red-200" />
             </div>
-            <h2 className="text-3xl font-bold">₹26,550</h2>
-            <p className="text-xs text-red-200 mt-2">Follow up required</p>
-          </CardContent>
-        </Card>
+            <h2 className="text-3xl font-black text-white tracking-tight">₹26,550</h2>
+            <p className="text-[10px] font-bold text-red-200 mt-2">Follow up required</p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-xl font-bold text-slate-800">Fee Structures</h3>
-          <Button className="gap-x-2">
+          <h3 className="text-lg font-black tracking-tight text-slate-900">Fee Structures</h3>
+          <button className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-x-2">
             <Plus className="h-4 w-4" />
             Create Fee Type
-          </Button>
+          </button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-border overflow-hidden">
-          <Table>
-            <TableHeader className="bg-slate-50">
-              <TableRow>
-                <TableHead>Fee Name</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/50">
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Fee Name</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Amount</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Due Date</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Description</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-right py-4 px-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
               {data.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    No fee structures defined.
-                  </TableCell>
-                </TableRow>
+                <tr>
+                  <td colSpan={5} className="py-20 text-center">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No fee structures defined.</p>
+                  </td>
+                </tr>
               ) : (
                 data.map((fee) => (
-                  <TableRow
-                    key={fee.id}
-                    className="hover:bg-slate-50/50 transition-colors"
-                  >
-                    <TableCell className="font-semibold text-foreground">
-                      {fee.name}
-                    </TableCell>
-                    <TableCell className="font-bold text-slate-700">
-                      ₹{fee.amount}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-x-2 text-muted-foreground">
+                  <tr key={fee.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="py-4 px-4 font-bold text-slate-900">{fee.name}</td>
+                    <td className="py-4 px-4 font-bold text-slate-700">₹{fee.amount}</td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-x-2 text-slate-500 text-sm">
                         <Calendar className="h-4 w-4" />
                         {new Date(fee.due_date).toLocaleDateString()}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm max-w-xs truncate">
-                      {fee.description || "N/A"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit Structure</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                    <td className="py-4 px-4 text-slate-500 text-sm max-w-xs truncate">{fee.description || "N/A"}</td>
+                    <td className="py-4 px-4 text-right">
+                      <button className="h-8 w-8 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all flex items-center justify-center">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
                 ))
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
-

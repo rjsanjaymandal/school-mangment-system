@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { MarksEntryForm } from "@/components/academics/exams/MarksEntryForm";
-import { ArrowLeft, BookOpen, GraduationCap } from "lucide-react";
+import { ArrowLeft, BookOpen, GraduationCap, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
 export default async function MarksPage({
   params,
@@ -12,7 +12,6 @@ export default async function MarksPage({
 }) {
   const { id: examId } = await params;
 
-  // Basic UUID format validation to prevent DB syntax errors
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   if (!uuidRegex.test(examId)) {
     notFound();
@@ -20,7 +19,6 @@ export default async function MarksPage({
 
   const supabase = await createClient();
 
-  // 1. Fetch Exam Details
   const { data: exam } = await supabase
     .from("exams")
     .select(`*, academic_year:academic_years(*), subject:subjects(*), class:classes(*)`)
@@ -71,30 +69,32 @@ export default async function MarksPage({
   }));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-4">
-          <Link href="/academics/exams">
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </Link>
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-              {exam?.name}
-            </h2>
-            <div className="flex items-center gap-x-4 text-slate-500 text-sm mt-1">
-              <span className="flex items-center gap-x-1">
-                <GraduationCap className="h-4 w-4" />
-                {exam?.academic_year?.name}
-              </span>
-              <span className="flex items-center gap-x-1">
-                <BookOpen className="h-4 w-4" />
-                {selectedSubject?.name || "Unassigned Subject"} ({selectedClass?.name || "Unassigned Class"})
-              </span>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="flex items-center gap-x-4">
+        <Link href="/academics/exams">
+          <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </button>
+        </Link>
+      </div>
+
+      <UnifiedPageHeader
+        title={exam?.name || "Marks Entry"}
+        subtitle="Performance Registry"
+        icon={ClipboardCheck}
+        color="emerald"
+      />
+
+      <div className="flex items-center gap-x-4 text-sm text-slate-500">
+        <span className="flex items-center gap-x-1">
+          <GraduationCap className="h-4 w-4" />
+          {exam?.academic_year?.name}
+        </span>
+        <span className="flex items-center gap-x-1">
+          <BookOpen className="h-4 w-4" />
+          {selectedSubject?.name || "Unassigned Subject"} ({selectedClass?.name || "Unassigned Class"})
+        </span>
       </div>
 
       <MarksEntryForm

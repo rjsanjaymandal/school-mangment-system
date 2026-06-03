@@ -3,14 +3,14 @@ import {
   Users,
   BookOpen,
   ShieldAlert,
-  Settings,
+  UsersRound,
+  Building2,
 } from "lucide-react";
 import { ERPCard } from "@/components/ui/erp-card";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { UserService } from "@/lib/services/user";
-import { Badge } from "@/components/ui/badge";
 import { AdminCharts } from "./AdminCharts";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminDashboard() {
@@ -36,73 +36,87 @@ export default async function AdminDashboard() {
       : "Academic Year 2024-25";
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>Dashboard</span>
             <span>/</span>
-            <span className="text-foreground font-medium">Admin</span>
+            <span className="text-slate-900 font-medium">Admin</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mt-1">Admin Mission Control</h1>
-          <p className="text-sm text-muted-foreground">{activeYearName}</p>
+          <h1 className="text-lg font-black tracking-tight text-slate-900 mt-1">Admin Mission Control</h1>
+          <p className="text-sm text-slate-500">{activeYearName}</p>
         </div>
-        <Button variant="outline">
-          <Settings className="h-4 w-4 mr-2" />
+        <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-2">
+          <ShieldAlert className="h-4 w-4" />
           Settings
-        </Button>
+        </button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        {[
-          { label: "Students", value: realStats.studentCount, sub: "Total Enrolled", icon: GraduationCap, color: "emerald" },
-          { label: "Teachers", value: realStats.teacherCount, sub: "Faculty Staff", icon: Users, color: "blue" },
-          { label: "Parents", value: realStats.parentCount, sub: "Verified Guardians", icon: Users, color: "purple" },
-          { label: "Classes", value: realStats.classCount, sub: "Active Sections", icon: BookOpen, color: "slate" },
-        ].map((stat, i) => (
-          <ERPCard key={i} accentColor={stat.color as any}>
-            <div className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className={`h-10 w-10 rounded-lg bg-${stat.color}-100 flex items-center justify-center`}>
-                  <stat.icon className={`h-5 w-5 text-${stat.color}-600`} />
-                </div>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-              </div>
-            </div>
-          </ERPCard>
-        ))}
+        <DashboardStatCard title="Students" value={realStats.studentCount} icon={GraduationCap} color="emerald" description="Total Enrolled" />
+        <DashboardStatCard title="Teachers" value={realStats.teacherCount} icon={Users} color="blue" description="Faculty Staff" />
+        <DashboardStatCard title="Parents" value={realStats.parentCount} icon={UsersRound} color="purple" description="Verified Guardians" />
+        <DashboardStatCard title="Classes" value={realStats.classCount} icon={BookOpen} color="slate" description="Active Sections" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <ERPCard accentColor="blue" title="Academic Overview" icon={<BookOpen className="h-5 w-5 text-blue-600" />}>
-          <div className="p-4 space-y-4">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded bg-blue-50">
+                <BookOpen className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">Academic Overview</h3>
+              </div>
+            </div>
+          </div>
+          <div className="p-5 space-y-4">
             <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
               <div className="h-full bg-blue-500 w-[85%] rounded-full" />
             </div>
             <div className="flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">85% Syllabus Completion</p>
-              <Badge className="bg-blue-100 text-blue-700">On Track</Badge>
+              <p className="text-sm text-slate-500">85% Syllabus Completion</p>
+              <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600">On Track</span>
             </div>
           </div>
-        </ERPCard>
+        </div>
 
-        <ERPCard accentColor="red" title="System Security" icon={<ShieldAlert className="h-5 w-5 text-red-600" />}>
-          <div className="p-4">
-            <p className="text-sm text-muted-foreground italic">
-              "All gateway entries are monitored. No breaches detected in the last 24 hours."
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded bg-red-50">
+                <ShieldAlert className="h-5 w-5 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">System Security</h3>
+              </div>
+            </div>
+          </div>
+          <div className="p-5">
+            <p className="text-sm text-slate-500">
+              All gateway entries are monitored. No breaches detected in the last 24 hours.
             </p>
           </div>
-        </ERPCard>
+        </div>
       </div>
 
-      <ERPCard accentColor="emerald" title="System Analytics" icon={<BookOpen className="h-5 w-5 text-emerald-600" />}>
-        <div className="p-4">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="p-1.5 rounded bg-emerald-50">
+              <Building2 className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-slate-900">System Analytics</h3>
+            </div>
+          </div>
+        </div>
+        <div className="p-5">
           <AdminCharts />
         </div>
-      </ERPCard>
+      </div>
     </div>
   );
 }

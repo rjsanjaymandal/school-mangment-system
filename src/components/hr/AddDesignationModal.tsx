@@ -1,12 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import { addDesignation } from "@/app/actions/hr";
 import { toast } from "sonner";
 
@@ -38,59 +34,68 @@ export function AddDesignationModal({ departments, onAdd }: { departments: any[]
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1 border-primary/20 text-primary hover:bg-primary/5">
-                    <Plus className="h-3 w-3" />
-                    Desig
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle className="text-xl font-bold tracking-tight">Add Designation</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="desig-name">Designation Name <span className="text-destructive">*</span></Label>
-                        <Input 
-                            id="desig-name" 
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)} 
-                            placeholder="e.g. Senior Teacher" 
-                            required 
-                        />
+        <>
+            <button
+                onClick={() => setOpen(true)}
+                className="h-8 rounded-xl border border-slate-200 text-slate-700 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 transition-all"
+            >
+                <Plus className="h-3 w-3 inline mr-1" />
+                Desig
+            </button>
+
+            {open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+                        <div className="p-5 border-b border-slate-100">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">Add Designation</h3>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">
+                                    Designation Name <span className="text-red-500">*</span>
+                                </label>
+                                <Input
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="e.g. Senior Teacher"
+                                    required
+                                    className="rounded-xl border-slate-200"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Designation Code</label>
+                                <Input
+                                    value={code}
+                                    onChange={(e) => setCode(e.target.value)}
+                                    placeholder="e.g. S-TCH"
+                                    className="rounded-xl border-slate-200"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Parent Department (Optional)</label>
+                                <select
+                                    value={departmentId}
+                                    onChange={(e) => setDepartmentId(e.target.value)}
+                                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                >
+                                    <option value="">None</option>
+                                    {departments.map(d => (
+                                        <option key={d.id} value={d.id}>{d.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex justify-end pt-2">
+                                <div className="flex gap-3">
+                                    <button type="button" onClick={() => setOpen(false)} className="h-11 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">Cancel</button>
+                                    <button type="submit" disabled={loading || !name} className="h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
+                                        {loading ? "Saving..." : "Save Designation"}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="desig-code">Designation Code</Label>
-                        <Input 
-                            id="desig-code" 
-                            value={code} 
-                            onChange={(e) => setCode(e.target.value)} 
-                            placeholder="e.g. S-TCH" 
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="desig-dept">Parent Department (Optional)</Label>
-                        <Select value={departmentId} onValueChange={setDepartmentId}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Department" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="none" className="text-muted-foreground italic">None</SelectItem>
-                                {departments.map(d => (
-                                    <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="flex justify-end pt-4">
-                        <Button type="submit" disabled={loading || !name} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                            Save Designation
-                        </Button>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+                </div>
+            )}
+        </>
     );
 }

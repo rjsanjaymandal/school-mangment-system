@@ -1,16 +1,14 @@
 import {
-  GraduationCap,
   Users,
   Calendar,
   CheckCircle,
   BookOpen,
+  GraduationCap,
 } from "lucide-react";
-import { ERPCard } from "@/components/ui/erp-card";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 import { InstitutionalService } from "@/lib/services/institutional";
 import { createClient } from "@/lib/supabase/server";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export default async function TeacherDashboard() {
   const supabase = await createClient();
@@ -21,73 +19,73 @@ export default async function TeacherDashboard() {
       : "Active Academic Cycle";
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-slate-500">
             <span>Dashboard</span>
             <span>/</span>
-            <span className="text-foreground font-medium">Teacher</span>
+            <span className="text-slate-900 font-medium">Teacher</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mt-1">Educator Workspace</h1>
-          <p className="text-sm text-muted-foreground">{activeYearName}</p>
+          <h1 className="text-lg font-black tracking-tight text-slate-900 mt-1">Educator Workspace</h1>
+          <p className="text-sm text-slate-500">{activeYearName}</p>
         </div>
         <Link href="/exams">
-          <Button className="bg-emerald-600 hover:bg-emerald-700">
-            <CheckCircle className="h-4 w-4 mr-2" />
+          <button className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
             Grading Center
-          </Button>
+          </button>
         </Link>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[
-          { title: "Active Groups", val: "4", icon: Users, color: "blue" },
-          { title: "Pending Grading", val: "12", icon: Calendar, color: "amber" },
-          { title: "Attendance Rate", val: "96%", icon: CheckCircle, color: "emerald" },
-          { title: "Curriculum Progress", val: "72%", icon: BookOpen, color: "purple" },
-        ].map((m, i) => (
-          <ERPCard key={i} accentColor={m.color as any}>
-            <div className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className={`h-10 w-10 rounded-lg bg-${m.color}-100 flex items-center justify-center`}>
-                  <m.icon className={`h-5 w-5 text-${m.color}-600`} />
-                </div>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{m.val}</p>
-                <p className="text-xs text-muted-foreground">{m.title}</p>
-              </div>
-            </div>
-          </ERPCard>
-        ))}
+        <DashboardStatCard title="Active Groups" value="4" icon={Users} color="blue" />
+        <DashboardStatCard title="Pending Grading" value="12" icon={Calendar} color="amber" />
+        <DashboardStatCard title="Attendance Rate" value="96%" icon={CheckCircle} color="emerald" />
+        <DashboardStatCard title="Curriculum Progress" value="72%" icon={BookOpen} color="purple" />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <ERPCard accentColor="blue" title="Classroom Overview">
-          <div className="p-4 space-y-3">
-            <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 hover:bg-slate-100 cursor-pointer">
-              <span className="font-medium">Advanced Physics (A-102)</span>
-            </div>
-            <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 hover:bg-slate-100 cursor-pointer">
-              <span className="font-medium">Quantum Theory (B-204)</span>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded bg-blue-50">
+                <Users className="h-5 w-5 text-blue-600" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900">Classroom Overview</h3>
             </div>
           </div>
-        </ERPCard>
+          <div className="p-5 space-y-3">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
+              <span className="text-sm font-bold text-slate-700">Advanced Physics (A-102)</span>
+            </div>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
+              <span className="text-sm font-bold text-slate-700">Quantum Theory (B-204)</span>
+            </div>
+          </div>
+        </div>
 
-        <ERPCard accentColor="amber" title="Upcoming Events">
-          <div className="p-4">
-            <div className="flex items-center gap-4 p-4 rounded-md bg-amber-50">
-              <div className="h-10 w-10 rounded-lg bg-amber-100 flex items-center justify-center">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded bg-amber-50">
+                <Calendar className="h-5 w-5 text-amber-600" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-900">Upcoming Events</h3>
+            </div>
+          </div>
+          <div className="p-5">
+            <div className="flex items-center gap-4 p-4 rounded-lg bg-amber-50">
+              <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center">
                 <Calendar className="h-5 w-5 text-amber-600" />
               </div>
               <div>
-                <p className="font-medium">Mid-Term Assessment</p>
-                <p className="text-xs text-muted-foreground">Starts in 3 days</p>
+                <p className="text-sm font-bold text-slate-900">Mid-Term Assessment</p>
+                <p className="text-xs text-slate-500">Starts in 3 days</p>
               </div>
             </div>
           </div>
-        </ERPCard>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import { CreditCard, FileText, Receipt, UserCheck, ArrowRight, Printer, Download } from "lucide-react";
 import Link from "next/link";
-import { ERPCard } from "@/components/ui/erp-card";
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const modules = [
     {
@@ -47,13 +46,13 @@ const colorClasses: Record<string, { bg: string; text: string; border: string }>
 
 export default function DownloadCenterPage() {
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 animate-in fade-in duration-700">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
+                <div className="p-2 bg-emerald-50 rounded-xl border-l-4 border-emerald-500">
                     <Printer className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                    <h1 className="text-xl font-semibold text-slate-900">Download Center</h1>
+                    <h1 className="text-lg font-black tracking-tight text-slate-900">Download Center</h1>
                     <p className="text-sm text-slate-500">Generate and print documents</p>
                 </div>
             </div>
@@ -63,23 +62,25 @@ export default function DownloadCenterPage() {
                     const colors = colorClasses[module.color];
                     return (
                         <Link key={module.title} href={module.href}>
-                            <div className={`bg-white border border-slate-200 rounded-md shadow-sm border-l-4 ${colors.border} hover:shadow-md transition-shadow h-full`}>
+                            <div className={`bg-white border border-slate-200 rounded-xl shadow-sm border-l-4 ${colors.border} hover:shadow-md transition-shadow h-full`}>
                                 <div className="p-4">
                                     <div className="flex items-start justify-between mb-3">
-                                        <div className={`p-3 rounded-md ${colors.bg}`}>
+                                        <div className={`p-3 rounded-xl ${colors.bg}`}>
                                             <module.icon className={`h-6 w-6 ${colors.text}`} />
                                         </div>
-                                        <Badge variant="outline" className="text-xs">{module.stats}</Badge>
+                                        <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", "bg-slate-100 text-slate-600")}>
+                                            {module.stats}
+                                        </span>
                                     </div>
-                                    
-                                    <h3 className="text-lg font-semibold text-slate-900 mb-2">
+
+                                    <h3 className="text-lg font-black tracking-tight text-slate-900 mb-2">
                                         {module.title}
                                     </h3>
                                     <p className="text-sm text-slate-500 mb-4">
                                         {module.description}
                                     </p>
-                                    
-                                    <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium">
+
+                                    <div className="flex items-center gap-2 text-emerald-600 text-sm font-black">
                                         Open <ArrowRight className="h-4 w-4" />
                                     </div>
                                 </div>
@@ -89,20 +90,20 @@ export default function DownloadCenterPage() {
                 })}
             </div>
 
-            <div className="bg-slate-900 rounded-md p-6 text-white">
+            <div className="bg-slate-900 rounded-xl p-6 text-white">
                 <div className="max-w-2xl">
-                    <h4 className="text-lg font-semibold mb-2">Print Optimized</h4>
+                    <h4 className="text-lg font-black tracking-tight mb-2">Print Optimized</h4>
                     <p className="text-slate-400 text-sm mb-4">
                         All documents are generated from real-time institutional records with high-fidelity formatting.
                     </p>
                     <div className="flex flex-wrap gap-3">
-                        <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-md text-sm">
+                        <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl text-sm">
                             <Printer className="h-4 w-4 text-emerald-400" />
-                            <span className="text-xs">Verified Records</span>
+                            <span className="text-xs font-black">Verified Records</span>
                         </div>
-                        <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-md text-sm">
+                        <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl text-sm">
                             <Download className="h-4 w-4 text-blue-400" />
-                            <span className="text-xs">PDF Export</span>
+                            <span className="text-xs font-black">PDF Export</span>
                         </div>
                     </div>
                 </div>

@@ -68,6 +68,7 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
     const [selectedSubjectId, setSelectedSubjectId] = useState("");
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setData(initialData);
     }, [initialData]);
 

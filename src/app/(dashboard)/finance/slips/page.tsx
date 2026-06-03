@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { FileText, Printer, Search, ChevronRight, Loader2, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -275,7 +272,7 @@ export default function FeeSlipsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
+    <div className="p-6 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-700">
       {/* Breadcrumb */}
       <div className="flex items-center text-sm text-slate-500 mb-1">
         <span>Home</span>
@@ -287,11 +284,11 @@ export default function FeeSlipsPage() {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-50 rounded-md border-l-4 border-emerald-500">
+          <div className="p-2 bg-emerald-50 rounded-xl border-l-4 border-emerald-500">
             <FileText className="h-5 w-5 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Fee Slip Print</h1>
+            <h1 className="text-lg font-black tracking-tight text-slate-900">Fee Slip Print</h1>
             <p className="text-sm text-slate-500">Generate and print bulk fee invoices for students</p>
           </div>
         </div>
@@ -300,87 +297,88 @@ export default function FeeSlipsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Selection Panel */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-5">
-            <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-emerald-500" />
-              Filter Students
-            </h3>
-            
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-slate-500 uppercase">Select Class</Label>
-                <select
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option value="">Choose a class...</option>
-                  {classes.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </select>
-                <Button 
-                  onClick={loadClassStudents}
-                  disabled={!selectedClass || isGenerating}
-                  variant="outline"
-                  className="w-full rounded-lg border-emerald-200 text-emerald-700 hover:bg-emerald-50"
-                >
-                  {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Load Class Students"}
-                </Button>
-              </div>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-slate-100"></span>
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="p-5 space-y-5">
+              <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2 mb-4">
+                <Calendar className="h-4 w-4 text-emerald-500" />
+                Filter Students
+              </h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Select Class</label>
+                  <select
+                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option value="">Choose a class...</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                  <button 
+                    onClick={loadClassStudents}
+                    disabled={!selectedClass || isGenerating}
+                    className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all w-full mt-2"
+                  >
+                    {isGenerating ? <Loader2 className="h-4 w-4 animate-spin inline mr-2" /> : "Load Class Students"}
+                  </button>
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-slate-400">OR</span>
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-slate-500 uppercase">Search by Name/ID</Label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <Input
-                    placeholder="Enter name or admission no..."
-                    className="pl-10 rounded-lg text-sm bg-slate-50 focus:bg-white"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-slate-100"></span>
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-2 text-slate-400">OR</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search by Name/ID</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      placeholder="Enter name or admission no..."
+                      className="pl-10 h-11 rounded-xl border-slate-200 text-sm font-bold"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-slate-100">
-              <Button
-                onClick={handleGenerateSlips}
-                disabled={isGenerating || selectedStudents.length === 0}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg h-11 font-semibold shadow-md shadow-emerald-600/20"
-              >
-                {isGenerating ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Printer className="h-4 w-4 mr-2" />
-                )}
-                Generate {selectedStudents.length > 0 ? `(${selectedStudents.length})` : ""} Slips
-              </Button>
+              <div className="pt-4 border-t border-slate-100">
+                <button
+                  onClick={handleGenerateSlips}
+                  disabled={isGenerating || selectedStudents.length === 0}
+                  className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 w-full"
+                >
+                  {isGenerating ? (
+                    <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
+                  ) : (
+                    <Printer className="h-4 w-4 inline mr-2" />
+                  )}
+                  Generate {selectedStudents.length > 0 ? `(${selectedStudents.length})` : ""} Slips
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         {/* List Panel */}
         <div className="lg:col-span-2">
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-[600px]">
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col h-[600px]">
+            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">Selection List</h3>
-                <p className="text-xs text-slate-500">{selectedStudents.length} of {students.length} students selected</p>
+                <h3 className="text-sm font-black text-slate-900">Selection List</h3>
+                <p className="text-sm text-slate-500">{selectedStudents.length} of {students.length} students selected</p>
               </div>
               {students.length > 0 && (
-                <Button variant="outline" size="sm" onClick={toggleAll} className="rounded-lg text-xs h-8">
+                <button onClick={toggleAll} className="h-8 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all">
                   {selectedStudents.length === students.length ? "Deselect All" : "Select All"}
-                </Button>
+                </button>
               )}
             </div>
             
@@ -390,8 +388,8 @@ export default function FeeSlipsPage() {
                   <div className="h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
                     <Search className="h-8 w-8 opacity-20" />
                   </div>
-                  <p className="text-sm font-medium">No students found</p>
-                  <p className="text-xs mt-1">Select a class or use the search bar to find students</p>
+                  <p className="text-sm font-bold text-slate-500">No students found</p>
+                  <p className="text-sm text-slate-500 mt-1">Select a class or use the search bar to find students</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
@@ -412,13 +410,13 @@ export default function FeeSlipsPage() {
                           {selectedStudents.includes(student.id) && <CheckCircle2 className="h-3.5 w-3.5 text-white" />}
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">{student.profile?.full_name}</p>
-                          <p className="text-xs text-slate-500 font-medium">{student.admission_number} • {student.class?.name}</p>
+                          <p className="text-sm font-bold text-slate-900">{student.profile?.full_name}</p>
+                          <p className="text-sm text-slate-500 font-medium">{student.admission_number} • {student.class?.name}</p>
                         </div>
                       </div>
-                      <Badge variant="secondary" className="bg-white border-slate-200 text-slate-600 text-[10px] uppercase font-bold">
+                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-white border border-slate-200 text-slate-600">
                         {schoolSettings.academic_year || "2024-25"}
-                      </Badge>
+                      </span>
                     </div>
                   ))}
                 </div>

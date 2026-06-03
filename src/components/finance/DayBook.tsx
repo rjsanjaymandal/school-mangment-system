@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { 
   BookOpen, Calendar, Filter, Download, 
   ArrowUpRight, ArrowDownRight, Wallet, Building,
@@ -25,7 +23,6 @@ export function DayBook() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(50);
 
-  // Fetch transactions
   const { data: transactions, isLoading } = useQuery({
     queryKey: ["transactions", dateFrom, dateTo, transactionType, paymentMode],
     queryFn: async () => {
@@ -61,7 +58,6 @@ export function DayBook() {
     staleTime: 30000,
   });
 
-  // Calculate totals
   const totalIncome = transactions
     ?.filter(t => t.type === "income" || t.type === "fee_collection")
     ?.reduce((sum, t) => sum + t.amount, 0) || 0;
@@ -84,8 +80,7 @@ export function DayBook() {
   const paginatedTransactions = transactions?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="space-y-8">
-      {/* Unified Stats Grid */}
+    <div className="space-y-6 animate-in fade-in duration-700">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         <DashboardStatCard title="Income Flow" value={`₹${totalIncome.toLocaleString()}`} icon={ArrowUpRight} color="emerald" />
         <DashboardStatCard title="Expense Flow" value={`₹${totalExpense.toLocaleString()}`} icon={ArrowDownRight} color="rose" />
@@ -94,11 +89,10 @@ export function DayBook() {
         <DashboardStatCard title="Bank Reserve" value={`₹${bankTotal.toLocaleString()}`} icon={Building} color="amber" />
       </div>
 
-      {/* Unified Action Bar */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200 p-5 shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-xl p-5">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="flex flex-1 flex-col lg:flex-row gap-4 w-full">
-            <div className="flex items-center bg-slate-50/50 border border-slate-200 rounded-xl px-3 py-1 gap-2">
+            <div className="flex items-center bg-white border border-slate-200 rounded-xl px-3 py-1 gap-2">
               <Calendar className="h-4 w-4 text-slate-400" />
               <Input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
               <span className="text-slate-300 font-black">→</span>
@@ -106,7 +100,7 @@ export function DayBook() {
             </div>
             
             <div className="flex gap-3">
-              <select value={transactionType} onChange={(e) => { setTransactionType(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
+              <select value={transactionType} onChange={(e) => { setTransactionType(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white outline-none">
                 <option value="all">All Channels</option>
                 <option value="fee_collection">Revenue Stream</option>
                 <option value="income">Direct Income</option>
@@ -114,7 +108,7 @@ export function DayBook() {
                 <option value="salary">Payroll</option>
               </select>
 
-              <select value={paymentMode} onChange={(e) => { setPaymentMode(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold bg-white/50">
+              <select value={paymentMode} onChange={(e) => { setPaymentMode(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white outline-none">
                 <option value="all">All Protocols</option>
                 <option value="cash">Cash Protocol</option>
                 <option value="bank">Digital Clearing</option>
@@ -122,54 +116,52 @@ export function DayBook() {
             </div>
           </div>
 
-          <Button variant="outline" className="h-11 px-6 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all active:scale-95">
-            <Download className="h-4 w-4 mr-2" /> Export Logs
-          </Button>
+          <button className="h-11 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-x-2">
+            <Download className="h-4 w-4" /> Export Logs
+          </button>
         </div>
       </div>
 
-      {/* Institutional Ledger */}
       <ERPCard
         title="Transaction Ledger"
         description="Chronological verification of institutional flows"
         icon={<BookOpen className="h-5 w-5" />}
         color="purple"
-        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-              <tr>
-                <th className="px-6 py-4">Maturity</th>
-                <th className="px-6 py-4">Voucher</th>
-                <th className="px-6 py-4">Particulars</th>
-                <th className="px-6 py-4">Domain</th>
-                <th className="px-6 py-4 text-center">Protocol</th>
-                <th className="px-6 py-4 text-right">Income</th>
-                <th className="px-6 py-4 text-right">Expense</th>
+            <thead>
+              <tr className="border-b border-slate-100 bg-slate-50/50">
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Maturity</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Voucher</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Particulars</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Domain</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-center">Protocol</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-right">Income</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-right">Expense</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-20 text-center animate-pulse">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Synchronizing Archive...</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Synchronizing Archive...</p>
                   </td>
                 </tr>
               ) : paginatedTransactions?.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-20 text-center">
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No Records Discovered</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No Records Discovered</p>
                   </td>
                 </tr>
               ) : (
                 paginatedTransactions?.map((txn) => {
                   const isIncome = txn.type === "income" || txn.type === "fee_collection";
                   return (
-                    <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-6 py-5 text-slate-400 font-mono text-[10px] font-bold">{txn.date}</td>
+                    <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-5 text-slate-500 font-mono text-[10px] font-bold">{txn.date}</td>
                       <td className="px-6 py-5">
-                        <span className="text-[9px] font-black uppercase text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200/50 tracking-tighter">
+                        <span className="text-[9px] font-black uppercase text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/50">
                           {txn.voucher_no || "SYS-GEN"}
                         </span>
                       </td>
@@ -178,12 +170,12 @@ export function DayBook() {
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
-                          "text-[9px] font-black uppercase px-2 py-1 rounded-md",
+                          "text-[9px] font-black uppercase px-2 py-1 rounded-lg",
                           isIncome ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"
                         )}>{txn.category}</span>
                       </td>
                       <td className="px-6 py-5 text-center">
-                        <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 px-2.5 py-1 rounded-md tracking-tighter shadow-sm bg-white capitalize">
+                        <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 px-2.5 py-1 rounded-lg bg-white capitalize">
                           {txn.mode}
                         </span>
                       </td>
@@ -200,7 +192,6 @@ export function DayBook() {
             </tbody>
           </table>
         </div>
-        {/* Unified Pagination Framework */}
         <UnifiedPagination
             currentPage={currentPage}
             totalPages={totalPages}

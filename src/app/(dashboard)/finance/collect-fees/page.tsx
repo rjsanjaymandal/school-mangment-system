@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { 
-  Search, 
-  Wallet, 
-  Bell, 
-  Eye, 
-  IndianRupee, 
-  Users, 
-  TrendingUp, 
+import {
+  Search,
+  Wallet,
+  Bell,
+  Eye,
+  IndianRupee,
+  Users,
+  TrendingUp,
   AlertCircle,
   ChevronLeft,
   ChevronRight,
@@ -21,17 +21,7 @@ import {
   CreditCard,
   Activity
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle,
-  SheetDescription
-} from "@/components/ui/sheet";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   useReactTable,
@@ -42,13 +32,11 @@ import {
 } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 
-// Shared UI Framework
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 import { UnifiedPagination } from "@/components/shared/UnifiedPagination";
 import { ERPCard } from "@/components/ui/erp-card";
 
-// --- Types ---
 interface FeeData {
   student_id: string;
   admission_number: string;
@@ -64,31 +52,26 @@ interface FeeData {
 export default function AdvancedFeeCollectionPage() {
   const supabase = createClient();
 
-  // --- State ---
   const [data, setData] = useState<FeeData[]>([]);
   const [totalRowCount, setTotalRowCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  
-  // Pagination State
+
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  // Slide-over Checkout State
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<FeeData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMode, setPaymentMode] = useState("cash");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Micro-metrics State
   const [collectedToday, setCollectedToday] = useState(0);
-  const [totalRealizable, setTotalRealizable] = useState(1250000); // Mocked for design
-  const [defaulterCount, setDefaulterCount] = useState(42); // Mocked for design
+  const [totalRealizable, setTotalRealizable] = useState(1250000);
+  const [defaulterCount, setDefaulterCount] = useState(42);
 
-  // --- Data Fetching ---
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -99,7 +82,7 @@ export default function AdvancedFeeCollectionPage() {
       });
 
       if (error) throw error;
-      
+
       setData(rpcData || []);
       setTotalRowCount(rpcData?.[0]?.total_count || 0);
     } catch (err: any) {
@@ -113,7 +96,6 @@ export default function AdvancedFeeCollectionPage() {
     fetchData();
   }, [fetchData]);
 
-  // --- Actions ---
   const handleOpenCheckout = (student: FeeData) => {
     setSelectedStudent(student);
     setPaymentAmount(student.outstanding_balance.toString());
@@ -141,7 +123,7 @@ export default function AdvancedFeeCollectionPage() {
         description: `₹${paymentAmount} collected via ${paymentMode.toUpperCase()}`,
         icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
       });
-      
+
       setIsCheckoutOpen(false);
       fetchData();
     } catch (err: any) {
@@ -151,8 +133,6 @@ export default function AdvancedFeeCollectionPage() {
     }
   };
 
-
-  // --- Table Configuration ---
   const columns = useMemo<ColumnDef<FeeData>[]>(
     () => [
       {
@@ -179,7 +159,7 @@ export default function AdvancedFeeCollectionPage() {
         header: "Class",
         accessorKey: "class_name",
         cell: ({ row }) => (
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/50">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50">
             {row.original.class_name || "Unassigned"}
           </span>
         ),
@@ -191,7 +171,7 @@ export default function AdvancedFeeCollectionPage() {
           const bal = Number(row.original.outstanding_balance);
           if (bal <= 0) {
             return (
-              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-md tracking-tighter border bg-emerald-50 text-emerald-600 border-emerald-100">
+              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-xl tracking-tighter border bg-emerald-50 text-emerald-600 border-emerald-100">
                 Paid
               </span>
             );
@@ -208,29 +188,19 @@ export default function AdvancedFeeCollectionPage() {
         header: "Actions",
         cell: ({ row }) => (
           <div className="flex items-center justify-end gap-1.5">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 rounded-xl border-emerald-500/20 text-emerald-600 bg-emerald-500/5 hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+            <button
+              className="h-9 w-9 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center"
               onClick={() => handleOpenCheckout(row.original)}
               disabled={Number(row.original.outstanding_balance) <= 0}
             >
               <Wallet className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 rounded-xl border-amber-500/20 text-amber-600 bg-amber-500/5 hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-            >
+            </button>
+            <button className="h-9 w-9 rounded-xl bg-amber-500/5 border border-amber-500/20 text-amber-600 hover:bg-amber-500 hover:text-white transition-all shadow-sm flex items-center justify-center">
               <Bell className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 rounded-xl border-blue-500/20 text-blue-600 bg-blue-500/5 hover:bg-blue-500 hover:text-white transition-all shadow-sm"
-            >
+            </button>
+            <button className="h-9 w-9 rounded-xl bg-blue-500/5 border border-blue-500/20 text-blue-600 hover:bg-blue-500 hover:text-white transition-all shadow-sm flex items-center justify-center">
               <Eye className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
         ),
       },
@@ -250,8 +220,7 @@ export default function AdvancedFeeCollectionPage() {
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
-      {/* Unified Page Header */}
-      <UnifiedPageHeader 
+      <UnifiedPageHeader
         title="Collect Fees"
         subtitle="Manage student fee payments and collection"
         icon={IndianRupee}
@@ -267,66 +236,63 @@ export default function AdvancedFeeCollectionPage() {
         }
       />
 
-      {/* Unified Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <DashboardStatCard 
-          title="Collected Today" 
-          value={`₹${collectedToday.toLocaleString()}`} 
-          icon={Activity} 
-          color="emerald" 
+        <DashboardStatCard
+          title="Collected Today"
+          value={`₹${collectedToday.toLocaleString()}`}
+          icon={Activity}
+          color="emerald"
           description="Total cash/online today"
         />
-        <DashboardStatCard 
-          title="Expected Total" 
-          value={`₹${totalRealizable.toLocaleString()}`} 
-          icon={IndianRupee} 
-          color="blue" 
+        <DashboardStatCard
+          title="Expected Total"
+          value={`₹${totalRealizable.toLocaleString()}`}
+          icon={IndianRupee}
+          color="blue"
           description="Institutional target"
         />
-        <DashboardStatCard 
-          title="Pending Payments" 
-          value={defaulterCount} 
-          icon={Users} 
-          color="amber" 
+        <DashboardStatCard
+          title="Pending Payments"
+          value={defaulterCount}
+          icon={Users}
+          color="amber"
           description="Students with dues"
         />
-        <DashboardStatCard 
-          title="Overdue Fees" 
-          value="₹45.2k" 
-          icon={AlertCircle} 
-          color="rose" 
+        <DashboardStatCard
+          title="Overdue Fees"
+          value="₹45.2k"
+          icon={AlertCircle}
+          color="rose"
           description="Beyond due date"
         />
       </div>
 
-      {/* Search & Action Bar */}
-      <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-sm animate-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-md p-4 rounded-xl border border-slate-200 shadow-sm animate-in slide-in-from-bottom-2 duration-500">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <Input 
-            placeholder="Search by student name, admission # or parent name..." 
+          <Input
+            placeholder="Search by student name, admission # or parent name..."
             className="pl-11 h-12 rounded-xl bg-slate-50/50 border-slate-100 text-xs font-bold"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <Button variant="outline" className="h-12 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-slate-50 shadow-sm flex-1 md:flex-none">
+          <button className="h-12 px-6 rounded-xl bg-white border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all flex-1 md:flex-none flex items-center justify-center">
             <Printer className="h-4 w-4 mr-2" /> Bulk Receipt
-          </Button>
-          <Button className="h-12 px-8 rounded-xl bg-slate-900 text-white hover:bg-black font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 flex-1 md:flex-none">
+          </button>
+          <button className="h-12 px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex-1 md:flex-none">
             Process All
-          </Button>
+          </button>
         </div>
       </div>
 
-      {/* Student List Ledger */}
-      <ERPCard 
-        title="Student List" 
-        description="List of all students and their current fee status" 
-        color="emerald" 
+      <ERPCard
+        title="Student List"
+        description="List of all students and their current fee status"
+        color="emerald"
         icon={<ReceiptText className="h-5 w-5" />}
-        className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+        className="border border-slate-200 shadow-xl rounded-xl overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -371,8 +337,7 @@ export default function AdvancedFeeCollectionPage() {
           </table>
         </div>
 
-        {/* Unified Pagination */}
-        <UnifiedPagination 
+        <UnifiedPagination
           currentPage={pageIndex + 1}
           totalPages={table.getPageCount()}
           onPageChange={(page) => table.setPageIndex(page - 1)}
@@ -383,23 +348,23 @@ export default function AdvancedFeeCollectionPage() {
         />
       </ERPCard>
 
-      {/* Slide-over Payment Checkout */}
-      <Sheet open={isCheckoutOpen} onOpenChange={setIsCheckoutOpen}>
-        <SheetContent className="sm:max-w-md border-l-0 p-0 overflow-hidden bg-slate-50 shadow-2xl">
-          <div className="h-full flex flex-col">
-            <SheetHeader className="p-8 bg-white border-b border-slate-100">
-              <div className="h-14 w-14 rounded-2xl bg-emerald-500 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/20">
+      {/* Payment Checkout Modal */}
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 bg-white border-b border-slate-100">
+              <div className="h-14 w-14 rounded-xl bg-emerald-500 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/20">
                 <IndianRupee className="h-7 w-7 text-white" />
               </div>
-              <SheetTitle className="text-2xl font-black text-slate-900 tracking-tight">Process Payment</SheetTitle>
-              <SheetDescription className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+              <h2 className="text-lg font-black tracking-tight text-slate-900">Process Payment</h2>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
                 Collecting fees for institutional credit
-              </SheetDescription>
-            </SheetHeader>
+              </p>
+            </div>
 
-            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+            <div className="p-6 space-y-6">
               {selectedStudent && (
-                <div className="glass futuristic-card p-6 rounded-2xl border-none shadow-sm space-y-4">
+                <div className="bg-white border border-slate-200 p-6 rounded-xl space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Student</span>
                     <span className="text-sm font-black text-slate-900">{selectedStudent.student_name}</span>
@@ -416,22 +381,22 @@ export default function AdvancedFeeCollectionPage() {
                 </div>
               )}
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Payment Amount</Label>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 ml-1">Payment Amount</label>
                   <div className="relative">
                     <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                    <Input 
-                      type="number" 
-                      value={paymentAmount} 
+                    <Input
+                      type="number"
+                      value={paymentAmount}
                       onChange={(e) => setPaymentAmount(e.target.value)}
-                      className="h-14 pl-12 rounded-2xl border-slate-200 text-lg font-black text-slate-900 shadow-sm focus:ring-emerald-500"
+                      className="h-14 pl-12 rounded-xl border-slate-200 text-lg font-black text-slate-900 shadow-sm focus:ring-emerald-500"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Payment Mode</Label>
+                <div>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1.5 ml-1">Payment Mode</label>
                   <div className="grid grid-cols-2 gap-3">
                     {['cash', 'online', 'cheque', 'transfer'].map((mode) => (
                       <button
@@ -439,8 +404,8 @@ export default function AdvancedFeeCollectionPage() {
                         onClick={() => setPaymentMode(mode)}
                         className={cn(
                           "h-12 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95",
-                          paymentMode === mode 
-                            ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm" 
+                          paymentMode === mode
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
                             : "border-slate-100 text-slate-400 hover:border-slate-200"
                         )}
                       >
@@ -451,7 +416,7 @@ export default function AdvancedFeeCollectionPage() {
                 </div>
               </div>
 
-              <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-100 space-y-3">
+              <div className="p-6 bg-emerald-50 rounded-xl border border-emerald-100 space-y-3">
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="h-5 w-5 text-emerald-600" />
                   <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Secure Transaction</p>
@@ -462,11 +427,11 @@ export default function AdvancedFeeCollectionPage() {
               </div>
             </div>
 
-            <div className="p-8 bg-white border-t border-slate-100">
-              <Button 
+            <div className="p-6 bg-white border-t border-slate-100 space-y-2">
+              <button
                 onClick={handleProcessPayment}
                 disabled={isProcessing || !paymentAmount}
-                className="w-full h-14 rounded-2xl bg-slate-900 text-white hover:bg-black font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 disabled:opacity-50"
+                className="w-full h-14 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-widest px-6 shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center"
               >
                 {isProcessing ? (
                   <>
@@ -477,11 +442,17 @@ export default function AdvancedFeeCollectionPage() {
                     <CheckCircle2 className="h-5 w-5 mr-2" /> Complete Payment
                   </>
                 )}
-              </Button>
+              </button>
+              <button
+                onClick={() => setIsCheckoutOpen(false)}
+                className="w-full h-10 rounded-xl bg-white border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all hover:bg-slate-50"
+              >
+                CANCEL
+              </button>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      )}
     </div>
   );
 }

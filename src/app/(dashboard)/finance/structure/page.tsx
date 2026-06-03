@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Plus, Edit2, Trash2, Building, IndianRupee, ChevronDown, ChevronUp, FileText, LayoutGrid, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useFinanceStore } from "@/lib/store/finance-store";
 import { cn } from "@/lib/utils";
@@ -142,13 +138,13 @@ export default function FeeStructurePage() {
         icon={Building}
         color="emerald"
         actions={
-          <Button
+          <button
             onClick={() => setIsModalOpen(true)}
-            className="h-10 px-6 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-slate-200 transition-all active:scale-95 gap-2"
+            className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 inline mr-2" />
             Assign Fee Head
-          </Button>
+          </button>
         }
       />
 
@@ -160,13 +156,13 @@ export default function FeeStructurePage() {
             description="Assign financial obligations to groups"
             icon={<LayoutGrid className="h-5 w-5" />}
             color="emerald"
-            className="glass futuristic-card border-none shadow-xl rounded-2xl p-6"
+            className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6"
           >
             <div className="space-y-5">
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Medium</Label>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Medium</label>
                 <select
-                  className="w-full h-11 px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold bg-white/50 focus:ring-emerald-500 transition-all"
+                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                   value={formData.medium}
                   onChange={(e) => setFormData({ ...formData, medium: e.target.value })}
                 >
@@ -176,10 +172,10 @@ export default function FeeStructurePage() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Academic Group</Label>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Academic Group</label>
                 <select
-                  className="w-full h-11 px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold bg-white/50 focus:ring-emerald-500 transition-all"
+                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                   value={formData.class_id}
                   onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
                 >
@@ -190,10 +186,10 @@ export default function FeeStructurePage() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Section</Label>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Section</label>
                 <select
-                  className="w-full h-11 px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold bg-white/50 focus:ring-emerald-500 transition-all"
+                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                   value={formData.section_id}
                   onChange={(e) => setFormData({ ...formData, section_id: e.target.value })}
                 >
@@ -204,10 +200,10 @@ export default function FeeStructurePage() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Category Head</Label>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category Head</label>
                 <select
-                  className="w-full h-11 px-4 py-2 border border-slate-200 rounded-xl text-xs font-bold bg-white/50 focus:ring-emerald-500 transition-all"
+                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                   value={formData.fee_head}
                   onChange={(e) => setFormData({ ...formData, fee_head: e.target.value })}
                 >
@@ -218,34 +214,34 @@ export default function FeeStructurePage() {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Amount (₹)</Label>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Amount (₹)</label>
                 <Input
                   type="number"
-                  className="h-11 rounded-xl border-slate-200 text-xs font-bold"
+                  className="h-11 rounded-xl border-slate-200 text-sm font-bold"
                   placeholder="0.00"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Maturity Date</Label>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Maturity Date</label>
                 <Input
                   type="date"
-                  className="h-11 rounded-xl border-slate-200 text-xs font-bold uppercase tracking-tighter"
+                  className="h-11 rounded-xl border-slate-200 text-sm font-bold"
                   value={formData.due_date}
                   onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                 />
               </div>
 
-              <Button
+              <button
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="w-full h-12 rounded-xl bg-slate-900 hover:bg-black text-white font-black text-[10px] uppercase tracking-widest shadow-xl transition-all active:scale-95 mt-4"
+                className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 w-full mt-4"
               >
                 {isLoading ? "Executing..." : "Authorize Allocation"}
-              </Button>
+              </button>
             </div>
           </ERPCard>
         </div>
@@ -257,7 +253,7 @@ export default function FeeStructurePage() {
             description="Verified fee distributions per academic group"
             icon={<FileText className="h-5 w-5" />}
             color="blue"
-            className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
+            className="bg-white border border-slate-200 rounded-xl overflow-hidden"
           >
             <div className="divide-y divide-slate-100">
               {groupedByClass.length === 0 ? (
@@ -308,39 +304,39 @@ export default function FeeStructurePage() {
                         <div className="p-6 bg-slate-50/30 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
                           <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white">
                             <table className="w-full text-left">
-                              <thead className="bg-slate-50/80 border-b border-slate-100 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                              <thead className="bg-slate-50/80 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500">
                                 <tr>
-                                  <th className="px-6 py-4">Context</th>
-                                  <th className="px-6 py-4">Identity</th>
-                                  <th className="px-6 py-4 text-right">Value</th>
-                                  <th className="px-6 py-4 text-right">Maturity</th>
-                                  <th className="px-6 py-4 text-center">Ops</th>
+                                  <th className="py-4 px-4">Context</th>
+                                  <th className="py-4 px-4">Identity</th>
+                                  <th className="py-4 px-4 text-right">Value</th>
+                                  <th className="py-4 px-4 text-right">Maturity</th>
+                                  <th className="py-4 px-4 text-center">Ops</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-slate-100">
                                 {group.structures.map((structure) => (
                                   <tr key={structure.id} className="hover:bg-slate-50/50 transition-colors">
-                                    <td className="px-6 py-4">
+                                    <td className="py-4 px-4">
                                        <span className="text-[9px] font-black uppercase text-slate-500">{structure.medium}</span>
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="py-4 px-4">
                                       <span className="text-sm font-bold text-slate-900 tracking-tight">{structure.fee_type}</span>
                                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{structure.section_id ? `Section ${structure.section_id}` : "Global"}</p>
                                     </td>
-                                    <td className="px-6 py-4 text-right font-black text-slate-900 text-sm">
+                                    <td className="py-4 px-4 text-right font-black text-slate-900 text-sm">
                                       ₹{structure.amount?.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-[10px] font-mono font-bold text-slate-400">
+                                    <td className="py-4 px-4 text-right text-[10px] font-mono font-bold text-slate-400">
                                       {structure.due_date || "—"}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="py-4 px-4">
                                       <div className="flex items-center justify-center gap-1">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-slate-100 rounded-lg">
+                                        <button className="h-8 w-8 hover:bg-slate-100 rounded-lg flex items-center justify-center">
                                           <Edit2 className="h-3 w-3 text-slate-400" />
-                                        </Button>
-                                        <Button variant="ghost" size="icon" onClick={() => handleDelete(structure.id)} className="h-8 w-8 hover:bg-rose-50 rounded-lg group/del">
+                                        </button>
+                                        <button onClick={() => handleDelete(structure.id)} className="h-8 w-8 hover:bg-rose-50 rounded-lg flex items-center justify-center group/del">
                                           <Trash2 className="h-3 w-3 text-slate-400 group-hover/del:text-rose-500" />
-                                        </Button>
+                                        </button>
                                       </div>
                                     </td>
                                   </tr>
@@ -360,53 +356,48 @@ export default function FeeStructurePage() {
       </div>
 
       {/* Assign Modal - Refined */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden border-none shadow-2xl rounded-3xl">
-          <div className="p-8 border-b border-slate-100 bg-slate-50/50">
-             <DialogHeader>
-               <DialogTitle className="text-2xl font-black text-slate-900 tracking-tight">Allocate Distribution</DialogTitle>
-               <DialogDescription className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">
-                 Assign financial heads to academic groups
-               </DialogDescription>
-             </DialogHeader>
-          </div>
-          <div className="p-8 space-y-5">
-            {/* Reusing the same logic but condensed */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-black tracking-tight text-slate-900">Allocate Distribution</h3>
+              <button onClick={() => setIsModalOpen(false)} className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600">&times;</button>
+            </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] font-black text-slate-400 ml-1 uppercase">Academic Group</Label>
-                  <select className="w-full h-11 px-4 py-2 border rounded-xl text-xs font-bold" value={formData.class_id} onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}>
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Academic Group</label>
+                  <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={formData.class_id} onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}>
                     <option value="">Select</option>
                     {classes.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                   </select>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-[10px] font-black text-slate-400 ml-1 uppercase">Section</Label>
-                  <select className="w-full h-11 px-4 py-2 border rounded-xl text-xs font-bold" value={formData.section_id} onChange={(e) => setFormData({ ...formData, section_id: e.target.value })}>
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Section</label>
+                  <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={formData.section_id} onChange={(e) => setFormData({ ...formData, section_id: e.target.value })}>
                     <option value="">Global</option>
                     {sections.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 ml-1 uppercase">Category Head</Label>
-                <select className="w-full h-11 px-4 py-2 border rounded-xl text-xs font-bold" value={formData.fee_head} onChange={(e) => setFormData({ ...formData, fee_head: e.target.value })}>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category Head</label>
+                <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={formData.fee_head} onChange={(e) => setFormData({ ...formData, fee_head: e.target.value })}>
                   <option value="">Select category</option>
                   {feeHeads.map(h => <option key={h.id} value={h.name}>{h.name}</option>)}
                 </select>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-slate-400 ml-1 uppercase">Value (₹)</Label>
-                <Input type="number" className="h-11 rounded-xl" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Value (₹)</label>
+                <Input type="number" className="h-11 rounded-xl border-slate-200 text-sm font-bold" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
               </div>
-              <Button onClick={handleSubmit} disabled={isLoading} className="w-full h-12 bg-slate-900 rounded-xl font-black text-[10px] uppercase tracking-widest text-white shadow-xl mt-4">
+              <button onClick={handleSubmit} disabled={isLoading} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 w-full mt-4">
                 Authorize Allocation
-              </Button>
+              </button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,24 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Calendar, CheckCircle, XCircle, Clock, User, MapPin, Activity, ShieldCheck, Search, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-// Shared UI Framework
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
-import { ERPCard } from "@/components/ui/erp-card";
 
 const STATUS_OPTIONS = [
-  { value: "present", label: "Present", icon: CheckCircle, color: "bg-emerald-50 text-emerald-600 border-emerald-100" },
-  { value: "absent", label: "Absent", icon: XCircle, color: "bg-rose-50 text-rose-600 border-rose-100" },
-  { value: "on_leave", label: "On Leave", icon: Clock, color: "bg-amber-50 text-amber-600 border-amber-100" },
-  { value: "late", label: "Late", icon: Clock, color: "bg-orange-50 text-orange-600 border-orange-100" },
-  { value: "half_day", label: "Half Day", icon: Clock, color: "bg-blue-50 text-blue-600 border-blue-100" },
+  { value: "present", label: "Present", icon: CheckCircle, color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+  { value: "absent", label: "Absent", icon: XCircle, color: "bg-rose-50 text-rose-600 border-rose-200" },
+  { value: "on_leave", label: "On Leave", icon: Clock, color: "bg-amber-50 text-amber-600 border-amber-200" },
+  { value: "late", label: "Late", icon: Clock, color: "bg-orange-50 text-orange-600 border-orange-200" },
+  { value: "half_day", label: "Half Day", icon: Clock, color: "bg-blue-50 text-blue-600 border-blue-200" },
 ];
 
 export default function StaffAttendancePage() {
@@ -29,11 +25,9 @@ export default function StaffAttendancePage() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadStaffAndAttendance();
-  }, [selectedDate]);
+  const loadKey = useRef(0);
 
-  async function loadStaffAndAttendance() {
+  const loadStaffAndAttendance = useCallback(async () => {
     setLoading(true);
     try {
       const { data: staffData } = await supabase
@@ -66,7 +60,13 @@ export default function StaffAttendancePage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [selectedDate, supabase]);
+
+  useEffect(() => {
+    loadKey.current += 1;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadStaffAndAttendance();
+  }, [loadStaffAndAttendance]);
 
   async function markAttendance(staffId: string, status: string) {
     setSaving(true);
@@ -109,14 +109,13 @@ export default function StaffAttendancePage() {
 
   return (
     <div className="p-6 space-y-8 animate-in fade-in duration-700">
-      {/* Unified Page Header */}
       <UnifiedPageHeader 
         title="Attendance"
         subtitle="Track daily staff attendance and manage substitutions"
         icon={Users}
         color="emerald"
         actions={
-          <div className="flex items-center gap-4 bg-white/80 backdrop-blur-md p-2 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-4 bg-white/80 backdrop-blur-md p-2 rounded-xl border border-slate-200 shadow-sm">
             <input
               type="date"
               value={selectedDate}
@@ -127,7 +126,6 @@ export default function StaffAttendancePage() {
         }
       />
 
-      {/* Stats Matrix */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <DashboardStatCard 
           title="Present" 
@@ -169,24 +167,34 @@ export default function StaffAttendancePage() {
       <div className="space-y-8 pb-20">
         <div className="flex items-center gap-6 mb-8">
             <div className="flex flex-col">
-                <h3 className="text-[10px] font-black tracking-[0.25em] text-slate-400 dark:text-slate-500 uppercase leading-none mb-2">
+                <h3 className="text-[10px] font-black tracking-[0.25em] text-slate-400 uppercase leading-none mb-2">
                     Daily Roster
                 </h3>
-                <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
+                <h2 className="text-lg font-black text-slate-900 tracking-tight leading-none">
                     Attendance Registry
                 </h2>
             </div>
-            <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent" />
+            <div className="h-px flex-1 bg-gradient-to-r from-slate-200 to-transparent" />
         </div>
 
         {loading ? (
-          <div className="p-24 text-center flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem]">
-            <div className="h-12 w-12 border-4 border-slate-100 border-t-emerald-500 rounded-full animate-spin mb-6" />
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Scanning staff database...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6 animate-pulse">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-14 w-14 rounded-xl bg-slate-200" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-slate-200 rounded w-3/4" />
+                    <div className="h-3 bg-slate-100 rounded w-1/2" />
+                  </div>
+                </div>
+                <div className="h-10 bg-slate-100 rounded-xl" />
+              </div>
+            ))}
           </div>
         ) : staffList.length === 0 ? (
-          <div className="p-24 text-center flex flex-col items-center justify-center bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem]">
-            <Users className="h-16 w-16 text-slate-200 dark:text-slate-700 mb-6" />
+          <div className="p-16 text-center flex flex-col items-center justify-center bg-white border border-slate-200 rounded-xl">
+            <Users className="h-16 w-16 text-slate-200 mb-6" />
             <p className="text-xs font-black text-slate-400 uppercase tracking-widest">No active faculty found</p>
           </div>
         ) : (
@@ -196,73 +204,59 @@ export default function StaffAttendancePage() {
               return (
                 <div 
                   key={staff.id} 
-                  className="group relative flex flex-col p-6 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800/60 rounded-[2rem] hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/5 overflow-hidden animate-in slide-in-from-bottom-8 fade-in fill-mode-both"
-                  style={{ animationDelay: `${idx * 50}ms` }}
+                  className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6 hover:border-emerald-300 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-4 mb-6 relative z-10">
-                    <div className="h-14 w-14 rounded-2xl bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 flex items-center justify-center font-black text-lg shadow-sm ring-1 ring-slate-100 dark:ring-slate-800 group-hover:bg-emerald-500 group-hover:text-white group-hover:ring-emerald-500 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="h-14 w-14 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center font-black text-lg border border-slate-100">
                       {staff.first_name[0]}{staff.last_name?.[0]}
                     </div>
                     <div>
-                      <h3 className="font-black text-slate-900 dark:text-white text-base tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                      <h3 className="font-black text-slate-900 text-sm tracking-tight">
                         {staff.first_name} {staff.last_name}
                       </h3>
-                      <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                         {staff.designations?.name || "Teacher"}
                       </p>
                     </div>
                   </div>
 
-                  <div className="relative z-10 mt-auto">
+                  <div>
                     {currentStatus ? (
                       <div className="flex gap-2">
                         <div className={cn(
-                          "flex-1 px-4 py-3 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all duration-500",
+                          "flex-1 px-4 py-3 rounded-xl text-center text-[10px] font-black uppercase tracking-widest border",
                           STATUS_OPTIONS.find(s => s.value === currentStatus)?.color || "bg-slate-100 text-slate-500 border-slate-200"
                         )}>
                           {STATUS_OPTIONS.find(s => s.value === currentStatus)?.label || currentStatus}
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-[38px] w-[38px] rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                        <button 
+                          className="h-[38px] w-[38px] rounded-xl border border-slate-200 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors flex items-center justify-center"
                           onClick={() => markAttendance(staff.id, "")}
                           disabled={saving}
                         >
                           <XCircle className="h-4 w-4" />
-                        </Button>
+                        </button>
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
                         {STATUS_OPTIONS.slice(0, 3).map((option) => (
-                          <Button
+                          <button
                             key={option.value}
-                            variant="outline"
                             className={cn(
-                              "flex-1 h-10 px-0 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 border-slate-200/60 dark:border-slate-800",
-                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 dark:hover:bg-emerald-500/10 dark:hover:border-emerald-500/30" :
-                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-500/10 dark:hover:border-rose-500/30" :
-                              "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 dark:hover:bg-amber-500/10 dark:hover:border-amber-500/30"
+                              "flex-1 h-10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border border-slate-200 text-slate-700",
+                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200" :
+                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200" :
+                              "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200"
                             )}
                             onClick={() => markAttendance(staff.id, option.value)}
                             disabled={saving}
                           >
                             {option.label}
-                          </Button>
+                          </button>
                         ))}
                       </div>
                     )}
                   </div>
-                  
-                  {/* Decorative Bottom Bar */}
-                  <div className={cn(
-                    "absolute bottom-0 left-0 h-1 transition-all duration-700 delay-100",
-                    currentStatus ? "w-full" : "w-0 group-hover:w-full",
-                    currentStatus === "present" ? "bg-emerald-500" :
-                    currentStatus === "absent" ? "bg-rose-500" :
-                    currentStatus === "on_leave" ? "bg-amber-500" :
-                    "bg-slate-200"
-                  )} />
                 </div>
               );
             })}
