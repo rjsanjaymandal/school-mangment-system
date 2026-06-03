@@ -2,416 +2,434 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-    MessageSquare,
-    Send,
-    Search,
-    Plus,
-    SendHorizontal,
-    Paperclip,
-    Smile,
-    CheckCheck,
-    Inbox,
-    Mail,
-    ArrowLeft,
-    MoreVertical,
-    Phone,
-    Video
+  MessageSquare,
+  Send,
+  Search,
+  Plus,
+  SendHorizontal,
+  Inbox,
+  Mail,
+  ArrowLeft,
+  Users,
+  CheckCheck,
+  AlertCircle,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { sendMessage, markMessageRead } from "@/app/actions/modules";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { MessagesService } from "@/lib/services/messages";
-import { format, isToday, isYesterday } from "date-fns";
+import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
+import { ERPCard } from "@/components/ui/erp-card";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
 interface MessagesDashboardProps {
-    initialConversations: any[];
-    contacts: any[];
-    currentUserId: string;
+  initialConversations: any[];
+  contacts: any[];
+  currentUserId: string;
+}
+
+const PRIORITIES = [
+  { id: "low", label: "Low", color: "bg-slate-400" as const },
+  { id: "normal", label: "Normal", color: "bg-blue-500" as const },
+  { id: "high", label: "High", color: "bg-amber-500" as const },
+  { id: "urgent", label: "Urgent", color: "bg-rose-500" as const },
+];
+
+function PriorityBadge({ priority }: { priority?: string }) {
+  if (!priority || priority === "normal") return null;
+  const meta = PRIORITIES.find((p) => p.id === priority);
+  if (!meta) return null;
+  return (
+    <Badge className={cn("text-[8px] px-1.5 py-0.5 font-black uppercase tracking-widest border-none text-white", meta.color)}>
+      {meta.label}
+    </Badge>
+  );
 }
 
 export function MessagesDashboard({ initialConversations, contacts, currentUserId }: MessagesDashboardProps) {
-    const router = useRouter();
-    const [selectedConversation, setSelectedConversation] = useState<any>(null);
-    const [messages, setMessages] = useState<any[]>([]);
-    const [newMessage, setNewMessage] = useState("");
-    const [searchTerm, setSearchTerm] = useState("");
-    const [sentMessages, setSentMessages] = useState<any[]>([]);
-    
-    const [composeForm, setComposeForm] = useState({ 
-        receiver_id: "", 
-        subject: "", 
-        body: ""
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("inbox");
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sentMessages, setSentMessages] = useState<any[]>([]);
+  const [composeForm, setComposeForm] = useState({ receiver_id: "", subject: "", body: "", priority: "normal" });
+  const [sending, setSending] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (activeTab === "sent") {
+      (async () => {
+        const result = await MessagesService.getAllMessages({ sender_id: currentUserId });
+        if (result.data) setSentMessages(result.data);
+      })();
+    }
+  }, [activeTab, currentUserId]);
+
+  const loadConversation = useCallback(async (contactId: string) => {
+    const result = await MessagesService.getConversationMessages(currentUserId, contactId);
+    if (result.data) {
+      setMessages(result.data);
+      const lastMsg = result.data[result.data.length - 1];
+      if (lastMsg && !lastMsg.is_read && lastMsg.receiver_id === currentUserId) {
+        await markMessageRead(lastMsg.id);
+      }
+    }
+  }, [currentUserId]);
+
+  const handleSelectConversation = useCallback((conv: any) => {
+    setSelectedConversation(conv);
+    if (conv) {
+      void loadConversation(conv.contact.id);
+    }
+  }, [loadConversation]);
+
+  const handleSend = async () => {
+    if (!newMessage.trim() || !selectedConversation) return;
+    const optimisticMsg = {
+      id: Date.now().toString(),
+      sender_id: currentUserId,
+      receiver_id: selectedConversation.contact.id,
+      content: newMessage,
+      body: newMessage,
+      subject: selectedConversation.last_message?.subject || null,
+      created_at: new Date().toISOString(),
+      is_read: true,
+      sender: { full_name: "You" },
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+    setNewMessage("");
+    const result = await sendMessage({
+      receiver_id: selectedConversation.contact.id,
+      subject: selectedConversation.last_message?.subject || "Direct Message",
+      body: newMessage,
     });
-    const [sending, setSending] = useState(false);
-    
-    const scrollRef = useRef<HTMLDivElement>(null);
+    if (result.success) {
+      toast.success("Message sent");
+      router.refresh();
+    } else {
+      toast.error("Failed to send");
+    }
+  };
 
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    }, [messages]);
+  const handleCompose = async () => {
+    if (!composeForm.receiver_id || !composeForm.body) {
+      toast.error("Fill recipient and message");
+      return;
+    }
+    setSending(true);
+    const result = await sendMessage({
+      receiver_id: composeForm.receiver_id,
+      subject: composeForm.subject,
+      body: composeForm.body,
+      priority: composeForm.priority,
+    });
+    setSending(false);
+    if (result.success) {
+      toast.success("Message sent");
+      setComposeForm({ receiver_id: "", subject: "", body: "", priority: "normal" });
+      setActiveTab("sent");
+      router.refresh();
+    } else {
+      toast.error("Failed to send");
+    }
+  };
 
-    const loadConversation = useCallback(async (contactId: string) => {
-        const result = await MessagesService.getConversationMessages(currentUserId, contactId);
-        if (result.data) {
-            setMessages(result.data);
-            const lastMsg = result.data[result.data.length - 1];
-            if (lastMsg && !lastMsg.is_read && lastMsg.receiver_id === currentUserId) {
-                await markMessageRead(lastMsg.id);
-            }
-        }
-    }, [currentUserId]);
+  const formatTime = (date: string) => {
+    const d = new Date(date);
+    if (isToday(d)) return format(d, "HH:mm");
+    if (isYesterday(d)) return "Yesterday";
+    return format(d, "MMM d");
+  };
 
-    const handleSelectConversation = useCallback((conv: any) => {
-        setSelectedConversation(conv);
-        if (conv) {
-            void loadConversation(conv.contact.id);
-        }
-    }, [loadConversation]);
+  const filteredConversations = initialConversations.filter((c) =>
+    c.contact?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
-    useEffect(() => {
-        const loadSent = async () => {
-            const result = await MessagesService.getAllMessages({ sender_id: currentUserId });
-            if (result.data) setSentMessages(result.data);
-        };
-        loadSent();
-    }, [currentUserId]);
+  const totalUnread = initialConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
+  const totalSent = sentMessages.length;
+  const totalConversations = initialConversations.length;
 
-    const handleSend = async () => {
-        if (!newMessage.trim() || !selectedConversation) return;
-        
-        const optimisticMsg = {
-            id: Date.now().toString(),
-            sender_id: currentUserId,
-            receiver_id: selectedConversation.contact.id,
-            content: newMessage,
-            body: newMessage,
-            created_at: new Date().toISOString(),
-            is_read: true,
-            sender: { full_name: "You" }
-        };
+  return (
+    <div className="space-y-6 animate-in fade-in duration-700 mt-6">
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <DashboardStatCard title="Conversations" value={totalConversations} icon={MessageSquare} color="blue" description="Active threads" />
+        <DashboardStatCard title="Unread" value={totalUnread} icon={Inbox} color="amber" description="Awaiting reply" />
+        <DashboardStatCard title="Sent" value={totalSent} icon={Send} color="emerald" description="Messages sent" />
+        <DashboardStatCard title="Contacts" value={contacts.length} icon={Users} color="purple" description="Available people" />
+      </div>
 
-        setMessages(prev => [...prev, optimisticMsg]);
-        setNewMessage("");
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-0">
+        {[
+          { id: "inbox", label: "Inbox", icon: Inbox, badge: totalUnread },
+          { id: "sent", label: "Sent", icon: Send, badge: 0 },
+          { id: "compose", label: "New Message", icon: Plus, badge: 0 },
+        ].map((tab) => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+            className={cn("flex items-center gap-2 px-4 py-3 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all",
+              activeTab === tab.id ? "border-blue-600 text-blue-600" : "border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-300")}>
+            <tab.icon className="h-4 w-4" /> {tab.label}
+            {tab.badge > 0 && <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 font-black border-none">{tab.badge}</Badge>}
+          </button>
+        ))}
+      </div>
 
-        const result = await sendMessage({
-            receiver_id: selectedConversation.contact.id,
-            subject: selectedConversation.last_message?.subject || "Direct Message",
-            body: newMessage
-        });
-        
-        if (result.success) {
-            toast.success("Message sent");
-            router.refresh();
-        } else {
-            toast.error("Failed to send");
-        }
-    };
-
-    const handleCompose = async () => {
-        if (!composeForm.receiver_id || !composeForm.body) {
-            toast.error("Fill recipient and message");
-            return;
-        }
-        setSending(true);
-        const result = await sendMessage({
-            receiver_id: composeForm.receiver_id,
-            subject: composeForm.subject,
-            body: composeForm.body
-        });
-        setSending(false);
-        if (result.success) {
-            toast.success("Message sent");
-            setComposeForm({ receiver_id: "", subject: "", body: "" });
-            router.refresh();
-        } else {
-            toast.error("Failed to send");
-        }
-    };
-
-    const formatTime = (date: string) => {
-        const d = new Date(date);
-        if (isToday(d)) return format(d, "HH:mm");
-        if (isYesterday(d)) return "Yesterday";
-        return format(d, "MMM d");
-    };
-
-    const filteredConversations = initialConversations.filter(c => 
-        c.contact?.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const totalUnread = initialConversations.reduce((sum, c) => sum + (c.unread_count || 0), 0);
-
-    return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Tabs defaultValue="inbox" className="w-full">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                    <TabsList className="bg-muted/80 backdrop-blur-sm p-1 h-auto border border-border/50 rounded-xl">
-                        <TabsTrigger value="inbox" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2.5 gap-2 text-xs font-semibold">
-                            <Inbox className="w-4 h-4" />
-                            <span>Inbox</span>
-                            {totalUnread > 0 && (
-                                <Badge className="ml-1 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                                    {totalUnread}
-                                </Badge>
-                            )}
-                        </TabsTrigger>
-                        <TabsTrigger value="sent" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2.5 gap-2 text-xs font-semibold">
-                            <Send className="w-4 h-4" />
-                            <span>Sent</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="compose" className="data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg px-4 py-2.5 gap-2 text-xs font-semibold">
-                            <Plus className="w-4 h-4" />
-                            <span>New Message</span>
-                        </TabsTrigger>
-                    </TabsList>
+      {/* Inbox */}
+      {activeTab === "inbox" && (
+        <ERPCard title="Inbox" description="Your conversations" color="blue" icon={<Inbox className="h-5 w-5" />}
+          className="border-none shadow-xl rounded-2xl overflow-hidden">
+          <div className="flex h-[calc(100vh-340px)]">
+            <div className={cn("w-80 border-r border-slate-100 flex flex-col bg-white/40 shrink-0",
+              selectedConversation ? "hidden md:flex" : "w-full")}>
+              <div className="p-4 border-b border-slate-100">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search conversations..." className="pl-11 h-10 rounded-xl bg-white border-slate-200 text-xs font-bold shadow-sm" />
                 </div>
-
-                <TabsContent value="inbox" className="outline-none">
-                    <div className="glass futuristic-card rounded-2xl overflow-hidden flex h-[calc(100vh-280px)]">
-                        {/* Conversation List */}
-                        <div className={cn(
-                            "w-80 border-r border-slate-200/60 flex flex-col bg-white/40",
-                            selectedConversation ? "hidden md:flex" : "w-full"
-                        )}>
-                            <div className="p-4 border-b border-slate-200/60">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input 
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        placeholder="Search..." 
-                                        className="pl-10 h-9 rounded-lg bg-muted/50 border-transparent focus:bg-white"
-                                    />
-                                </div>
+              </div>
+              <ScrollArea className="flex-1">
+                {filteredConversations.length === 0 ? (
+                  <div className="p-12 text-center flex flex-col items-center">
+                    <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+                      <Mail className="h-6 w-6 text-slate-300" />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No conversations</p>
+                  </div>
+                ) : (
+                  <div className="p-2 space-y-1">
+                    {filteredConversations.map((conv) => {
+                      const isSelected = selectedConversation?.contact?.id === conv.contact.id;
+                      const hasUnread = conv.unread_count > 0;
+                      const lastPriority = conv.last_message?.priority;
+                      return (
+                        <button key={conv.contact.id} onClick={() => handleSelectConversation(conv)}
+                          className={cn("w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all",
+                            isSelected ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20" : hasUnread ? "bg-blue-50/70" : "hover:bg-slate-50")}>
+                          <div className={cn("h-10 w-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 shadow-sm",
+                            isSelected ? "bg-white text-blue-600" : hasUnread ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-600")}>
+                            {conv.contact.full_name?.[0] || "?"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-0.5">
+                              <span className={cn("text-sm font-bold truncate flex items-center gap-1.5", isSelected ? "text-white" : "text-slate-900")}>
+                                {conv.contact.full_name}
+                                {lastPriority && lastPriority !== "normal" && <PriorityBadge priority={lastPriority} />}
+                              </span>
+                              <span className={cn("text-[10px] font-semibold shrink-0 ml-2", isSelected ? "text-white/60" : "text-slate-400")}>
+                                {conv.last_message?.created_at ? formatTime(conv.last_message.created_at) : ""}
+                              </span>
                             </div>
-                            <ScrollArea className="flex-1">
-                                {filteredConversations.length === 0 ? (
-                                    <div className="p-8 text-center">
-                                        <Mail className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                                        <p className="text-sm text-muted-foreground">No messages</p>
-                                    </div>
-                                ) : (
-                                    filteredConversations.map((conv) => {
-                                        const isSelected = selectedConversation?.contact?.id === conv.contact.id;
-                                        const hasUnread = conv.unread_count > 0;
-                                        return (
-                                            <button
-                                                key={conv.contact.id}
-                                                onClick={() => handleSelectConversation(conv)}
-                                                className={cn(
-                                                    "w-full flex items-center gap-3 p-4 text-left border-b border-slate-100/50 transition-all",
-                                                    isSelected ? "bg-blue-500 text-white" : hasUnread ? "bg-blue-50/50" : "hover:bg-slate-50"
-                                                )}
-                                            >
-                                                <div className={cn(
-                                                    "h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
-                                                    isSelected ? "bg-white text-blue-500" : hasUnread ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-600"
-                                                )}>
-                                                    {conv.contact.full_name?.[0] || "?"}
-                                                </div>
-                                                <div className="flex-1 min-w-0 text-left">
-                                                    <div className="flex justify-between items-center mb-0.5">
-                                                        <span className={cn("text-sm font-semibold truncate", isSelected ? "text-white" : "text-slate-900")}>
-                                                            {conv.contact.full_name}
-                                                        </span>
-                                                        <span className={cn("text-[10px]", isSelected ? "text-white/60" : "text-muted-foreground")}>
-                                                            {conv.last_message?.created_at ? formatTime(conv.last_message.created_at) : ""}
-                                                        </span>
-                                                    </div>
-                                                    <p className={cn("text-xs truncate", isSelected ? "text-white/60" : "text-muted-foreground")}>
-                                                        {conv.last_message?.subject || "Direct message"}
-                                                    </p>
-                                                </div>
-                                                {hasUnread && !isSelected && (
-                                                    <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
-                                                )}
-                                            </button>
-                                        );
-                                    })
-                                )}
-                            </ScrollArea>
-                        </div>
+                            <p className={cn("text-xs truncate", isSelected ? "text-white/60" : "text-slate-500")}>
+                              {conv.last_message?.subject || "Direct message"}
+                            </p>
+                          </div>
+                          {hasUnread && !isSelected && <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </ScrollArea>
+            </div>
 
-                        {/* Chat Area */}
-                        <div className={cn("flex-1 flex flex-col bg-white/20", !selectedConversation ? "hidden md:flex" : "flex")}>
-                            {selectedConversation ? (
-                                <>
-                                    <div className="p-4 border-b border-slate-200/60 bg-white/50 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={() => handleSelectConversation(null)}>
-                                                <ArrowLeft className="h-4 w-4" />
-                                            </Button>
-                                            <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
-                                                {selectedConversation.contact.full_name[0]}
-                                            </div>
-                                            <div>
-                                                <p className="font-semibold text-sm">{selectedConversation.contact.full_name}</p>
-                                                <p className="text-xs text-muted-foreground capitalize">{selectedConversation.contact.role}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-1">
-                                            <Button variant="ghost" size="icon" className="h-9 w-9"><Phone className="h-4 w-4" /></Button>
-                                            <Button variant="ghost" size="icon" className="h-9 w-9"><Video className="h-4 w-4" /></Button>
-                                            <Button variant="ghost" size="icon" className="h-9 w-9"><MoreVertical className="h-4 w-4" /></Button>
-                                        </div>
-                                    </div>
+            <div className={cn("flex-1 flex flex-col bg-white/20", !selectedConversation ? "hidden md:flex" : "flex")}>
+              {selectedConversation ? (
+                <>
+                  <div className="px-5 py-4 border-b border-slate-100 bg-white/50 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg md:hidden" onClick={() => handleSelectConversation(null as any)}>
+                        <ArrowLeft className="h-4 w-4" />
+                      </Button>
+                      <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold shadow-sm">
+                        {selectedConversation.contact.full_name[0]}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-slate-900">{selectedConversation.contact.full_name}</p>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{selectedConversation.contact.role || "Staff"}</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-200 text-slate-400">
+                      {selectedConversation.last_message?.created_at
+                        ? formatDistanceToNow(new Date(selectedConversation.last_message.created_at), { addSuffix: true })
+                        : "No recent activity"}
+                    </Badge>
+                  </div>
 
-                                    <ScrollArea className="flex-1 p-6" viewportRef={scrollRef}>
-                                        <div className="space-y-4 max-w-2xl mx-auto">
-                                            {messages.map((msg) => {
-                                                const isMe = msg.sender_id === currentUserId;
-                                                return (
-                                                    <div key={msg.id} className={cn("flex items-end gap-2", isMe ? "justify-end" : "justify-start")}>
-                                                        {!isMe && (
-                                                            <div className="h-7 w-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">
-                                                                {msg.sender?.full_name?.[0] || "?"}
-                                                            </div>
-                                                        )}
-                                                        <div className={cn(
-                                                            "px-4 py-2.5 rounded-2xl text-sm max-w-[70%]",
-                                                            isMe ? "bg-blue-500 text-white rounded-br-md" : "bg-white text-slate-700 border border-slate-100 rounded-bl-md"
-                                                        )}>
-                                                            {msg.subject && <p className="text-xs font-semibold mb-1 opacity-60">{msg.subject}</p>}
-                                                            <p className="whitespace-pre-wrap">{msg.content || msg.body}</p>
-                                                            <p className={cn("text-[10px] mt-1", isMe ? "text-white/50" : "text-slate-400")}>
-                                                                {format(new Date(msg.created_at), "HH:mm")}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </ScrollArea>
-
-                                    <div className="p-4 bg-white/50 border-t border-slate-200/60">
-                                        <div className="max-w-2xl mx-auto flex items-center gap-2">
-                                            <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0"><Paperclip className="h-4 w-4" /></Button>
-                                            <Input 
-                                                value={newMessage}
-                                                onChange={(e) => setNewMessage(e.target.value)}
-                                                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                                                placeholder="Type a message..." 
-                                                className="flex-1 rounded-lg"
-                                            />
-                                            <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0"><Smile className="h-4 w-4" /></Button>
-                                            <Button onClick={handleSend} disabled={!newMessage.trim()} className="h-9 w-9 p-0 bg-blue-500 hover:bg-blue-600 shrink-0">
-                                                <SendHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="flex-1 flex items-center justify-center">
-                                    <div className="text-center">
-                                        <MessageSquare className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
-                                        <p className="font-semibold">Select a conversation</p>
-                                        <p className="text-sm text-muted-foreground mt-1">Choose from the list to start chatting</p>
-                                    </div>
-                                </div>
+                  <ScrollArea className="flex-1 p-5" viewportRef={scrollRef}>
+                    <div className="space-y-4 max-w-2xl mx-auto">
+                      {messages.map((msg) => {
+                        const isMe = msg.sender_id === currentUserId;
+                        return (
+                          <div key={msg.id} className={cn("flex items-end gap-2", isMe ? "justify-end" : "justify-start")}>
+                            {!isMe && (
+                              <div className="h-7 w-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold shrink-0">
+                                {msg.sender?.full_name?.[0] || "?"}
+                              </div>
                             )}
-                        </div>
+                            <div className={cn("px-4 py-3 rounded-2xl text-sm max-w-[70%]",
+                              isMe ? "bg-blue-500 text-white rounded-br-md shadow-lg shadow-blue-500/20" : "bg-white text-slate-700 border border-slate-100 rounded-bl-md shadow-sm")}>
+                              <div className="flex items-center gap-2 mb-1">
+                                {msg.subject && <p className={cn("text-[10px] font-black uppercase tracking-widest", isMe ? "text-blue-200" : "text-slate-400")}>{msg.subject}</p>}
+                                {msg.priority && msg.priority !== "normal" && <PriorityBadge priority={msg.priority} />}
+                              </div>
+                              <p className="whitespace-pre-wrap">{msg.content || msg.body}</p>
+                              <div className={cn("flex items-center gap-1.5 mt-2", isMe ? "justify-end" : "justify-start")}>
+                                <span className={cn("text-[9px] font-semibold", isMe ? "text-blue-200" : "text-slate-400")}>
+                                  {format(new Date(msg.created_at), "HH:mm")}
+                                </span>
+                                {isMe && <CheckCheck className="h-3 w-3 text-blue-200" />}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                </TabsContent>
+                  </ScrollArea>
 
-                <TabsContent value="sent" className="outline-none">
-                    <div className="glass futuristic-card rounded-2xl overflow-hidden">
-                        <div className="p-4 border-b border-slate-200/60">
-                            <h3 className="text-sm font-semibold flex items-center gap-2">
-                                <span className="w-1 h-4 bg-emerald-500 rounded-full" />
-                                Sent Messages
-                            </h3>
-                        </div>
-                        <ScrollArea className="h-[calc(100vh-340px)]">
-                            {sentMessages.length === 0 ? (
-                                <div className="p-8 text-center">
-                                    <Send className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                                    <p className="text-sm text-muted-foreground">No sent messages</p>
-                                </div>
-                            ) : (
-                                sentMessages.map((msg) => (
-                                    <div key={msg.id} className="p-4 border-b border-slate-100/50">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="flex items-center gap-2">
-                                                <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
-                                                    {msg.receiver?.full_name?.[0] || "?"}
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-semibold">{msg.receiver?.full_name || "Unknown"}</p>
-                                                    <p className="text-xs text-muted-foreground">{msg.receiver?.role}</p>
-                                                </div>
-                                            </div>
-                                            <span className="text-[10px] text-muted-foreground">
-                                                {format(new Date(msg.created_at), "MMM d, HH:mm")}
-                                            </span>
-                                        </div>
-                                        {msg.subject && <p className="text-xs font-semibold text-slate-700 mb-1">{msg.subject}</p>}
-                                        <p className="text-sm text-slate-500">{msg.content || msg.body}</p>
-                                    </div>
-                                ))
-                            )}
-                        </ScrollArea>
+                  <div className="px-5 py-4 bg-white/50 border-t border-slate-100">
+                    <div className="max-w-2xl mx-auto flex items-center gap-3">
+                      <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
+                        placeholder="Type a message..." className="flex-1 rounded-xl border-slate-200 h-11 bg-white shadow-sm" />
+                      <Button onClick={handleSend} disabled={!newMessage.trim()}
+                        className="h-11 w-11 rounded-xl bg-blue-600 hover:bg-blue-700 p-0 shadow-lg transition-all active:scale-95 disabled:opacity-50">
+                        <SendHorizontal className="h-5 w-5" />
+                      </Button>
                     </div>
-                </TabsContent>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                      <MessageSquare className="h-8 w-8 text-slate-300" />
+                    </div>
+                    <p className="text-sm font-bold text-slate-400 mb-1">Select a conversation</p>
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Choose from the list to start chatting</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </ERPCard>
+      )}
 
-                <TabsContent value="compose" className="outline-none">
-                    <div className="glass futuristic-card rounded-2xl p-6">
-                        <h3 className="text-sm font-semibold flex items-center gap-2 mb-6">
-                            <span className="w-1 h-4 bg-blue-500 rounded-full" />
-                            New Message
-                        </h3>
-                        <div className="max-w-xl space-y-4">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground">To</Label>
-                                <select 
-                                    value={composeForm.receiver_id}
-                                    onChange={(e) => setComposeForm({ ...composeForm, receiver_id: e.target.value })}
-                                    className="w-full h-11 rounded-lg border border-slate-200 px-3 text-sm"
-                                >
-                                    <option value="">Select recipient...</option>
-                                    {contacts.map(c => (
-                                        <option key={c.id} value={c.id}>
-                                            {c.full_name} ({c.role})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground">Subject</Label>
-                                <Input 
-                                    value={composeForm.subject}
-                                    onChange={(e) => setComposeForm({ ...composeForm, subject: e.target.value })}
-                                    placeholder="Enter subject..."
-                                    className="rounded-lg"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-semibold text-muted-foreground">Message</Label>
-                                <textarea
-                                    value={composeForm.body}
-                                    onChange={(e) => setComposeForm({ ...composeForm, body: e.target.value })}
-                                    placeholder="Write your message..."
-                                    className="w-full h-40 rounded-lg border border-slate-200 p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div className="flex justify-end">
-                                <Button onClick={handleCompose} disabled={sending || !composeForm.receiver_id || !composeForm.body} className="bg-blue-500 hover:bg-blue-600">
-                                    <Send className="h-4 w-4 mr-2" />
-                                    {sending ? "Sending..." : "Send Message"}
-                                </Button>
-                            </div>
+      {/* Sent */}
+      {activeTab === "sent" && (
+        <ERPCard title="Sent Messages" description="Messages you have sent" color="emerald" icon={<Send className="h-5 w-5" />}
+          className="border-none shadow-xl rounded-2xl overflow-hidden">
+          <ScrollArea className="h-[calc(100vh-380px)]">
+            {sentMessages.length === 0 ? (
+              <div className="p-16 text-center flex flex-col items-center">
+                <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                  <Send className="h-8 w-8 text-slate-300" />
+                </div>
+                <p className="text-sm font-bold text-slate-400 mb-1">No sent messages</p>
+                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Send your first message to get started</p>
+              </div>
+            ) : (
+              <div className="p-4 space-y-3">
+                {sentMessages.map((msg) => (
+                  <div key={msg.id} className="p-5 rounded-2xl border border-slate-100 bg-white hover:border-slate-200 transition-all">
+                    <div className="flex items-start gap-4">
+                      <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
+                        {msg.receiver?.full_name?.[0] || "?"}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-sm text-slate-900">{msg.receiver?.full_name || "Unknown"}</span>
+                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-200 bg-slate-50 text-slate-500">
+                              {msg.receiver?.role || "Staff"}
+                            </Badge>
+                            <PriorityBadge priority={msg.priority} />
+                            <Badge className={cn("text-[8px] px-1.5 py-0.5 font-black uppercase tracking-widest border-none",
+                              msg.is_read ? "bg-emerald-500 text-white" : "bg-amber-500 text-white")}>
+                              {msg.is_read ? "Read" : "Unread"}
+                            </Badge>
+                          </div>
+                          <span className="text-[10px] font-semibold text-slate-400 shrink-0 ml-2">
+                            {format(new Date(msg.created_at), "MMM d, HH:mm")}
+                          </span>
                         </div>
+                        {msg.subject && <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{msg.subject}</p>}
+                        <p className="text-sm text-slate-500 line-clamp-2">{msg.content || msg.body}</p>
+                      </div>
                     </div>
-                </TabsContent>
-            </Tabs>
-        </div>
-    );
+                  </div>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </ERPCard>
+      )}
+
+      {/* Compose */}
+      {activeTab === "compose" && (
+        <ERPCard title="New Message" description="Send a message to anyone" color="purple" icon={<Plus className="h-5 w-5" />}
+          className="border-none shadow-xl rounded-2xl overflow-hidden">
+          <div className="p-6 max-w-xl space-y-5">
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Recipient</label>
+              <select value={composeForm.receiver_id} onChange={(e) => setComposeForm({ ...composeForm, receiver_id: e.target.value })}
+                className="w-full h-11 rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
+                <option value="">Select recipient...</option>
+                {contacts.map((c) => (
+                  <option key={c.id} value={c.id}>{c.full_name} — {c.role}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Subject</label>
+              <Input value={composeForm.subject} onChange={(e) => setComposeForm({ ...composeForm, subject: e.target.value })}
+                placeholder="Enter subject..." className="rounded-xl border-slate-200 h-11" />
+            </div>
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Priority</label>
+              <div className="flex gap-2">
+                {PRIORITIES.map((p) => (
+                  <button key={p.id} onClick={() => setComposeForm({ ...composeForm, priority: p.id })}
+                    className={cn("flex items-center justify-center gap-1.5 h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all px-4",
+                      composeForm.priority === p.id ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-slate-400 border-slate-200 hover:border-slate-300")}>
+                    <div className={cn("h-2 w-2 rounded-full", p.color)} />
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Message</label>
+              <textarea value={composeForm.body} onChange={(e) => setComposeForm({ ...composeForm, body: e.target.value })}
+                placeholder="Write your message..."
+                className="w-full h-40 rounded-xl border border-slate-200 p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300" />
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button variant="outline" onClick={() => { setComposeForm({ receiver_id: "", subject: "", body: "", priority: "normal" }); setActiveTab("inbox"); }}
+                className="rounded-xl h-11 px-6 text-[10px] font-black uppercase tracking-widest border-slate-200">Cancel</Button>
+              <Button onClick={handleCompose} disabled={sending || !composeForm.receiver_id || !composeForm.body}
+                className="rounded-xl h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest gap-2 shadow-lg transition-all active:scale-95 disabled:opacity-50">
+                <Send className="h-4 w-4" /> {sending ? "Sending..." : "Send Message"}
+              </Button>
+            </div>
+          </div>
+        </ERPCard>
+      )}
+    </div>
+  );
 }
