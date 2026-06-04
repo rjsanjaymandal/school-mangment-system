@@ -47,7 +47,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
     "attendance": "Attendance",
     "conduct": "Behavior",
     "finance": "Finance",
-    "launcher": "Launchpad",
+    "portal": "Portal",
     "academics": "Academics",
     "services": "Services"
   };
@@ -134,7 +134,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
 
         <div className="flex items-center gap-1">
           <button
-            onClick={() => router.push("/launcher")}
+            onClick={() => router.push("/portal")}
             className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all"
           >
             <Grid3X3 className="h-4 w-4" />

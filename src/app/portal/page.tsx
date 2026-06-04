@@ -4,7 +4,7 @@
 import { Suspense, lazy } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Search, LogOut, User as UserIcon, GraduationCap, Sparkles, Activity, ShieldCheck, IndianRupee, BookOpen, ClipboardCheck, Calendar, MessageSquare, Users, Library, Bus, Award, Heart, Clock, BookMarked, Monitor, Wallet, Star } from "lucide-react";
+import { Search, LogOut, User as UserIcon, GraduationCap, Activity, ShieldCheck, IndianRupee, BookOpen, ClipboardCheck, Calendar, MessageSquare, Users, Library, Bus, Award, Heart, Clock, BookMarked, Monitor, Wallet, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UserService } from "@/lib/services/user";
 import { SkeletonLoader } from "@/components/shared/SkeletonLoader";
@@ -51,7 +51,7 @@ const quickStats = [
   { title: "Years of Excellence", value: "25+", icon: Award, color: "purple", accent: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
 ];
 
-export default function LauncherPage() {
+export default function PortalPage() {
   const router = useRouter();
   const [userProfile, setUserProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,19 +140,18 @@ export default function LauncherPage() {
         "animate-in fade-in slide-in-from-top-4 duration-700"
       )}>
         <div className="flex items-center gap-x-5">
-          <div className="h-12 rounded-xl overflow-hidden shadow-xl shadow-emerald-500/20">
+          <div className="h-12 w-auto flex items-center">
             <Image 
               src="/logo-rounded-v2.png" 
               alt="Edu Maysan" 
               width={160}
               height={48}
-              className="object-contain h-full w-auto brightness-0 invert"
-              style={{ width: 'auto', height: '100%' }}
+              className="object-contain h-10 w-auto"
               priority
             />
           </div>
-          <div className="h-7 w-px bg-white/10" />
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/40">School Management</span>
+          <div className="h-6 w-px bg-white/10" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Edu Maysan</span>
         </div>
 
         <div className="flex items-center gap-4">
@@ -260,11 +259,6 @@ export default function LauncherPage() {
         {/* Hero Section */}
         <div className="grid lg:grid-cols-12 gap-10 mb-20 items-end">
           <div className="lg:col-span-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center gap-2.5">
-              <Badge className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border-emerald-500/20 font-bold text-[10px] uppercase tracking-wider backdrop-blur-xl">
-                <Sparkles className="h-3 w-3 mr-1.5" /> Enterprise Suite v4.8
-              </Badge>
-            </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.05]">
               {getGreeting()}, <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-200">
@@ -470,19 +464,18 @@ export default function LauncherPage() {
           <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-2xl px-8 py-6 shadow-xl">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="h-8 rounded-lg overflow-hidden">
+                <div className="h-8 w-auto rounded-lg overflow-hidden bg-slate-800/30 flex items-center px-1.5">
                   <Image 
                     src="/logo-rounded-v2.png" 
                     alt="Edu Maysan" 
                     width={100}
                     height={32}
-                    className="object-contain h-full w-auto brightness-0 invert opacity-60"
-                    style={{ width: 'auto', height: '100%' }}
+                    className="object-contain h-6 w-auto opacity-60"
                   />
                 </div>
                 <div className="h-4 w-px bg-white/10" />
                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">
-                  School Management System
+                  Edu Maysan
                 </span>
               </div>
               <div className="flex items-center gap-4">

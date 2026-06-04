@@ -96,7 +96,7 @@ export default function LoginPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/launcher");
+        router.push("/portal");
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "An unexpected error occurred.");
