@@ -23,10 +23,10 @@ const ROLE_STYLES: Record<string, string> = {
 };
 
 const ROLE_OPTIONS = [
-  { value: "admin", label: "Administrator", description: "Full system access" },
+  { value: "admin", label: "Admin", description: "Full system access" },
   { value: "principal", label: "Principal", description: "Management access" },
   { value: "teacher", label: "Teacher", description: "Teaching staff" },
-  { value: "clerk", label: "Clerk", description: "Administrative staff" },
+  { value: "clerk", label: "Clerk", description: "Admin staff" },
   { value: "receptionist", label: "Receptionist", description: "Front desk access" },
 ];
 

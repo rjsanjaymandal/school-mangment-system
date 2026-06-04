@@ -12,7 +12,6 @@ import {
     ResponsiveContainer, Tooltip, Legend, 
     XAxis, YAxis, CartesianGrid 
 } from "recharts";
-import { Input } from "@/components/ui/input";
 import { markAttendance, getAttendanceByClassAndDate } from "@/app/actions/attendance";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -378,16 +377,16 @@ export function AttendanceDashboard({
                             </div>
                             <div>
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
-                                <div className="relative">
-                                    <Input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="h-11 rounded-xl border-slate-200 font-bold text-sm pl-10" />
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                    <div className="relative">
+                                        <input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 pl-10 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
+                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 </div>
                             </div>
                             <div>
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search</label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="h-11 pl-10 rounded-xl border-slate-200 font-bold text-sm" />
+                                    <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="w-full h-11 rounded-xl border border-slate-200 px-3 pl-10 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
                                 </div>
                             </div>
                         </div>
@@ -503,7 +502,7 @@ export function AttendanceDashboard({
                             <div>
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
                                 <div className="relative">
-                                    <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-11 rounded-xl border-slate-200 font-bold text-sm pl-10" />
+                                    <input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 pl-10 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
                                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 </div>
                             </div>

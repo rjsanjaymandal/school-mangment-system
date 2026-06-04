@@ -23,7 +23,7 @@ import {
     Eye
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
+
 import { ManageAccessModal } from "./ManageAccessModal";
 import { ProvisionUserModal } from "./ProvisionUserModal";
 import { ImpersonationButton } from "./ImpersonationButton";
@@ -79,7 +79,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <DashboardStatCard title="Total Users" value={users.length.toString().padStart(2, '0')} icon={Users} color="slate" description="Active Accounts" />
-                <DashboardStatCard title="Administrators" value={users.filter(u => u.role === 'admin').length.toString().padStart(2, '0')} icon={ShieldCheck} color="rose" description="System Admins" />
+                <DashboardStatCard title="Admins" value={users.filter(u => u.role === 'admin').length.toString().padStart(2, '0')} icon={ShieldCheck} color="rose" description="System Admins" />
                 <DashboardStatCard title="Teachers" value={users.filter(u => u.role === 'teacher').length.toString().padStart(2, '0')} icon={BookOpen} color="indigo" description="Teaching Staff" />
                 <DashboardStatCard title="Parents" value={users.filter(u => u.role === 'parent').length.toString().padStart(2, '0')} icon={Baby} color="blue" description="Parent Accounts" />
             </div>
@@ -108,9 +108,9 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
 
                             <div className="relative flex-1 md:w-80">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                                <Input
+                                <input
                                     placeholder="Search users..."
-                                    className="h-11 pl-11 rounded-xl border-slate-200"
+                                    className="w-full h-11 pl-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -125,13 +125,14 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                     <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Name</th>
                                     <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Email Address</th>
                                     <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Role</th>
+                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
                                     <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredUsers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={4} className="py-16 text-center text-slate-500">
+                                        <td colSpan={5} className="py-16 text-center text-slate-500">
                                             <div className="flex flex-col items-center">
                                                 <Users className="h-12 w-12 mb-4 text-slate-300" />
                                                 <p className="text-sm font-bold text-slate-700">No users found matching your criteria</p>
@@ -168,6 +169,20 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                                 )}>
                                                     {getRoleIcon(user.role)}
                                                     {user.role}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4 text-center">
+                                                <span className={cn(
+                                                    "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-1.5",
+                                                    user.is_active !== false
+                                                        ? "bg-emerald-50 text-emerald-600"
+                                                        : "bg-slate-100 text-slate-400"
+                                                )}>
+                                                    <span className={cn(
+                                                        "h-1.5 w-1.5 rounded-full",
+                                                        user.is_active !== false ? "bg-emerald-500" : "bg-slate-300"
+                                                    )} />
+                                                    {user.is_active !== false ? "Active" : "Inactive"}
                                                 </span>
                                             </td>
                                             <td className="py-4 px-4 text-right">

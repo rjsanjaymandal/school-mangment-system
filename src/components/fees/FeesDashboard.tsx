@@ -23,12 +23,13 @@ import {
     ResponsiveContainer, Tooltip, Legend,
     XAxis, YAxis, CartesianGrid
 } from "recharts";
-import { Input } from "@/components/ui/input";
 import { createFee, recordPayment } from "@/app/actions/fees";
 import { createPayroll, processPayroll, submitLeaveRequest, updateLeaveStatus } from "@/app/actions/payroll";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useRealtimeSync } from "@/hooks/use-realtime-sync";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 
 interface FeesDashboardProps {
     fees: any[];
@@ -97,6 +98,14 @@ export function FeesDashboard({
         return Object.entries(methodMap).map(([name, value]) => ({ name, value }));
     }, [payments]);
 
+    const statusBreakdown = useMemo(() => {
+        const collected = payments.filter(p => p.status === "completed").reduce((sum, p) => sum + Number(p.amount_paid || 0), 0);
+        const pending = dashboardStats?.total_pending || stats.outstanding || 0;
+        const overdue = dashboardStats?.overdue_amount || 0;
+        const refunded = payments.filter(p => p.status === "refunded").reduce((sum, p) => sum + Number(p.amount_paid || 0), 0);
+        return { collected, pending, overdue, refunded };
+    }, [payments, dashboardStats, stats]);
+
     const [feeForm, setFeeForm] = useState({
         name: "",
         amount: "",
@@ -144,20 +153,63 @@ export function FeesDashboard({
 
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
-            {/* Action Bar */}
-            {!isStudent && (
-                <div className="flex items-center justify-end gap-4 mb-10 border-b border-slate-200 pb-8">
-                    <button onClick={() => setIsPaymentOpen(true)} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
-                        <CreditCard className="mr-2 h-4 w-4 inline" />
-                        Record Payment
-                    </button>
+            <UnifiedPageHeader
+                title="Fees Dashboard"
+                subtitle="Financial Management & Analytics"
+                icon={IndianRupee}
+                color="emerald"
+                actions={!isStudent && (
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => setIsPaymentOpen(true)} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
+                            <CreditCard className="mr-2 h-4 w-4 inline" />
+                            Record Payment
+                        </button>
+                        <button onClick={() => setIsAddFeeOpen(true)} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
+                            <Plus className="mr-2 h-4 w-4 inline" />
+                            Add New Fee
+                        </button>
+                    </div>
+                )}
+            />
 
-                    <button onClick={() => setIsAddFeeOpen(true)} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
-                        <Plus className="mr-2 h-4 w-4 inline" />
-                        Add New Fee
-                    </button>
+            {/* Financial Summary Section */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <DashboardStatCard title="Total Collected" value={`₹${statusBreakdown.collected.toLocaleString()}`} icon={TrendingUp} color="emerald" description="Completed payments" />
+                <DashboardStatCard title="Pending" value={`₹${statusBreakdown.pending.toLocaleString()}`} icon={Clock} color="amber" description="Awaiting payment" />
+                <DashboardStatCard title="Overdue" value={`₹${statusBreakdown.overdue.toLocaleString()}`} icon={AlertCircle} color="rose" description="Past due date" />
+                <DashboardStatCard title="Refunded" value={`₹${statusBreakdown.refunded.toLocaleString()}`} icon={XCircle} color="slate" description="Total refunded" />
+            </div>
+
+            {/* Payment Status Breakdown */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
+                        <PieIcon className="h-4 w-4" />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900">Payment Status Breakdown</h3>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Distribution by payment status</p>
+                    </div>
                 </div>
-            )}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">Completed</p>
+                        <p className="text-2xl font-black text-slate-900">{payments.filter(p => p.status === "completed").length}</p>
+                    </div>
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-1">Pending</p>
+                        <p className="text-2xl font-black text-slate-900">{payments.filter(p => p.status === "pending").length}</p>
+                    </div>
+                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-rose-600 mb-1">Failed</p>
+                        <p className="text-2xl font-black text-slate-900">{payments.filter(p => p.status === "failed").length}</p>
+                    </div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-1">Refunded</p>
+                        <p className="text-2xl font-black text-slate-900">{payments.filter(p => p.status === "refunded").length}</p>
+                    </div>
+                </div>
+            </div>
 
             {/* Record Payment Modal */}
             {isPaymentOpen && (
@@ -189,7 +241,7 @@ export function FeesDashboard({
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Amount (₹)</label>
-                                    <Input type="number" value={payForm.amount_paid} onChange={(e) => setPayForm({ ...payForm, amount_paid: e.target.value })} className="bg-white border-slate-200 h-11 font-bold text-sm" placeholder="0.00" />
+                                    <input type="number" value={payForm.amount_paid} onChange={(e) => setPayForm({ ...payForm, amount_paid: e.target.value })} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" placeholder="0.00" />
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Payment Method</label>
@@ -222,16 +274,16 @@ export function FeesDashboard({
                         <div className="space-y-4">
                             <div>
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Fee Name</label>
-                                <Input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} className="bg-white border-slate-200 h-11 font-bold text-sm" placeholder="e.g. Annual Tuition Fee" />
+                                <input value={feeForm.name} onChange={(e) => setFeeForm({ ...feeForm, name: e.target.value })} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" placeholder="e.g. Annual Tuition Fee" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Amount (₹)</label>
-                                    <Input type="number" value={feeForm.amount} onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })} className="bg-white border-slate-200 h-11 font-bold text-sm" placeholder="0.00" />
+                                    <input type="number" value={feeForm.amount} onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" placeholder="0.00" />
                                 </div>
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Due Date</label>
-                                    <Input type="date" value={feeForm.due_date} onChange={(e) => setFeeForm({ ...feeForm, due_date: e.target.value })} className="bg-white border-slate-200 h-11 font-bold text-sm" />
+                                    <input type="date" value={feeForm.due_date} onChange={(e) => setFeeForm({ ...feeForm, due_date: e.target.value })} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -273,7 +325,7 @@ export function FeesDashboard({
                                 <h3 className="text-lg font-black tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors">
                                     Collection <span className="text-emerald-600">Matrix</span>
                                 </h3>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400/60 mt-3 flex items-center gap-2">
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400/60 mt-3 flex items-center gap-2">
                                     Temporal Revenue Vector Analysis
                                 </p>
                             </div>

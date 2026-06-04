@@ -47,7 +47,7 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
     const result = studentSchema.safeParse(formState);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach(err => {
+      result.error.issues.forEach(err => {
         fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);

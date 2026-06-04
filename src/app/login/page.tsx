@@ -40,7 +40,7 @@ const formSchema = z.object({
 const roleOptions = [
   { 
     id: "admin", 
-    label: "Administrator", 
+    label: "Admin", 
     icon: Shield, 
     description: "School management & settings",
     accent: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"

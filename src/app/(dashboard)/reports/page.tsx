@@ -101,6 +101,7 @@ export default function ReportCardsPage() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadReportCards();
   }, [loadReportCards]);
 

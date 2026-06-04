@@ -17,9 +17,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ERPCard } from "@/components/ui/erp-card";
+import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 import { cn } from "@/lib/utils";
 import { UnifiedPagination } from "@/components/shared/UnifiedPagination";
 
@@ -56,9 +55,9 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
             <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col md:flex-row items-center gap-4">
                 <div className="relative flex-1 w-full max-w-sm">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input 
+                    <input 
                         placeholder="Search staff by name or ID..." 
-                        className="pl-11 h-11 rounded-xl bg-slate-50/50 border-slate-200 text-xs font-bold"
+                        className="w-full h-11 pl-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                     />
@@ -106,15 +105,24 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                 </div>
             </div>
 
+            {/* Stats Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <DashboardStatCard title="Total Staff" value={initialData.length} icon={Users} color="emerald" description="All personnel" />
+                <DashboardStatCard title="Teaching" value={initialData.filter(s => s.staff_type === 'teaching').length} icon={Briefcase} color="blue" description="Teaching staff" />
+                <DashboardStatCard title="Non-Teaching" value={initialData.filter(s => s.staff_type === 'non_teaching').length} icon={Building2} color="amber" description="Admin staff" />
+                <DashboardStatCard title="Departments" value={departments.length} icon={LayoutGrid} color="purple" description="Total departments" />
+            </div>
+
             {/* Main Content Area */}
             {viewMode === "table" ? (
-                <ERPCard
-                    title="Staff List"
-                    description="Complete staff and employee records"
-                    icon={<Users className="h-5 w-5" />}
-                    color="emerald"
-                    className="border-slate-200 rounded-xl"
-                >
+                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="p-5 border-b border-slate-100 flex items-center gap-3">
+                        <Users className="h-5 w-5 text-slate-500" />
+                        <div>
+                            <h3 className="text-sm font-bold text-slate-900">Staff List</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Complete staff and employee records</p>
+                        </div>
+                    </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead className="bg-slate-50/50 border-b border-slate-100">
@@ -139,13 +147,12 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                         <tr key={staff.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-5">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-11 w-11 rounded-xl bg-white p-0.5 border border-slate-100 shadow-sm group-hover:rotate-3 transition-transform">
-                                                        <Avatar className="h-full w-full rounded-[10px]">
-                                                            <AvatarImage src={staff.photo_url} />
-                                                            <AvatarFallback className="bg-emerald-500 text-white font-black text-xs">
-                                                                {staff.first_name[0]}{staff.last_name?.[0]}
-                                                            </AvatarFallback>
-                                                        </Avatar>
+                                                    <div className="h-11 w-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-black text-sm text-emerald-600 group-hover:rotate-3 transition-transform flex-shrink-0">
+                                                        {staff.photo_url ? (
+                                                            <img src={staff.photo_url} alt="" className="h-full w-full rounded-xl object-cover" />
+                                                        ) : (
+                                                            staff.first_name[0]?.toUpperCase() + (staff.last_name?.[0]?.toUpperCase() || "")
+                                                        )}
                                                     </div>
                                                     <div>
                                                         <div className="font-bold text-slate-900 tracking-tight text-sm">
@@ -245,7 +252,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                         }}
                         itemName="personnel"
                     />
-                </ERPCard>
+                </div>
             ) : (
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -271,13 +278,12 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                             {staff.staff_type === 'teaching' ? 'Teaching' : 'Admin'}
                                         </span>
                                     </div>
-                                    <div className="h-20 w-20 mx-auto rounded-2xl bg-white p-1 border-2 border-slate-100 shadow-sm group-hover:rotate-6 transition-transform">
-                                        <Avatar className="h-full w-full rounded-xl">
-                                            <AvatarImage src={staff.photo_url} />
-                                            <AvatarFallback className="bg-emerald-500 text-white font-black text-xl">
-                                                {staff.first_name[0]}{staff.last_name?.[0]}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                    <div className="h-20 w-20 mx-auto rounded-2xl bg-emerald-500/10 border-2 border-emerald-500/20 shadow-sm group-hover:rotate-6 transition-transform flex items-center justify-center overflow-hidden">
+                                        {staff.photo_url ? (
+                                            <img src={staff.photo_url} alt="" className="h-full w-full object-cover" />
+                                        ) : (
+                                            <span className="text-2xl font-black text-emerald-600">{staff.first_name[0]?.toUpperCase()}{staff.last_name?.[0]?.toUpperCase()}</span>
+                                        )}
                                     </div>
                                     <div className="mt-4">
                                         <p className="text-lg font-black tracking-tight text-slate-900">{staff.first_name} {staff.last_name}</p>

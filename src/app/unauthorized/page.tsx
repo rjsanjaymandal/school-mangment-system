@@ -14,7 +14,7 @@ export default function UnauthorizedPage() {
         </h1>
         <p className="text-muted-foreground font-medium">
           Your credentials do not grant access to this secure segment. Please
-          contact administration if you believe this is an error.
+          contact an admin if you believe this is an error.
         </p>
         <Button
           asChild

@@ -193,7 +193,7 @@ export function ManageAccessModal({ user }: { user: any }) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-sm border-border bg-card">
-                      <SelectItem value="admin" className="text-xs uppercase font-black tracking-widest text-primary focus:bg-primary/10">Administrator</SelectItem>
+                      <SelectItem value="admin" className="text-xs uppercase font-black tracking-widest text-primary focus:bg-primary/10">Admin</SelectItem>
                       <SelectItem value="teacher" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Teacher</SelectItem>
                       <SelectItem value="student" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Student</SelectItem>
                       <SelectItem value="parent" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Parent</SelectItem>

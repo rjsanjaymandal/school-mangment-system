@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 const roles = [
     {
         id: "admin",
-        title: "Administrator",
+        title: "Admin",
         description: "Full institutional control, security protocols, and advanced analytics.",
         icon: ShieldCheck,
         color: "text-blue-600 dark:text-blue-400",
@@ -63,7 +63,7 @@ const roles = [
     {
         id: "receptionist",
         title: "Front Office",
-        description: "School inquiries, visitor registration, and administrative support.",
+        description: "School inquiries, visitor registration, and admin support.",
         icon: Monitor,
         color: "text-slate-600 dark:text-slate-400",
         bg: "bg-slate-50 dark:bg-slate-900/10",

@@ -11,7 +11,7 @@ import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 import { cn } from "@/lib/utils";
 
-const CATEGORIES = ["Legal", "Academic", "HR", "Financial", "Administrative"];
+const CATEGORIES = ["Legal", "Academic", "HR", "Financial", "Admin"];
 const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]; auditLogs: any[] }) {

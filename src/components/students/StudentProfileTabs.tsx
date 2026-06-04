@@ -5,7 +5,8 @@ import {
     User, Mail, Phone, MapPin, Calendar, GraduationCap, 
     FileText, IndianRupee, ClipboardCheck, Upload, 
     Download, Printer, Edit3, CheckCircle2, XCircle,
-    Activity, ShieldCheck, TrendingUp, BarChart3
+    Activity, ShieldCheck, TrendingUp, BarChart3,
+    AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -37,8 +38,29 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
         { id: "documents", label: "Documents", icon: FileText },
     ];
 
+    const fullName = student.profile?.full_name || `${student.profile?.first_name || ""} ${student.profile?.last_name || ""}`.trim() || "Unknown";
+
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
+            {/* Profile Header */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row items-center gap-6">
+                <div className="h-20 w-20 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-3xl font-black text-emerald-600">{fullName[0]?.toUpperCase() || "?"}</span>
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">{fullName}</h2>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Class {student.class?.name || "N/A"}</span>
+                        <span className="h-3 w-px bg-slate-200" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Adm: {student.admission_number || "SYS-000"}</span>
+                        <span className="h-3 w-px bg-slate-200" />
+                        <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", student.status === "active" ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400")}>
+                            {student.status || "Active"}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/60 w-fit overflow-x-auto max-w-full">
                     {tabItems.map((tab) => (
@@ -278,19 +300,54 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
             )}
 
             {activeTab === "fees" && (
-                <div className="outline-none">
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-12 text-center">
-                        <Activity className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Loading financial data...</p>
+                <div className="outline-none animate-in fade-in duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <DashboardStatCard title="Total Paid" value={`₹${(grades as any)?.totalPaid || 0}`} icon={IndianRupee} color="emerald" description="Lifetime payments" />
+                        <DashboardStatCard title="Pending Dues" value={`₹${(grades as any)?.pendingDues || 0}`} icon={AlertCircle} color="amber" description="Outstanding amount" />
+                        <DashboardStatCard title="Last Payment" value={(grades as any)?.lastPaymentDate || "—"} icon={Activity} color="blue" description="Most recent" />
+                    </div>
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                        <div className="p-5">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
+                                    <IndianRupee className="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-slate-900">Fee Payment History</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Complete financial record</p>
+                                </div>
+                            </div>
+                            <div className="text-center py-12">
+                                <Activity className="h-10 w-10 text-slate-200 mx-auto mb-3" />
+                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Fee data will appear once integrated</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
 
             {activeTab === "documents" && (
-                <div className="outline-none">
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-12 text-center">
-                        <ShieldCheck className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No documents found</p>
+                <div className="outline-none animate-in fade-in duration-500">
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                        <div className="p-5">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-1.5 rounded bg-blue-50 text-blue-600">
+                                    <FileText className="h-4 w-4" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-slate-900">Student Documents</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Uploaded files and records</p>
+                                </div>
+                            </div>
+                            <div className="text-center py-12">
+                                <Upload className="h-10 w-10 text-slate-200 mx-auto mb-3" />
+                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No documents uploaded</p>
+                                <button className="mt-4 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all inline-flex items-center gap-2">
+                                    <Upload className="h-4 w-4" />
+                                    Upload Document
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

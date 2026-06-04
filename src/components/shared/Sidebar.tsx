@@ -431,7 +431,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-xs font-black text-white truncate">{profile?.full_name || "School User"}</p>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{userRole?.replace('_', ' ') || "Administrator"}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest truncate">{userRole?.replace('_', ' ') || "Admin"}</p>
             </div>
           </div>
         </div>

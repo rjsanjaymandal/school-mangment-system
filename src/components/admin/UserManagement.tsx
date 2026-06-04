@@ -193,7 +193,7 @@ export function UserManagement() {
             <div>
                 <div className="relative">
                     <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                        System Administration
+                        System Admin
                     </h2>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
@@ -230,7 +230,7 @@ export function UserManagement() {
         </div>
 
         <div className="bg-card border border-border rounded-xl p-6 relative overflow-hidden flex flex-col justify-between group shadow-sm hover:shadow-md transition-all">
-            <p className="text-xs font-medium text-muted-foreground mb-2">Administrators</p>
+            <p className="text-xs font-medium text-muted-foreground mb-2">Admins</p>
             <h3 className="text-4xl font-bold text-foreground leading-none">{users.filter(u => u.role === 'admin').length.toString().padStart(2, '0')}</h3>
             <p className="text-xs font-medium text-primary mt-6 flex items-center gap-2">
                <ShieldCheck className="h-3.5 w-3.5 text-red-500" /> Root Permissions
@@ -400,7 +400,7 @@ export function UserManagement() {
                 Audit Logs
               </p>
               <h4 className="text-base font-medium text-foreground leading-tight">
-                Review system activity and administrative changes in the global log.
+                Review system activity and admin changes in the global log.
               </h4>
             </div>
           </div>

@@ -154,7 +154,7 @@ export function GlobalSearch() {
 
           <CommandSeparator className="my-2" />
 
-          <CommandGroup heading="ADMINISTRATION">
+          <CommandGroup heading="ADMIN">
             <SearchItem 
               icon={GraduationCap} 
               title="Class Management" 

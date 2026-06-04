@@ -79,7 +79,7 @@ const navigation: NavGroup[] = [
     group: "Staff",
     roles: ["admin", "teacher"],
     items: [
-      { name: "Staff List", href: "/hr/directory", icon: UserSquare2, roles: ["admin"], description: "Directory of all administrative and academic staff" },
+      { name: "Staff List", href: "/hr/directory", icon: UserSquare2, roles: ["admin"], description: "Directory of all admin and academic staff" },
       { name: "Add Staff", href: "/hr/add-staff", icon: UserSquare2, roles: ["admin"], description: "Register and onboard new staff members" },
       { name: "Permissions", href: "/hr/roles", icon: ShieldCheck, roles: ["admin"], description: "Manage system access scopes and permissions" },
       { name: "Attendance", href: "/hr/attendance", icon: ClipboardCheck, roles: ["admin"], description: "Track active staff daily presence logs" },
