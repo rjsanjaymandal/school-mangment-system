@@ -315,3 +315,22 @@ table *,
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #475569; /* slate-600 */
 }
+
+/* Premium smooth morphing floating glow spheres */
+@keyframes float-slow-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(30px, -45px) scale(1.1); }
+}
+@keyframes float-slow-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1.1); }
+  50% { transform: translate(-40px, 30px) scale(0.9); }
+}
+.animate-float-1 {
+  animation: float-slow-1 14s ease-in-out infinite;
+}
+.animate-float-2 {
+  animation: float-slow-2 18s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spin 12s linear infinite;
+}
