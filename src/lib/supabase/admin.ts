@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { wrapWithDemoProtection } from './demo-protection';
 
 export function createAdminClient() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -6,7 +7,7 @@ export function createAdminClient() {
   }
 
   // Create a Supabase client with the Service Role Key to bypass RLS
-  return createClient(
+  const client = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
@@ -16,4 +17,6 @@ export function createAdminClient() {
       }
     }
   );
+
+  return wrapWithDemoProtection(client);
 }

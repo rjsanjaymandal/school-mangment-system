@@ -1,4 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { wrapWithDemoProtection } from "./demo-protection";
 
 export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -8,8 +9,10 @@ export function createClient() {
     console.error('Supabase URL or Key is missing!');
   }
 
-  return createBrowserClient(
+  const client = createBrowserClient(
     supabaseUrl!,
     supabaseKey!,
   );
+
+  return wrapWithDemoProtection(client);
 }

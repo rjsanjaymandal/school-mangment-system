@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
+import { wrapWithDemoProtection } from './demo-protection'
 
 export const createClient = cache(async function createClient() {
   const cookieStore = await cookies()
@@ -12,7 +13,7 @@ export const createClient = cache(async function createClient() {
     throw new Error('Supabase URL and Key are required. Please check your environment variables.')
   }
 
-  return createServerClient(
+  const client = createServerClient(
     supabaseUrl,
     supabaseKey,
     {
@@ -34,4 +35,6 @@ export const createClient = cache(async function createClient() {
       },
     }
   )
+
+  return wrapWithDemoProtection(client);
 });
