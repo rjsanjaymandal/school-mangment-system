@@ -89,34 +89,34 @@ export function DayBook() {
         <DashboardStatCard title="Bank Reserve" value={`₹${bankTotal.toLocaleString()}`} icon={Building} color="amber" />
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="flex flex-1 flex-col lg:flex-row gap-4 w-full">
-            <div className="flex items-center bg-white border border-slate-200 rounded-xl px-3 py-1 gap-2">
+            <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-1 gap-2">
               <Calendar className="h-4 w-4 text-slate-400" />
-              <Input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
+              <Input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter text-slate-900 dark:text-white" />
               <span className="text-slate-300 font-black">→</span>
-              <Input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter" />
+              <Input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setCurrentPage(1); }} className="border-0 bg-transparent w-32 h-9 text-[10px] font-black uppercase tracking-tighter text-slate-900 dark:text-white" />
             </div>
             
             <div className="flex gap-3">
-              <select value={transactionType} onChange={(e) => { setTransactionType(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white outline-none">
-                <option value="all">All Channels</option>
-                <option value="fee_collection">Revenue Stream</option>
-                <option value="income">Direct Income</option>
-                <option value="expense">Operational Expense</option>
-                <option value="salary">Payroll</option>
+              <select value={transactionType} onChange={(e) => { setTransactionType(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 outline-none">
+                <option value="all" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">All Channels</option>
+                <option value="fee_collection" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Revenue Stream</option>
+                <option value="income" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Direct Income</option>
+                <option value="expense" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Operational Expense</option>
+                <option value="salary" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Payroll</option>
               </select>
 
-              <select value={paymentMode} onChange={(e) => { setPaymentMode(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white outline-none">
-                <option value="all">All Protocols</option>
-                <option value="cash">Cash Protocol</option>
-                <option value="bank">Digital Clearing</option>
+              <select value={paymentMode} onChange={(e) => { setPaymentMode(e.target.value); setCurrentPage(1); }} className="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 outline-none">
+                <option value="all" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">All Protocols</option>
+                <option value="cash" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Cash Protocol</option>
+                <option value="bank" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Digital Clearing</option>
               </select>
             </div>
           </div>
 
-          <button className="h-11 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-x-2">
+          <button className="h-11 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-x-2">
             <Download className="h-4 w-4" /> Export Logs
           </button>
         </div>
@@ -131,17 +131,17 @@ export function DayBook() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Maturity</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Voucher</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Particulars</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6">Domain</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-center">Protocol</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-right">Income</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-4 px-6 text-right">Expense</th>
+              <tr className="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50">
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6">Maturity</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6">Voucher</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6">Particulars</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6">Domain</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6 text-center">Protocol</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6 text-right">Income</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 py-4 px-6 text-right">Expense</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-200/50 dark:divide-slate-800/50">
               {isLoading ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-20 text-center animate-pulse">
@@ -158,24 +158,26 @@ export function DayBook() {
                 paginatedTransactions?.map((txn) => {
                   const isIncome = txn.type === "income" || txn.type === "fee_collection";
                   return (
-                    <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-5 text-slate-500 font-mono text-[10px] font-bold">{txn.date}</td>
+                    <tr key={txn.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 border-b border-slate-200/50 dark:border-slate-800/50 transition-colors">
+                      <td className="px-6 py-5 text-slate-500 dark:text-slate-400 font-mono text-[10px] font-bold">{txn.date}</td>
                       <td className="px-6 py-5">
-                        <span className="text-[9px] font-black uppercase text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/50">
+                        <span className="text-[9px] font-black uppercase text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/50">
                           {txn.voucher_no || "SYS-GEN"}
                         </span>
                       </td>
                       <td className="px-6 py-5">
-                        <span className="text-sm font-bold text-slate-900 tracking-tight">{txn.description || txn.category}</span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">{txn.description || txn.category}</span>
                       </td>
                       <td className="px-6 py-5">
                         <span className={cn(
                           "text-[9px] font-black uppercase px-2 py-1 rounded-lg",
-                          isIncome ? "text-emerald-600 bg-emerald-50" : "text-rose-600 bg-rose-50"
+                          isIncome 
+                            ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400" 
+                            : "text-rose-600 bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400"
                         )}>{txn.category}</span>
                       </td>
                       <td className="px-6 py-5 text-center">
-                        <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 px-2.5 py-1 rounded-lg bg-white capitalize">
+                        <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 capitalize">
                           {txn.mode}
                         </span>
                       </td>

@@ -80,18 +80,18 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
         <div className="space-y-6">
             {/* Class Filter */}
             <div className="flex items-center gap-4">
-                <label className="text-sm font-medium text-slate-600">Filter by Class:</label>
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Filter by Class:</label>
                 <select
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
-                    className="border border-slate-200 rounded-md px-3 py-2 text-sm"
+                    className="border border-slate-200 dark:border-slate-800 rounded-md px-3 py-2 text-sm bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 outline-none"
                 >
-                    <option value="all">All Classes</option>
+                    <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Classes</option>
                     {classes.map(c => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
+                        <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>
                     ))}
                 </select>
-                <span className="text-sm text-slate-500">{filtered.length} students</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{filtered.length} students</span>
             </div>
 
             {/* Charts Grid */}
@@ -116,7 +116,11 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                                         <Cell key={i} fill={GENDER_COLORS[i % GENDER_COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                             </PieChart>
                         </ResponsiveContainer>
                     )}
@@ -129,10 +133,14 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                     ) : (
                         <ResponsiveContainer width="100%" height={200}>
                             <BarChart data={categoryData} layout="vertical" margin={{ left: 10 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
-                                <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b" }} />
-                                <YAxis dataKey="name" type="category" width={60} tick={{ fontSize: 11, fill: "#64748b" }} />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" />
+                                <XAxis type="number" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+                                <YAxis dataKey="name" type="category" width={60} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
                                     {categoryData.map((_, i) => (
                                         <Cell key={i} fill={CATEGORY_COLORS[i % CATEGORY_COLORS.length]} />
@@ -150,10 +158,14 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                     ) : (
                         <ResponsiveContainer width="100%" height={200}>
                             <BarChart data={religionData.slice(0, 5)} margin={{ bottom: 20 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-30} textAnchor="end" height={40} />
-                                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                                <XAxis dataKey="name" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} interval={0} angle={-30} textAnchor="end" height={40} />
+                                <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={24}>
                                     {religionData.slice(0, 5).map((_, i) => (
                                         <Cell key={i} fill={RELIGION_COLORS[i % RELIGION_COLORS.length]} />
@@ -171,10 +183,14 @@ export function DemographicsPanel({ students, classes, documentStats }: Demograp
                     ) : (
                         <ResponsiveContainer width="100%" height={200}>
                             <BarChart data={ageData}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#64748b" }} />
-                                <YAxis tick={{ fontSize: 11, fill: "#64748b" }} />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+                                <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={32}>
                                     {ageData.map((_, i) => (
                                         <Cell key={i} fill={AGE_COLORS[i % AGE_COLORS.length]} />

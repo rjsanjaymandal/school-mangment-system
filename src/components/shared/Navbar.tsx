@@ -81,14 +81,14 @@ export function Navbar({ user, userRole }: NavbarProps) {
   return (
     <header 
       className={cn(
-        "h-16 border-b border-slate-200 bg-white/80 backdrop-blur-xl flex items-center justify-between px-4 fixed top-0 right-0 z-50 shadow-sm",
+        "h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl flex items-center justify-between px-4 fixed top-0 right-0 z-50 shadow-sm",
         "transition-all duration-300"
       )}
       style={{ left: sidebarWidth }}
     >
       <div className="flex items-center gap-4">
         <button
-          className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all md:hidden"
+          className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-900 transition-all md:hidden"
           onClick={() => setShowMobileMenu(!showMobileMenu)}
         >
           <Menu className="h-5 w-5" />
@@ -107,18 +107,18 @@ export function Navbar({ user, userRole }: NavbarProps) {
         </Link>
 
         <nav className="hidden md:flex items-center gap-1.5 text-sm">
-          <Link href="/" className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors">
+          <Link href="/" className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
             <Home className="h-4 w-4" />
           </Link>
           {breadcrumbs.map((crumb, i) => (
             <span key={i} className="flex items-center gap-1.5">
-              <span className="text-slate-300">/</span>
+              <span className="text-slate-300 dark:text-slate-700">/</span>
               {crumb.href ? (
-                <Link href={crumb.href} className="text-slate-500 hover:text-slate-800 font-bold px-1.5 py-1 rounded-xl hover:bg-slate-100 transition-colors">
+                <Link href={crumb.href} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-bold px-1.5 py-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-slate-800 font-bold px-1.5 py-1 bg-slate-100 rounded-xl">{crumb.label}</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold px-1.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-xl">{crumb.label}</span>
               )}
             </span>
           ))}
@@ -135,14 +135,14 @@ export function Navbar({ user, userRole }: NavbarProps) {
         <div className="flex items-center gap-1">
           <button
             onClick={() => router.push("/portal")}
-            className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all"
+            className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
           >
             <Grid3X3 className="h-4 w-4" />
           </button>
           
           <button
             onClick={toggleTheme}
-            className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 transition-all"
+            className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
           >
             {theme === "light" ? <MoonIcon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
@@ -157,7 +157,7 @@ export function Navbar({ user, userRole }: NavbarProps) {
         <div className="relative">
           <button
             onClick={(e) => { e.stopPropagation(); setShowDropdown(!showDropdown); }}
-            className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
           >
             <div className="relative">
               <Avatar className="h-8 w-8 rounded-xl">
@@ -166,19 +166,19 @@ export function Navbar({ user, userRole }: NavbarProps) {
                   {user?.email?.[0]?.toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
-              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-500 rounded-full border-2 border-white" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-950" />
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-xs font-bold text-slate-900 truncate max-w-[120px]">
+              <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate max-w-[120px]">
                 {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User"}
               </p>
-              <span className="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 text-slate-500 inline-block mt-0.5">{role}</span>
+              <span className="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 inline-block mt-0.5">{role}</span>
             </div>
           </button>
 
           {showDropdown && (
-            <div className="absolute right-0 mt-2 w-64 rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/20 p-2 z-50" onClick={(e) => e.stopPropagation()}>
-              <div className="p-3 bg-slate-50 rounded-xl mb-2">
+            <div className="absolute right-0 mt-2 w-64 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-xl shadow-slate-200/20 dark:shadow-none p-2 z-50" onClick={(e) => e.stopPropagation()}>
+              <div className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl mb-2">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10 rounded-xl">
                     <AvatarImage src={user?.user_metadata?.avatar_url || ""} />
@@ -187,33 +187,33 @@ export function Navbar({ user, userRole }: NavbarProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">
+                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
                       {user?.user_metadata?.full_name || "User"}
                     </p>
-                    <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
                   </div>
                 </div>
               </div>
-              <div className="h-px bg-slate-100" />
+              <div className="h-px bg-slate-100 dark:bg-slate-800" />
               
-              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 transition-colors" onClick={() => { router.push("/profile"); setShowDropdown(false); }}>
-                <div className="p-1.5 rounded-xl bg-blue-100 text-blue-600">
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors" onClick={() => { router.push("/profile"); setShowDropdown(false); }}>
+                <div className="p-1.5 rounded-xl bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
                   <UserCircle className="h-3.5 w-3.5" />
                 </div>
-                <span className="text-sm font-bold text-slate-700">My Profile</span>
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">My Profile</span>
               </button>
               
-              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 transition-colors" onClick={() => { router.push("/settings"); setShowDropdown(false); }}>
-                <div className="p-1.5 rounded-xl bg-slate-100 text-slate-600">
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors" onClick={() => { router.push("/settings"); setShowDropdown(false); }}>
+                <div className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                   <Settings className="h-3.5 w-3.5" />
                 </div>
-                <span className="text-sm font-bold text-slate-700">Settings</span>
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Settings</span>
               </button>
               
-              <div className="h-px bg-slate-100" />
+              <div className="h-px bg-slate-100 dark:bg-slate-800" />
               
-              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-rose-50 transition-colors text-rose-600" onClick={handleSignOut}>
-                <div className="p-1.5 rounded-xl bg-rose-100 text-rose-600">
+              <button className="w-full flex items-center gap-2 p-2.5 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-colors text-rose-600 dark:text-rose-400" onClick={handleSignOut}>
+                <div className="p-1.5 rounded-xl bg-rose-100 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400">
                   <LogOut className="h-3.5 w-3.5" />
                 </div>
                 <span className="text-sm font-bold">Sign Out</span>

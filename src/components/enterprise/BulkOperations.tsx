@@ -136,7 +136,7 @@ export function BulkOperations() {
     <div className="space-y-6">
       {/* Export Section */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
             <Download className="h-4 w-4 text-emerald-500" />
             Export Data
@@ -151,12 +151,12 @@ export function BulkOperations() {
               { label: "Attendance", count: "12,500", icon: FileSpreadsheet },
               { label: "Payments", count: "₹45L", icon: IndianRupee },
             ].map((item, i) => (
-              <div key={i} className="p-4 border rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
+              <div key={i} className="p-4 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer transition-colors">
                 <div className="flex items-center justify-between mb-2">
-                  <item.icon className="h-5 w-5 text-slate-500" />
-                  <span className="text-xs text-slate-500">{item.count}</span>
+                  <item.icon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                  <span className="text-xs text-slate-500 dark:text-slate-400">{item.count}</span>
                 </div>
-                <p className="text-sm font-medium text-slate-900">{item.label}</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-white">{item.label}</p>
                 <Button variant="ghost" size="sm" className="mt-2 h-7 text-xs text-emerald-600 p-0">
                   Download <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
@@ -168,7 +168,7 @@ export function BulkOperations() {
 
       {/* Import Section */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
             <Upload className="h-4 w-4 text-blue-500" />
             Import Data
@@ -191,8 +191,8 @@ export function BulkOperations() {
                 <div className={`h-10 w-10 rounded-lg ${template.bg} flex items-center justify-center mb-3`}>
                   <template.icon className={`h-5 w-5 ${template.color}`} />
                 </div>
-                <p className="font-medium text-slate-900">{template.name}</p>
-                <p className="text-xs text-slate-500 mt-1">{template.description}</p>
+                <p className="font-medium text-slate-900 dark:text-white">{template.name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{template.description}</p>
               </div>
             ))}
           </div>
@@ -217,15 +217,15 @@ export function BulkOperations() {
             {uploading ? (
               <div className="space-y-2">
                 <Progress value={uploadProgress} className="h-2" />
-                <p className="text-sm text-slate-600">Uploading... {uploadProgress}%</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Uploading... {uploadProgress}%</p>
               </div>
             ) : (
               <>
                 <Upload className="h-10 w-10 mx-auto text-slate-400 mb-3" />
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-white">
                   Drop files here or click to upload
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   Supports Excel (.xlsx, .xls) and CSV files
                 </p>
               </>
@@ -234,8 +234,8 @@ export function BulkOperations() {
 
           {/* Recent Imports */}
           <div className="mt-6">
-            <h4 className="text-sm font-medium text-slate-900 mb-3 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-slate-500" />
+            <h4 className="text-sm font-medium text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               Recent Imports
             </h4>
             <div className="space-y-2">
@@ -244,19 +244,19 @@ export function BulkOperations() {
                   <div className="flex items-center gap-3">
                     <FileSpreadsheet className="h-5 w-5 text-slate-400" />
                     <div>
-                      <p className="text-sm font-medium text-slate-900">{importItem.template}</p>
-                      <p className="text-xs text-slate-500">{importItem.fileName}</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{importItem.template}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{importItem.fileName}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <div className="flex items-center gap-2 text-xs">
                         <CheckCircle className="h-3 w-3 text-emerald-500" />
-                        <span className="text-slate-600">{importItem.success} success</span>
+                        <span className="text-slate-600 dark:text-slate-400">{importItem.success} success</span>
                         {importItem.failed > 0 && (
                           <>
                             <XCircle className="h-3 w-3 text-red-500" />
-                            <span className="text-slate-600">{importItem.failed} failed</span>
+                            <span className="text-slate-600 dark:text-slate-400">{importItem.failed} failed</span>
                           </>
                         )}
                       </div>

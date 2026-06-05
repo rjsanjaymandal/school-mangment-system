@@ -86,17 +86,17 @@ export function SystemHealthDashboard() {
             {overallStatus === "degraded" && <AlertTriangle className="h-6 w-6 text-amber-600" />}
             {overallStatus === "down" && <XCircle className="h-6 w-6 text-red-600" />}
             <div>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-slate-900 dark:text-white">
                 {overallStatus === "operational" ? "All Systems Operational" :
                  overallStatus === "degraded" ? "Some Services Degraded" :
                  "System Outage"}
               </p>
-              <p className="text-sm text-slate-600">Last checked: Just now</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Last checked: Just now</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-slate-900">99.7%</p>
-            <p className="text-xs text-slate-500">Uptime (30 days)</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">99.7%</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Uptime (30 days)</p>
           </div>
         </div>
       </div>
@@ -120,8 +120,8 @@ export function SystemHealthDashboard() {
                     <Activity className="h-4 w-4 text-slate-400" />
                 )}
               </div>
-              <p className="text-lg font-semibold text-slate-900">{metric.value}</p>
-              <p className="text-xs text-slate-500">{metric.label}</p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">{metric.value}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{metric.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -130,9 +130,9 @@ export function SystemHealthDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Services Status */}
         <Card className="shadow-sm">
-          <CardHeader className="pb-4 border-b bg-slate-50/50">
+          <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
             <CardTitle className="text-base flex items-center gap-2">
-              <Server className="h-4 w-4 text-slate-500" />
+              <Server className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               Service Status
             </CardTitle>
           </CardHeader>
@@ -141,18 +141,18 @@ export function SystemHealthDashboard() {
               {SERVICES.map((service, i) => {
                 const StatusIcon = STATUS_ICONS[service.status];
                 return (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-950">
                     <div className="flex items-center gap-3">
                       <StatusIcon className={`h-4 w-4 ${
                         service.status === "operational" ? "text-emerald-500" :
                         service.status === "degraded" ? "text-amber-500" :
                         "text-red-500"
                       }`} />
-                      <span className="font-medium text-slate-900">{service.name}</span>
+                      <span className="font-medium text-slate-900 dark:text-white">{service.name}</span>
                     </div>
                     <div className="flex items-center gap-4 text-xs">
-                      <span className="text-slate-500">{service.uptime}</span>
-                      <span className="text-slate-600">{service.responseTime}</span>
+                      <span className="text-slate-500 dark:text-slate-400">{service.uptime}</span>
+                      <span className="text-slate-600 dark:text-slate-400">{service.responseTime}</span>
                       <Badge className={STATUS_COLORS[service.status]}>{service.status}</Badge>
                     </div>
                   </div>
@@ -164,9 +164,9 @@ export function SystemHealthDashboard() {
 
         {/* Resource Usage */}
         <Card className="shadow-sm">
-          <CardHeader className="pb-4 border-b bg-slate-50/50">
+          <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
             <CardTitle className="text-base flex items-center gap-2">
-              <Activity className="h-4 w-4 text-slate-500" />
+              <Activity className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               Resource Usage
             </CardTitle>
           </CardHeader>
@@ -179,8 +179,8 @@ export function SystemHealthDashboard() {
             ].map((resource, i) => (
               <div key={i}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-slate-700">{resource.label}</span>
-                  <span className="text-sm text-slate-500">{resource.value}%</span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{resource.label}</span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400">{resource.value}%</span>
                 </div>
                 <Progress 
                   value={resource.value} 
@@ -198,23 +198,23 @@ export function SystemHealthDashboard() {
 
       {/* Recent Events */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
-            <Clock className="h-4 w-4 text-slate-500" />
+            <Clock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             Recent System Events
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {RECENT_EVENTS.map((event, i) => (
-              <div key={i} className="p-3 flex items-center gap-4 hover:bg-slate-50">
+              <div key={i} className="p-3 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-900">
                 <div className={`w-2 h-2 rounded-full ${
                   event.level === "info" ? "bg-blue-500" :
                   event.level === "warning" ? "bg-amber-500" :
                   "bg-red-500"
                 }`} />
                 <span className="text-xs text-slate-400 font-mono w-20">{event.time}</span>
-                <span className="text-sm text-slate-700">{event.message}</span>
+                <span className="text-sm text-slate-700 dark:text-slate-300">{event.message}</span>
               </div>
             ))}
           </div>

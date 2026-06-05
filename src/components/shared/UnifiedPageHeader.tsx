@@ -21,12 +21,12 @@ export function UnifiedPageHeader({
     className
 }: UnifiedPageHeaderProps) {
     const iconColors: Record<string, string> = {
-        emerald: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 shadow-emerald-500/5",
-        blue: "bg-blue-500/10 text-blue-600 border-blue-500/20 shadow-blue-500/5",
-        rose: "bg-rose-500/10 text-rose-600 border-rose-500/20 shadow-rose-500/5",
-        amber: "bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-amber-500/5",
-        purple: "bg-purple-500/10 text-purple-600 border-purple-500/20 shadow-purple-500/5",
-        indigo: "bg-indigo-500/10 text-indigo-600 border-indigo-500/20 shadow-indigo-500/5",
+        emerald: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/30 shadow-emerald-500/5",
+        blue: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 dark:border-blue-500/30 shadow-blue-500/5",
+        rose: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20 dark:border-rose-500/30 shadow-rose-500/5",
+        amber: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 dark:border-amber-500/30 shadow-amber-500/5",
+        purple: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 dark:border-purple-500/30 shadow-purple-500/5",
+        indigo: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 dark:border-indigo-500/30 shadow-indigo-500/5",
     };
 
     return (
@@ -42,7 +42,7 @@ export function UnifiedPageHeader({
                     <Icon className="h-6 w-6" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                         {title}
                     </h1>
                     {subtitle && (

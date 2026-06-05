@@ -326,7 +326,7 @@ export function Sidebar({ initialProfile, userRole }: { initialProfile: any; use
           {navigation.filter(canSeeGroup).map((group) => (
             <div key={group.group} className="space-y-2">
               {!isCollapsed && (
-                <h2 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-4 animate-in fade-in duration-700">
+                <h2 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 animate-in fade-in duration-700">
                   {group.group}
                 </h2>
               )}

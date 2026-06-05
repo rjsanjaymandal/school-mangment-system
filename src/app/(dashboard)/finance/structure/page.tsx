@@ -156,13 +156,13 @@ export default function FeeStructurePage() {
             description="Assign financial obligations to groups"
             icon={<LayoutGrid className="h-5 w-5" />}
             color="emerald"
-            className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-6"
           >
             <div className="space-y-5">
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Medium</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Medium</label>
                 <select
-                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                  className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                   value={formData.medium}
                   onChange={(e) => setFormData({ ...formData, medium: e.target.value })}
                 >
@@ -173,9 +173,9 @@ export default function FeeStructurePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Academic Group</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Academic Group</label>
                 <select
-                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                  className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                   value={formData.class_id}
                   onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
                 >
@@ -187,9 +187,9 @@ export default function FeeStructurePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Section</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Section</label>
                 <select
-                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                  className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                   value={formData.section_id}
                   onChange={(e) => setFormData({ ...formData, section_id: e.target.value })}
                 >
@@ -201,9 +201,9 @@ export default function FeeStructurePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category Head</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Category Head</label>
                 <select
-                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                  className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                   value={formData.fee_head}
                   onChange={(e) => setFormData({ ...formData, fee_head: e.target.value })}
                 >
@@ -215,10 +215,10 @@ export default function FeeStructurePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Amount (₹)</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Amount (₹)</label>
                 <Input
                   type="number"
-                  className="h-11 rounded-xl border-slate-200 text-sm font-bold"
+                  className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900"
                   placeholder="0.00"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
@@ -226,10 +226,10 @@ export default function FeeStructurePage() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Maturity Date</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Maturity Date</label>
                 <Input
                   type="date"
-                  className="h-11 rounded-xl border-slate-200 text-sm font-bold"
+                  className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900"
                   value={formData.due_date}
                   onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
                 />
@@ -253,12 +253,12 @@ export default function FeeStructurePage() {
             description="Verified fee distributions per academic group"
             icon={<FileText className="h-5 w-5" />}
             color="blue"
-            className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"
           >
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {groupedByClass.length === 0 ? (
                 <div className="p-20 text-center">
-                  <div className="p-6 bg-slate-50 rounded-full inline-block mb-4">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-full inline-block mb-4">
                     <Building className="h-10 w-10 text-slate-200" />
                   </div>
                   <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">No allocations discovered</p>
@@ -272,25 +272,25 @@ export default function FeeStructurePage() {
                       <button
                         onClick={() => setExpandedClass(isExpanded ? null : group.className)}
                         className={cn(
-                          "w-full flex items-center justify-between p-6 transition-all hover:bg-slate-50/50",
-                          isExpanded && "bg-slate-50"
+                          "w-full flex items-center justify-between p-6 transition-all hover:bg-slate-50/50 dark:hover:bg-slate-900/20",
+                          isExpanded && "bg-slate-50 dark:bg-slate-900/50"
                         )}
                       >
                         <div className="flex items-center gap-5">
                           <div className={cn(
                             "h-12 w-12 rounded-xl flex items-center justify-center border-2 transition-all group-hover:rotate-6",
-                            isExpanded ? "bg-emerald-500 text-white border-emerald-400" : "bg-slate-50 text-slate-400 border-slate-100"
+                            isExpanded ? "bg-emerald-500 text-white border-emerald-400" : "bg-slate-50 dark:bg-slate-950 text-slate-400 border-slate-100 dark:border-slate-800"
                           )}>
                             <Building className="h-6 w-6" />
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-black text-slate-900 tracking-tight uppercase">Group {group.className}</p>
+                            <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase">Group {group.className}</p>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{group.structures.length} Distribution Heads</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           {group.medium.map(m => (
-                            <span key={m} className="text-[8px] font-black uppercase bg-white border border-slate-200 px-2.5 py-1 rounded-md tracking-tighter shadow-sm">{m}</span>
+                            <span key={m} className="text-[8px] font-black uppercase bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-md tracking-tighter shadow-sm">{m}</span>
                           ))}
                           {isExpanded ? (
                             <ChevronUp className="h-5 w-5 text-slate-400" />
@@ -301,10 +301,10 @@ export default function FeeStructurePage() {
                       </button>
 
                       {isExpanded && (
-                        <div className="p-6 bg-slate-50/30 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
-                          <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white">
+                        <div className="p-6 bg-slate-50/30 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2 duration-300">
+                          <div className="overflow-hidden rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900">
                             <table className="w-full text-left">
-                              <thead className="bg-slate-50/80 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                              <thead className="bg-slate-50/80 dark:bg-slate-950/80 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                                 <tr>
                                   <th className="py-4 px-4">Context</th>
                                   <th className="py-4 px-4">Identity</th>
@@ -313,17 +313,17 @@ export default function FeeStructurePage() {
                                   <th className="py-4 px-4 text-center">Ops</th>
                                 </tr>
                               </thead>
-                              <tbody className="divide-y divide-slate-100">
+                              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {group.structures.map((structure) => (
-                                  <tr key={structure.id} className="hover:bg-slate-50/50 transition-colors">
+                                  <tr key={structure.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
                                     <td className="py-4 px-4">
-                                       <span className="text-[9px] font-black uppercase text-slate-500">{structure.medium}</span>
+                                       <span className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-400">{structure.medium}</span>
                                     </td>
                                     <td className="py-4 px-4">
-                                      <span className="text-sm font-bold text-slate-900 tracking-tight">{structure.fee_type}</span>
+                                      <span className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">{structure.fee_type}</span>
                                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{structure.section_id ? `Section ${structure.section_id}` : "Global"}</p>
                                     </td>
-                                    <td className="py-4 px-4 text-right font-black text-slate-900 text-sm">
+                                    <td className="py-4 px-4 text-right font-black text-slate-900 dark:text-white text-sm">
                                       ₹{structure.amount?.toLocaleString()}
                                     </td>
                                     <td className="py-4 px-4 text-right text-[10px] font-mono font-bold text-slate-400">
@@ -331,10 +331,10 @@ export default function FeeStructurePage() {
                                     </td>
                                     <td className="py-4 px-4">
                                       <div className="flex items-center justify-center gap-1">
-                                        <button className="h-8 w-8 hover:bg-slate-100 rounded-lg flex items-center justify-center">
+                                        <button className="h-8 w-8 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg flex items-center justify-center">
                                           <Edit2 className="h-3 w-3 text-slate-400" />
                                         </button>
-                                        <button onClick={() => handleDelete(structure.id)} className="h-8 w-8 hover:bg-rose-50 rounded-lg flex items-center justify-center group/del">
+                                        <button onClick={() => handleDelete(structure.id)} className="h-8 w-8 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg flex items-center justify-center group/del">
                                           <Trash2 className="h-3 w-3 text-slate-400 group-hover/del:text-rose-500" />
                                         </button>
                                       </div>
@@ -358,38 +358,38 @@ export default function FeeStructurePage() {
       {/* Assign Modal - Refined */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-black tracking-tight text-slate-900">Allocate Distribution</h3>
-              <button onClick={() => setIsModalOpen(false)} className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600">&times;</button>
+              <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Allocate Distribution</h3>
+              <button onClick={() => setIsModalOpen(false)} className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600">&times;</button>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Academic Group</label>
-                  <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={formData.class_id} onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Academic Group</label>
+                  <select className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none" value={formData.class_id} onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}>
                     <option value="">Select</option>
                     {classes.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Section</label>
-                  <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={formData.section_id} onChange={(e) => setFormData({ ...formData, section_id: e.target.value })}>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Section</label>
+                  <select className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none" value={formData.section_id} onChange={(e) => setFormData({ ...formData, section_id: e.target.value })}>
                     <option value="">Global</option>
                     {sections.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category Head</label>
-                <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={formData.fee_head} onChange={(e) => setFormData({ ...formData, fee_head: e.target.value })}>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Category Head</label>
+                <select className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none" value={formData.fee_head} onChange={(e) => setFormData({ ...formData, fee_head: e.target.value })}>
                   <option value="">Select category</option>
                   {feeHeads.map(h => <option key={h.id} value={h.name}>{h.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Value (₹)</label>
-                <Input type="number" className="h-11 rounded-xl border-slate-200 text-sm font-bold" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Value (₹)</label>
+                <Input type="number" className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} />
               </div>
               <button onClick={handleSubmit} disabled={isLoading} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 w-full mt-4">
                 Authorize Allocation

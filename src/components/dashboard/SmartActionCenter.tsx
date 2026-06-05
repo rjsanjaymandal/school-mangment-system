@@ -16,7 +16,7 @@ export function SmartActionCenter({ alerts }: SmartActionCenterProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-black text-slate-900 flex items-center gap-2 uppercase tracking-[0.15em]">
+        <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2 uppercase tracking-[0.15em]">
           <Bell className="h-4 w-4 text-rose-500 animate-pulse" />
           Smart Action Center
         </h3>
@@ -49,8 +49,8 @@ export function SmartActionCenter({ alerts }: SmartActionCenterProps) {
                    <Info className="h-4 w-4" />}
                 </div>
               </div>
-              <h4 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-tight">{alert.title}</h4>
-              <p className="text-[10px] text-slate-500 mt-1 leading-relaxed font-medium">{alert.description}</p>
+              <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight">{alert.title}</h4>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed font-medium">{alert.description}</p>
             </div>
             
             {alert.action && (

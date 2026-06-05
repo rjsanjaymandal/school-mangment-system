@@ -174,7 +174,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-0">
+      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-0">
         {[
           { id: "inbox", label: "Inbox", icon: Inbox, badge: totalUnread },
           { id: "sent", label: "Sent", icon: Send, badge: 0 },
@@ -196,17 +196,17 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
           <div className="flex h-[calc(100vh-340px)]">
             <div className={cn("w-80 border-r border-slate-100 flex flex-col bg-white/40 shrink-0",
               selectedConversation ? "hidden md:flex" : "w-full")}>
-              <div className="p-4 border-b border-slate-100">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search conversations..." className="pl-11 h-10 rounded-xl bg-white border-slate-200 text-xs font-bold shadow-sm" />
+                    placeholder="Search conversations..." className="pl-11 h-10 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs font-bold shadow-sm" />
                 </div>
               </div>
               <ScrollArea className="flex-1">
                 {filteredConversations.length === 0 ? (
                   <div className="p-12 text-center flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+                    <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3">
                       <Mail className="h-6 w-6 text-slate-300" />
                     </div>
                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">No conversations</p>
@@ -251,7 +251,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
             <div className={cn("flex-1 flex flex-col bg-white/20", !selectedConversation ? "hidden md:flex" : "flex")}>
               {selectedConversation ? (
                 <>
-                  <div className="px-5 py-4 border-b border-slate-100 bg-white/50 flex items-center justify-between">
+                  <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-white/50 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg md:hidden" onClick={() => handleSelectConversation(null as any)}>
                         <ArrowLeft className="h-4 w-4" />
@@ -260,11 +260,11 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                         {selectedConversation.contact.full_name[0]}
                       </div>
                       <div>
-                        <p className="font-bold text-sm text-slate-900">{selectedConversation.contact.full_name}</p>
+                        <p className="font-bold text-sm text-slate-900 dark:text-white">{selectedConversation.contact.full_name}</p>
                         <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{selectedConversation.contact.role || "Staff"}</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-200 text-slate-400">
+                    <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800 text-slate-400">
                       {selectedConversation.last_message?.created_at
                         ? formatDistanceToNow(new Date(selectedConversation.last_message.created_at), { addSuffix: true })
                         : "No recent activity"}
@@ -302,11 +302,11 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                     </div>
                   </ScrollArea>
 
-                  <div className="px-5 py-4 bg-white/50 border-t border-slate-100">
+                  <div className="px-5 py-4 bg-white/50 border-t border-slate-100 dark:border-slate-800">
                     <div className="max-w-2xl mx-auto flex items-center gap-3">
                       <Input value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-                        placeholder="Type a message..." className="flex-1 rounded-xl border-slate-200 h-11 bg-white shadow-sm" />
+                        placeholder="Type a message..." className="flex-1 rounded-xl border-slate-200 dark:border-slate-800 h-11 bg-white dark:bg-slate-900 shadow-sm" />
                       <Button onClick={handleSend} disabled={!newMessage.trim()}
                         className="h-11 w-11 rounded-xl bg-blue-600 hover:bg-blue-700 p-0 shadow-lg transition-all active:scale-95 disabled:opacity-50">
                         <SendHorizontal className="h-5 w-5" />
@@ -317,7 +317,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
               ) : (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
                       <MessageSquare className="h-8 w-8 text-slate-300" />
                     </div>
                     <p className="text-sm font-bold text-slate-400 mb-1">Select a conversation</p>
@@ -337,7 +337,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
           <ScrollArea className="h-[calc(100vh-380px)]">
             {sentMessages.length === 0 ? (
               <div className="p-16 text-center flex flex-col items-center">
-                <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
                   <Send className="h-8 w-8 text-slate-300" />
                 </div>
                 <p className="text-sm font-bold text-slate-400 mb-1">No sent messages</p>
@@ -346,7 +346,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
             ) : (
               <div className="p-4 space-y-3">
                 {sentMessages.map((msg) => (
-                  <div key={msg.id} className="p-5 rounded-2xl border border-slate-100 bg-white hover:border-slate-200 transition-all">
+                  <div key={msg.id} className="p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-200 transition-all">
                     <div className="flex items-start gap-4">
                       <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
                         {msg.receiver?.full_name?.[0] || "?"}
@@ -354,8 +354,8 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-sm text-slate-900">{msg.receiver?.full_name || "Unknown"}</span>
-                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-200 bg-slate-50 text-slate-500">
+                            <span className="font-bold text-sm text-slate-900 dark:text-white">{msg.receiver?.full_name || "Unknown"}</span>
+                            <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400">
                               {msg.receiver?.role || "Staff"}
                             </Badge>
                             <PriorityBadge priority={msg.priority} />
@@ -369,7 +369,7 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
                           </span>
                         </div>
                         {msg.subject && <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{msg.subject}</p>}
-                        <p className="text-sm text-slate-500 line-clamp-2">{msg.content || msg.body}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">{msg.content || msg.body}</p>
                       </div>
                     </div>
                   </div>
@@ -386,27 +386,27 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
           className="border-none shadow-xl rounded-2xl overflow-hidden">
           <div className="p-6 max-w-xl space-y-5">
             <div>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Recipient</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Recipient</label>
               <select value={composeForm.receiver_id} onChange={(e) => setComposeForm({ ...composeForm, receiver_id: e.target.value })}
-                className="w-full h-11 rounded-xl border border-slate-200 px-4 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                <option value="">Select recipient...</option>
+                className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-4 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select recipient...</option>
                 {contacts.map((c) => (
-                  <option key={c.id} value={c.id}>{c.full_name} — {c.role}</option>
+                  <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.full_name} — {c.role}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Subject</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Subject</label>
               <Input value={composeForm.subject} onChange={(e) => setComposeForm({ ...composeForm, subject: e.target.value })}
-                placeholder="Enter subject..." className="rounded-xl border-slate-200 h-11" />
+                placeholder="Enter subject..." className="rounded-xl border-slate-200 dark:border-slate-800 h-11" />
             </div>
             <div>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Priority</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Priority</label>
               <div className="flex gap-2">
                 {PRIORITIES.map((p) => (
                   <button key={p.id} onClick={() => setComposeForm({ ...composeForm, priority: p.id })}
                     className={cn("flex items-center justify-center gap-1.5 h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all px-4",
-                      composeForm.priority === p.id ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-slate-400 border-slate-200 hover:border-slate-300")}>
+                      composeForm.priority === p.id ? "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800" : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700")}>
                     <div className={cn("h-2 w-2 rounded-full", p.color)} />
                     {p.label}
                   </button>
@@ -414,14 +414,14 @@ export function MessagesDashboard({ initialConversations, contacts, currentUserI
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Message</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Message</label>
               <textarea value={composeForm.body} onChange={(e) => setComposeForm({ ...composeForm, body: e.target.value })}
                 placeholder="Write your message..."
-                className="w-full h-40 rounded-xl border border-slate-200 p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300" />
+                className="w-full h-40 rounded-xl border border-slate-200 dark:border-slate-800 p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <Button variant="outline" onClick={() => { setComposeForm({ receiver_id: "", subject: "", body: "", priority: "normal" }); setActiveTab("inbox"); }}
-                className="rounded-xl h-11 px-6 text-[10px] font-black uppercase tracking-widest border-slate-200">Cancel</Button>
+                className="rounded-xl h-11 px-6 text-[10px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800">Cancel</Button>
               <Button onClick={handleCompose} disabled={sending || !composeForm.receiver_id || !composeForm.body}
                 className="rounded-xl h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest gap-2 shadow-lg transition-all active:scale-95 disabled:opacity-50">
                 <Send className="h-4 w-4" /> {sending ? "Sending..." : "Send Message"}

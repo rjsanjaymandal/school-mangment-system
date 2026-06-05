@@ -255,7 +255,7 @@ export function AttendanceDashboard({
                 "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-x-2",
                 studentRecords[studentId] === status
                     ? `${activeClass} text-white shadow-md`
-                    : "bg-slate-100 text-slate-500 hover:bg-slate-200 border border-slate-200"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-800"
             )}
         >
             {icon}
@@ -272,7 +272,7 @@ export function AttendanceDashboard({
                 icon={Users}
                 color="emerald"
                 actions={isAdminOrTeacher && (
-                    <button onClick={handleExportCSV} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all bg-white">
+                    <button onClick={handleExportCSV} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all bg-white dark:bg-slate-900">
                         <Download className="w-4 h-4 mr-2" /> Export
                     </button>
                 )}
@@ -285,7 +285,7 @@ export function AttendanceDashboard({
                 <DashboardStatCard title="Late" value={weekLate} icon={Clock} color="amber" description="This week" />
             </div>
 
-            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl w-fit">
+            <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl w-fit">
                 {!isStudent && (
                     <button onClick={() => setActiveTab("mark")} className={cn("px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2", activeTab === "mark" ? "bg-white text-emerald-600 shadow-sm" : "text-slate-500")}>
                         <ClipboardCheck className="w-4 h-4" /> Mark
@@ -302,30 +302,32 @@ export function AttendanceDashboard({
             {activeTab === "stats" && (
                 <div className="space-y-8 animate-in fade-in duration-700">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 w-full">
-                        <div className="md:col-span-8 bg-white border border-slate-200 rounded-xl overflow-hidden">
-                            <div className="p-5 border-b border-slate-100 flex justify-between items-center">
+                        <div className="md:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                                 <div>
-                                    <h3 className="text-lg font-black tracking-tight text-slate-900">Weekly Attendance</h3>
-                                    <p className="text-sm text-slate-500 mt-1 text-left">Daily breakdown of attendance statuses</p>
+                                    <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Weekly Attendance</h3>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 text-left">Daily breakdown of attendance statuses</p>
                                 </div>
                                 <Activity className="h-5 w-5 text-slate-400" />
                             </div>
                             <div className="p-5 h-[340px]">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={presenceMatrix}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#88888810" vertical={false} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                                         <XAxis 
                                             dataKey="name" 
                                             axisLine={false} 
                                             tickLine={false} 
-                                            tick={{ fill: "#888888", fontSize: 12 }}
+                                            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
                                         />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: "#888888", fontSize: 12 }} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
                                         <Tooltip 
                                             cursor={{ fill: "rgba(0,0,0,0.05)" }}
-                                            contentStyle={{ backgroundColor: "rgba(10,10,10,0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", fontSize: "12px", color: "#fff" }}
+                                            contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "12px" }}
+                                            labelStyle={{ color: "var(--foreground)" }}
+                                            itemStyle={{ color: "var(--foreground)" }}
                                         />
-                                        <Legend verticalAlign="top" height={36} formatter={(value) => <span className="text-xs font-bold text-slate-500 capitalize">{value}</span>}/>
+                                        <Legend verticalAlign="top" height={36} formatter={(value) => <span className="text-xs font-bold text-slate-500 dark:text-slate-400 capitalize">{value}</span>}/>
                                         <Bar dataKey="Present" fill="#10b981" radius={[4, 4, 0, 0]} barSize={32} />
                                         <Bar dataKey="Absent" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={12} />
                                     </BarChart>
@@ -333,10 +335,10 @@ export function AttendanceDashboard({
                             </div>
                         </div>
 
-                        <div className="md:col-span-4 bg-white border border-slate-200 rounded-xl overflow-hidden">
-                            <div className="p-5 border-b border-slate-100 text-center">
-                                <h3 className="text-lg font-black tracking-tight text-slate-900">Today's Status</h3>
-                                <p className="text-sm text-slate-500 mt-1">Distribution of active records</p>
+                        <div className="md:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                            <div className="p-5 border-b border-slate-100 dark:border-slate-800 text-center">
+                                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Today's Status</h3>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Distribution of active records</p>
                             </div>
                             <div className="p-5 h-[340px]">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -353,9 +355,11 @@ export function AttendanceDashboard({
                                             ))}
                                         </Pie>
                                         <Tooltip 
-                                            contentStyle={{ backgroundColor: "rgba(10,10,10,0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", fontSize: "12px", color: "#fff" }}
+                                            contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", fontSize: "12px" }}
+                                            labelStyle={{ color: "var(--foreground)" }}
+                                            itemStyle={{ color: "var(--foreground)" }}
                                         />
-                                        <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-xs font-bold text-slate-500 capitalize">{value}</span>}/>
+                                        <Legend verticalAlign="bottom" height={36} formatter={(value) => <span className="text-xs font-bold text-slate-500 dark:text-slate-400 capitalize">{value}</span>}/>
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>
@@ -366,27 +370,27 @@ export function AttendanceDashboard({
 
             {activeTab === "mark" && (
                 <div className="space-y-6 animate-in fade-in duration-700">
-                    <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
-                                <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                    <option value="" disabled>Select class</option>
-                                    {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
+                                <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                    <option value="" disabled className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select class</option>
+                                    {classes.map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{c.name}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Date</label>
                                     <div className="relative">
-                                        <input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 pl-10 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
+                                        <input type="date" value={selectedDate} onChange={(e) => handleDateChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 pl-10 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none" />
                                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Search</label>
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="w-full h-11 rounded-xl border border-slate-200 px-3 pl-10 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
+                                    <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search students..." className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 pl-10 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none" />
                                 </div>
                             </div>
                         </div>
@@ -394,55 +398,55 @@ export function AttendanceDashboard({
 
                     {studentsLoaded && classStudents.length > 0 && (
                         <div className="space-y-5">
-                            <div className="flex flex-wrap items-center justify-between gap-4 p-5 bg-white border border-slate-200 rounded-xl">
+                            <div className="flex flex-wrap items-center justify-between gap-4 p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
                                 <div className="flex items-center gap-3">
-                                    <button onClick={markAllPresent} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-emerald-50 transition-all">
+                                    <button onClick={markAllPresent} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all">
                                         <Check className="w-4 h-4" /> All Present
                                     </button>
-                                    <button onClick={markAllAbsent} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-red-50 transition-all">
+                                    <button onClick={markAllAbsent} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all">
                                         <X className="w-4 h-4" /> All Absent
                                     </button>
                                 </div>
-                                <div className="flex items-center gap-6 border-l border-slate-200 pl-6">
+                                <div className="flex items-center gap-6 border-l border-slate-200 dark:border-slate-800 pl-6">
                                     <div className="flex flex-col items-center">
                                         <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Present</span>
-                                        <span className="text-xl font-black text-slate-900 mt-1 leading-none">{presentCount}</span>
+                                        <span className="text-xl font-black text-slate-900 dark:text-white mt-1 leading-none">{presentCount}</span>
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Absent</span>
-                                        <span className="text-xl font-black text-slate-900 mt-1 leading-none">{absentCount}</span>
+                                        <span className="text-xl font-black text-slate-900 dark:text-white mt-1 leading-none">{absentCount}</span>
                                     </div>
                                     <div className="flex flex-col items-center">
                                         <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest">Late</span>
-                                        <span className="text-xl font-black text-slate-900 mt-1 leading-none">{lateCount}</span>
+                                        <span className="text-xl font-black text-slate-900 dark:text-white mt-1 leading-none">{lateCount}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left border-collapse">
                                         <thead>
-                                            <tr className="border-b border-slate-100 bg-slate-50/50">
-                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Student</th>
-                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Adm No</th>
-                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
+                                            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Student</th>
+                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Adm No</th>
+                                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {filteredStudents.map((student) => (
-                                                <tr key={student.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                                                <tr key={student.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 transition-colors">
                                                     <td className="py-4 px-4">
                                                         <div className="flex items-center gap-3">
                                                             <div className="h-9 w-9 flex items-center justify-center font-black text-white text-xs rounded-xl bg-emerald-600">
                                                                 {student.profile?.full_name?.[0] || "?"}
                                                             </div>
-                                                            <div className="font-bold text-sm text-slate-700">
+                                                            <div className="font-bold text-sm text-slate-700 dark:text-slate-300">
                                                                 {student.profile?.full_name}
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="py-4 px-4 font-mono text-sm text-slate-500 font-bold">
+                                                    <td className="py-4 px-4 font-mono text-sm text-slate-500 dark:text-slate-400 font-bold">
                                                         {student.admission_number || "N/A"}
                                                     </td>
                                                     <td className="py-4 px-4">
@@ -480,7 +484,7 @@ export function AttendanceDashboard({
                     {studentsLoaded && classStudents.length === 0 && (
                         <div className="flex flex-col items-center justify-center py-24">
                             <Search className="h-10 w-10 mb-4 text-slate-300" />
-                            <p className="text-sm font-bold text-slate-500">No students found for this class.</p>
+                            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">No students found for this class.</p>
                         </div>
                     )}
                 </div>
@@ -488,21 +492,21 @@ export function AttendanceDashboard({
 
             {activeTab === "history" && (
                 <div className="space-y-6 animate-in fade-in duration-700">
-                    <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                             {!isStudent && (
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
-                                    <select value={historyClass} onChange={(e) => setHistoryClass(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                        <option value="" disabled>Select class</option>
-                                        {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
+                                    <select value={historyClass} onChange={(e) => setHistoryClass(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                        <option value="" disabled className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select class</option>
+                                        {classes.map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{c.name}</option>)}
                                     </select>
                                 </div>
                             )}
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Date</label>
                                 <div className="relative">
-                                    <input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 pl-10 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
+                                    <input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 pl-10 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none" />
                                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 </div>
                             </div>
@@ -513,16 +517,16 @@ export function AttendanceDashboard({
                         </div>
                     </div>
 
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/50 rounded-xl overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-100 bg-slate-50/50">
-                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">ID</th>
-                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Student Name</th>
-                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Admission No</th>
-                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
-                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Remarks</th>
+                                    <tr className="border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50">
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">ID</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Student Name</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Admission No</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Status</th>
+                                        <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Remarks</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -530,8 +534,8 @@ export function AttendanceDashboard({
                                         <tr>
                                             <td colSpan={5} className="py-24 text-center">
                                                 <div className="flex flex-col items-center justify-center gap-4">
-                                                    <div className="h-8 w-8 rounded-xl bg-slate-200 animate-pulse" />
-                                                    <div className="h-4 w-48 rounded-xl bg-slate-200 animate-pulse" />
+                                                    <div className="h-8 w-8 rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+                                                    <div className="h-4 w-48 rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
                                                 </div>
                                             </td>
                                         </tr>
@@ -540,7 +544,7 @@ export function AttendanceDashboard({
                                             <td colSpan={5} className="py-24 text-center">
                                                 <div className="flex flex-col items-center">
                                                     <Search className="h-10 w-10 mb-4 text-slate-300" />
-                                                    <p className="text-sm font-bold text-slate-500">
+                                                    <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
                                                         No attendance records found for this date.
                                                     </p>
                                                 </div>
@@ -548,8 +552,8 @@ export function AttendanceDashboard({
                                         </tr>
                                     ) : (
                                         historyRecords.map((record, idx) => (
-                                            <tr key={record.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                                                <td className="py-4 px-4 font-mono text-sm text-slate-500 font-bold">
+                                            <tr key={record.id} className="border-b border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                                <td className="py-4 px-4 font-mono text-sm text-slate-500 dark:text-slate-400 font-bold">
                                                     {String(idx + 1).padStart(3, '0')}
                                                 </td>
                                                 <td className="py-4 px-4">
@@ -562,25 +566,25 @@ export function AttendanceDashboard({
                                                         )}>
                                                             {record.student?.profile?.full_name?.[0] || "?"}
                                                         </div>
-                                                        <span className="font-bold text-sm text-slate-700">
+                                                        <span className="font-bold text-sm text-slate-700 dark:text-slate-300">
                                                             {record.student?.profile?.full_name}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="py-4 px-4 font-mono text-sm text-slate-500 font-bold">
+                                                <td className="py-4 px-4 font-mono text-sm text-slate-500 dark:text-slate-400 font-bold">
                                                     {record.student?.admission_number || "N/A"}
                                                 </td>
                                                 <td className="py-4 px-4">
                                                     <span className={cn(
                                                         "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
-                                                        record.status === "present" ? "bg-emerald-50 text-emerald-600" :
-                                                            record.status === "absent" ? "bg-red-50 text-red-600" :
-                                                                record.status === "late" ? "bg-amber-50 text-amber-600" : "bg-blue-50 text-blue-600"
+                                                        record.status === "present" ? "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400" :
+                                                            record.status === "absent" ? "bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400" :
+                                                                record.status === "late" ? "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400" : "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400"
                                                     )}>
                                                         {record.status}
                                                     </span>
                                                 </td>
-                                                <td className="py-4 px-4 text-sm text-slate-500 font-bold">
+                                                <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400 font-bold">
                                                     {record.remarks || "-"}
                                                 </td>
                                             </tr>

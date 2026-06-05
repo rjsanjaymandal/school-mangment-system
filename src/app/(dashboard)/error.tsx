@@ -17,18 +17,18 @@ export default function DashboardError({
           <AlertTriangle className="h-8 w-8 text-red-500" />
         </div>
 
-        <h2 className="text-xl font-bold text-slate-900 mb-2">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
           Something went wrong
         </h2>
-        <p className="text-sm text-slate-500 max-w-md mb-4">
+        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mb-4">
           An unexpected error occurred. Please try again.
         </p>
 
         {process.env.NODE_ENV === "development" && error?.message && (
           <div className="mt-4 mb-6 max-w-lg w-full">
-            <div className="p-4 rounded-md bg-slate-50 border border-slate-200 text-left">
+            <div className="p-4 rounded-md bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-left">
               <p className="text-xs font-medium text-red-500 mb-2">Error Details</p>
-              <code className="text-xs text-slate-600 break-all font-mono">
+              <code className="text-xs text-slate-600 dark:text-slate-400 break-all font-mono">
                 {error.message}
               </code>
             </div>
@@ -45,7 +45,7 @@ export default function DashboardError({
           </button>
           <Link
             href="/"
-            className="flex items-center gap-2 px-4 py-2 bg-white text-slate-900 border border-slate-200 rounded-md text-sm font-medium hover:bg-slate-50"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-md text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-900"
           >
             <Home className="h-4 w-4" />
             Go to Dashboard

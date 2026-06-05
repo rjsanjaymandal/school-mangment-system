@@ -91,9 +91,9 @@ export default function AuditLogsPage() {
     if (action.includes("UPDATE")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-100 text-blue-700">Update</span>;
     if (action.includes("DELETE")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-rose-100 text-rose-700">Delete</span>;
     if (action.includes("LOGIN")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-violet-100 text-violet-700">Login</span>;
-    if (action.includes("LOGOUT")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">Logout</span>;
+    if (action.includes("LOGOUT")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Logout</span>;
     if (action.includes("EXPORT")) return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">Export</span>;
-    return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">{action}</span>;
+    return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">{action}</span>;
   };
 
   const getStatusBadge = (status?: string) => {
@@ -108,7 +108,7 @@ export default function AuditLogsPage() {
     switch (role) {
       case "admin": return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-rose-100 text-rose-700">Admin</span>;
       case "teacher": return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-100 text-blue-700">Teacher</span>;
-      default: return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">Student</span>;
+      default: return <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Student</span>;
     }
   };
 
@@ -133,14 +133,14 @@ export default function AuditLogsPage() {
         <DashboardStatCard title="Warnings" value={stats.warnings} icon={AlertTriangle} color="amber" />
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input placeholder="Search by user, action, or entity..." className="pl-9 rounded-xl border-slate-200" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <Input placeholder="Search by user, action, or entity..." className="pl-9 rounded-xl border-slate-200 dark:border-slate-800" value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={selectedAction} onChange={(e) => setSelectedAction(e.target.value)}>
+            <select className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none" value={selectedAction} onChange={(e) => setSelectedAction(e.target.value)}>
               <option value="all">All Actions</option>
               <option value="CREATE">Create</option>
               <option value="UPDATE">Update</option>
@@ -148,7 +148,7 @@ export default function AuditLogsPage() {
               <option value="LOGIN">Login</option>
               <option value="LOGOUT">Logout</option>
             </select>
-            <select className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" value={selectedModule} onChange={(e) => setSelectedModule(e.target.value)}>
+            <select className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none" value={selectedModule} onChange={(e) => setSelectedModule(e.target.value)}>
               <option value="all">All Modules</option>
               <option value="students">Students</option>
               <option value="profiles">Profiles</option>
@@ -161,29 +161,29 @@ export default function AuditLogsPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50">
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Timestamp</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">User</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Role</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Action</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Module</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Entity ID</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">IP Address</th>
-                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Timestamp</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">User</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Role</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Action</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Module</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Entity ID</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">IP Address</th>
+                <th className="text-left py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Status</th>
               </tr>
             </thead>
             <tbody>
               {filteredLogs.length === 0 ? (
-                <tr><td colSpan={8} className="py-16 text-center text-slate-500">No audit logs found</td></tr>
+                <tr><td colSpan={8} className="py-16 text-center text-slate-500 dark:text-slate-400">No audit logs found</td></tr>
               ) : (
                 filteredLogs.map((log) => (
-                  <tr key={log.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                  <tr key={log.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50">
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-slate-400" />
                         <div>
-                          <p className="text-xs font-mono text-slate-700">{new Date(log.created_at).toLocaleDateString()}</p>
-                          <p className="text-xs text-slate-500">{formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}</p>
+                          <p className="text-xs font-mono text-slate-700 dark:text-slate-300">{new Date(log.created_at).toLocaleDateString()}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}</p>
                         </div>
                       </div>
                     </td>
@@ -191,16 +191,16 @@ export default function AuditLogsPage() {
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-xs">{log.actor?.full_name?.[0]?.toUpperCase() || "S"}</div>
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{log.actor?.full_name || "SYSTEM"}</p>
-                          <p className="text-xs text-slate-500">{log.actor?.email}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{log.actor?.full_name || "SYSTEM"}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{log.actor?.email}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 px-4">{getRoleBadge(log.actor?.role)}</td>
                     <td className="py-4 px-4">{getActionBadge(log.action)}</td>
-                    <td className="py-4 px-4"><span className="text-sm font-bold text-slate-700 capitalize">{log.entity_type}</span></td>
-                    <td className="py-4 px-4"><code className="text-xs bg-slate-100 px-2 py-1 rounded font-mono text-slate-700">{log.entity_id.substring(0, 12)}...</code></td>
-                    <td className="py-4 px-4"><code className="text-xs font-mono text-slate-500">{log.ip_address || "Internal"}</code></td>
+                    <td className="py-4 px-4"><span className="text-sm font-bold text-slate-700 dark:text-slate-300 capitalize">{log.entity_type}</span></td>
+                    <td className="py-4 px-4"><code className="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded font-mono text-slate-700 dark:text-slate-300">{log.entity_id.substring(0, 12)}...</code></td>
+                    <td className="py-4 px-4"><code className="text-xs font-mono text-slate-500 dark:text-slate-400">{log.ip_address || "Internal"}</code></td>
                     <td className="py-4 px-4">{getStatusBadge(log.status)}</td>
                   </tr>
                 ))
@@ -209,7 +209,7 @@ export default function AuditLogsPage() {
           </table>
         </div>
 
-        <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between text-sm text-slate-500">
+        <div className="px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
           <span>Showing {filteredLogs.length} of {logs.length} entries</span>
         </div>
       </div>

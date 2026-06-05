@@ -54,8 +54,8 @@ export function ReportBuilder() {
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-slate-900">Custom Report Builder</p>
-              <p className="text-sm text-slate-500">Create and customize reports with filters</p>
+              <p className="font-medium text-slate-900 dark:text-white">Custom Report Builder</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Create and customize reports with filters</p>
             </div>
             <Button onClick={() => setShowBuilder(true)} className="rounded-md bg-blue-600">
               <Plus className="h-4 w-4 mr-2" />
@@ -68,18 +68,18 @@ export function ReportBuilder() {
       {/* Data Sources & Types */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-sm">
-          <CardHeader className="pb-4 border-b bg-slate-50/50">
+          <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
             <CardTitle className="text-base flex items-center gap-2">
-              <FileBarChart className="h-4 w-4 text-slate-500" />
+              <FileBarChart className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               Data Sources
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4">
             <div className="space-y-2">
               {DATA_SOURCES.map(source => (
-                <div key={source.id} className="p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-                  <p className="font-medium text-slate-900">{source.name}</p>
-                  <p className="text-xs text-slate-500 mt-1">{source.fields.join(", ")}</p>
+                <div key={source.id} className="p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
+                  <p className="font-medium text-slate-900 dark:text-white">{source.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{source.fields.join(", ")}</p>
                 </div>
               ))}
             </div>
@@ -87,19 +87,19 @@ export function ReportBuilder() {
         </Card>
 
         <Card className="shadow-sm">
-          <CardHeader className="pb-4 border-b bg-slate-50/50">
+          <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
             <CardTitle className="text-base flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-slate-500" />
+              <BarChart3 className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               Report Types
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-4">
               {REPORT_TYPES.map(type => (
-                <div key={type.id} className="p-4 border rounded-lg text-center hover:bg-slate-50 cursor-pointer">
-                  <type.icon className="h-6 w-6 mx-auto text-slate-500 mb-2" />
-                  <p className="font-medium text-slate-900 text-sm">{type.name}</p>
-                  <p className="text-xs text-slate-500 mt-1">{type.description}</p>
+                <div key={type.id} className="p-4 border rounded-lg text-center hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
+                  <type.icon className="h-6 w-6 mx-auto text-slate-500 dark:text-slate-400 mb-2" />
+                  <p className="font-medium text-slate-900 dark:text-white text-sm">{type.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{type.description}</p>
                 </div>
               ))}
             </div>
@@ -109,49 +109,49 @@ export function ReportBuilder() {
 
       {/* Saved Reports */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
-            <FileBarChart className="h-4 w-4 text-slate-500" />
+            <FileBarChart className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             Saved Reports
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b">
+              <thead className="bg-slate-50 dark:bg-slate-950 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Report Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Data Source</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Filters</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Created By</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Last Run</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Report Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Data Source</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Filters</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Created By</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Last Run</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {CUSTOM_REPORTS.map(report => (
-                  <tr key={report.id} className="hover:bg-slate-50">
+                  <tr key={report.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
                     <td className="px-4 py-3">
                       <div>
-                        <p className="font-medium text-slate-900">{report.name}</p>
-                        <p className="text-xs text-slate-500">{report.description}</p>
+                        <p className="font-medium text-slate-900 dark:text-white">{report.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{report.description}</p>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="outline" className="capitalize">{report.type}</Badge>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm text-slate-600 capitalize">{report.data_source}</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-400 capitalize">{report.data_source}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm text-slate-500">{report.filters} filters</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">{report.filters} filters</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm text-slate-500">{report.created_by}</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">{report.created_by}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm text-slate-500">{report.last_generated || "-"}</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">{report.last_generated || "-"}</span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
@@ -184,26 +184,26 @@ export function ReportBuilder() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-slate-700">Report Name</label>
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Report Name</label>
                   <Input placeholder="Enter report name" className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-slate-700">Data Source</label>
-                  <select className="w-full mt-1 h-10 px-3 rounded-md border">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Data Source</label>
+                  <select className="w-full mt-1 h-10 px-3 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                     {DATA_SOURCES.map(s => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
+                      <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{s.name}</option>
                     ))}
                   </select>
                 </div>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-slate-700">Report Type</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Report Type</label>
                 <div className="flex gap-3 mt-2">
                   {REPORT_TYPES.map(type => (
-                    <label key={type.id} className="flex-1 flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50">
+                    <label key={type.id} className="flex-1 flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900">
                       <input type="radio" name="reportType" value={type.id} />
-                      <type.icon className="h-4 w-4 text-slate-500" />
+                      <type.icon className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                       <span className="text-sm">{type.name}</span>
                     </label>
                   ))}
@@ -211,10 +211,10 @@ export function ReportBuilder() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-slate-700">Filters</label>
-                <div className="mt-2 p-4 border rounded-lg bg-slate-50 text-center">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Filters</label>
+                <div className="mt-2 p-4 border rounded-lg bg-slate-50 dark:bg-slate-950 text-center">
                   <Filter className="h-6 w-6 mx-auto text-slate-400 mb-2" />
-                  <p className="text-sm text-slate-500">Click to add filters</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Click to add filters</p>
                 </div>
               </div>
 

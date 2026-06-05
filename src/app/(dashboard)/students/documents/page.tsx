@@ -168,14 +168,14 @@ export default function StudentDocumentsPage() {
             color="emerald"
             className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden"
           >
-            <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input 
                   placeholder="Search by name or admission..." 
                   value={searchQuery} 
                   onChange={(e) => setSearchQuery(e.target.value)} 
-                  className="pl-11 h-11 rounded-xl bg-white border-slate-200 text-xs font-bold" 
+                  className="pl-11 h-11 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500" 
                 />
               </div>
             </div>
@@ -196,17 +196,17 @@ export default function StudentDocumentsPage() {
                     key={student.id}
                     onClick={() => setSelectedStudent(student)}
                     className={cn(
-                      "w-full flex items-center gap-4 p-5 text-left transition-all hover:bg-slate-50/80",
-                      selectedStudent?.id === student.id && "bg-emerald-500/5 border-l-4 border-l-emerald-500"
+                      "w-full flex items-center gap-4 p-5 text-left transition-all hover:bg-slate-50/80 dark:hover:bg-slate-800/80",
+                      selectedStudent?.id === student.id && "bg-emerald-500/5 dark:bg-emerald-500/10 border-l-4 border-l-emerald-500"
                     )}
                   >
                     <StudentAvatar name={student.full_name} size="md" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-slate-900 tracking-tight truncate">{student.full_name}</p>
+                      <p className="font-bold text-sm text-slate-900 dark:text-white tracking-tight truncate">{student.full_name}</p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-[9px] font-black text-slate-400 font-mono tracking-tighter">{student.admission_number}</span>
                         <span className="text-slate-200 text-[8px] font-black">/</span>
-                        <span className="text-[9px] font-black uppercase text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">{student.class_name}</span>
+                        <span className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">{student.class_name}</span>
                       </div>
                     </div>
                     {docsMap.get("student_photo") && (
@@ -229,13 +229,13 @@ export default function StudentDocumentsPage() {
             className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden min-h-[600px]"
           >
             {selectedStudent && (
-              <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                 <div className="flex items-center gap-5">
-                   <div className="h-14 w-14 rounded-2xl bg-white p-1 border-2 border-slate-100 shadow-sm overflow-hidden">
+                   <div className="h-14 w-14 rounded-2xl bg-white dark:bg-slate-900 p-1 border-2 border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
                       <StudentAvatar name={selectedStudent.full_name} className="w-full h-full rounded-xl" />
                    </div>
                    <div>
-                      <h2 className="text-lg font-black text-slate-900 tracking-tight">{selectedStudent.full_name}</h2>
+                      <h2 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">{selectedStudent.full_name}</h2>
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-0.5">{selectedStudent.class_name}</p>
                    </div>
                 </div>
@@ -244,7 +244,7 @@ export default function StudentDocumentsPage() {
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Completion</span>
                       <span className="text-xs font-black text-emerald-600">{completionPercent}%</span>
                    </div>
-                   <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                   <div className="h-2 w-32 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/50">
                       <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000 shadow-sm" style={{ width: `${completionPercent}%` }} />
                    </div>
                 </div>
@@ -254,7 +254,7 @@ export default function StudentDocumentsPage() {
             <div className="p-8">
               {!selectedStudent ? (
                 <div className="flex flex-col items-center justify-center py-20 animate-in fade-in zoom-in-95 duration-700">
-                  <div className="h-24 w-24 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-6 shadow-sm">
+                  <div className="h-24 w-24 rounded-3xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-center mb-6 shadow-sm">
                     <FileUp className="h-10 w-10 text-slate-200" />
                   </div>
                   <p className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">No Student Selected</p>
@@ -278,9 +278,9 @@ export default function StudentDocumentsPage() {
                           "relative group rounded-3xl border-2 p-6 transition-all duration-500",
                           isUploaded 
                             ? isVerified 
-                              ? "border-emerald-500/30 bg-emerald-50/50 shadow-lg shadow-emerald-500/5" 
-                              : "border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-blue-500/30"
-                            : "border-dashed border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300"
+                              ? "border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/10 shadow-lg shadow-emerald-500/5" 
+                              : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md hover:border-blue-500/30"
+                            : "border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20 hover:bg-white dark:hover:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700"
                         )}
                       >
                         {doc.required && (
@@ -298,7 +298,7 @@ export default function StudentDocumentsPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{doc.label}</p>
+                              <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase">{doc.label}</p>
                               {isVerified && <ShieldCheck className="h-4 w-4 text-emerald-500" />}
                             </div>
                             {isUploaded ? (
@@ -318,12 +318,12 @@ export default function StudentDocumentsPage() {
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="h-9 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50"
+                                className="h-9 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900"
                                 onClick={() => setPreviewUrl(docData.file_url)}
                               >
                                 <Eye className="h-3.5 w-3.5 mr-2" /> View
                               </Button>
-                              <Button variant="ghost" size="sm" className="h-9 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50" asChild>
+                              <Button variant="ghost" size="sm" className="h-9 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900" asChild>
                                 <a href={docData.file_url || '#'} target="_blank" rel="noopener noreferrer">
                                   <Download className="h-3.5 w-3.5 mr-2" /> Download
                                 </a>
@@ -334,14 +334,14 @@ export default function StudentDocumentsPage() {
                                 size="sm" 
                                 className={cn(
                                     "h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                                    isVerified ? "text-emerald-600 bg-emerald-50" : "bg-slate-900 text-white hover:bg-black"
+                                    isVerified ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20" : "bg-slate-900 dark:bg-slate-800 text-white dark:text-slate-200 hover:bg-black dark:hover:bg-slate-950"
                                 )}
                                 onClick={() => handleVerifyDocument(doc.key, !isVerified)}
                               >
                                 {isVerified ? <XCircle className="h-3.5 w-3.5 mr-2" /> : <ShieldCheck className="h-3.5 w-3.5 mr-2" />}
                                 {isVerified ? "Unverify" : "Verify"}
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-rose-500 hover:bg-rose-50" onClick={() => handleDeleteDocument(doc.key)}>
+                              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30" onClick={() => handleDeleteDocument(doc.key)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </>
@@ -355,7 +355,7 @@ export default function StudentDocumentsPage() {
                                 disabled={uploading === doc.key}
                               />
                               <label htmlFor={`upload-${doc.key}`} className="cursor-pointer">
-                                <div className="flex items-center justify-center gap-3 py-3 rounded-2xl border-2 border-dashed border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all group/up">
+                                <div className="flex items-center justify-center gap-3 py-3 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-900 hover:border-slate-300 transition-all group/up">
                                   {uploading === doc.key ? (
                                     <Activity className="h-4 w-4 animate-spin text-slate-400" />
                                   ) : (
@@ -380,24 +380,24 @@ export default function StudentDocumentsPage() {
       {/* Preview Overlay */}
       {previewUrl && (
         <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-md flex items-center justify-center z-50 p-8 animate-in fade-in duration-300" onClick={() => setPreviewUrl(null)}>
-          <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-6 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
                <div>
-                  <h3 className="text-xl font-black text-slate-900 tracking-tight">View Document</h3>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">View Document</h3>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Reviewing student record</p>
                </div>
                <div className="flex gap-3">
-                  <Button variant="outline" className="h-11 px-6 rounded-xl border-slate-200 text-[10px] font-black uppercase tracking-widest shadow-sm" asChild>
+                  <Button variant="outline" className="h-11 px-6 rounded-xl border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest shadow-sm" asChild>
                     <a href={previewUrl || '#'} target="_blank" rel="noopener noreferrer">
                       <Download className="h-4 w-4 mr-2" /> Download
                     </a>
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl bg-slate-50" onClick={() => setPreviewUrl(null)}>
+                  <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl bg-slate-50 dark:bg-slate-950" onClick={() => setPreviewUrl(null)}>
                     <XCircle className="h-6 w-6 text-slate-400" />
                   </Button>
                </div>
             </div>
-            <div className="p-10 overflow-auto max-h-[75vh] bg-slate-100/50 flex justify-center">
+            <div className="p-10 overflow-auto max-h-[75vh] bg-slate-100/50 dark:bg-slate-800/50 flex justify-center">
               <img src={previewUrl || ''} alt="Preview" className="max-w-full h-auto rounded-2xl shadow-2xl border-4 border-white" />
             </div>
           </div>

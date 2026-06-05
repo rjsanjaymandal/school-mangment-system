@@ -76,14 +76,14 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5 flex items-center gap-2">
                     <BookOpen className="h-4 w-4 text-emerald-500" /> Subject Name
                   </label>
                   <FormControl>
                     <Input
                       placeholder="e.g. Mathematics"
                       {...field}
-                      className="rounded-xl border-slate-200 h-11"
+                      className="rounded-xl border-slate-200 dark:border-slate-800 h-11"
                     />
                   </FormControl>
                   <FormMessage className="text-[10px] font-bold text-rose-500" />
@@ -97,14 +97,14 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5 flex items-center gap-2">
                     <Hash className="h-4 w-4 text-emerald-500" /> Subject Code
                   </label>
                   <FormControl>
                     <Input
                       placeholder="e.g. MATH-101"
                       {...field}
-                      className="rounded-xl border-slate-200 h-11 font-mono"
+                      className="rounded-xl border-slate-200 dark:border-slate-800 h-11 font-mono"
                     />
                   </FormControl>
                   <FormMessage className="text-[10px] font-bold text-rose-500" />
@@ -121,7 +121,7 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
               name="credits"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5 flex items-center gap-2">
                     <Star className="h-4 w-4 text-emerald-500" /> Credits
                   </label>
                   <FormControl>
@@ -131,7 +131,7 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
                         min={1}
                         max={10}
                         {...field}
-                        className="rounded-xl border-slate-200 h-11"
+                        className="rounded-xl border-slate-200 dark:border-slate-800 h-11"
                       />
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-[10px] text-slate-400 uppercase tracking-widest pointer-events-none">Points</div>
                     </div>
@@ -149,13 +149,13 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5 flex items-center gap-2">
                 <FileText className="h-4 w-4 text-emerald-500" /> Description
               </label>
               <FormControl>
                 <textarea
                   placeholder="Enter subject description..."
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none min-h-[100px]"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none resize-none min-h-[100px]"
                   {...field}
                 />
               </FormControl>
@@ -169,13 +169,13 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
           name="syllabus"
           render={({ field }) => (
             <FormItem>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5 flex items-center gap-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5 flex items-center gap-2">
                 <LayoutList className="h-4 w-4 text-emerald-500" /> Syllabus Overview
               </label>
               <FormControl>
                 <textarea
                   placeholder="Enter syllabus details or curriculum breakdown..."
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none min-h-[160px]"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none resize-none min-h-[160px]"
                   {...field}
                 />
               </FormControl>
@@ -188,7 +188,7 @@ export function SubjectForm({ initialData, onSuccess }: SubjectFormProps) {
           <button
             type="button"
             onClick={() => onSuccess()}
-            className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all w-full md:w-1/3"
+            className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all w-full md:w-1/3"
           >
             Cancel
           </button>

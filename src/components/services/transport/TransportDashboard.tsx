@@ -157,8 +157,8 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                         <Bus className="h-6 w-6 text-emerald-600" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-black tracking-tight text-slate-900">Transport</h2>
-                        <p className="text-sm text-slate-500">Manage Bus Routes</p>
+                        <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Transport</h2>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Manage Bus Routes</p>
                     </div>
                 </div>
 
@@ -177,31 +177,36 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-5">
+                <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <h3 className="text-lg font-black tracking-tight text-slate-900">Bus Usage</h3>
-                            <p className="text-sm text-slate-500">Current bus occupancy for each route</p>
+                            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Bus Usage</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Current bus occupancy for each route</p>
                         </div>
                         <Activity className="h-5 w-5 text-slate-300" />
                     </div>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={fleetOccupancyData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 10, fontWeight: "bold" }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 10 }} unit="%" />
-                                <Tooltip cursor={{ fill: "#ffffff05" }} contentStyle={{ backgroundColor: "#fff", borderRadius: "12px", border: "1px solid #e2e8f0", fontSize: "10px" }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: "bold" }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} unit="%" />
+                                <Tooltip 
+                                    cursor={{ fill: "var(--muted)" }} 
+                                    contentStyle={{ backgroundColor: "var(--card)", borderRadius: "12px", border: "1px solid var(--border)", fontSize: "10px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Bar dataKey="occupancy" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
-                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
                     <div className="mb-4 text-center">
-                        <h3 className="text-lg font-black tracking-tight text-slate-900">Service Status</h3>
-                        <p className="text-sm text-slate-500">Current fleet operational health</p>
+                        <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Service Status</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Current fleet operational health</p>
                     </div>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -211,7 +216,11 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                         <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
                                     ))}
                                 </Pie>
-                                <Tooltip contentStyle={{ backgroundColor: "#fff", borderRadius: "12px", border: "1px solid #e2e8f0" }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", borderRadius: "12px", border: "1px solid var(--border)" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Legend verticalAlign="bottom" height={36} />
                             </PieChart>
                         </ResponsiveContainer>
@@ -228,26 +237,26 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
             </div>
 
             {/* Search & Filter */}
-            <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col md:flex-row items-center gap-4">
+            <div className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center gap-4">
                 <div className="relative flex-1 w-full">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                         placeholder="Search routes, plates, or drivers..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-9 rounded-xl border-slate-200"
+                        className="pl-9 rounded-xl border-slate-200 dark:border-slate-800"
                     />
                 </div>
                 <div className="flex items-center gap-4 w-full md:w-auto">
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="w-[180px] h-10 rounded-xl border border-slate-200 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700 bg-white focus:border-blue-300 outline-none"
+                        className="w-[180px] h-10 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                     >
-                        <option value="all">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Offline</option>
-                        <option value="maintenance">Maintenance</option>
+                        <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Statuses</option>
+                        <option value="active" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Active</option>
+                        <option value="inactive" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Offline</option>
+                        <option value="maintenance" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Maintenance</option>
                     </select>
                 </div>
             </div>
@@ -256,11 +265,11 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
             <div className="grid gap-6 lg:grid-cols-12 items-start">
                 {/* Routes List */}
                 <div className="lg:col-span-4 h-full space-y-4">
-                    <h3 className="text-lg font-black tracking-tight text-slate-900">All Routes</h3>
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden max-h-[700px] overflow-y-auto">
+                    <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">All Routes</h3>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden max-h-[700px] overflow-y-auto">
                         <div className="p-2 space-y-2">
                             {routes.length === 0 ? (
-                                <div className="text-center py-16 text-slate-400 font-black text-[10px] uppercase tracking-widest border border-dashed border-slate-200 mx-4 rounded-xl">
+                                <div className="text-center py-16 text-slate-400 font-black text-[10px] uppercase tracking-widest border border-dashed border-slate-200 dark:border-slate-800 mx-4 rounded-xl">
                                     No active routes
                                 </div>
                             ) : (
@@ -278,7 +287,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                             "p-4 rounded-xl border cursor-pointer transition-all",
                                             selectedRoute?.id === route.id
                                                 ? "bg-emerald-600 border-emerald-600 text-white"
-                                                : "bg-white border-slate-200 hover:border-emerald-300"
+                                                : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-700"
                                         )}
                                     >
                                         <div className="flex justify-between items-start">
@@ -330,7 +339,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                 <div className="lg:col-span-8">
                     {selectedRoute ? (
                         <div className="space-y-6">
-                            <div className="bg-white border border-slate-200 rounded-xl p-6">
+                            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6">
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <StopManagement
                                         routeId={selectedRoute.id}
@@ -345,13 +354,13 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Vehicle Plate</p>
-                                                <p className="text-xl font-black text-slate-900 uppercase">{selectedRoute.plate_number || "Pending"}</p>
+                                                <p className="text-xl font-black text-slate-900 dark:text-white uppercase">{selectedRoute.plate_number || "Pending"}</p>
                                             </div>
-                                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                                            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4">
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Occupancy</p>
-                                                <p className="text-xl font-black text-slate-900">
+                                                <p className="text-xl font-black text-slate-900 dark:text-white">
                                                     {assignments.filter(a => a.route_id === selectedRoute.id).length}<span className="text-slate-300">/{selectedRoute.capacity || 40}</span>
                                                 </p>
                                                 <div className="h-1.5 w-full bg-slate-200 rounded-full mt-2 overflow-hidden">
@@ -361,7 +370,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                             </div>
                                         </div>
 
-                                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                        <div className="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-xl p-4">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-10 w-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center">
@@ -369,8 +378,8 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                                     </div>
                                                     <div>
                                                         <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Assigned Driver</p>
-                                                        <h4 className="font-bold text-sm text-slate-900">{selectedRoute.driver_name || "Unassigned"}</h4>
-                                                        <p className="text-[10px] font-bold text-slate-500">{selectedRoute.driver_phone || "No contact info"}</p>
+                                                        <h4 className="font-bold text-sm text-slate-900 dark:text-white">{selectedRoute.driver_name || "Unassigned"}</h4>
+                                                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400">{selectedRoute.driver_phone || "No contact info"}</p>
                                                     </div>
                                                 </div>
                                                 <button className="h-10 w-10 rounded-xl border border-emerald-200 flex items-center justify-center text-emerald-600 hover:bg-emerald-100">
@@ -382,7 +391,7 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                         <div className="flex gap-3">
                                             <button
                                                 onClick={(e) => openEditRoute(selectedRoute, e)}
-                                                className="flex-1 h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all"
+                                                className="flex-1 h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                                             >
                                                 Edit Route
                                             </button>
@@ -398,8 +407,8 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                             </div>
 
                             {/* Students on Route */}
-                            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                                <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                                <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                                     <div>
                                         <h3 className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Students on Route</h3>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-1">Students assigned to this route</p>
@@ -411,18 +420,18 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                                 <div className="p-5">
                                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {assignments.filter(a => a.route_id === selectedRoute.id).length === 0 ? (
-                                            <div className="col-span-full text-center py-16 text-slate-400 font-black text-[10px] uppercase tracking-widest border border-dashed border-slate-200 rounded-xl">
+                                            <div className="col-span-full text-center py-16 text-slate-400 font-black text-[10px] uppercase tracking-widest border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
                                                 No students assigned
                                             </div>
                                         ) : (
                                             assignments.filter(a => a.route_id === selectedRoute.id).map((a) => (
-                                                <div key={a.id} className="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-emerald-300 transition-all">
+                                                <div key={a.id} className="p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl hover:border-emerald-300 transition-all">
                                                     <div className="flex items-center gap-3">
                                                         <div className="h-10 w-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-bold text-sm">
                                                             {a.student?.profile?.full_name?.[0] || "?"}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="font-bold text-sm text-slate-900 truncate">{a.student?.profile?.full_name}</p>
+                                                            <p className="font-bold text-sm text-slate-900 dark:text-white truncate">{a.student?.profile?.full_name}</p>
                                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider truncate">{a.stop?.name || "No stop assigned"}</p>
                                                         </div>
                                                         <button
@@ -440,11 +449,11 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center text-slate-300 bg-white border border-dashed border-slate-200 rounded-xl p-12 min-h-[400px]">
-                            <div className="h-16 w-16 bg-slate-100 rounded-xl flex items-center justify-center mb-4">
+                        <div className="flex flex-col items-center justify-center text-slate-300 bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-12 min-h-[400px]">
+                            <div className="h-16 w-16 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-4">
                                 <Bus className="h-8 w-8 text-slate-300" />
                             </div>
-                            <h3 className="text-lg font-black text-slate-900 mb-2">Select a Route</h3>
+                            <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2">Select a Route</h3>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Choose a transport route from the list</p>
                         </div>
                     )}
@@ -454,45 +463,45 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
             {/* Add Route Modal */}
             {isAddRouteOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-                        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+                        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 className="text-lg font-black tracking-tight text-slate-900">Add New Route</h3>
+                                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Add New Route</h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Configure a new transport service path</p>
                             </div>
-                            <button onClick={() => setIsAddRouteOpen(false)} className="h-8 w-8 rounded-xl hover:bg-slate-100 flex items-center justify-center">
-                                <X className="h-4 w-4 text-slate-500" />
+                            <button onClick={() => setIsAddRouteOpen(false)} className="h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center justify-center">
+                                <X className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             </button>
                         </div>
                         <div className="p-5 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Route Name</label>
-                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="e.g. North Route" className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Route Name</label>
+                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} placeholder="e.g. North Route" className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Route Number</label>
-                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="e.g. R-101" className="rounded-xl border-slate-200" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Driver Name</label>
-                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="Driver's Full Name" className="rounded-xl border-slate-200" />
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Driver Phone</label>
-                                    <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+1234567890" className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Route Number</label>
+                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} placeholder="e.g. R-101" className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Bus Plate Number</label>
-                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="Plate / VIN" className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Driver Name</label>
+                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} placeholder="Driver's Full Name" className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Seating Capacity</label>
-                                    <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Driver Phone</label>
+                                    <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} placeholder="+1234567890" className="rounded-xl border-slate-200 dark:border-slate-800" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Bus Plate Number</label>
+                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} placeholder="Plate / VIN" className="rounded-xl border-slate-200 dark:border-slate-800" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Seating Capacity</label>
+                                    <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                             </div>
                             <button onClick={handleCreateRoute} disabled={loading} className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">
@@ -506,57 +515,57 @@ export function TransportDashboard({ routes, stops, assignments, userRole }: Tra
             {/* Edit Route Modal */}
             {isEditRouteOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-                        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+                        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 className="text-lg font-black tracking-tight text-slate-900">Edit Route</h3>
+                                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Edit Route</h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Update route configuration</p>
                             </div>
-                            <button onClick={() => setIsEditRouteOpen(false)} className="h-8 w-8 rounded-xl hover:bg-slate-100 flex items-center justify-center">
-                                <X className="h-4 w-4 text-slate-500" />
+                            <button onClick={() => setIsEditRouteOpen(false)} className="h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center justify-center">
+                                <X className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                             </button>
                         </div>
                         <div className="p-5 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Route Name</label>
-                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Route Name</label>
+                                    <Input value={routeForm.name} onChange={(e) => setRouteForm({ ...routeForm, name: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Route Number</label>
-                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} className="rounded-xl border-slate-200" />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Driver Name</label>
-                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} className="rounded-xl border-slate-200" />
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Driver Phone</label>
-                                    <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Route Number</label>
+                                    <Input value={routeForm.route_number} onChange={(e) => setRouteForm({ ...routeForm, route_number: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Plate Number</label>
-                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Driver Name</label>
+                                    <Input value={routeForm.driver_name} onChange={(e) => setRouteForm({ ...routeForm, driver_name: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Capacity</label>
-                                    <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Driver Phone</label>
+                                    <Input value={routeForm.driver_phone} onChange={(e) => setRouteForm({ ...routeForm, driver_phone: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Plate Number</label>
+                                    <Input value={routeForm.plate_number} onChange={(e) => setRouteForm({ ...routeForm, plate_number: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Capacity</label>
+                                    <Input type="number" value={routeForm.capacity} onChange={(e) => setRouteForm({ ...routeForm, capacity: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Route Status</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Route Status</label>
                                 <select
                                     value={routeForm.status}
                                     onChange={(e) => setRouteForm({ ...routeForm, status: e.target.value })}
-                                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                    className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                                 >
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="maintenance">Maintenance</option>
+                                    <option value="active" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Active</option>
+                                    <option value="inactive" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Inactive</option>
+                                    <option value="maintenance" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Maintenance</option>
                                 </select>
                             </div>
                             <button onClick={handleUpdateRoute} disabled={loading} className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">

@@ -13,9 +13,9 @@ function LoadingFallback() {
     <div className="flex-1 p-6 space-y-6 animate-pulse">
       <Skeleton className="h-8 w-48 bg-slate-200" />
       <div className="space-y-4">
-        <Skeleton className="h-32 w-full bg-slate-100" />
-        <Skeleton className="h-32 w-full bg-slate-100" />
-        <Skeleton className="h-32 w-full bg-slate-100" />
+        <Skeleton className="h-32 w-full bg-slate-100 dark:bg-slate-800" />
+        <Skeleton className="h-32 w-full bg-slate-100 dark:bg-slate-800" />
+        <Skeleton className="h-32 w-full bg-slate-100 dark:bg-slate-800" />
       </div>
     </div>
   );

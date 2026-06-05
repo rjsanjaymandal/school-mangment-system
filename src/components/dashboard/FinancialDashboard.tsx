@@ -55,16 +55,16 @@ export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
           </div>
           
           <div className="space-y-3">
-            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
+            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500 dark:text-slate-400">
               <span>Collection Status</span>
               <span className={cn(
                 "px-2 py-0.5 rounded-full text-[9px]",
-                collectionVsExpenseRatio > 80 ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600"
+                collectionVsExpenseRatio > 80 ? "bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-400" : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400"
               )}>
                 {collectionVsExpenseRatio.toFixed(1)}% Ratio
               </span>
             </div>
-            <Progress value={collectionVsExpenseRatio} className="h-2 bg-slate-100/50" />
+            <Progress value={collectionVsExpenseRatio} className="h-2 bg-slate-100/50 dark:bg-slate-800/50" />
           </div>
         </div>
       </ERPCard>
@@ -81,7 +81,7 @@ export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="space-y-2">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Total Salary</p>
-              <p className="text-2xl font-black text-slate-900 tracking-tighter">₹{(metrics?.payroll?.generated || 0).toLocaleString()}</p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">₹{(metrics?.payroll?.generated || 0).toLocaleString()}</p>
             </div>
             <div className="space-y-2">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Amount Paid</p>
@@ -96,18 +96,18 @@ export function FinancialDashboard({ metrics }: FinancialDashboardProps) {
             </div>
           </div>
 
-          <div className="bg-slate-50/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-100/50 shadow-inner">
+          <div className="bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl p-5 border border-slate-100/50 dark:border-slate-800/50 shadow-inner">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center gap-2">
-                <History className="h-4 w-4 text-blue-600" />
-                <span className="text-[10px] font-black text-slate-700 uppercase tracking-[0.1em]">Payment Progress</span>
+                <History className="h-4 w-4 text-blue-600 dark:text-blue-450" />
+                <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-[0.1em]">Payment Progress</span>
               </div>
-              <span className="text-xs font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">{payrollPaidPercentage.toFixed(1)}%</span>
+              <span className="text-xs font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-1 rounded-lg">{payrollPaidPercentage.toFixed(1)}%</span>
             </div>
-            <Progress value={payrollPaidPercentage} className="h-3 bg-white shadow-sm" />
+            <Progress value={payrollPaidPercentage} className="h-3 bg-white dark:bg-slate-900 shadow-sm" />
             
             {(metrics?.payroll?.pending || 0) > 0 && (
-              <div className="mt-5 flex items-center gap-2.5 text-rose-600 bg-rose-50/50 p-2.5 rounded-xl border border-rose-100/50">
+              <div className="mt-5 flex items-center gap-2.5 text-rose-600 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/20 p-2.5 rounded-xl border border-rose-100/50 dark:border-rose-900/30">
                 <AlertCircle className="h-4 w-4" />
                 <p className="text-[10px] font-black uppercase tracking-wider">Action Needed: Unpaid staff salaries detected</p>
               </div>

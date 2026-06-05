@@ -144,26 +144,26 @@ export function PayrollDashboard({
             description="Log of monthly salary disbursals" 
             color="blue" 
             icon={<ReceiptText className="h-5 w-5" />}
-            className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"
           >
-            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row items-center justify-between gap-4">
                <div className="relative flex-1 w-full max-w-xs">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input 
                     placeholder="Search staff..." 
-                    className="pl-11 h-11 rounded-xl border-slate-200 text-sm font-bold"
+                    className="pl-11 h-11 rounded-xl border-slate-200 dark:border-slate-800 text-sm font-bold"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                </div>
-               <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center">
+               <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center">
                   <Filter className="h-4 w-4 mr-2" /> Filter
                </button>
             </div>
             
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   <tr>
                     <th className="py-4 px-4">Staff Member</th>
                     <th className="py-4 px-4">Net Pay</th>
@@ -171,7 +171,7 @@ export function PayrollDashboard({
                     <th className="py-4 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredPayrolls.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="py-4 px-4 text-center py-20 text-slate-300 font-bold uppercase text-[10px] tracking-widest">
@@ -180,14 +180,14 @@ export function PayrollDashboard({
                     </tr>
                   ) : (
                     filteredPayrolls.map((payroll) => (
-                      <tr key={payroll.id} className="hover:bg-slate-50/50 transition-colors group border-b border-slate-100">
+                      <tr key={payroll.id} className="hover:bg-slate-50/50 transition-colors group border-b border-slate-100 dark:border-slate-800">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-blue-500/20 group-hover:rotate-3 transition-transform">
                               {payroll.staff?.full_name?.[0]}
                             </div>
                             <div>
-                              <p className="font-bold text-slate-900 tracking-tight text-sm group-hover:text-blue-600 transition-colors">
+                              <p className="font-bold text-slate-900 dark:text-white tracking-tight text-sm group-hover:text-blue-600 transition-colors">
                                 {payroll.staff?.full_name}
                               </p>
                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-0.5">{payroll.staff?.role?.replace('_', ' ')}</p>
@@ -195,7 +195,7 @@ export function PayrollDashboard({
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <span className="font-black text-slate-900 text-sm tracking-tighter">
+                          <span className="font-black text-slate-900 dark:text-white text-sm tracking-tighter">
                             {formatCurrency(payroll.net_pay)}
                           </span>
                         </td>
@@ -219,7 +219,7 @@ export function PayrollDashboard({
                               {processing === payroll.id ? "..." : "Pay"}
                             </button>
                           ) : (
-                            <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all gap-2 flex items-center">
+                            <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all gap-2 flex items-center">
                                <FileText className="h-4 w-4" /> Receipt
                             </button>
                           )}
@@ -241,7 +241,7 @@ export function PayrollDashboard({
             description="Pending staff requests" 
             color="amber" 
             icon={<CalendarDays className="h-5 w-5" />}
-            className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"
           >
             <div className="max-h-[450px] overflow-y-auto">
               <div className="p-5 space-y-4">
@@ -254,14 +254,14 @@ export function PayrollDashboard({
                   </div>
                 ) : (
                   pendingLeaveRequests.map((req) => (
-                    <div key={req.id} className="bg-white border border-slate-200 rounded-xl p-5 group hover:border-blue-500/30 transition-all duration-300 shadow-sm hover:shadow-md">
+                    <div key={req.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 group hover:border-blue-500/30 transition-all duration-300 shadow-sm hover:shadow-md">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-[10px]">
+                          <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-slate-500 dark:text-slate-400 text-[10px]">
                              {req.staff?.full_name?.[0]}
                           </div>
                           <div>
-                            <span className="font-bold text-sm text-slate-900 block group-hover:text-blue-600 transition-colors">{req.staff?.full_name}</span>
+                            <span className="font-bold text-sm text-slate-900 dark:text-white block group-hover:text-blue-600 transition-colors">{req.staff?.full_name}</span>
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter block">{req.staff?.role?.replace('_', ' ')}</span>
                           </div>
                         </div>
@@ -280,7 +280,7 @@ export function PayrollDashboard({
                         </button>
                         <button 
                           onClick={() => handleLeaveAction(req.id, "rejected")}
-                          className="flex-1 h-9 rounded-xl border border-slate-200 text-slate-700 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 transition-all"
+                          className="flex-1 h-9 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                         >
                           Deny
                         </button>
@@ -297,7 +297,7 @@ export function PayrollDashboard({
             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform">
                 <ShieldCheck className="h-24 w-24 text-white" />
             </div>
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6 flex items-center gap-3">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400 mb-6 flex items-center gap-3">
                 <Activity className="h-4 w-4 text-emerald-500" />
                 Shortcuts
             </h3>

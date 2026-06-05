@@ -42,12 +42,14 @@ function AttendanceSnap({ title, data, icon: Icon, color }: AttendanceSnapProps)
               ))}
             </Pie>
             <Tooltip 
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+              contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px" }}
+              labelStyle={{ color: "var(--foreground)" }}
+              itemStyle={{ color: "var(--foreground)" }}
             />
           </PieChart>
         </ResponsiveContainer>
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-sm font-bold text-slate-900">{percentage}%</span>
+          <span className="text-sm font-bold text-slate-900 dark:text-white">{percentage}%</span>
         </div>
       </div>
       <div className="flex-1 min-w-0">
@@ -55,7 +57,7 @@ function AttendanceSnap({ title, data, icon: Icon, color }: AttendanceSnapProps)
           <div className={`p-1.5 rounded-lg bg-${color}-50 text-${color}-600`}>
             <Icon className="h-4 w-4" />
           </div>
-          <h4 className="text-sm font-bold text-slate-900 truncate uppercase tracking-tight">{title}</h4>
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate uppercase tracking-tight">{title}</h4>
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1">
           <div className="flex items-center justify-between">
@@ -70,9 +72,9 @@ function AttendanceSnap({ title, data, icon: Icon, color }: AttendanceSnapProps)
             <span className="text-[10px] font-bold text-slate-400 uppercase">Leave</span>
             <span className="text-xs font-black text-amber-600">{data.leave}</span>
           </div>
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100">
-            <span className="text-[10px] font-bold text-slate-500 uppercase">Total</span>
-            <span className="text-xs font-black text-slate-900">{data.total}</span>
+          <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-slate-800">
+            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">Total</span>
+            <span className="text-xs font-black text-slate-900 dark:text-white">{data.total}</span>
           </div>
         </div>
       </div>

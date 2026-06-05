@@ -62,8 +62,8 @@ export function ReportScheduler() {
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-slate-900">Schedule New Report</p>
-              <p className="text-sm text-slate-500">Automate recurring report generation and delivery</p>
+              <p className="font-medium text-slate-900 dark:text-white">Schedule New Report</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Automate recurring report generation and delivery</p>
             </div>
             <Button onClick={() => setShowCreateModal(true)} className="rounded-md bg-emerald-600">
               <Calendar className="h-4 w-4 mr-2" />
@@ -79,7 +79,7 @@ export function ReportScheduler() {
           <Card key={type.id} className="shadow-sm cursor-pointer hover:border-emerald-200 transition-colors">
             <CardContent className="p-4 text-center">
               <type.icon className={`h-6 w-6 mx-auto mb-2 ${type.color}`} />
-              <p className="text-sm font-medium text-slate-900">{type.name}</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">{type.name}</p>
             </CardContent>
           </Card>
         ))}
@@ -87,47 +87,47 @@ export function ReportScheduler() {
 
       {/* Scheduled Reports List */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
-            <Clock className="h-4 w-4 text-slate-500" />
+            <Clock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             Scheduled Reports
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {reports.map(report => (
-              <div key={report.id} className="p-4 hover:bg-slate-50">
+              <div key={report.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-900">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center">
+                    <div className="h-10 w-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                       {REPORT_TYPES.find(t => t.id === report.type)?.icon && 
                         (() => {
                           const Icon = REPORT_TYPES.find(t => t.id === report.type)!.icon;
-                          return <Icon className="h-5 w-5 text-slate-500" />;
+                          return <Icon className="h-5 w-5 text-slate-500 dark:text-slate-400" />;
                         })()
                       }
                     </div>
                     <div>
-                      <p className="font-medium text-slate-900">{report.name}</p>
+                      <p className="font-medium text-slate-900 dark:text-white">{report.name}</p>
                       <div className="flex items-center gap-3 mt-1">
                         <Badge variant="outline" className="text-xs capitalize">
                           {report.frequency}
                         </Badge>
-                        <span className="text-xs text-slate-500">Format: {report.format.toUpperCase()}</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Format: {report.format.toUpperCase()}</span>
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-6">
                     <div className="text-right">
-                      <p className="text-xs text-slate-500">Next Run</p>
-                      <p className="text-sm text-slate-700">{report.nextRun}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Next Run</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">{report.nextRun}</p>
                     </div>
                     
                     {report.lastRun && (
                       <div className="text-right">
-                        <p className="text-xs text-slate-500">Last Run</p>
-                        <p className="text-sm text-slate-700">{report.lastRun}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Last Run</p>
+                        <p className="text-sm text-slate-700 dark:text-slate-300">{report.lastRun}</p>
                       </div>
                     )}
 
@@ -144,7 +144,7 @@ export function ReportScheduler() {
                 </div>
 
                 <div className="mt-3 pl-14">
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                     <Mail className="h-3 w-3" />
                     <span>Recipients: {report.recipients.join(", ")}</span>
                   </div>
@@ -164,34 +164,34 @@ export function ReportScheduler() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700">Report Name</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Report Name</label>
                 <Input placeholder="e.g., Weekly Attendance Report" className="mt-1" />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700">Report Type</label>
-                <select className="w-full mt-1 h-10 px-3 rounded-md border">
-                  <option>Select type...</option>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Report Type</label>
+                <select className="w-full mt-1 h-10 px-3 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white outline-none">
+                  <option className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select type...</option>
                   {REPORT_TYPES.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
+                    <option key={t.id} value={t.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{t.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700">Frequency</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Frequency</label>
                 <div className="mt-2 space-y-2">
                   {FREQUENCY_OPTIONS.map(opt => (
-                    <label key={opt.value} className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-slate-50">
+                    <label key={opt.value} className="flex items-center gap-2 p-2 border rounded-md cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900">
                       <input type="radio" name="frequency" value={opt.value} />
                       <div>
                         <p className="text-sm font-medium">{opt.label}</p>
-                        <p className="text-xs text-slate-500">{opt.description}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{opt.description}</p>
                       </div>
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700">Recipients (emails)</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Recipients (emails)</label>
                 <Input placeholder="email1@school.com, email2@school.com" className="mt-1" />
               </div>
               <div className="flex gap-3 pt-4">

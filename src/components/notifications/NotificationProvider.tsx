@@ -125,7 +125,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
               
               <div className="space-y-2">
                 {notifications.length === 0 ? (
-                  <p className="text-center text-slate-500 py-8">No notifications</p>
+                  <p className="text-center text-slate-500 dark:text-slate-400 py-8">No notifications</p>
                 ) : (
                   notifications.map((notification) => {
                     const Icon = notificationIcons[notification.type] || notificationIcons.default;
@@ -146,7 +146,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
                           </div>
                           <div className="flex-1">
                             <p className="font-medium text-sm">{notification.title}</p>
-                            <p className="text-xs text-slate-500">{notification.message}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{notification.message}</p>
                             <p className="text-[10px] text-slate-400 mt-1">
                               {new Date(notification.created_at).toLocaleString()}
                             </p>

@@ -75,9 +75,9 @@ export function ExamForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Name</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Exam Name</label>
               <FormControl>
-                <Input placeholder="Midterm Examination 2024" {...field} className="rounded-xl border-slate-200 h-11" />
+                <Input placeholder="Midterm Examination 2024" {...field} className="rounded-xl border-slate-200 dark:border-slate-800 h-11 text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
               </FormControl>
               <FormMessage className="text-[10px] font-bold text-rose-500" />
             </FormItem>
@@ -88,19 +88,19 @@ export function ExamForm({
           name="academic_year_id"
           render={({ field }) => (
             <FormItem>
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Academic Year</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Academic Year</label>
               <FormControl>
                 <select
-                  className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                  className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                   value={field.value}
                   onChange={(e) => field.onChange(e.target.value)}
                 >
-                  <option value="" disabled>Select academic year</option>
+                  <option value="" disabled className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select academic year</option>
                   {academicYears.map((year) => (
-                    <option key={year.id} value={year.id}>{year.name}</option>
+                    <option key={year.id} value={year.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{year.name}</option>
                   ))}
                   {academicYears.length === 0 && (
-                    <option value="none" disabled>No years available</option>
+                    <option value="none" disabled className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">No years available</option>
                   )}
                 </select>
               </FormControl>
@@ -114,9 +114,9 @@ export function ExamForm({
             name="start_date"
             render={({ field }) => (
               <FormItem>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Start Date</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Start Date</label>
                 <FormControl>
-                  <Input type="date" {...field} className="rounded-xl border-slate-200 h-11" />
+                  <Input type="date" {...field} className="rounded-xl border-slate-200 dark:border-slate-800 h-11 text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                 </FormControl>
                 <FormMessage className="text-[10px] font-bold text-rose-500" />
               </FormItem>
@@ -127,9 +127,9 @@ export function ExamForm({
             name="end_date"
             render={({ field }) => (
               <FormItem>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">End Date</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">End Date</label>
                 <FormControl>
-                  <Input type="date" {...field} className="rounded-xl border-slate-200 h-11" />
+                  <Input type="date" {...field} className="rounded-xl border-slate-200 dark:border-slate-800 h-11 text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                 </FormControl>
                 <FormMessage className="text-[10px] font-bold text-rose-500" />
               </FormItem>
@@ -140,7 +140,7 @@ export function ExamForm({
           <button
             type="button"
             onClick={() => onSuccess()}
-            className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all"
+            className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
           >
             Cancel
           </button>

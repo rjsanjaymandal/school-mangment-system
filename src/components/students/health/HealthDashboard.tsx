@@ -139,15 +139,15 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
             </div>
 
             <div className="grid md:grid-cols-12 gap-8">
-                <div className="md:col-span-8 bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="md:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                     <div className="p-5">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-1.5 rounded bg-indigo-50 text-indigo-600">
                                 <History className="h-4 w-4" />
                             </div>
                             <div>
-                                <h3 className="text-sm font-bold text-slate-900">Visit Trends</h3>
-                                <p className="text-[10px] text-slate-500">Visits frequency over the academic year</p>
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Visit Trends</h3>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400">Visits frequency over the academic year</p>
                             </div>
                         </div>
                         <div className="h-[300px] mt-4">
@@ -159,20 +159,22 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                                             <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                                     <XAxis 
                                         dataKey="name" 
                                         axisLine={false} 
                                         tickLine={false} 
-                                        tick={{ fontSize: 10, fontWeight: 700, fill: "#94a3b8" }}
+                                        tick={{ fontSize: 10, fontWeight: 700, fill: "var(--muted-foreground)" }}
                                     />
                                     <YAxis 
                                         axisLine={false} 
                                         tickLine={false} 
-                                        tick={{ fontSize: 10, fontWeight: 700, fill: "#94a3b8" }}
+                                        tick={{ fontSize: 10, fontWeight: 700, fill: "var(--muted-foreground)" }}
                                     />
                                     <Tooltip 
-                                        contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
+                                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                        labelStyle={{ color: "var(--foreground)" }}
+                                        itemStyle={{ color: "var(--foreground)" }}
                                     />
                                     <Area type="monotone" dataKey="visits" stroke="#f43f5e" fill="url(#health-visits)" strokeWidth={3} />
                                 </AreaChart>
@@ -181,15 +183,15 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                     </div>
                 </div>
 
-                <div className="md:col-span-4 bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="md:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                     <div className="p-5">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-1.5 rounded bg-amber-50 text-amber-600">
                                 <Activity className="h-4 w-4" />
                             </div>
                             <div>
-                                <h3 className="text-sm font-bold text-slate-900">Ailment Distribution</h3>
-                                <p className="text-[10px] text-slate-500">Categorical diagnosis breakdown</p>
+                                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Ailment Distribution</h3>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400">Categorical diagnosis breakdown</p>
                             </div>
                         </div>
                         <div className="h-[300px] mt-4">
@@ -202,14 +204,18 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                                         outerRadius={95}
                                         paddingAngle={5}
                                     >
-                                        {ailmentData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} className="stroke-white stroke-2" />)}
+                                        {ailmentData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} stroke="var(--card)" strokeWidth={2} />)}
                                     </Pie>
-                                    <Tooltip />
+                                    <Tooltip 
+                                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                        labelStyle={{ color: "var(--foreground)" }}
+                                        itemStyle={{ color: "var(--foreground)" }}
+                                    />
                                     <Legend 
                                         verticalAlign="bottom" 
                                         height={36} 
                                         iconType="circle"
-                                        formatter={(v) => <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{v}</span>}
+                                        formatter={(v) => <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">{v}</span>}
                                     />
                                 </PieChart>
                             </ResponsiveContainer>
@@ -218,29 +224,29 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                 </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                 <div className="p-5">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-rose-50 text-rose-600">
                             <HeartPulse className="h-4 w-4" />
                         </div>
                         <div>
-                            <h3 className="text-sm font-bold text-slate-900">Recent Medical Visits</h3>
-                            <p className="text-[10px] text-slate-500">Latest student visits to the infirmary</p>
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Recent Medical Visits</h3>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400">Latest student visits to the infirmary</p>
                         </div>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-y border-slate-100">
-                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Student</span></th>
-                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Reason / Diagnosis</span></th>
-                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Vitals</span></th>
-                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Status</span></th>
-                                    <th className="px-6 py-4 text-right"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Actions</span></th>
+                                <tr className="border-y border-slate-100 dark:border-slate-800">
+                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Student</span></th>
+                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Reason / Diagnosis</span></th>
+                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Vitals</span></th>
+                                    <th className="px-6 py-4 text-left"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Status</span></th>
+                                    <th className="px-6 py-4 text-right"><span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Actions</span></th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {infirmaryLogs.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="p-12 text-center">
@@ -255,25 +261,25 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                                         <tr key={log.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                                                    <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                                                         <User className="h-5 w-5 text-slate-400" />
                                                     </div>
                                                     <div>
-                                                        <p className="text-sm font-bold text-slate-900">{log.student?.profile?.first_name} {log.student?.profile?.last_name}</p>
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{log.student?.profile?.first_name} {log.student?.profile?.last_name}</p>
                                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{log.student?.admission_number}</p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="max-w-[200px]">
-                                                    <p className="font-bold text-slate-700">{log.visit_reason}</p>
+                                                    <p className="font-bold text-slate-700 dark:text-slate-300">{log.visit_reason}</p>
                                                     <p className="text-[10px] text-slate-400 line-clamp-1">{log.symptoms || "No secondary symptoms recorded"}</p>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <Activity className="h-3 w-3 text-rose-400" />
-                                                    <span className="font-black text-slate-600">{log.temperature ? `${log.temperature}\u00b0F` : "--"}</span>
+                                                    <span className="font-black text-slate-600 dark:text-slate-400">{log.temperature ? `${log.temperature}\u00b0F` : "--"}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -288,7 +294,7 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                                             <td className="px-6 py-4 text-right">
                                                 {isAdminOrTeacher && log.status === "under_observation" && (
                                                     <div className="flex justify-end gap-2">
-                                                        <button onClick={() => handleStatusChange(log.id, "referral")} className="h-8 rounded-lg border border-slate-200 text-slate-700 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 transition-all">Referral</button>
+                                                        <button onClick={() => handleStatusChange(log.id, "referral")} className="h-8 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">Referral</button>
                                                         <button onClick={() => handleStatusChange(log.id, "discharged")} className="h-8 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[9px] font-black uppercase tracking-widest px-3 shadow-lg transition-all flex items-center gap-1">
                                                             <CheckCircle className="h-3 w-3" /> Discharge
                                                         </button>
@@ -304,29 +310,29 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                 </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                 <div className="p-5">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
                             <Stethoscope className="h-4 w-4" />
                         </div>
                         <div>
-                            <h3 className="text-sm font-bold text-slate-900">Preserved Medical Dossiers</h3>
-                            <p className="text-[10px] text-slate-500">Long-term health profiles and critical metadata</p>
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Preserved Medical Dossiers</h3>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400">Long-term health profiles and critical metadata</p>
                         </div>
                     </div>
                     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                         {students.slice(0, 9).map((student: any) => {
                             const profile = profileLookup[student.id];
                             return (
-                                <div key={student.id} className="p-5 rounded-xl border border-slate-200 bg-white hover:shadow-lg transition-all duration-300 group">
+                                <div key={student.id} className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:shadow-lg transition-all duration-300 group">
                                     <div className="flex items-start justify-between gap-3 mb-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-11 w-11 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-400">
+                                            <div className="h-11 w-11 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center text-slate-400">
                                                 <User className="h-6 w-6" />
                                             </div>
                                             <div>
-                                                <p className="font-bold text-slate-900">{student.profile?.full_name || student.admission_number}</p>
+                                                <p className="font-bold text-slate-900 dark:text-white">{student.profile?.full_name || student.admission_number}</p>
                                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{student.admission_number}</p>
                                             </div>
                                         </div>
@@ -343,14 +349,14 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                                         </div>
                                         <div className="space-y-1">
                                             <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Critical Allergies</span>
-                                            <p className="text-xs font-bold text-slate-600 line-clamp-1">{profile?.allergies?.join(", ") || "No known allergies"}</p>
+                                            <p className="text-xs font-bold text-slate-600 dark:text-slate-400 line-clamp-1">{profile?.allergies?.join(", ") || "No known allergies"}</p>
                                         </div>
-                                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <ShieldAlert className="h-3 w-3 text-amber-500" />
-                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Emergency Protocol</span>
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Emergency Protocol</span>
                                             </div>
-                                            <p className="text-[11px] font-bold text-slate-700">{profile?.emergency_contact_name || "Emergency Contact Missing"}</p>
+                                            <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{profile?.emergency_contact_name || "Emergency Contact Missing"}</p>
                                             <p className="text-[10px] font-medium text-slate-400">{profile?.emergency_contact_phone || "No terminal phone recorded"}</p>
                                         </div>
                                     </div>
@@ -358,7 +364,7 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
                             );
                         })}
                     </div>
-                    <div className="mt-8 pt-4 border-t border-slate-100 flex justify-center">
+                    <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-center">
                         <button className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-emerald-600 h-10 px-6">
                             View Complete Medical Registry
                         </button>
@@ -369,35 +375,35 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
             {/* Profile Modal */}
             {isProfileOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <div className="bg-white rounded-xl w-full max-w-2xl mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                            <h2 className="text-sm font-black uppercase tracking-widest text-slate-900">Health Profile Synchronization</h2>
-                            <button onClick={() => setIsProfileOpen(false)} className="h-8 w-8 rounded-lg hover:bg-slate-100 inline-flex items-center justify-center">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-2xl mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Health Profile Synchronization</h2>
+                            <button onClick={() => setIsProfileOpen(false)} className="h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 inline-flex items-center justify-center">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
                         <div className="p-6 space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Student Target</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Student Target</label>
                                 <select
-                                    className="w-full h-12 rounded-xl border border-slate-200 px-3 text-xs font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                    className="w-full h-12 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                                     value={profileForm.student_id}
                                     onChange={(e) => handleOpenProfile(e.target.value)}
                                 >
-                                    <option value="">Select student dossier</option>
+                                    <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select student dossier</option>
                                     {students.map((s: any) => (
-                                        <option key={s.id} value={s.id}>{s.profile?.full_name || s.admission_number}</option>
+                                        <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{s.profile?.full_name || s.admission_number}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Blood Group</label>
-                                    <Input value={profileForm.blood_group} onChange={(e) => setProfileForm({ ...profileForm, blood_group: e.target.value })} className="h-11 rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Blood Group</label>
+                                    <Input value={profileForm.blood_group} onChange={(e) => setProfileForm({ ...profileForm, blood_group: e.target.value })} className="h-11 rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Insurance Identifier</label>
-                                    <Input value={profileForm.insurance_number} onChange={(e) => setProfileForm({ ...profileForm, insurance_number: e.target.value })} className="h-11 rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Insurance Identifier</label>
+                                    <Input value={profileForm.insurance_number} onChange={(e) => setProfileForm({ ...profileForm, insurance_number: e.target.value })} className="h-11 rounded-xl border-slate-200 dark:border-slate-800" />
                                 </div>
                             </div>
                             <button
@@ -415,30 +421,30 @@ export function HealthDashboard({ infirmaryLogs, healthProfiles, students, userR
             {/* Log Modal */}
             {isLogOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <div className="bg-white rounded-xl w-full max-w-xl mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                            <h2 className="text-sm font-black uppercase tracking-widest text-slate-900">New Infirmary Log Entry</h2>
-                            <button onClick={() => setIsLogOpen(false)} className="h-8 w-8 rounded-lg hover:bg-slate-100 inline-flex items-center justify-center">
+                    <div className="bg-white dark:bg-slate-900 rounded-xl w-full max-w-xl mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">New Infirmary Log Entry</h2>
+                            <button onClick={() => setIsLogOpen(false)} className="h-8 w-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 inline-flex items-center justify-center">
                                 <X className="h-4 w-4" />
                             </button>
                         </div>
                         <div className="p-6 space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Student Entry</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Student Entry</label>
                                 <select
-                                    className="w-full h-12 rounded-xl border border-slate-200 px-3 text-xs font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                    className="w-full h-12 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                                     value={logForm.student_id}
                                     onChange={(e) => setLogForm({ ...logForm, student_id: e.target.value })}
                                 >
-                                    <option value="">Identify student</option>
+                                    <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Identify student</option>
                                     {students.map((s: any) => (
-                                        <option key={s.id} value={s.id}>{s.profile?.full_name || s.admission_number}</option>
+                                        <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{s.profile?.full_name || s.admission_number}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Primary Reason</label>
-                                <Input value={logForm.visit_reason} onChange={(e) => setLogForm({ ...logForm, visit_reason: e.target.value })} className="h-11 rounded-xl border-slate-200" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Primary Reason</label>
+                                <Input value={logForm.visit_reason} onChange={(e) => setLogForm({ ...logForm, visit_reason: e.target.value })} className="h-11 rounded-xl border-slate-200 dark:border-slate-800" />
                             </div>
                             <button
                                 onClick={handleCreateLog}

@@ -274,22 +274,22 @@ export default function FeeSlipsPage() {
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-700">
       {/* Breadcrumb */}
-      <div className="flex items-center text-sm text-slate-500 mb-1">
+      <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-1">
         <span>Home</span>
         <ChevronRight className="h-3 w-3 mx-1" />
         <span>Finance</span>
         <ChevronRight className="h-3 w-3 mx-1" />
-        <span className="text-slate-900 font-medium">Fee Slips</span>
+        <span className="text-slate-900 dark:text-white font-medium">Fee Slips</span>
       </div>
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-50 rounded-xl border-l-4 border-emerald-500">
-            <FileText className="h-5 w-5 text-emerald-600" />
+          <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border-l-4 border-emerald-500">
+            <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-slate-900">Fee Slip Print</h1>
-            <p className="text-sm text-slate-500">Generate and print bulk fee invoices for students</p>
+            <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Fee Slip Print</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Generate and print bulk fee invoices for students</p>
           </div>
         </div>
       </div>
@@ -297,18 +297,18 @@ export default function FeeSlipsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Selection Panel */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
             <div className="p-5 space-y-5">
-              <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2 mb-4">
+              <h3 className="text-sm font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2 mb-4">
                 <Calendar className="h-4 w-4 text-emerald-500" />
                 Filter Students
               </h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Select Class</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Select Class</label>
                   <select
-                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                    className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
                   >
@@ -320,7 +320,7 @@ export default function FeeSlipsPage() {
                   <button 
                     onClick={loadClassStudents}
                     disabled={!selectedClass || isGenerating}
-                    className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all w-full mt-2"
+                    className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all w-full mt-2"
                   >
                     {isGenerating ? <Loader2 className="h-4 w-4 animate-spin inline mr-2" /> : "Load Class Students"}
                   </button>
@@ -328,20 +328,20 @@ export default function FeeSlipsPage() {
 
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-slate-100"></span>
+                    <span className="w-full border-t border-slate-100 dark:border-slate-800"></span>
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-white px-2 text-slate-400">OR</span>
+                    <span className="bg-white dark:bg-slate-900 px-2 text-slate-400">OR</span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search by Name/ID</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Search by Name/ID</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input
                       placeholder="Enter name or admission no..."
-                      className="pl-10 h-11 rounded-xl border-slate-200 text-sm font-bold"
+                      className="pl-10 h-11 rounded-xl border-slate-200 dark:border-slate-800 text-sm font-bold"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
@@ -349,7 +349,7 @@ export default function FeeSlipsPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={handleGenerateSlips}
                   disabled={isGenerating || selectedStudents.length === 0}
@@ -369,14 +369,14 @@ export default function FeeSlipsPage() {
 
         {/* List Panel */}
         <div className="lg:col-span-2">
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col h-[600px]">
-            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden flex flex-col h-[600px]">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-black text-slate-900">Selection List</h3>
-                <p className="text-sm text-slate-500">{selectedStudents.length} of {students.length} students selected</p>
+                <h3 className="text-sm font-black text-slate-900 dark:text-white">Selection List</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{selectedStudents.length} of {students.length} students selected</p>
               </div>
               {students.length > 0 && (
-                <button onClick={toggleAll} className="h-8 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all">
+                <button onClick={toggleAll} className="h-8 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
                   {selectedStudents.length === students.length ? "Deselect All" : "Select All"}
                 </button>
               )}
@@ -385,19 +385,19 @@ export default function FeeSlipsPage() {
             <div className="flex-1 overflow-y-auto">
               {students.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8">
-                  <div className="h-16 w-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                  <div className="h-16 w-16 rounded-full bg-slate-50 dark:bg-slate-950 flex items-center justify-center mb-4">
                     <Search className="h-8 w-8 opacity-20" />
                   </div>
-                  <p className="text-sm font-bold text-slate-500">No students found</p>
-                  <p className="text-sm text-slate-500 mt-1">Select a class or use the search bar to find students</p>
+                  <p className="text-sm font-bold text-slate-500 dark:text-slate-400">No students found</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Select a class or use the search bar to find students</p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   {students.map((student: any) => (
                     <div 
                       key={student.id} 
                       className={`p-4 flex items-center justify-between cursor-pointer transition-colors ${
-                        selectedStudents.includes(student.id) ? "bg-emerald-50/50" : "hover:bg-slate-50"
+                        selectedStudents.includes(student.id) ? "bg-emerald-50/50 dark:bg-emerald-950/20" : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       }`}
                       onClick={() => toggleStudent(student.id)}
                     >
@@ -405,16 +405,16 @@ export default function FeeSlipsPage() {
                         <div className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${
                           selectedStudents.includes(student.id) 
                             ? "bg-emerald-600 border-emerald-600" 
-                            : "border-slate-300 bg-white"
+                            : "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
                         }`}>
                           {selectedStudents.includes(student.id) && <CheckCircle2 className="h-3.5 w-3.5 text-white" />}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{student.profile?.full_name}</p>
-                          <p className="text-sm text-slate-500 font-medium">{student.admission_number} • {student.class?.name}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{student.profile?.full_name}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{student.admission_number} • {student.class?.name}</p>
                         </div>
                       </div>
-                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-white border border-slate-200 text-slate-600">
+                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
                         {schoolSettings.academic_year || "2024-25"}
                       </span>
                     </div>

@@ -55,14 +55,14 @@ export default function IDCardGeneratorPage() {
     if (previewMode && idCards) {
         return (
             <div className="space-y-8 animate-in fade-in duration-700">
-                <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-slate-200 shadow-sm print:hidden">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm print:hidden">
                     <div className="flex items-center gap-4">
-                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back
                         </button>
                         <div>
-                            <h2 className="text-lg font-black tracking-tight text-slate-900">ID Card Preview</h2>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{idCards.members.length} Cards Generated</p>
+                            <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">ID Card Preview</h2>
+                            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{idCards.members.length} Cards Generated</p>
                         </div>
                     </div>
                     <button onClick={() => window.print()} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
@@ -99,13 +99,13 @@ export default function IDCardGeneratorPage() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/hr/download-center">
-                        <button className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center">
+                        <button className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center justify-center">
                             <ArrowLeft className="h-5 w-5" />
                         </button>
                     </Link>
                     <div>
-                        <h1 className="text-lg font-black tracking-tight text-slate-900">Identity Card Generator</h1>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Generate CR80 sized ID cards</p>
+                        <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Identity Card Generator</h1>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Generate CR80 sized ID cards</p>
                     </div>
                 </div>
             </div>
@@ -113,11 +113,11 @@ export default function IDCardGeneratorPage() {
             <ERPCard accentColor="emerald" className="p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Card Type</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Card Type</label>
                         <select 
                             value={targetType}
                             onChange={(e) => setTargetType(e.target.value as 'student' | 'staff')}
-                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                         >
                             <option value="student">Student Identity Card</option>
                             <option value="staff">Staff Identity Card</option>
@@ -125,11 +125,11 @@ export default function IDCardGeneratorPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Filter / Group</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Filter / Group</label>
                         <select 
                             value={selectedClass}
                             onChange={(e) => setSelectedClass(e.target.value)}
-                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                         >
                             <option value="all">All Active {targetType === 'student' ? 'Students' : 'Staff'}</option>
                             {targetType === 'student' && classes.map(c => (
@@ -165,7 +165,7 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
     const role = isStudent ? "Student" : (Array.isArray(designationData) ? designationData[0] : designationData)?.name;
 
     return (
-        <div className="w-[240px] aspect-[1/1.58] bg-white rounded-2xl border-2 border-slate-900 shadow-xl overflow-hidden flex flex-col print-area mx-auto bg-gradient-to-b from-white to-slate-50">
+        <div className="w-[240px] aspect-[1/1.58] bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-900 shadow-xl overflow-hidden flex flex-col print-area mx-auto bg-gradient-to-b from-white to-slate-50">
             <div className="bg-slate-900 h-2" />
             
             <div className="p-3 text-center space-y-1">
@@ -173,7 +173,7 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
                     <div className="h-5 w-5 bg-slate-900 rounded-xl flex items-center justify-center">
                         <ShieldCheck className="h-3 w-3 text-white" />
                     </div>
-                    <span className="text-[10px] font-black text-slate-900 uppercase tracking-tighter">Edu Maysan</span>
+                    <span className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-tighter">Edu Maysan</span>
                 </div>
                 <p className="text-[6px] font-black uppercase tracking-[0.2em] text-emerald-600">Institutional Identity Card</p>
             </div>
@@ -182,7 +182,7 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
                 <div className="relative">
                     <Avatar className="h-28 w-28 border-4 border-white shadow-2xl rounded-2xl">
                         <AvatarImage src={member.photo_url} className="object-cover" />
-                        <AvatarFallback className="bg-slate-100 text-slate-400 font-black text-3xl">
+                        <AvatarFallback className="bg-slate-100 dark:bg-slate-800 text-slate-400 font-black text-3xl">
                             {name?.[0]}
                         </AvatarFallback>
                     </Avatar>
@@ -192,7 +192,7 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
                 </div>
 
                 <div className="text-center space-y-0.5">
-                    <h4 className="text-sm font-black uppercase tracking-tight text-slate-900 leading-tight">
+                    <h4 className="text-sm font-black uppercase tracking-tight text-slate-900 dark:text-white leading-tight">
                         {name}
                     </h4>
                     <p className="text-[7px] font-black text-slate-400 uppercase tracking-[0.2em]">
@@ -200,14 +200,14 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
                     </p>
                 </div>
 
-                <div className="w-full space-y-2 border-t border-slate-100 pt-3">
+                <div className="w-full space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3">
                     <div className="flex justify-between items-center">
                         <span className="text-[7px] font-black text-slate-400 uppercase">ID No</span>
-                        <span className="text-[8px] font-black font-mono text-slate-900">{subId}</span>
+                        <span className="text-[8px] font-black font-mono text-slate-900 dark:text-white">{subId}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-[7px] font-black text-slate-400 uppercase">Valid Thru</span>
-                        <span className="text-[8px] font-black text-slate-900 uppercase tracking-tighter">March 2027</span>
+                        <span className="text-[8px] font-black text-slate-900 dark:text-white uppercase tracking-tighter">March 2027</span>
                     </div>
                 </div>
             </div>
@@ -218,7 +218,7 @@ function IDCardTemplate({ member, type, settings }: { member: any, type: string,
                         <p className="text-[5px] font-black text-slate-400 uppercase leading-none">Emergency Contact</p>
                         <p className="text-[7px] font-bold tracking-tighter">+91 98765 43210</p>
                     </div>
-                    <div className="h-8 w-8 bg-white p-0.5 rounded-xl">
+                    <div className="h-8 w-8 bg-white dark:bg-slate-900 p-0.5 rounded-xl">
                         <div className="h-full w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#000_2px,#000_3px)] opacity-50" />
                     </div>
                 </div>

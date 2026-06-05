@@ -63,25 +63,25 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const iconColors: Record<string, string> = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    blue: "bg-blue-50 text-blue-600",
-    amber: "bg-amber-50 text-amber-600",
-    purple: "bg-purple-50 text-purple-600",
+    emerald: "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400",
+    blue: "bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400",
+    amber: "bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400",
+    purple: "bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400",
 };
 
 function FormCard({ title, description, icon, color = "emerald", children, className }: { 
     title: string; description: string; icon: React.ReactNode; color?: string; children: React.ReactNode; className?: string 
 }) {
     return (
-        <div className={cn("bg-white border border-slate-200 rounded-xl overflow-hidden", className)}>
-            <div className="border-b border-slate-100 p-5">
+        <div className={cn("bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden", className)}>
+            <div className="border-b border-slate-100 dark:border-slate-800 p-5">
                 <div className="flex items-center gap-3">
                     <div className={cn("p-2 rounded-lg", iconColors[color])}>
                         {icon}
                     </div>
                     <div>
-                        <h3 className="text-sm font-black tracking-tight text-slate-900">{title}</h3>
-                        <p className="text-[10px] text-slate-500 font-bold">{description}</p>
+                        <h3 className="text-sm font-black tracking-tight text-slate-900 dark:text-white">{title}</h3>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">{description}</p>
                     </div>
                 </div>
             </div>
@@ -179,28 +179,28 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
                 >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Staff ID</label>
-                            <Input disabled value={initialData?.staff_id || "Auto-generated"} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono bg-slate-50" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Staff ID</label>
+                            <Input disabled value={initialData?.staff_id || "Auto-generated"} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Staff Type</label>
-                            <select {...form.register("staff_type")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                <option value="teaching">Teaching Faculty</option>
-                                <option value="non_teaching">Non-Teaching Staff</option>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Staff Type</label>
+                            <select {...form.register("staff_type")} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                <option value="teaching" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Teaching Faculty</option>
+                                <option value="non_teaching" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Non-Teaching Staff</option>
                             </select>
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Department</label>
-                            <select {...form.register("department_id")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                <option value="">Select department</option>
-                                {departments.map(d => (<option key={d.id} value={d.id}>{d.name}</option>))}
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Department</label>
+                            <select {...form.register("department_id")} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                <option value="" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select department</option>
+                                {departments.map(d => (<option key={d.id} value={d.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{d.name}</option>))}
                             </select>
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Designation</label>
-                            <select {...form.register("designation_id")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                <option value="">Select designation</option>
-                                {designations.map(d => (<option key={d.id} value={d.id}>{d.name}</option>))}
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Designation</label>
+                            <select {...form.register("designation_id")} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                <option value="" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select designation</option>
+                                {designations.map(d => (<option key={d.id} value={d.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{d.name}</option>))}
                             </select>
                         </div>
                     </div>
@@ -215,7 +215,7 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
                 >
                     <div className="flex flex-col items-center justify-center space-y-6">
                         <div className="relative group">
-                            <div className="h-32 w-32 rounded-xl bg-slate-50 border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-400 shadow-inner">
+                            <div className="h-32 w-32 rounded-xl bg-slate-50 dark:bg-slate-950 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-center overflow-hidden transition-all group-hover:border-blue-400 shadow-inner">
                                 {photoPreview ? (
                                     <img src={photoPreview} alt="Preview" className="h-full w-full object-cover" />
                                 ) : (
@@ -243,36 +243,36 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
                 >
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">First Name</label>
-                            <Input {...form.register("first_name")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">First Name</label>
+                            <Input {...form.register("first_name")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Last Name</label>
-                            <Input {...form.register("last_name")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Last Name</label>
+                            <Input {...form.register("last_name")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Father's Name</label>
-                            <Input {...form.register("father_name")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Father's Name</label>
+                            <Input {...form.register("father_name")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date of Birth</label>
-                            <Input type="date" {...form.register("date_of_birth")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Date of Birth</label>
+                            <Input type="date" {...form.register("date_of_birth")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Gender</label>
-                            <select {...form.register("gender")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Gender</label>
+                            <select {...form.register("gender")} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                <option value="male" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Male</option>
+                                <option value="female" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Female</option>
+                                <option value="other" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Other</option>
                             </select>
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Marital Status</label>
-                            <select {...form.register("marital_status")} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                <option value="single">Single</option>
-                                <option value="married">Married</option>
-                                <option value="divorced">Divorced</option>
-                                <option value="widowed">Widowed</option>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Marital Status</label>
+                            <select {...form.register("marital_status")} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                <option value="single" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Single</option>
+                                <option value="married" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Married</option>
+                                <option value="divorced" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Divorced</option>
+                                <option value="widowed" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Widowed</option>
                             </select>
                         </div>
                     </div>
@@ -288,52 +288,52 @@ export function AddStaffForm({ departments, designations, onRefreshLists, initia
                 >
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Mobile Number</label>
-                            <Input {...form.register("mobile")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Mobile Number</label>
+                            <Input {...form.register("mobile")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Email Address</label>
-                            <Input {...form.register("email")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Email Address</label>
+                            <Input {...form.register("email")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Joining Date</label>
-                            <Input type="date" {...form.register("date_of_joining")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Joining Date</label>
+                            <Input type="date" {...form.register("date_of_joining")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Primary Qualification</label>
-                            <Input {...form.register("highest_qualification")} placeholder="e.g. M.Sc, PhD" className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Primary Qualification</label>
+                            <Input {...form.register("highest_qualification")} placeholder="e.g. M.Sc, PhD" className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Primary Language</label>
-                            <Input {...form.register("mother_tongue")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Primary Language</label>
+                            <Input {...form.register("mother_tongue")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Other Languages</label>
-                            <Input {...form.register("languages_known")} className="h-11 rounded-xl border-slate-200 text-xs font-bold" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Other Languages</label>
+                            <Input {...form.register("languages_known")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div className="md:col-span-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Full Address</label>
-                            <textarea {...form.register("address")} className="w-full h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Full Address</label>
+                            <textarea {...form.register("address")} className="w-full h-24 rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-300 outline-none resize-none" />
                         </div>
                         <div>
                             <label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 block mb-1.5">Monthly Pay (₹)</label>
-                            <Input type="number" {...form.register("monthly_salary")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                            <Input type="number" {...form.register("monthly_salary")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Aadhar Number</label>
-                            <Input {...form.register("aadhar_number")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Aadhar Number</label>
+                            <Input {...form.register("aadhar_number")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">PAN Number</label>
-                            <Input {...form.register("pan_number")} className="h-11 rounded-xl border-slate-200 text-xs font-black font-mono uppercase" />
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">PAN Number</label>
+                            <Input {...form.register("pan_number")} className="h-11 rounded-xl border-slate-200 dark:border-slate-800 text-xs font-black font-mono uppercase text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                         </div>
                     </div>
                 </FormCard>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-4 p-6 bg-white/80 backdrop-blur-md rounded-xl border border-slate-200 shadow-xl sticky bottom-8 z-50 animate-in slide-in-from-bottom-10 duration-1000">
-                <button type="button" onClick={() => router.back()} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">
+            <div className="flex items-center justify-end gap-4 p-6 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl sticky bottom-8 z-50 animate-in slide-in-from-bottom-10 duration-1000">
+                <button type="button" onClick={() => router.back()} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
                     Cancel
                 </button>
                 <button type="submit" disabled={isSubmitting} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex items-center gap-2">

@@ -154,7 +154,7 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
       <div className="p-4 md:p-6 flex items-center justify-center h-64">
         <div className="text-center">
           <div className="h-8 w-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-slate-500 mt-2">Loading student data...</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-2">Loading student data...</p>
         </div>
       </div>
     );
@@ -172,7 +172,7 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
             <StudentAvatar name={`${formData.first_name} ${formData.last_name}`} size="lg" />
             <div>
               <h1 className="text-xl font-bold">Edit Student</h1>
-              <p className="text-sm text-slate-500 font-mono">{formData.admission_number}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">{formData.admission_number}</p>
             </div>
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Admission No.</Label>
-                <Input value={formData.admission_number} disabled className="h-11 font-mono bg-slate-50" />
+                <Input value={formData.admission_number} disabled className="h-11 font-mono bg-slate-50 dark:bg-slate-950" />
               </div>
               <div className="space-y-2">
                 <Label>Roll Number</Label>
@@ -332,7 +332,7 @@ export default function EditStudentPage({ params }: { params: Promise<{ id: stri
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500">RTE Status</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">RTE Status</span>
                 <Badge variant={formData.rte_status === "true" ? "default" : "outline"}>
                   {formData.rte_status === "true" ? "RTE Candidate" : "Non-RTE"}
                 </Badge>

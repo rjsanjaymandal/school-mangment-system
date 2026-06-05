@@ -25,7 +25,7 @@ export default function EnterpriseSettingsPage() {
     { title: "Notifications", description: "Email, SMS, push notifications and templates", icon: <Bell className="h-5 w-5 text-blue-600" />, children: <NotificationCenter /> },
     { title: "Workflow Automation", description: "Automate business processes and triggers", icon: <GitBranch className="h-5 w-5 text-purple-600" />, children: <WorkflowAutomation /> },
     { title: "Data Management", description: "Import and export bulk data", icon: <Database className="h-5 w-5 text-amber-600" />, children: <BulkOperations /> },
-    { title: "Custom Reports", description: "Build and customize reports", icon: <Code className="h-5 w-5 text-slate-600" />, children: <ReportBuilder /> },
+    { title: "Custom Reports", description: "Build and customize reports", icon: <Code className="h-5 w-5 text-slate-600 dark:text-slate-400" />, children: <ReportBuilder /> },
     { title: "Report Automation", description: "Schedule and automate report generation", icon: <Clock className="h-5 w-5 text-amber-600" />, children: <ReportScheduler /> },
     { title: "API Access", description: "REST API documentation for integrations", icon: <Code className="h-5 w-5 text-blue-600" />, children: <APIDocumentation /> },
     { title: "Parent Portal", description: "Parent engagement and activity tracking", icon: <Users className="h-5 w-5 text-emerald-600" />, children: <ParentPortal /> },
@@ -42,7 +42,7 @@ export default function EnterpriseSettingsPage() {
         actions={
           <button
             onClick={() => setExportOpen(true)}
-            className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all"
+            className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
           >
             <Download className="h-4 w-4 inline mr-2" />
             Export Data
@@ -52,12 +52,12 @@ export default function EnterpriseSettingsPage() {
 
       <div className="grid gap-6">
         {sections.map((section, i) => (
-          <div key={i} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <div className="p-5 border-b border-slate-100 flex items-center gap-3">
+          <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
               {section.icon}
               <div>
-                <h3 className="text-lg font-black tracking-tight text-slate-900">{section.title}</h3>
-                <p className="text-sm text-slate-500">{section.description}</p>
+                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">{section.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{section.description}</p>
               </div>
             </div>
             <div className="p-5">{section.children}</div>

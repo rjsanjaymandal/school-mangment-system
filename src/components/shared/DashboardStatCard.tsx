@@ -25,13 +25,13 @@ export function DashboardStatCard({
     className 
 }: DashboardStatCardProps) {
     const colors: Record<string, string> = {
-        emerald: "text-emerald-600 bg-emerald-50 border-emerald-100 shadow-emerald-500/10",
-        rose: "text-rose-600 bg-rose-50 border-rose-100 shadow-rose-500/10",
-        amber: "text-amber-600 bg-amber-50 border-amber-100 shadow-amber-500/10",
-        blue: "text-blue-600 bg-blue-50 border-blue-100 shadow-blue-500/10",
-        slate: "text-slate-600 bg-slate-50 border-slate-200 shadow-slate-500/5",
-        purple: "text-purple-600 bg-purple-50 border-purple-100 shadow-purple-500/10",
-        indigo: "text-indigo-600 bg-indigo-50 border-indigo-100 shadow-indigo-500/10",
+        emerald: "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900/50 shadow-emerald-500/10",
+        rose: "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border-rose-100 dark:border-rose-900/50 shadow-rose-500/10",
+        amber: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/50 shadow-amber-500/10",
+        blue: "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 border-blue-100 dark:border-blue-900/50 shadow-blue-500/10",
+        slate: "text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/30 border-slate-200 dark:border-slate-800 shadow-slate-500/5",
+        purple: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30 border-purple-100 dark:border-purple-900/50 shadow-purple-500/10",
+        indigo: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 border-indigo-100 dark:border-indigo-900/50 shadow-indigo-500/10",
     };
 
     return (
@@ -41,7 +41,7 @@ export function DashboardStatCard({
         )}>
             <div className="flex flex-col gap-1">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{title}</p>
-                <p className="text-3xl font-black text-slate-900 tracking-tighter">{value}</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{value}</p>
                 {trend && (
                     <p className={cn(
                         "text-[9px] font-black uppercase tracking-widest mt-1",

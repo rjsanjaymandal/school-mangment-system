@@ -140,7 +140,7 @@ export default function AdvancedFeeCollectionPage() {
         accessorKey: "admission_number",
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-bold text-slate-900 text-sm tracking-tight">{row.original.admission_number || "N/A"}</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">{row.original.admission_number || "N/A"}</span>
             <span className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">ID: {row.original.student_id.split('-')[0]}</span>
           </div>
         ),
@@ -150,7 +150,7 @@ export default function AdvancedFeeCollectionPage() {
         accessorKey: "student_name",
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-bold text-slate-900 text-sm tracking-tight">{row.original.student_name}</span>
+            <span className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">{row.original.student_name}</span>
             <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Father: {row.original.father_name}</span>
           </div>
         ),
@@ -159,7 +159,7 @@ export default function AdvancedFeeCollectionPage() {
         header: "Class",
         accessorKey: "class_name",
         cell: ({ row }) => (
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/50">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200/50">
             {row.original.class_name || "Unassigned"}
           </span>
         ),
@@ -171,7 +171,7 @@ export default function AdvancedFeeCollectionPage() {
           const bal = Number(row.original.outstanding_balance);
           if (bal <= 0) {
             return (
-              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-xl tracking-tighter border bg-emerald-50 text-emerald-600 border-emerald-100">
+              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-xl tracking-tighter border bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30">
                 Paid
               </span>
             );
@@ -267,18 +267,18 @@ export default function AdvancedFeeCollectionPage() {
         />
       </div>
 
-      <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 backdrop-blur-md p-4 rounded-xl border border-slate-200 shadow-sm animate-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col md:flex-row items-center gap-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm animate-in slide-in-from-bottom-2 duration-500">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Search by student name, admission # or parent name..."
-            className="pl-11 h-12 rounded-xl bg-slate-50/50 border-slate-100 text-xs font-bold"
+            className="pl-11 h-12 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 text-xs font-bold"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <button className="h-12 px-6 rounded-xl bg-white border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 shadow-sm transition-all flex-1 md:flex-none flex items-center justify-center">
+          <button className="h-12 px-6 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 shadow-sm transition-all flex-1 md:flex-none flex items-center justify-center">
             <Printer className="h-4 w-4 mr-2" /> Bulk Receipt
           </button>
           <button className="h-12 px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50 flex-1 md:flex-none">
@@ -292,11 +292,11 @@ export default function AdvancedFeeCollectionPage() {
         description="List of all students and their current fee status"
         color="emerald"
         icon={<ReceiptText className="h-5 w-5" />}
-        className="border border-slate-200 shadow-xl rounded-xl overflow-hidden"
+        className="border border-slate-200 dark:border-slate-800 shadow-xl rounded-xl overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-200/50 dark:border-slate-800/50 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -307,7 +307,7 @@ export default function AdvancedFeeCollectionPage() {
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-200/50 dark:divide-slate-800/50">
               {isLoading ? (
                 <tr>
                   <td colSpan={columns.length} className="px-6 py-20 text-center">
@@ -324,7 +324,7 @@ export default function AdvancedFeeCollectionPage() {
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={row.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 border-b border-slate-200/50 dark:border-slate-800/50 transition-colors group">
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-6 py-5">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -351,12 +351,12 @@ export default function AdvancedFeeCollectionPage() {
       {/* Payment Checkout Modal */}
       {isCheckoutOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-            <div className="p-6 bg-white border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+            <div className="p-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
               <div className="h-14 w-14 rounded-xl bg-emerald-500 flex items-center justify-center mb-4 shadow-lg shadow-emerald-500/20">
                 <IndianRupee className="h-7 w-7 text-white" />
               </div>
-              <h2 className="text-lg font-black tracking-tight text-slate-900">Process Payment</h2>
+              <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Process Payment</h2>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
                 Collecting fees for institutional credit
               </p>
@@ -364,16 +364,16 @@ export default function AdvancedFeeCollectionPage() {
 
             <div className="p-6 space-y-6">
               {selectedStudent && (
-                <div className="bg-white border border-slate-200 p-6 rounded-xl space-y-4">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Student</span>
-                    <span className="text-sm font-black text-slate-900">{selectedStudent.student_name}</span>
+                    <span className="text-sm font-black text-slate-900 dark:text-white">{selectedStudent.student_name}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admission #</span>
-                    <span className="text-xs font-black font-mono text-slate-600">{selectedStudent.admission_number}</span>
+                    <span className="text-xs font-black font-mono text-slate-600 dark:text-slate-400">{selectedStudent.admission_number}</span>
                   </div>
-                  <div className="h-[1px] bg-slate-100" />
+                  <div className="h-[1px] bg-slate-100 dark:bg-slate-800" />
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Due Amount</span>
                     <span className="text-lg font-black text-rose-600 tracking-tighter">₹{selectedStudent.outstanding_balance.toLocaleString()}</span>
@@ -390,7 +390,7 @@ export default function AdvancedFeeCollectionPage() {
                       type="number"
                       value={paymentAmount}
                       onChange={(e) => setPaymentAmount(e.target.value)}
-                      className="h-14 pl-12 rounded-xl border-slate-200 text-lg font-black text-slate-900 shadow-sm focus:ring-emerald-500"
+                      className="h-14 pl-12 rounded-xl border-slate-200 dark:border-slate-800 text-lg font-black text-slate-900 dark:text-white shadow-sm focus:ring-emerald-500"
                     />
                   </div>
                 </div>
@@ -405,8 +405,8 @@ export default function AdvancedFeeCollectionPage() {
                         className={cn(
                           "h-12 rounded-xl border-2 text-[10px] font-black uppercase tracking-widest transition-all active:scale-95",
                           paymentMode === mode
-                            ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm"
-                            : "border-slate-100 text-slate-400 hover:border-slate-200"
+                            ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 shadow-sm"
+                            : "border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:border-slate-200 dark:hover:border-slate-700"
                         )}
                       >
                         {mode}
@@ -416,18 +416,18 @@ export default function AdvancedFeeCollectionPage() {
                 </div>
               </div>
 
-              <div className="p-6 bg-emerald-50 rounded-xl border border-emerald-100 space-y-3">
+              <div className="p-6 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-100 dark:border-emerald-900/30 space-y-3">
                 <div className="flex items-center gap-3">
-                  <ShieldCheck className="h-5 w-5 text-emerald-600" />
-                  <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Secure Transaction</p>
+                  <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Secure Transaction</p>
                 </div>
-                <p className="text-[10px] font-bold text-emerald-600/70 leading-relaxed uppercase">
+                <p className="text-[10px] font-bold text-emerald-600/70 dark:text-emerald-400/70 leading-relaxed uppercase">
                   Once processed, this amount will be credited to the institutional account and a digital receipt will be generated.
                 </p>
               </div>
             </div>
 
-            <div className="p-6 bg-white border-t border-slate-100 space-y-2">
+            <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 space-y-2">
               <button
                 onClick={handleProcessPayment}
                 disabled={isProcessing || !paymentAmount}
@@ -445,7 +445,7 @@ export default function AdvancedFeeCollectionPage() {
               </button>
               <button
                 onClick={() => setIsCheckoutOpen(false)}
-                className="w-full h-10 rounded-xl bg-white border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all hover:bg-slate-50"
+                className="w-full h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all hover:bg-slate-50 dark:hover:bg-slate-900"
               >
                 CANCEL
               </button>

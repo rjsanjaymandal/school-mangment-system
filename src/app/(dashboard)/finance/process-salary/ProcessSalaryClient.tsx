@@ -148,7 +148,7 @@ export function ProcessSalaryClient() {
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(Number(e.target.value))}
-            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -159,7 +159,7 @@ export function ProcessSalaryClient() {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
           >
             {[2024, 2025, 2026].map(year => (
               <option key={year} value={year}>{year}</option>
@@ -180,51 +180,51 @@ export function ProcessSalaryClient() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
           <div className="p-5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total Staff</p>
-            <p className="text-lg font-black tracking-tight text-slate-900 mt-2">{staff?.length || 0}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Total Staff</p>
+            <p className="text-lg font-black tracking-tight text-slate-900 dark:text-white mt-2">{staff?.length || 0}</p>
           </div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
           <div className="p-5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Processed</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Processed</p>
             <p className="text-lg font-black tracking-tight text-emerald-600 mt-2">{processedCount}</p>
           </div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
           <div className="p-5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total Deductions</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Total Deductions</p>
             <p className="text-lg font-black tracking-tight text-amber-600 mt-2">₹{totalDeductions.toLocaleString()}</p>
           </div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
           <div className="p-5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Net Payable</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Net Payable</p>
             <p className="text-lg font-black tracking-tight text-purple-600 mt-2">₹{totalNet.toLocaleString()}</p>
           </div>
         </div>
       </div>
 
       {/* Staff List */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 flex items-center gap-2">
             <Users className="h-4 w-4 text-slate-400" />
             Staff Salary Details
           </h3>
         </div>
         <div className="p-0">
           {payrollLoading || staffLoading ? (
-            <div className="p-8 text-center text-slate-500">Loading...</div>
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400">Loading...</div>
           ) : payrollData?.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400">
               <AlertCircle className="h-8 w-8 mx-auto mb-2 text-amber-500" />
               <p>No payroll data generated for this month.</p>
               <p className="text-sm mt-1">Click &quot;Generate Salary&quot; to process.</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {staff?.map((member: any) => {
                 const payroll = payrollData?.find(p => p.staff_id === member.id);
                 const isExpanded = expandedStaff.includes(member.id);
@@ -233,22 +233,22 @@ export function ProcessSalaryClient() {
                 return (
                   <div key={member.id}>
                     <div 
-                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/50"
+                      className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/30"
                       onClick={() => payroll && toggleExpand(member.id)}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 font-black">
+                        <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-black">
                           {staffName.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900 text-sm">{staffName}</p>
-                          <p className="text-sm text-slate-500">{member.designation?.name || "Staff"}</p>
+                          <p className="font-bold text-slate-900 dark:text-white text-sm">{staffName}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">{member.designation?.name || "Staff"}</p>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-6">
                         <div className="text-right">
-                          <p className="font-bold text-slate-900 text-sm">
+                          <p className="font-bold text-slate-900 dark:text-white text-sm">
                             ₹{(() => {
                               if (!payroll) return (member.base_salary || 0);
                               const deductions = (payroll.absence_deduction || 0) + (payroll.leave_deduction || 0) + (payroll.late_deduction || 0) + (payroll.other_deductions || 0);
@@ -256,20 +256,20 @@ export function ProcessSalaryClient() {
                               return (payroll.base_salary || 0) + additions - deductions;
                             })().toLocaleString()}
                           </p>
-                          <p className="text-sm text-slate-500">Net Pay</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">Net Pay</p>
                         </div>
                         
                         {payroll ? (
                           <span className={cn(
                             "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
-                            payroll.status === "approved" ? "bg-emerald-50 text-emerald-600" :
-                            payroll.status === "paid" ? "bg-blue-50 text-blue-600" :
-                            "bg-amber-50 text-amber-600"
+                            payroll.status === "approved" ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400" :
+                            payroll.status === "paid" ? "bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400" :
+                            "bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400"
                           )}>
                             {payroll.status}
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 text-slate-500">Not Processed</span>
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">Not Processed</span>
                         )}
                         
                         {payroll && (
@@ -280,31 +280,31 @@ export function ProcessSalaryClient() {
 
                     {/* Expanded Details */}
                     {isExpanded && payroll && (
-                      <div className="px-4 pb-4 bg-slate-50/50">
+                      <div className="px-4 pb-4 bg-slate-50/50 dark:bg-slate-900/50">
                         <div className="grid grid-cols-4 gap-4 text-sm">
                           <div>
-                            <p className="text-slate-500">Base Salary</p>
+                            <p className="text-slate-500 dark:text-slate-400">Base Salary</p>
                             <p className="font-bold">₹{payroll.base_salary?.toLocaleString() || 0}</p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Working Days</p>
+                            <p className="text-slate-500 dark:text-slate-400">Working Days</p>
                             <p className="font-bold">{payroll.working_days || 0}</p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Present/Absent</p>
+                            <p className="text-slate-500 dark:text-slate-400">Present/Absent</p>
                             <p className="font-bold">
                               {payroll.days_present || 0} / {payroll.days_absent || 0}
                             </p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Deductions</p>
-                            <p className="font-bold text-red-600">
+                            <p className="text-slate-500 dark:text-slate-400">Deductions</p>
+                            <p className="font-bold text-red-600 dark:text-red-400">
                               -₹{((payroll.absence_deduction || 0) + (payroll.leave_deduction || 0) + (payroll.late_deduction || 0) + (payroll.other_deductions || 0)).toLocaleString()}
                             </p>
                           </div>
                           <div>
-                            <p className="text-slate-500">Bonus</p>
-                            <p className="font-bold text-emerald-600">
+                            <p className="text-slate-500 dark:text-slate-400">Bonus</p>
+                            <p className="font-bold text-emerald-600 dark:text-emerald-400">
                               +₹{(payroll.bonus || 0).toLocaleString()}
                             </p>
                           </div>
@@ -312,16 +312,16 @@ export function ProcessSalaryClient() {
                             <button 
                               disabled={payroll.status === "approved"}
                               onClick={() => approvePayroll.mutate(member.id)}
-                              className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2"
+                              className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all disabled:opacity-50 flex items-center gap-2"
                             >
                               <CheckCircle className="h-3 w-3" />
                               Approve
                             </button>
-                            <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-2">
+                            <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
                               <Download className="h-3 w-3" />
                               Slip
                             </button>
-                            <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-2">
+                            <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
                               <Send className="h-3 w-3" />
                               WhatsApp
                             </button>

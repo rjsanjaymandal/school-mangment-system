@@ -85,27 +85,27 @@ export function AuditLogViewer() {
         </div>
         
         <select 
-          className="h-10 px-3 rounded-md border border-slate-200 text-sm"
+          className="h-10 px-3 rounded-md border border-slate-200 dark:border-slate-800 text-sm bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 outline-none"
           value={actionFilter}
           onChange={e => setActionFilter(e.target.value)}
         >
-          <option value="all">All Actions</option>
-          <option value="LOGIN">Login/Logout</option>
-          <option value="CREATE">Create</option>
-          <option value="UPDATE">Update</option>
-          <option value="DELETE">Delete</option>
-          <option value="PAYMENT">Payments</option>
+          <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Actions</option>
+          <option value="LOGIN" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Login/Logout</option>
+          <option value="CREATE" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Create</option>
+          <option value="UPDATE" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Update</option>
+          <option value="DELETE" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Delete</option>
+          <option value="PAYMENT" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Payments</option>
         </select>
 
         <select 
-          className="h-10 px-3 rounded-md border border-slate-200 text-sm"
+          className="h-10 px-3 rounded-md border border-slate-200 dark:border-slate-800 text-sm bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 outline-none"
           value={dateRange}
           onChange={e => setDateRange(e.target.value)}
         >
-          <option value="1d">Today</option>
-          <option value="7d">Last 7 days</option>
-          <option value="30d">Last 30 days</option>
-          <option value="90d">Last 90 days</option>
+          <option value="1d" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Today</option>
+          <option value="7d" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Last 7 days</option>
+          <option value="30d" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Last 30 days</option>
+          <option value="90d" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Last 90 days</option>
         </select>
 
         <Button variant="outline" className="rounded-md">
@@ -118,83 +118,83 @@ export function AuditLogViewer() {
       <div className="grid grid-cols-4 gap-4">
         <Card className="border-l-4 border-l-emerald-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Total Actions</p>
-            <p className="text-2xl font-semibold text-slate-900">1,247</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Total Actions</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">1,247</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-blue-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Active Users</p>
-            <p className="text-2xl font-semibold text-slate-900">23</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Active Users</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">23</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-amber-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Warnings</p>
-            <p className="text-2xl font-semibold text-slate-900">12</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Warnings</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">12</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-red-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Failed Attempts</p>
-            <p className="text-2xl font-semibold text-slate-900">3</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Failed Attempts</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">3</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Logs Table */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
-            <Clock className="h-4 w-4 text-slate-500" />
+            <Clock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             Audit Trail
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b">
+              <thead className="bg-slate-50 dark:bg-slate-950 border-b">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Action</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">User</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Entity</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Details</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Timestamp</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">IP Address</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Action</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">User</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Entity</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Details</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Timestamp</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">IP Address</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredLogs.map(log => {
                   const IconComponent = ACTION_ICONS[log.action] || Eye;
                   return (
-                    <tr key={log.id} className="hover:bg-slate-50">
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-900">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <IconComponent className="h-4 w-4 text-slate-400" />
-                          <span className="text-sm font-medium text-slate-900">{log.action}</span>
+                          <span className="text-sm font-medium text-slate-900 dark:text-white">{log.action}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <User className="h-3 w-3 text-slate-400" />
-                          <span className="text-sm text-slate-700">{log.user_name}</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-300">{log.user_name}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm text-slate-600">{log.entity_type}</span>
+                        <span className="text-sm text-slate-600 dark:text-slate-400">{log.entity_type}</span>
                         <span className="text-xs text-slate-400 ml-1">#{log.entity_id}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm text-slate-600 max-w-[200px] truncate block">
+                        <span className="text-sm text-slate-600 dark:text-slate-400 max-w-[200px] truncate block">
                           {log.details || "-"}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm text-slate-500">{log.timestamp}</span>
+                        <span className="text-sm text-slate-500 dark:text-slate-400">{log.timestamp}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm text-slate-500 font-mono">{log.ip_address}</span>
+                        <span className="text-sm text-slate-500 dark:text-slate-400 font-mono">{log.ip_address}</span>
                       </td>
                       <td className="px-4 py-3">
                         <Badge className={STATUS_COLORS[log.status]}>{log.status}</Badge>

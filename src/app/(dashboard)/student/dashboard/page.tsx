@@ -16,11 +16,11 @@ export default async function StudentDashboard() {
     <div className="p-6 space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-black tracking-tight text-slate-900 uppercase">
+          <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white uppercase">
             Student Portal
           </h2>
           <div className="flex items-center gap-x-2 mt-1">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Learning Journey & Academic Achievement Tracking
             </p>
             <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-green-50 text-green-600">
@@ -42,8 +42,8 @@ export default async function StudentDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-xl overflow-hidden p-5">
-          <h3 className="text-sm font-semibold text-slate-900 mb-4">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-5">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
             Academic Milestones
           </h3>
           <div className="space-y-3">
@@ -54,11 +54,11 @@ export default async function StudentDashboard() {
             ].map((m, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-100 hover:shadow-md transition-all"
+                className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:shadow-md transition-all"
               >
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{m.name}</p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">{m.name}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mt-0.5">
                     {m.date}
                   </p>
                 </div>

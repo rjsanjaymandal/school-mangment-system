@@ -85,23 +85,23 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
 
   return (
     <div className="animate-in fade-in duration-700 space-y-6">
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
-        <div className="p-5 border-b border-slate-100 -mx-5 -mt-5 mb-5">
-          <h3 className="text-lg font-black tracking-tight text-slate-900">Select Class & Date</h3>
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
+        <div className="p-5 border-b border-slate-100 dark:border-slate-800 -mx-5 -mt-5 mb-5">
+          <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Select Class & Date</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
-            <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-              <option value="" disabled>Select a class</option>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
+            <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+              <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select a class</option>
               {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
-            <div className="h-11 rounded-xl border border-slate-200 px-3 flex items-center gap-2 text-sm font-bold text-slate-700 bg-white">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Date</label>
+            <div className="h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900">
               <CalendarIcon className="h-4 w-4 text-slate-400" />
               {new Date().toLocaleDateString()}
             </div>
@@ -119,27 +119,27 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
       </div>
 
       {students.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden animate-in fade-in duration-700">
-          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-lg font-black tracking-tight text-slate-900">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden animate-in fade-in duration-700">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
               Student List ({students.filter((s) => s.status === "present").length}/{students.length} Present)
             </h3>
             <button onClick={handleSave} disabled={loading} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50">
               {loading ? "Saving..." : "Save Attendance"}
             </button>
           </div>
-          <div className="p-5 divide-y divide-slate-100">
+          <div className="p-5 divide-y divide-slate-100 dark:divide-slate-800">
             {students.map((student) => (
               <div
                 key={student.id}
                 className="py-4 flex items-center justify-between first:pt-0 last:pb-0"
               >
                 <div className="flex items-center gap-x-3">
-                  <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-sm">
+                  <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-slate-500 dark:text-slate-400 text-sm">
                     {student.profile?.first_name?.[0] || "?"}
                   </div>
                   <div>
-                    <p className="font-bold text-slate-700 text-sm">
+                    <p className="font-bold text-slate-700 dark:text-slate-300 text-sm">
                       {student.profile?.first_name} {student.profile?.last_name}
                     </p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
@@ -154,7 +154,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
                       "h-10 rounded-xl font-black text-[10px] uppercase tracking-widest px-4 transition-all flex items-center gap-2",
                       student.status === "present"
                         ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg"
-                        : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                        : "border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                     )}
                   >
                     <Check className="h-4 w-4" /> Present
@@ -165,7 +165,7 @@ export function AttendanceForm({ classes }: AttendanceFormProps) {
                       "h-10 rounded-xl font-black text-[10px] uppercase tracking-widest px-4 transition-all flex items-center gap-2",
                       student.status === "absent"
                         ? "bg-red-600 hover:bg-red-700 text-white shadow-lg"
-                        : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                        : "border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                     )}
                   >
                     <X className="h-4 w-4" /> Absent

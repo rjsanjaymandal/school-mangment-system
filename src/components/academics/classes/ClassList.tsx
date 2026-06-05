@@ -220,20 +220,20 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                                     {isAdminOrTeacher && (
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-colors">
+                                                <Button variant="ghost" className="h-8 w-8 p-0 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 rounded-xl transition-colors">
                                                     <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-48 rounded-2xl border-slate-200/60 shadow-xl overflow-hidden p-1">
+                                            <DropdownMenuContent align="end" className="w-48 rounded-2xl border-slate-200/60 dark:border-slate-800/60 shadow-xl overflow-hidden p-1">
                                                 <DropdownMenuLabel className="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => onEdit(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 focus:bg-slate-50 focus:text-emerald-600 p-3">
+                                                <DropdownMenuItem onClick={() => onEdit(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 p-3">
                                                     <Pencil className="h-4 w-4" /> Edit
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => onManageSubjects(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 focus:bg-slate-50 focus:text-blue-600 p-3">
+                                                <DropdownMenuItem onClick={() => onManageSubjects(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-blue-600 dark:focus:text-blue-400 p-3">
                                                     <BookOpen className="h-4 w-4" /> Manage Subjects
                                                 </DropdownMenuItem>
-                                                <DropdownMenuSeparator className="bg-slate-100 my-1" />
-                                                <DropdownMenuItem onClick={() => onDelete(cls.id)} className="flex items-center gap-3 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-700 rounded-xl font-bold text-xs p-3">
+                                                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
+                                                <DropdownMenuItem onClick={() => onDelete(cls.id)} className="flex items-center gap-3 cursor-pointer text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/35 focus:text-rose-700 dark:focus:text-rose-400 rounded-xl font-bold text-xs p-3">
                                                     <Trash2 className="h-4 w-4" /> Delete
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -247,7 +247,7 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                                             {cls.name}
                                         </h3>
                                         <div className="flex items-center gap-2 mt-2">
-                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
+                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">
                                                 <DoorOpen className="h-3 w-3 text-slate-400" />
                                                 {cls.room_number || "No Room"}
                                             </div>
@@ -307,7 +307,7 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                             <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                                 {editingClass ? "Edit Class" : "Add New Class"}
                             </DialogTitle>
-                            <DialogDescription className="text-sm font-medium text-slate-500">
+                            <DialogDescription className="text-sm font-medium text-slate-500 dark:text-slate-400">
                                 {editingClass ? "Update class details" : "Create a new class"}
                             </DialogDescription>
                         </DialogHeader>
@@ -326,7 +326,7 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                 <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
                     <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
                         <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Manage Subjects</DialogTitle>
-                        <DialogDescription className="text-sm font-medium text-slate-500 mt-1">
+                        <DialogDescription className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
                             Add subjects to <span className="text-blue-600 font-bold">{subjectClass?.name}</span>
                         </DialogDescription>
                     </div>
@@ -353,7 +353,7 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
 
                         <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                             {classSubjectRecords.length === 0 ? (
-                                <div className="border-2 border-dashed border-slate-200/60 dark:border-slate-800/60 p-12 text-sm text-slate-500 font-medium text-center rounded-[2rem]">
+                                <div className="border-2 border-dashed border-slate-200/60 dark:border-slate-800/60 p-12 text-sm text-slate-500 dark:text-slate-400 font-medium text-center rounded-[2rem]">
                                     No subjects assigned yet.
                                 </div>
                             ) : (

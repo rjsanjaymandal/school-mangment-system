@@ -34,8 +34,8 @@ export default async function SettingsPage() {
           <SettingsIcon className="h-5 w-5 text-emerald-600" />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
-          <p className="text-sm text-slate-500">Configure system preferences</p>
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-white">Settings</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Configure system preferences</p>
         </div>
       </div>
 

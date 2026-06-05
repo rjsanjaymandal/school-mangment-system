@@ -55,14 +55,14 @@ export function GlobalSearch() {
       {/* Navbar Trigger Button */}
       <Button
         variant="outline"
-        className="h-9 w-56 justify-between text-muted-foreground border-slate-200 hover:bg-slate-50 hover:border-slate-300 bg-slate-50/50 hidden md:flex"
+        className="h-9 w-56 justify-between text-muted-foreground border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 hover:border-slate-300 bg-slate-50/50 dark:bg-slate-900/50 hidden md:flex"
         onClick={() => setOpen(true)}
       >
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-slate-400" />
-          <span className="text-sm text-slate-500">Search School...</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400">Search School...</span>
         </div>
-        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded bg-white border border-slate-200 px-1.5 font-mono text-[10px] font-medium text-slate-400">
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-1.5 font-mono text-[10px] font-medium text-slate-400">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
@@ -75,7 +75,7 @@ export function GlobalSearch() {
         description="Search students, staff, or take quick actions."
         showCloseButton={false}
       >
-        <div className="p-2 border-b border-slate-100 bg-slate-50/50">
+        <div className="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
           <CommandInput placeholder="Search students, staff, or actions..." className="border-none focus:ring-0" />
         </div>
         <CommandList className="p-2 max-h-[450px]">
@@ -178,10 +178,10 @@ export function GlobalSearch() {
             />
           </CommandGroup>
         </CommandList>
-        <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
           <div className="flex gap-4 text-slate-400">
-            <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 px-1 rounded text-slate-900 font-mono">↑↓</kbd> Navigate</span>
-            <span className="flex items-center gap-1"><kbd className="bg-white border border-slate-200 px-1 rounded text-slate-900 font-mono">↵</kbd> Select</span>
+            <span className="flex items-center gap-1"><kbd className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-1 rounded text-slate-900 dark:text-white font-mono">↑↓</kbd> Navigate</span>
+            <span className="flex items-center gap-1"><kbd className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-1 rounded text-slate-900 dark:text-white font-mono">↵</kbd> Select</span>
           </div>
           <span className="flex items-center gap-1 text-emerald-600/70"><ShieldCheck className="h-3 w-3" /> Secure Access</span>
         </div>
@@ -223,10 +223,10 @@ function SearchItem({
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between">
-          <h4 className="text-sm font-bold text-slate-900 uppercase tracking-tight">{title}</h4>
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-tight">{title}</h4>
           <ChevronRight className="h-3 w-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">{subtitle}</p>
+        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-tight mt-0.5">{subtitle}</p>
       </div>
     </CommandItem>
   );

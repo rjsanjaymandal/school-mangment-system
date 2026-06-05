@@ -88,19 +88,19 @@ export function SalarySettingsClient() {
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
-          <Settings className="h-5 w-5 text-emerald-600" />
+        <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+          <Settings className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
         <div>
-          <h1 className="text-lg font-black tracking-tight text-slate-900">Salary Settings</h1>
-          <p className="text-sm text-slate-500">Configure payroll calculation rules</p>
+          <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Salary Settings</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Configure payroll calculation rules</p>
         </div>
       </div>
 
       {categoryGroups.map((group) => (
-        <div key={group.title} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
-            <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2">
+        <div key={group.title} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="text-sm font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
               <group.icon className={`h-4 w-4 ${group.color}`} />
               {group.title}
             </h3>
@@ -110,17 +110,17 @@ export function SalarySettingsClient() {
               {settings
                 ?.filter((s) => group.keys.includes(s.key))
                 .map((setting) => (
-                  <div key={setting.key} className="p-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                  <div key={setting.key} className="p-4 border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-bold text-slate-900 capitalize">
+                        <p className="font-bold text-slate-900 dark:text-white capitalize">
                           {setting.key.replace(/_/g, " ")}
                         </p>
-                        <p className="text-xs text-slate-500">{setting.description}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{setting.description}</p>
                       </div>
                       <span className={cn(
                         "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
-                        setting.is_active ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                        setting.is_active ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-450" : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-400"
                       )}>
                         {setting.is_active ? "Active" : "Inactive"}
                       </span>
@@ -132,7 +132,7 @@ export function SalarySettingsClient() {
                           type="number"
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
-                          className="w-24 rounded-xl border-slate-200"
+                          className="w-24 rounded-xl border-slate-200 dark:border-slate-800"
                         />
                         <button
                           onClick={() => saveEdit(setting.key)}
@@ -141,20 +141,20 @@ export function SalarySettingsClient() {
                         >
                           <Save className="h-3.5 w-3.5" />
                         </button>
-                        <button onClick={cancelEdit} className="h-9 w-9 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center">
+                        <button onClick={cancelEdit} className="h-9 w-9 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center justify-center">
                           <RotateCcw className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     ) : (
                       <div className="flex items-center justify-between mt-2">
-                        <p className="text-2xl font-black text-slate-900">
+                        <p className="text-2xl font-black text-slate-900 dark:text-white">
                           {setting.key.includes("rate") || setting.key.includes("percentage")
                             ? `${setting.value}%`
                             : `₹${setting.value.toLocaleString()}`}
                         </p>
                         <button
                           onClick={() => startEdit(setting)}
-                          className="h-8 rounded-xl border border-slate-200 text-slate-600 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 transition-all"
+                          className="h-8 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-black text-[9px] uppercase tracking-widest px-3 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                         >
                           Edit
                         </button>
@@ -167,13 +167,13 @@ export function SalarySettingsClient() {
         </div>
       ))}
 
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden border-l-4 border-l-blue-500">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden border-l-4 border-l-blue-500">
         <div className="p-5">
           <div className="flex items-start gap-3">
             <Calculator className="h-5 w-5 text-blue-500 mt-0.5" />
             <div>
-              <p className="font-bold text-slate-900">How calculations work</p>
-              <ul className="text-sm text-slate-600 mt-2 space-y-1">
+              <p className="font-bold text-slate-900 dark:text-white">How calculations work</p>
+              <ul className="text-sm text-slate-600 dark:text-slate-400 mt-2 space-y-1">
                 <li>• <strong>Per Day Salary</strong> = Base Salary / Working Days</li>
                 <li>• <strong>Absence Deduction</strong> = Days Absent x Per Day Salary</li>
                 <li>• <strong>Late Coming</strong> = Number of incidents &times; Late Deduction</li>

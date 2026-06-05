@@ -93,7 +93,7 @@ function getTargetMeta(type: string) {
 function TypeBadge({ type }: { type: string }) {
   const meta = getTypeMeta(type);
   return (
-    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-slate-200 text-slate-400 shrink-0">
+    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-slate-200 dark:border-slate-800 text-slate-400 shrink-0">
       {meta.label}
     </Badge>
   );
@@ -105,7 +105,7 @@ function TargetBadge({ type }: { type: string }) {
   const meta = TARGET_AUDIENCES.find((t) => t.id === target);
   if (!meta) return null;
   return (
-    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-slate-200 bg-slate-50 text-slate-500 shrink-0">
+    <Badge variant="outline" className="text-[8px] font-bold uppercase tracking-widest border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 shrink-0">
       {meta.label}
     </Badge>
   );
@@ -248,11 +248,11 @@ export function NotificationCenter() {
                 className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest gap-2 shadow-lg transition-all active:scale-95">
                 <Send className="h-4 w-4" /> New Notification
               </Button>
-              <Link href="/messages" className="w-full flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
-                <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                  <MessageSquare className="h-4 w-4 text-slate-500 group-hover:text-blue-600" />
+              <Link href="/messages" className="w-full flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-800/40 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-all group">
+                <div className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40 transition-colors">
+                  <MessageSquare className="h-4 w-4 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-blue-700">Go to Messages</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 group-hover:text-blue-700 dark:group-hover:text-blue-400">Go to Messages</span>
               </Link>
             </div>
           </ERPCard>
@@ -265,12 +265,12 @@ export function NotificationCenter() {
                 return (
                   <button key={tpl.id} onClick={() => applyTemplate(tpl.id)}
                     className={cn("w-full flex items-center gap-3 p-2.5 rounded-xl border transition-all text-left",
-                      selectedTemplate === tpl.id ? "border-amber-200 bg-amber-50" : "border-slate-100 hover:bg-slate-50 hover:border-slate-200")}>
-                    <div className="h-7 w-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                      <Icon className="h-3.5 w-3.5 text-slate-500" />
+                      selectedTemplate === tpl.id ? "border-amber-200 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/20" : "border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50 hover:border-slate-200 dark:hover:border-slate-700")}>
+                    <div className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                      <Icon className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-700 block">{tpl.name}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 block">{tpl.name}</span>
                       <span className="text-[8px] font-semibold text-slate-400">{TARGET_AUDIENCES.find(t => t.id === tpl.target)?.label}</span>
                     </div>
                   </button>
@@ -287,14 +287,14 @@ export function NotificationCenter() {
                 const count = notifications.filter((n) => getBaseType(n.type) === nt.id).length;
                 return (
                   <button key={nt.id} onClick={() => setTypeFilter(typeFilter === nt.id ? "all" : nt.id)}
-                    className={cn("w-full flex items-center justify-between p-2.5 rounded-xl transition-all", typeFilter === nt.id ? "bg-slate-100" : "hover:bg-slate-50")}>
+                    className={cn("w-full flex items-center justify-between p-2.5 rounded-xl transition-all", typeFilter === nt.id ? "bg-slate-100 dark:bg-slate-800" : "hover:bg-slate-50 dark:hover:bg-slate-900/50")}>
                     <div className="flex items-center gap-2.5">
-                      <div className={cn("p-1.5 rounded-lg", nt.color === "blue" ? "bg-blue-100" : nt.color === "rose" ? "bg-rose-100" : nt.color === "purple" ? "bg-purple-100" : nt.color === "emerald" ? "bg-emerald-100" : "bg-slate-100")}>
-                        <Icon className={cn("h-3.5 w-3.5", nt.color === "blue" ? "text-blue-600" : nt.color === "rose" ? "text-rose-600" : nt.color === "purple" ? "text-purple-600" : nt.color === "emerald" ? "text-emerald-600" : "text-slate-600")} />
+                      <div className={cn("p-1.5 rounded-lg", nt.color === "blue" ? "bg-blue-100 dark:bg-blue-950/40" : nt.color === "rose" ? "bg-rose-100 dark:bg-rose-950/40" : nt.color === "purple" ? "bg-purple-100 dark:bg-purple-950/40" : nt.color === "emerald" ? "bg-emerald-100 dark:bg-emerald-950/40" : "bg-slate-100 dark:bg-slate-800")}>
+                        <Icon className={cn("h-3.5 w-3.5", nt.color === "blue" ? "text-blue-600 dark:text-blue-400" : nt.color === "rose" ? "text-rose-600 dark:text-rose-400" : nt.color === "purple" ? "text-purple-600 dark:text-purple-400" : nt.color === "emerald" ? "text-emerald-600 dark:text-emerald-400" : "text-slate-600 dark:text-slate-400")} />
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{nt.label}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">{nt.label}</span>
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black border-slate-200">{count}</Badge>
+                    <Badge variant="outline" className="text-[8px] font-black border-slate-200 dark:border-slate-800">{count}</Badge>
                   </button>
                 );
               })}
@@ -309,14 +309,14 @@ export function NotificationCenter() {
                 const count = notifications.filter((n) => getTarget(n.type) === ta.id).length;
                 return (
                   <button key={ta.id} onClick={() => setTargetFilter(targetFilter === ta.id ? "all" : ta.id)}
-                    className={cn("w-full flex items-center justify-between p-2.5 rounded-xl transition-all", targetFilter === ta.id ? "bg-blue-50" : "hover:bg-slate-50")}>
+                    className={cn("w-full flex items-center justify-between p-2.5 rounded-xl transition-all", targetFilter === ta.id ? "bg-blue-50 dark:bg-blue-950/20" : "hover:bg-slate-50 dark:hover:bg-slate-900/50")}>
                     <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-blue-100">
-                        <Icon className="h-3.5 w-3.5 text-blue-600" />
+                      <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-950/40">
+                        <Icon className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                       </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{ta.label}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">{ta.label}</span>
                     </div>
-                    <Badge variant="outline" className="text-[8px] font-black border-slate-200">{count}</Badge>
+                    <Badge variant="outline" className="text-[8px] font-black border-slate-200 dark:border-slate-800">{count}</Badge>
                   </button>
                 );
               })}
@@ -328,18 +328,18 @@ export function NotificationCenter() {
         <div className="lg:col-span-3">
           <ERPCard title="Notification Log" description="History of all sent notifications" color="blue" icon={<Inbox className="h-5 w-5" />}
             className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50 space-y-3">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
               <div className="flex flex-col md:flex-row items-center gap-3">
                 <div className="relative flex-1 w-full">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <Input placeholder="Search notifications..." className="pl-11 h-10 rounded-xl bg-white border-slate-200 text-xs font-bold shadow-sm"
+                  <Input placeholder="Search notifications..." className="pl-11 h-10 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs font-bold shadow-sm"
                     value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
                 <div className="flex items-center gap-2 w-full md:w-auto">
                   {(["all", "unread", "read"] as const).map((opt) => (
                     <button key={opt} onClick={() => setReadFilter(opt)}
                       className={cn("px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border transition-all",
-                        readFilter === opt ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-slate-400 border-slate-200 hover:border-slate-300")}>
+                        readFilter === opt ? "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/50" : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700")}>
                       {opt}
                     </button>
                   ))}
@@ -352,16 +352,16 @@ export function NotificationCenter() {
               </div>
             </div>
 
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <div className="p-12 text-center">
                   <div className="animate-pulse space-y-4">
-                    {[1, 2, 3].map((i) => (<div key={i} className="h-20 bg-slate-100 rounded-xl" />))}
+                    {[1, 2, 3].map((i) => (<div key={i} className="h-20 bg-slate-100 dark:bg-slate-800 rounded-xl" />))}
                   </div>
                 </div>
               ) : paginated.length === 0 ? (
                 <div className="p-16 text-center flex flex-col items-center">
-                  <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                  <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
                     <Bell className="h-8 w-8 text-slate-300" />
                   </div>
                   <p className="text-sm font-bold text-slate-400 mb-1">No notifications found</p>
@@ -383,7 +383,7 @@ export function NotificationCenter() {
                     return (
                       <div key={n.id}
                         className={cn("p-4 rounded-2xl border transition-all group hover:shadow-sm",
-                          !n.is_read ? "bg-blue-50/70 border-l-4 border-l-blue-500 border-blue-100" : "bg-white border-slate-100 hover:border-slate-200")}>
+                          !n.is_read ? "bg-blue-50/70 border-l-4 border-l-blue-500 border-blue-100 dark:bg-blue-950/25 dark:border-blue-900/40 dark:border-l-blue-500" : "bg-white dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700")}>
                         <div className="flex items-start gap-3">
                           <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
                             meta.color === "blue" ? "bg-blue-500 text-white" :
@@ -395,7 +395,7 @@ export function NotificationCenter() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                              <span className="font-bold text-sm text-slate-900 truncate">{n.title}</span>
+                              <span className="font-bold text-sm text-slate-900 dark:text-white truncate">{n.title}</span>
                               {!n.is_read && (
                                 <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 font-black uppercase tracking-widest border-none shrink-0">New</Badge>
                               )}
@@ -403,7 +403,7 @@ export function NotificationCenter() {
                               <TargetBadge type={n.type} />
                             </div>
                             {n.message && (
-                              <p className="text-sm text-slate-500 line-clamp-2 mb-2">{n.message}</p>
+                              <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-2">{n.message}</p>
                             )}
                             <div className="flex items-center gap-2">
                               <Clock className="h-3 w-3 text-slate-300" />
@@ -416,14 +416,14 @@ export function NotificationCenter() {
                           </div>
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                             <button onClick={() => toggleRead(n.id, n.is_read)}
-                              className="h-7 w-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                              className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors"
                               title={n.is_read ? "Mark unread" : "Mark read"}>
-                              {n.is_read ? <Mail className="h-3.5 w-3.5 text-slate-400" /> : <CheckCircle className="h-3.5 w-3.5 text-blue-500" />}
+                              {n.is_read ? <Mail className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" /> : <CheckCircle className="h-3.5 w-3.5 text-blue-500" />}
                             </button>
                             <button onClick={() => deleteNotification(n.id)}
-                              className="h-7 w-7 rounded-lg bg-slate-100 hover:bg-red-100 flex items-center justify-center transition-colors"
+                              className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-950/30 flex items-center justify-center transition-colors"
                               title="Delete">
-                              <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-red-500" />
+                              <Trash2 className="h-3.5 w-3.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400" />
                             </button>
                           </div>
                         </div>
@@ -435,23 +435,23 @@ export function NotificationCenter() {
             </div>
 
             {totalPages > 1 && (
-              <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <div className="px-4 py-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex items-center justify-between">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Page {page} of {totalPages}</span>
                 <div className="flex items-center gap-1">
                   <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
-                    className="h-8 w-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center disabled:opacity-40 hover:bg-slate-50 transition-colors">
-                    <ChevronLeft className="h-4 w-4 text-slate-500" />
+                    className="h-8 w-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center disabled:opacity-40 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                    <ChevronLeft className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <button key={p} onClick={() => setPage(p)}
                       className={cn("h-8 w-8 rounded-lg text-[10px] font-black transition-colors",
-                        p === page ? "bg-blue-600 text-white" : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50")}>
+                        p === page ? "bg-blue-600 text-white" : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800")}>
                       {p}
                     </button>
                   ))}
                   <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
-                    className="h-8 w-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center disabled:opacity-40 hover:bg-slate-50 transition-colors">
-                    <ChevronRight className="h-4 w-4 text-slate-500" />
+                    className="h-8 w-8 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center disabled:opacity-40 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
+                    <ChevronRight className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                   </button>
                 </div>
               </div>
@@ -463,7 +463,7 @@ export function NotificationCenter() {
       {/* Compose Modal */}
       {showCompose && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden">
             <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-5 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="h-10 w-10 rounded-xl bg-white/15 flex items-center justify-center backdrop-blur-sm">
@@ -485,14 +485,14 @@ export function NotificationCenter() {
             </div>
             <div className="p-6 space-y-5">
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Category</label>
                 <div className="flex gap-2 flex-wrap">
                   {NOTIFICATION_TYPES.map((nt) => {
                     const Icon = nt.icon;
                     return (
                       <button key={nt.id} onClick={() => setComposeForm({ ...composeForm, type: nt.id })}
                         className={cn("flex items-center justify-center gap-1.5 h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all px-3",
-                          composeForm.type === nt.id ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-slate-400 border-slate-200 hover:border-slate-300")}>
+                          composeForm.type === nt.id ? "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/50" : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700")}>
                         <Icon className="h-3.5 w-3.5" /> {nt.label}
                       </button>
                     );
@@ -501,14 +501,14 @@ export function NotificationCenter() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Target Audience</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Target Audience</label>
                 <div className="flex gap-2 flex-wrap">
                   {TARGET_AUDIENCES.map((ta) => {
                     const Icon = ta.icon;
                     return (
                       <button key={ta.id} onClick={() => setComposeForm({ ...composeForm, target: ta.id })}
                         className={cn("flex items-center justify-center gap-1.5 h-10 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all px-3",
-                          composeForm.target === ta.id ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-slate-400 border-slate-200 hover:border-slate-300")}>
+                          composeForm.target === ta.id ? "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/50" : "bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700")}>
                         <Icon className="h-3.5 w-3.5" /> {ta.label}
                       </button>
                     );
@@ -517,25 +517,25 @@ export function NotificationCenter() {
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Title</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Title</label>
                 <Input value={composeForm.title} onChange={(e) => setComposeForm({ ...composeForm, title: e.target.value })}
-                  placeholder="Notification title..." className="rounded-xl border-slate-200 h-11" />
+                  placeholder="Notification title..." className="rounded-xl bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 h-11" />
               </div>
 
               <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Message</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Message</label>
                 <Textarea value={composeForm.message} onChange={(e) => setComposeForm({ ...composeForm, message: e.target.value })}
-                  placeholder="Write your message..." className="rounded-xl border-slate-200 resize-none h-28" />
+                  placeholder="Write your message..." className="rounded-xl bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 resize-none h-28" />
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
                 <p className="text-[8px] font-semibold text-slate-400">
-                  Sending to: <span className="font-black uppercase tracking-widest text-slate-600">{TARGET_AUDIENCES.find((t) => t.id === composeForm.target)?.label}</span>
+                  Sending to: <span className="font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">{TARGET_AUDIENCES.find((t) => t.id === composeForm.target)?.label}</span>
                   {composeForm.target !== "everyone" && <span className="ml-1">via {NOTIFICATION_TYPES.find((t) => t.id === composeForm.type)?.label} channel</span>}
                 </p>
                 <div className="flex gap-3">
                   <Button variant="outline" onClick={() => { setShowCompose(false); setSelectedTemplate(null); }}
-                    className="rounded-xl h-11 px-6 text-[10px] font-black uppercase tracking-widest border-slate-200">Cancel</Button>
+                    className="rounded-xl h-11 px-6 text-[10px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800">Cancel</Button>
                   <Button onClick={handleSend} disabled={sending}
                     className="rounded-xl h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-widest gap-2 shadow-lg transition-all active:scale-95">
                     <Send className="h-4 w-4" /> {sending ? "Sending..." : "Send Notification"}

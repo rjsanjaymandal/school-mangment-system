@@ -33,7 +33,7 @@ export function QuickActionsFab() {
               onClick={() => handleAction(action.href)}
               className="flex items-center gap-3 group"
             >
-              <span className="bg-white text-slate-700 px-3 py-1.5 rounded-lg shadow-md text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <span className="bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 px-3 py-1.5 rounded-lg shadow-md text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 {action.label}
               </span>
               <div className={`h-12 w-12 rounded-full ${action.color} flex items-center justify-center shadow-lg hover:scale-110 transition-transform`}>

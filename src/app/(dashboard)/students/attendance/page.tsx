@@ -353,21 +353,21 @@ export default function StudentAttendancePage() {
                         <select 
                             value={selectedClassId} 
                             onChange={(e) => setSelectedClassId(e.target.value)}
-                            className="w-full sm:w-44 h-10 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                            className="w-full sm:w-44 h-10 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                         >
                             <option value="">Select Class</option>
                             {classes.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
                         </select>
-                        <div className="flex items-center bg-white border border-slate-200 rounded-xl overflow-hidden h-10 w-full sm:w-auto">
+                        <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden h-10 w-full sm:w-auto">
                             <button onClick={() => {
                                 const d = new Date(selectedDate); d.setDate(d.getDate() - 1); setSelectedDate(d.toISOString().split('T')[0]);
-                            }} className="h-10 w-8 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-none transition-all">
+                            }} className="h-10 w-8 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-none transition-all">
                                 <ChevronLeft className="h-4 w-4" />
                             </button>
-                            <Input type="date" className="border-0 bg-transparent w-28 h-10 text-center text-xs font-bold text-slate-800 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                            <Input type="date" className="border-0 bg-transparent w-28 h-10 text-center text-xs font-bold text-slate-800 dark:text-slate-200 focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
                             <button onClick={() => {
                                 const d = new Date(selectedDate); d.setDate(d.getDate() + 1); setSelectedDate(d.toISOString().split('T')[0]);
-                            }} className="h-10 w-8 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-none transition-all">
+                            }} className="h-10 w-8 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-none transition-all">
                                 <ChevronRight className="h-4 w-4" />
                             </button>
                         </div>
@@ -431,15 +431,15 @@ export default function StudentAttendancePage() {
                 <TabsContent value="mark" className="space-y-6">
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex gap-2">
-                            <button onClick={() => markAll("present")} className="h-10 rounded-xl border border-slate-200 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 font-black text-[10px] uppercase tracking-wider px-5 transition-all shrink-0 flex items-center gap-2 shadow-sm">
+                            <button onClick={() => markAll("present")} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-wider px-5 transition-all shrink-0 flex items-center gap-2 shadow-sm">
                                 <CheckCheck className="h-4 w-4" /> All Present
                             </button>
-                            <button onClick={() => markAll("absent")} className="h-10 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-black text-[10px] uppercase tracking-wider px-5 transition-all shrink-0 flex items-center gap-2 shadow-sm">
+                            <button onClick={() => markAll("absent")} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-wider px-5 transition-all shrink-0 flex items-center gap-2 shadow-sm">
                                 <XCircle className="h-4 w-4" /> All Absent
                             </button>
                         </div>
                         <div className="relative w-full md:w-64">
-                            <Input placeholder="Search students..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-10 pl-10 rounded-xl border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 focus-visible:ring-emerald-500/50 font-bold" />
+                            <Input placeholder="Search students..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-10 pl-10 rounded-xl border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 focus-visible:ring-emerald-500/50 font-bold text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         </div>
                     </div>
@@ -527,15 +527,15 @@ export default function StudentAttendancePage() {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                         <div className="md:col-span-2 space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">Select Date</label>
-                            <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-10 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md focus-visible:ring-emerald-500/50 font-bold px-3" />
+                            <Input type="date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} className="h-10 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md focus-visible:ring-emerald-500/50 font-bold px-3 text-slate-800 dark:text-slate-200" />
                         </div>
                         <div>
-                            <button className="h-10 rounded-xl w-full border border-slate-200 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2">
+                            <button className="h-10 rounded-xl w-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2">
                                 <Download className="h-4 w-4" /> Export CSV
                             </button>
                         </div>
                         <div>
-                            <button className="h-10 rounded-xl w-full border border-slate-200 bg-white hover:bg-emerald-50 hover:text-emerald-600 text-slate-700 font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2">
+                            <button className="h-10 rounded-xl w-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2">
                                 <Search className="h-4 w-4" /> Filter
                             </button>
                         </div>
@@ -655,63 +655,64 @@ export default function StudentAttendancePage() {
                                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest mt-1">Analytics over past 7 days</p>
                                 </div>
                             </div>
-                            <div className="h-[280px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={weeklyTrendData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.1)" />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} />
-                                        <Tooltip 
-                                            cursor={{ fill: 'rgba(248, 250, 252, 0.03)' }}
-                                            contentStyle={{ 
-                                                backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-                                                borderColor: 'rgba(226, 232, 240, 0.5)',
-                                                borderRadius: '12px',
-                                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.05)',
-                                                backdropFilter: 'blur(8px)'
-                                            }}
-                                        />
-                                        <Bar dataKey="Present" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={28} />
-                                        <Bar dataKey="Absent" fill="#f43f5e" radius={[6, 6, 0, 0]} maxBarSize={28} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </div>
-
-                        {/* Distribution Breakdown */}
-                        <div className="glass futuristic-card border-none shadow-xl rounded-2xl p-6 sm:p-8">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center border border-blue-500/10">
-                                    <PieChartIcon className="h-5 w-5" />
-                                </div>
-                                <div>
-                                    <h4 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Status Distribution</h4>
-                                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest mt-1">Breakdown of current metrics</p>
-                                </div>
-                            </div>
-                            <div className="h-[180px] w-full relative">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <PieChart>
-                                        <Pie
-                                            data={safeDistributionData}
-                                            innerRadius={50}
-                                            outerRadius={70}
-                                            paddingAngle={5}
-                                            dataKey="value"
-                                        >
-                                            {safeDistributionData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip 
-                                            contentStyle={{ 
-                                                backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-                                                borderColor: 'rgba(226, 232, 240, 0.5)',
-                                                borderRadius: '12px',
-                                                backdropFilter: 'blur(8px)'
-                                            }}
-                                        />
-                                    </PieChart>
+                             <div className="h-[280px] w-full">
+                                 <ResponsiveContainer width="100%" height="100%">
+                                     <BarChart data={weeklyTrendData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                                         <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 'bold', fill: 'var(--muted-foreground)' }} />
+                                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 'bold', fill: 'var(--muted-foreground)' }} />
+                                         <Tooltip 
+                                             cursor={{ fill: 'rgba(248, 250, 252, 0.03)' }}
+                                             contentStyle={{ 
+                                                 backgroundColor: 'var(--card)', 
+                                                 borderColor: 'var(--border)',
+                                                 borderRadius: '12px'
+                                             }}
+                                             labelStyle={{ color: 'var(--foreground)' }}
+                                             itemStyle={{ color: 'var(--foreground)' }}
+                                         />
+                                         <Bar dataKey="Present" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                                         <Bar dataKey="Absent" fill="#f43f5e" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                                     </BarChart>
+                                 </ResponsiveContainer>
+                             </div>
+                         </div>
+ 
+                         {/* Distribution Breakdown */}
+                         <div className="glass futuristic-card border-none shadow-xl rounded-2xl p-6 sm:p-8">
+                             <div className="flex items-center gap-3 mb-6">
+                                 <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center border border-blue-500/10">
+                                     <PieChartIcon className="h-5 w-5" />
+                                 </div>
+                                 <div>
+                                     <h4 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight">Status Distribution</h4>
+                                     <p className="text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest mt-1">Breakdown of current metrics</p>
+                                 </div>
+                             </div>
+                             <div className="h-[180px] w-full relative">
+                                 <ResponsiveContainer width="100%" height="100%">
+                                     <PieChart>
+                                         <Pie
+                                             data={safeDistributionData}
+                                             innerRadius={50}
+                                             outerRadius={70}
+                                             paddingAngle={5}
+                                             dataKey="value"
+                                         >
+                                             {safeDistributionData.map((entry, index) => (
+                                                 <Cell key={`cell-${index}`} fill={entry.color} />
+                                             ))}
+                                         </Pie>
+                                         <Tooltip 
+                                             contentStyle={{ 
+                                                 backgroundColor: 'var(--card)', 
+                                                 borderColor: 'var(--border)',
+                                                 borderRadius: '12px'
+                                             }}
+                                             labelStyle={{ color: 'var(--foreground)' }}
+                                             itemStyle={{ color: 'var(--foreground)' }}
+                                         />
+                                     </PieChart>
                                 </ResponsiveContainer>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                     <span className="text-2xl font-black text-slate-900 dark:text-white">{stats.total}</span>
@@ -781,10 +782,10 @@ export default function StudentAttendancePage() {
 function StatusButton({ studentId, status, active, onClick }: { studentId: string; status: string; active: string; onClick: any }) {
     const isActive = active === status;
     const colors: Record<string, string> = {
-        present: isActive ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-600",
-        absent: isActive ? "bg-rose-500 text-white" : "bg-slate-100 text-slate-500 hover:bg-rose-50 hover:text-rose-600",
-        late: isActive ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-500 hover:bg-amber-50 hover:text-amber-600",
-        excused: isActive ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-500 hover:bg-blue-50 hover:text-blue-600",
+        present: isActive ? "bg-emerald-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400",
+        absent: isActive ? "bg-rose-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/20 dark:hover:text-rose-400",
+        late: isActive ? "bg-amber-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/20 dark:hover:text-amber-400",
+        excused: isActive ? "bg-blue-500 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/20 dark:hover:text-blue-400",
     };
 
     return (

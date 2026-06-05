@@ -81,7 +81,7 @@ export default function GradebookDashboard({
   return (
     <div className="space-y-12 w-full max-w-7xl mx-auto">
         <div className="lg:w-[400px] space-y-6">
-            <div className="relative bg-card border border-slate-200 p-8 rounded-xl transition-all duration-300 shadow-sm overflow-hidden">
+            <div className="relative bg-card border border-slate-200 dark:border-slate-800 p-8 rounded-xl transition-all duration-300 shadow-sm overflow-hidden">
                 <div className="absolute -right-4 -bottom-4 h-32 w-32 text-primary opacity-[0.05] rotate-12 group-hover:rotate-0 transition-transform duration-700">
                     <GraduationCap className="h-full w-full" />
                 </div>
@@ -112,7 +112,7 @@ export default function GradebookDashboard({
                     </div>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-slate-200 grid grid-cols-2 gap-6">
+                <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 grid grid-cols-2 gap-6">
                     <div>
                         <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1">Percentile</p>
                         <p className="text-xl font-black text-foreground tracking-tight leading-none">Top 2%</p>
@@ -127,7 +127,7 @@ export default function GradebookDashboard({
             </div>
 
             {/* --- Analytics Layer: Institutional Academic Intelligence --- */}
-            <div className="bg-card border border-slate-200 p-10 rounded-xl relative overflow-hidden group">
+            <div className="bg-card border border-slate-200 dark:border-slate-800 p-10 rounded-xl relative overflow-hidden group">
                 <div className="relative z-10 h-full flex flex-col">
                     <div className="mb-8 flex justify-between items-start">
                         <div>
@@ -149,26 +149,29 @@ export default function GradebookDashboard({
                                         <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                                 <XAxis 
                                     dataKey="name" 
                                     axisLine={false} 
                                     tickLine={false} 
-                                    tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
+                                    tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: "bold" }}
+                                    stroke="var(--muted-foreground)"
                                 />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} stroke="var(--muted-foreground)" />
                                 <Tooltip 
-                                    contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px", fontSize: "10px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
                                 />
                                 <Area type="monotone" dataKey="score" stroke="#10b981" fillOpacity={1} fill="url(#colorScore)" strokeWidth={3} />
-                                <Area type="monotone" dataKey="average" stroke="#88888840" strokeWidth={1} strokeDasharray="5 5" fill="transparent" />
+                                <Area type="monotone" dataKey="average" stroke="var(--muted)" strokeWidth={1} strokeDasharray="5 5" fill="transparent" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-card border border-slate-200 p-10 rounded-xl relative overflow-hidden group">
+            <div className="bg-card border border-slate-200 dark:border-slate-800 p-10 rounded-xl relative overflow-hidden group">
                 <div className="mb-8 relative z-10 text-center">
                     <h3 className="text-2xl font-black uppercase tracking-tighter text-foreground group-hover:text-primary transition-colors">
                         Competency <span className="text-primary tracking-normal px-1">/</span> Profiling
@@ -178,8 +181,8 @@ export default function GradebookDashboard({
                 <div className="h-[280px] relative z-10">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={competencyProfiling}>
-                            <PolarGrid stroke="#88888820" />
-                            <PolarAngleAxis dataKey="subject" tick={{ fill: "#88888860", fontSize: 8, fontWeight: "bold" }} />
+                            <PolarGrid stroke="var(--border)" />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: "var(--muted-foreground)", fontSize: 8, fontWeight: "bold" }} />
                             <Radar
                                 name="Grades"
                                 dataKey="A"
@@ -187,7 +190,11 @@ export default function GradebookDashboard({
                                 fill="hsl(var(--primary))"
                                 fillOpacity={0.6}
                             />
-                            <Tooltip contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }} />
+                            <Tooltip 
+                                contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px", fontSize: "10px" }}
+                                labelStyle={{ color: "var(--foreground)" }}
+                                itemStyle={{ color: "var(--foreground)" }}
+                            />
                         </RadarChart>
                     </ResponsiveContainer>
                 </div>
@@ -195,7 +202,7 @@ export default function GradebookDashboard({
 
         {/* Evaluation Pillar */}
         <div className="lg:flex-1 space-y-10">
-            <div className="bg-card border border-slate-200 p-8 rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-card border border-slate-200 dark:border-slate-800 p-8 rounded-xl shadow-sm overflow-hidden">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div>
                         <h3 className="text-4xl font-black uppercase tracking-tighter leading-none">Grade <span className="text-primary">Breakdown</span></h3>
@@ -211,7 +218,7 @@ export default function GradebookDashboard({
 
                     <div className="space-y-4">
                         {components.map((c, idx) => (
-                            <div key={c.id} className="group relative flex items-center justify-between p-6 rounded-xl bg-secondary/30 border border-slate-200 hover:border-primary/40 hover:bg-secondary/50 transition-all duration-300 overflow-hidden">
+                            <div key={c.id} className="group relative flex items-center justify-between p-6 rounded-xl bg-secondary/30 border border-slate-200 dark:border-slate-800 hover:border-primary/40 hover:bg-secondary/50 transition-all duration-300 overflow-hidden">
                                 <div className="flex items-center gap-x-6 relative z-10 w-full justify-between">
                                     <div className="flex items-center gap-x-6">
                                         <div className="h-12 w-12 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs group-hover:bg-primary group-hover:text-primary-foreground transition-all">
@@ -247,7 +254,7 @@ export default function GradebookDashboard({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-card border border-slate-200 p-8 rounded-xl group relative border-l-4 border-l-primary/50 overflow-hidden shadow-sm">
+                <div className="bg-card border border-slate-200 dark:border-slate-800 p-8 rounded-xl group relative border-l-4 border-l-primary/50 overflow-hidden shadow-sm">
                     <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:rotate-12 transition-transform duration-700">
                         <TrendingUp className="h-20 w-20 text-primary" />
                     </div>
@@ -256,7 +263,7 @@ export default function GradebookDashboard({
                         Predicted Outcome: <span className="text-primary bg-primary/10 px-3 py-1 rounded-lg font-black tracking-tighter">Distinction (92%)</span>
                     </p>
                 </div>
-                <div className="bg-card border border-slate-200 p-8 rounded-xl group relative border-l-4 border-l-orange-500/50 overflow-hidden shadow-sm">
+                <div className="bg-card border border-slate-200 dark:border-slate-800 p-8 rounded-xl group relative border-l-4 border-l-orange-500/50 overflow-hidden shadow-sm">
                     <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:rotate-12 transition-transform duration-700">
                         <AlertTriangle className="h-20 w-20 text-orange-500" />
                     </div>

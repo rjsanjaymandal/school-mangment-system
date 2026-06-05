@@ -40,11 +40,11 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
   if (!metrics) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="bg-slate-50 p-4 rounded-full mb-4">
+        <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-full mb-4">
           <LayoutDashboard className="h-8 w-8 text-slate-300" />
         </div>
-        <h3 className="text-lg font-bold text-slate-900">No dashboard data</h3>
-        <p className="text-sm text-slate-500 mt-1 max-w-xs">We couldn't retrieve the school metrics. Please check your connection or try again.</p>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white">No dashboard data</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-xs">We couldn't retrieve the school metrics. Please check your connection or try again.</p>
       </div>
     );
   }
@@ -116,17 +116,17 @@ export function DashboardOverview({ initialData }: { initialData?: any }) {
           </section>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="glass futuristic-card rounded-2xl p-8 border border-slate-200/60 flex flex-col items-center justify-center text-center">
+            <div className="glass futuristic-card rounded-2xl p-8 border border-slate-200/60 dark:border-slate-800/60 flex flex-col items-center justify-center text-center">
               <div className="mb-6">
                 <ReportCardDownloadButton />
               </div>
-              <p className="text-sm font-bold text-slate-600 uppercase tracking-widest">Academic Report Engine</p>
-              <p className="text-[10px] text-slate-500 mt-2 max-w-xs">Generate instant, professional PDF report cards for any student with academic summary and grading.</p>
+              <p className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">Academic Report Engine</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 max-w-xs">Generate instant, professional PDF report cards for any student with academic summary and grading.</p>
             </div>
-            <div className="glass futuristic-card rounded-2xl p-6 border border-slate-200/60 h-auto flex flex-col items-center justify-center text-center">
+            <div className="glass futuristic-card rounded-2xl p-6 border border-slate-200/60 dark:border-slate-800/60 h-auto flex flex-col items-center justify-center text-center">
               <LayoutDashboard className="h-12 w-12 text-emerald-500 mb-4 opacity-20" />
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Exam Center</p>
-              <p className="text-[10px] text-slate-500 mt-2">Upcoming: Real-time Proctoring & Result Entry</p>
+              <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Exam Center</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2">Upcoming: Real-time Proctoring & Result Entry</p>
             </div>
           </div>
         </TabsContent>

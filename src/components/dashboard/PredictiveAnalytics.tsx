@@ -80,9 +80,9 @@ export function PredictiveAnalytics({ className }: PredictiveAnalyticsProps) {
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {METRICS.map((metric, i) => (
-                    <div key={i} className="glass futuristic-card rounded-xl p-4 border border-slate-200/60">
+                    <div key={i} className="glass futuristic-card rounded-xl p-4 border border-slate-200/60 dark:border-slate-800/60">
                         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">{metric.label}</p>
-                        <p className="text-2xl font-bold text-slate-900">{metric.value}</p>
+                        <p className="text-2xl font-bold text-slate-900 dark:text-white">{metric.value}</p>
                         <div className={cn(
                             "flex items-center gap-1 mt-2 text-xs font-medium",
                             metric.trend === "up" ? "text-emerald-600" : "text-rose-600"
@@ -99,7 +99,7 @@ export function PredictiveAnalytics({ className }: PredictiveAnalyticsProps) {
             </div>
 
             {/* Predictions */}
-            <div className="glass futuristic-card rounded-xl p-5 border border-slate-200/60">
+            <div className="glass futuristic-card rounded-xl p-5 border border-slate-200/60 dark:border-slate-800/60">
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-4">
                     <span className="w-1 h-4 bg-blue-500 rounded-full" />
                     AI Predictions
@@ -113,10 +113,10 @@ export function PredictiveAnalytics({ className }: PredictiveAnalyticsProps) {
                                 </div>
                                 <div className="flex-1">
                                     <div className="flex items-center justify-between mb-1">
-                                        <p className="text-sm font-semibold text-slate-900">{pred.title}</p>
+                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">{pred.title}</p>
                                         <span className="text-xs font-medium text-emerald-600">{pred.confidence}</span>
                                     </div>
-                                    <p className="text-xs text-slate-500">{pred.prediction}</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">{pred.prediction}</p>
                                 </div>
                             </div>
                         </div>

@@ -189,3 +189,129 @@
   background-color: oklch(0.145 0.015 285);
   color: oklch(0.985 0 285);
 }
+
+/* Global native select dropdown option styling to prevent contrast issues */
+select option {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+}
+
+/* Native select element dark mode contrast fix */
+.dark select {
+  background-color: oklch(0.178 0.015 285) !important; /* var(--card) */
+  color: oklch(0.985 0 285) !important; /* var(--card-foreground) */
+}
+
+/* Native date/time picker dark mode popover overrides */
+.dark input[type="date"],
+.dark input[type="time"],
+.dark input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+/* Ensure native checkboxes are legible and themed in dark mode */
+.dark input[type="checkbox"] {
+  color-scheme: dark;
+  accent-color: var(--primary);
+}
+
+/* Premium dark mode overrides for light-only hover utility states */
+.dark .hover\:bg-slate-50\/50:hover {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+.dark .hover\:bg-slate-50:hover {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+.dark .hover\:bg-slate-100:hover {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+}
+.dark .hover\:bg-slate-200:hover {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* Non-hover background overrides for dark mode to ensure nice row/section contrast */
+.dark .bg-slate-50\/50 {
+  background-color: rgba(30, 41, 59, 0.2) !important;
+}
+.dark .bg-slate-50 {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+.dark .bg-slate-100 {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+}
+.dark .bg-slate-200 {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* Legible placeholder styling */
+::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8 !important; /* slate-400 */
+  opacity: 1 !important;
+}
+
+.dark ::placeholder,
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important; /* slate-500 */
+  opacity: 1 !important;
+}
+
+/* Enforce table headers, cells, rows, and dividers clean borders */
+table,
+table *,
+[data-slot="table-container"],
+[data-slot="table-container"] * {
+  border-color: rgba(226, 232, 240, 0.5) !important; /* border-slate-200/50 */
+}
+
+.dark table,
+.dark table *,
+.dark [data-slot="table-container"],
+.dark [data-slot="table-container"] * {
+  border-color: rgba(30, 41, 59, 0.5) !important; /* border-slate-800/50 */
+}
+
+/* General fallback/override utility colors for borders/dividers */
+.border-slate-100,
+.border-slate-200,
+.border-slate-300 {
+  border-color: rgba(226, 232, 240, 0.5) !important; /* border-slate-200/50 */
+}
+
+.divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(226, 232, 240, 0.5) !important;
+}
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: #1e293b !important; /* border-slate-800 */
+}
+
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #1e293b !important;
+}
+
+/* Premium backdrop filter for Dialog/Modal overlays */
+[data-slot="dialog-overlay"],
+.fixed.inset-0.bg-black\/50 {
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+.dark [data-slot="dialog-overlay"],
+.dark .fixed.inset-0.bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Dark mode scrollbars */
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-600 */
+}

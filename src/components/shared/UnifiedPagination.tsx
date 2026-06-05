@@ -47,22 +47,22 @@ export function UnifiedPagination({
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
                         Records Overview
                     </span>
-                    <span className="text-xs font-bold text-slate-600 mt-1">
-                        Showing <span className="text-slate-900 font-black">{startItem}-{endItem}</span> of <span className="text-slate-900 font-black">{totalItems}</span> {itemName}
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400 mt-1">
+                        Showing <span className="text-slate-900 dark:text-white font-black">{startItem}-{endItem}</span> of <span className="text-slate-900 dark:text-white font-black">{totalItems}</span> {itemName}
                     </span>
                 </div>
 
                 {onItemsPerPageChange && (
-                    <div className="hidden md:flex items-center gap-2 border-l border-slate-200 pl-6">
+                    <div className="hidden md:flex items-center gap-2 border-l border-slate-200 dark:border-slate-800 pl-6">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Per Page:</span>
                         <Select
                             value={itemsPerPage.toString()}
                             onValueChange={(val) => onItemsPerPageChange(parseInt(val))}
                         >
-                            <SelectTrigger className="h-8 w-16 text-[10px] font-black rounded-xl border-slate-200 bg-white/50 shadow-sm">
+                            <SelectTrigger className="h-8 w-16 text-[10px] font-black rounded-xl border-slate-200 dark:border-slate-800 bg-white/50 shadow-sm">
                                 <SelectValue placeholder={itemsPerPage.toString()} />
                             </SelectTrigger>
-                            <SelectContent className="rounded-xl border-slate-200 shadow-2xl backdrop-blur-xl">
+                            <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl">
                                 {[10, 20, 50, 100].map(size => (
                                     <SelectItem key={size} value={size.toString()} className="text-[10px] font-bold rounded-lg cursor-pointer">
                                         {size}
@@ -80,7 +80,7 @@ export function UnifiedPagination({
                     size="icon"
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="h-9 w-9 rounded-xl border-slate-200 hover:bg-white hover:text-emerald-600 disabled:opacity-30 transition-all shadow-sm group"
+                    className="h-9 w-9 rounded-xl border-slate-200 dark:border-slate-800 hover:bg-white hover:text-emerald-600 disabled:opacity-30 transition-all shadow-sm group"
                 >
                     <ChevronLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
                 </Button>
@@ -117,7 +117,7 @@ export function UnifiedPagination({
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => onPageChange(totalPages)}
-                                className="h-9 min-w-[36px] rounded-xl text-[10px] font-black text-slate-500 hover:bg-white hover:text-slate-900"
+                                className="h-9 min-w-[36px] rounded-xl text-[10px] font-black text-slate-500 dark:text-slate-400 hover:bg-white hover:text-slate-900"
                             >
                                 {totalPages}
                             </Button>
@@ -130,7 +130,7 @@ export function UnifiedPagination({
                     size="icon"
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages || totalPages === 0}
-                    className="h-9 w-9 rounded-xl border-slate-200 hover:bg-white hover:text-emerald-600 disabled:opacity-30 transition-all shadow-sm group"
+                    className="h-9 w-9 rounded-xl border-slate-200 dark:border-slate-800 hover:bg-white hover:text-emerald-600 disabled:opacity-30 transition-all shadow-sm group"
                 >
                     <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </Button>

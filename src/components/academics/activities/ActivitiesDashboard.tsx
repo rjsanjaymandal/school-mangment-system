@@ -138,17 +138,17 @@ export default function ActivitiesDashboard({
                         <Trophy className="h-8 w-8" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black tracking-tight text-slate-900">
+                        <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                             Clubs & Activities
                         </h2>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 mt-1">
                             School Clubs, Sports and Extra-curricular Activities
                         </p>
                     </div>
                 </div>
                 {!isStudent && isAdminOrTeacher && (
                     <div className="flex gap-x-4">
-                        <button className="h-11 rounded-xl border border-slate-200 bg-white/80 px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 shadow-sm">
+                        <button className="h-11 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 px-6 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:border-blue-200 hover:text-blue-600 transition-all flex items-center gap-2 shadow-sm">
                             <Calendar className="h-4 w-4" />
                             Venue Bookings
                         </button>
@@ -168,11 +168,11 @@ export default function ActivitiesDashboard({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 reveal-1 w-full relative z-10 mt-10">
-                <div className="md:col-span-8 bg-white border border-slate-200 p-10 rounded-xl relative overflow-hidden group">
+                <div className="md:col-span-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-10 rounded-xl relative overflow-hidden group">
                     <div className="relative z-10 h-full flex flex-col">
                         <div className="mb-8 flex justify-between items-start">
                             <div>
-                                <h3 className="text-lg font-black tracking-tight text-slate-900">
+                                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                                     Participation <span className="text-blue-500">Matrix</span>
                                 </h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">
@@ -194,16 +194,18 @@ export default function ActivitiesDashboard({
                                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#88888820" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                                     <XAxis 
                                         dataKey="name" 
                                         axisLine={false} 
                                         tickLine={false} 
-                                        tick={{ fill: "#88888870", fontSize: 10, fontWeight: "bold" }}
+                                        tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: "bold" }}
                                     />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888850", fontSize: 10 }} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} />
                                     <Tooltip 
-                                        contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }}
+                                        contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px", fontSize: "10px" }}
+                                        labelStyle={{ color: "var(--foreground)" }}
+                                        itemStyle={{ color: "var(--foreground)" }}
                                     />
                                     <Area type="monotone" dataKey="Athletes" stroke="#10b981" fillOpacity={1} fill="url(#colorAthletes)" strokeWidth={3} />
                                     <Area type="monotone" dataKey="Artists" stroke="#3b82f6" fillOpacity={1} fill="url(#colorArtists)" strokeWidth={2} strokeDasharray="5 5" />
@@ -213,9 +215,9 @@ export default function ActivitiesDashboard({
                     </div>
                 </div>
 
-                <div className="md:col-span-4 bg-white border border-slate-200 p-10 rounded-xl relative overflow-hidden group">
+                <div className="md:col-span-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-10 rounded-xl relative overflow-hidden group">
                     <div className="mb-8 relative z-10 text-center">
-                        <h3 className="text-lg font-black tracking-tight text-slate-900">
+                        <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                             House <span className="text-blue-500">/</span> Performance
                         </h3>
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Competency Distribution</p>
@@ -223,8 +225,8 @@ export default function ActivitiesDashboard({
                     <div className="h-[280px] relative z-10">
                         <ResponsiveContainer width="100%" height="100%">
                             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={housePerformance}>
-                                <PolarGrid stroke="#88888820" />
-                                <PolarAngleAxis dataKey="subject" tick={{ fill: "#88888860", fontSize: 8, fontWeight: "bold" }} />
+                                <PolarGrid stroke="var(--border)" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fill: "var(--muted-foreground)", fontSize: 8, fontWeight: "bold" }} />
                                 <Radar
                                     name="Performance"
                                     dataKey="A"
@@ -232,7 +234,11 @@ export default function ActivitiesDashboard({
                                     fill="#10b981"
                                     fillOpacity={0.6}
                                 />
-                                <Tooltip contentStyle={{ backgroundColor: "rgba(0,0,0,0.8)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: "12px", fontSize: "10px", color: "#fff" }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px", fontSize: "10px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                             </RadarChart>
                         </ResponsiveContainer>
                     </div>
@@ -250,7 +256,7 @@ export default function ActivitiesDashboard({
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500 opacity-40 group-hover:opacity-100 transition-opacity" />
                             <Input
                                 placeholder="Search activities..."
-                                className="pl-10 rounded-xl h-11 bg-white border-slate-200 font-black text-[10px] uppercase tracking-widest placeholder:text-slate-300 focus:border-emerald-300 transition-all shadow-sm"
+                                className="pl-10 rounded-xl h-11 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 font-black text-[10px] uppercase tracking-widest placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-emerald-300 transition-all shadow-sm"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -259,38 +265,38 @@ export default function ActivitiesDashboard({
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         {filteredActivities.map((activity) => (
-                            <div key={activity.id} className="p-5 rounded-xl border border-slate-200 bg-white hover:border-blue-200 hover:shadow-sm transition-all group cursor-pointer">
+                            <div key={activity.id} className="p-5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-200 dark:hover:border-slate-700 hover:shadow-sm transition-all group cursor-pointer">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="h-12 w-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 transition-all group-hover:scale-110 group-hover:rotate-3 shadow-sm">
+                                    <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 transition-all group-hover:scale-110 group-hover:rotate-3 shadow-sm">
                                         <Zap className="h-6 w-6" />
                                     </div>
-                                    <span className="text-[9px] font-black px-3 py-1 rounded-lg bg-emerald-50 text-emerald-600 uppercase tracking-widest">
+                                    <span className="text-[9px] font-black px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                                         {activity.max_participants || 0} CAP
                                     </span>
                                 </div>
-                                <h4 className="text-xl font-black text-slate-900 mb-1 tracking-tight group-hover:text-emerald-600 transition-colors">
+                                <h4 className="text-xl font-black text-slate-900 dark:text-white mb-1 tracking-tight group-hover:text-emerald-600 transition-colors">
                                     {activity.name}
                                 </h4>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
                                     {activity.category || "GENERAL"}
                                 </p>
                                 <div className="space-y-3">
-                                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
                                         <p className="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">
                                             Description
                                         </p>
-                                        <p className="text-[11px] font-bold text-slate-600 line-clamp-2">
+                                        <p className="text-[11px] font-bold text-slate-600 dark:text-slate-400 line-clamp-2">
                                             {activity.description || "Active operations underway"}
                                         </p>
                                     </div>
-                                    <button className="w-full text-emerald-600 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 py-3 rounded-xl hover:bg-emerald-50 transition-all">
+                                    <button className="w-full text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 py-3 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all">
                                         VIEW DETAILS <ArrowRight className="h-3 w-3" />
                                     </button>
                                 </div>
                             </div>
                         ))}
                         {filteredActivities.length === 0 && (
-                            <div className="col-span-2 text-center text-slate-400 py-10 bg-white border border-slate-200 rounded-xl">
+                            <div className="col-span-2 text-center text-slate-400 py-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
                                 No activities match your search.
                             </div>
                         )}
@@ -298,26 +304,26 @@ export default function ActivitiesDashboard({
                 </div>
 
                 <div className="space-y-6">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 flex items-center gap-x-2">
-                        <Dumbbell className="h-4 w-4 text-slate-700" />
+                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 flex items-center gap-x-2">
+                        <Dumbbell className="h-4 w-4 text-slate-700 dark:text-slate-300" />
                         Sports Fixtures
                     </h3>
 
-                    <div className="border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm">
-                        <div className="bg-emerald-50 border-b border-emerald-100 p-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
+                    <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm">
+                        <div className="bg-emerald-50 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/30 p-4">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
                                 Upcoming Matches
                             </h4>
                         </div>
-                        <div className="divide-y divide-slate-100">
+                        <div className="divide-y divide-slate-100 dark:divide-slate-800">
                             {upcomingFixtures.map((fix) => (
-                                <div key={fix.id} className="p-5 space-y-4 hover:bg-slate-50 transition-all group">
+                                <div key={fix.id} className="p-5 space-y-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group">
                                     <div className="flex items-center gap-x-4">
-                                        <div className="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+                                        <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
                                             <Trophy className="h-6 w-6" />
                                         </div>
                                         <div>
-                                            <h4 className="font-black text-slate-900 text-sm uppercase tracking-tight">
+                                            <h4 className="font-black text-slate-900 dark:text-white text-sm uppercase tracking-tight">
                                                 {fix.team}
                                             </h4>
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
@@ -325,12 +331,12 @@ export default function ActivitiesDashboard({
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-100">
+                                    <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
                                         <div className="flex flex-col">
                                             <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">
                                                 Sport / Location
                                             </span>
-                                            <span className="text-[10px] font-black text-slate-700 uppercase tracking-tight">
+                                            <span className="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-tight">
                                                 {fix.sport} • {fix.venue}
                                             </span>
                                         </div>
@@ -338,21 +344,21 @@ export default function ActivitiesDashboard({
                                             HOME
                                         </span>
                                     </div>
-                                    <button className="w-full h-10 rounded-xl bg-emerald-50 border border-emerald-100 hover:bg-emerald-600 hover:text-white text-emerald-600 font-black text-[10px] uppercase tracking-widest transition-all">
+                                    <button className="w-full h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-600 hover:text-white text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-widest transition-all">
                                         VIEW DETAILS
                                     </button>
                                 </div>
                             ))}
                         </div>
-                        <div className="p-4 bg-slate-50 border-t border-slate-100">
-                            <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest text-center leading-relaxed">
+                        <div className="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
+                            <p className="text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest text-center leading-relaxed">
                                 Team rosters are synchronized with student eligibility records.
                             </p>
                         </div>
                     </div>
 
                     {!isStudent && (
-                        <div className="border border-slate-200 bg-white rounded-xl p-6 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+                        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-6 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
                             <div className="flex items-center justify-between mb-6">
                                 <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
                                     Sports Engagement
@@ -365,7 +371,7 @@ export default function ActivitiesDashboard({
                                         <span className="text-slate-400">Club Participation</span>
                                         <span className="text-emerald-600">92%</span>
                                     </div>
-                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                                         <div className="h-full rounded-full bg-emerald-500 shadow-sm transition-all duration-1000" style={{ width: "92%" }} />
                                     </div>
                                 </div>
@@ -374,7 +380,7 @@ export default function ActivitiesDashboard({
                                         <span className="text-slate-400">Athletic Engagement</span>
                                         <span className="text-emerald-600">65%</span>
                                     </div>
-                                    <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                    <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                                         <div className="h-full rounded-full bg-emerald-500 shadow-sm transition-all duration-1000" style={{ width: "65%" }} />
                                     </div>
                                 </div>
@@ -386,46 +392,46 @@ export default function ActivitiesDashboard({
 
             {showCreateModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h3 className="text-lg font-black tracking-tight text-slate-900">New Club/Activity</h3>
+                                <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">New Club/Activity</h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Create a new creative or athletic group</p>
                             </div>
-                            <button onClick={() => setShowCreateModal(false)} className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600">&times;</button>
+                            <button onClick={() => setShowCreateModal(false)} className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600">&times;</button>
                         </div>
                         <form onSubmit={handleInitialize} className="space-y-4">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Activity Name</label>
-                                <input name="name" required placeholder="E.g., Chess Club" className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Activity Name</label>
+                                <input name="name" required placeholder="E.g., Chess Club" className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none" />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Category</label>
-                                    <select name="category" required className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                        <option value="">Select...</option>
-                                        <option value="Arts">Arts & Culture</option>
-                                        <option value="Sports">Athletics</option>
-                                        <option value="Tech">Technology</option>
-                                        <option value="Social">Social Welfare</option>
-                                        <option value="Music">Music</option>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Category</label>
+                                    <select name="category" required className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                        <option value="" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select...</option>
+                                        <option value="Arts" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Arts & Culture</option>
+                                        <option value="Sports" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Athletics</option>
+                                        <option value="Tech" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Technology</option>
+                                        <option value="Social" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Social Welfare</option>
+                                        <option value="Music" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Music</option>
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Capacity</label>
-                                    <input name="max_participants" type="number" defaultValue={50} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Capacity</label>
+                                    <input name="max_participants" type="number" defaultValue={50} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none" />
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Teacher-in-Charge</label>
-                                <select name="teacher_id" className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                    <option value="">Select Teacher...</option>
-                                    {(teachers || []).map((t) => (<option key={t.id} value={t.id}>{t.profile?.first_name || ''} {t.profile?.last_name || ''}</option>))}
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Teacher-in-Charge</label>
+                                <select name="teacher_id" className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                    <option value="" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Select Teacher...</option>
+                                    {(teachers || []).map((t) => (<option key={t.id} value={t.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{t.profile?.first_name || ''} {t.profile?.last_name || ''}</option>))}
                                 </select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Description</label>
-                                <textarea name="description" rows={3} placeholder="Activity description..." className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none resize-none" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Description</label>
+                                <textarea name="description" rows={3} placeholder="Activity description..." className="w-full rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none resize-none" />
                             </div>
                             <button type="submit" disabled={isInitializing} className="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">
                                 {isInitializing ? "CREATING..." : "Save Club/Activity"}

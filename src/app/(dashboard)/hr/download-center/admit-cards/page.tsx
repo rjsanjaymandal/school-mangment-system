@@ -66,14 +66,14 @@ export default function AdmitCardGeneratorPage() {
     if (previewMode && admitCards) {
         return (
             <div className="space-y-8 animate-in fade-in duration-700">
-                <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-slate-200 shadow-sm print:hidden">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm print:hidden">
                     <div className="flex items-center gap-4">
-                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back
                         </button>
                         <div>
-                            <h2 className="text-lg font-black tracking-tight text-slate-900">Print Preview</h2>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{admitCards.students.length} Cards Generated</p>
+                            <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Print Preview</h2>
+                            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{admitCards.students.length} Cards Generated</p>
                         </div>
                     </div>
                     <button onClick={handlePrint} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
@@ -126,13 +126,13 @@ export default function AdmitCardGeneratorPage() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/hr/download-center">
-                        <button className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center">
+                        <button className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center justify-center">
                             <ArrowLeft className="h-5 w-5" />
                         </button>
                     </Link>
                     <div>
-                        <h1 className="text-lg font-black tracking-tight text-slate-900">Admit Card Generator</h1>
-                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">Generate exam hall tickets</p>
+                        <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Admit Card Generator</h1>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Generate exam hall tickets</p>
                     </div>
                 </div>
             </div>
@@ -140,11 +140,11 @@ export default function AdmitCardGeneratorPage() {
             <ERPCard accentColor="blue" className="p-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Target Class</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Target Class</label>
                         <select 
                             value={selectedClass}
                             onChange={(e) => setSelectedClass(e.target.value)}
-                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                         >
                             <option value="">Select Class</option>
                             {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -152,11 +152,11 @@ export default function AdmitCardGeneratorPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Session</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Exam Session</label>
                         <select 
                             value={selectedExam}
                             onChange={(e) => setSelectedExam(e.target.value)}
-                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                         >
                             <option value="">Select Exam</option>
                             {exams.map(e => <option key={e.id} value={e.id}>{e.name} ({new Date(e.date).toLocaleDateString()})</option>)}
@@ -182,10 +182,10 @@ export default function AdmitCardGeneratorPage() {
                     { icon: CheckCircle2, title: "Verified Data", desc: "Pulls from latest subject & enrollment data." },
                     { icon: Printer, title: "Direct Print", desc: "No download needed. Print directly to thermal or laser." }
                 ].map((item, idx) => (
-                    <div key={idx} className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col items-center text-center">
+                    <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col items-center text-center">
                         <item.icon className="h-6 w-6 text-slate-400 mb-3" />
-                        <h4 className="text-sm font-black uppercase tracking-tight text-slate-900">{item.title}</h4>
-                        <p className="text-xs font-bold text-slate-500 mt-1">{item.desc}</p>
+                        <h4 className="text-sm font-black uppercase tracking-tight text-slate-900 dark:text-white">{item.title}</h4>
+                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">{item.desc}</p>
                     </div>
                 ))}
             </div>
@@ -195,14 +195,14 @@ export default function AdmitCardGeneratorPage() {
 
 function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: any, settings: any }) {
     return (
-        <div className="bg-white border-2 border-slate-900 rounded-xl p-6 flex flex-col gap-4 print-card print-area max-w-md mx-auto h-[480px] relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border-2 border-slate-900 rounded-xl p-6 flex flex-col gap-4 print-card print-area max-w-md mx-auto h-[480px] relative overflow-hidden">
             <div className="flex items-center gap-3 border-b-2 border-slate-900 pb-3">
                 <div className="h-12 w-12 bg-slate-900 rounded-xl flex items-center justify-center shrink-0">
                     <span className="text-white font-black text-lg">EM</span>
                 </div>
                 <div className="flex-1">
                     <h3 className="text-lg font-black uppercase tracking-tighter leading-none">{settings?.school_name || "Edu Maysan Academy"}</h3>
-                    <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Official Examination Hall Ticket • {(Array.isArray(exam.academic_year) ? exam.academic_year[0] : exam.academic_year)?.name || '2026-27'}</p>
+                    <p className="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Official Examination Hall Ticket • {(Array.isArray(exam.academic_year) ? exam.academic_year[0] : exam.academic_year)?.name || '2026-27'}</p>
                 </div>
             </div>
 
@@ -211,21 +211,21 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
             </div>
 
             <div className="grid grid-cols-1 gap-3 mt-2">
-                <div className="flex justify-between border-b border-slate-100 pb-1">
+                <div className="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1">
                     <span className="text-[10px] font-black uppercase text-slate-400">Student Name</span>
                     <span className="text-xs font-bold uppercase">{student.full_name}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-100 pb-1">
+                <div className="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1">
                     <span className="text-[10px] font-black uppercase text-slate-400">Roll / Admission No.</span>
                     <span className="text-xs font-mono font-bold tracking-tighter">{student.admission_number}</span>
                 </div>
-                <div className="flex justify-between border-b border-slate-100 pb-1">
+                <div className="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-1">
                     <span className="text-[10px] font-black uppercase text-slate-400">Class & Section</span>
                     <span className="text-xs font-bold">{(Array.isArray(student.class) ? student.class[0] : student.class)?.name}</span>
                 </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-2">
+            <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-800 mt-2">
                 <h4 className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-2">Subject Details</h4>
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
@@ -253,7 +253,7 @@ function AdmitCardTemplate({ student, exam, settings }: { student: any, exam: an
                         <span className="text-[6px] text-emerald-600/50 font-black uppercase text-center leading-none">Edu Maysan<br/>Verified</span>
                     </div>
                     <div className="w-24 h-px bg-slate-900 mb-1" />
-                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-900">Principal</span>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Principal</span>
                 </div>
             </div>
 

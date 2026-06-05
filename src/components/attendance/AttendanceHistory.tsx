@@ -78,35 +78,35 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
 
   const statusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      present: "bg-emerald-50 text-emerald-600",
-      absent: "bg-red-50 text-red-600",
-      late: "bg-amber-50 text-amber-600",
-      excused: "bg-blue-50 text-blue-600",
+      present: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400",
+      absent: "bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400",
+      late: "bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400",
+      excused: "bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400",
     };
-    return cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", styles[status] || "bg-slate-50 text-slate-600");
+    return cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", styles[status] || "bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400");
   };
 
   return (
     <div className="animate-in fade-in duration-700 space-y-6">
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
-            <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-              <option value="" disabled>Select a class</option>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
+            <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)} className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+              <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select a class</option>
               {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Date</label>
             <div className="relative">
               <Input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="h-11 rounded-xl border-slate-200 font-bold text-sm pl-10"
+                className="h-11 rounded-xl border-slate-200 dark:border-slate-800 font-bold text-sm pl-10"
               />
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             </div>
@@ -122,15 +122,15 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
-                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Roll No</th>
-                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Student Name</th>
-                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Status</th>
-                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Remarks</th>
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Roll No</th>
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Student Name</th>
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Status</th>
+                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Remarks</th>
               </tr>
             </thead>
             <tbody>
@@ -148,7 +148,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
                   <td colSpan={4} className="py-24 text-center">
                     <div className="flex flex-col items-center">
                       <Search className="h-10 w-10 mb-4 text-slate-300" />
-                      <p className="text-sm font-bold text-slate-500">
+                      <p className="text-sm font-bold text-slate-500 dark:text-slate-400">
                         {selectedClass
                           ? "No records found for this date."
                           : "Select a class to view history."}
@@ -158,11 +158,11 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
                 </tr>
               ) : (
                 records.map((record) => (
-                  <tr key={record.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-4 px-4 font-bold text-sm text-slate-700">
+                  <tr key={record.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                    <td className="py-4 px-4 font-bold text-sm text-slate-700 dark:text-slate-300">
                       {record.student?.roll_number || "N/A"}
                     </td>
-                    <td className="py-4 px-4 font-bold text-sm text-slate-700">
+                    <td className="py-4 px-4 font-bold text-sm text-slate-700 dark:text-slate-300">
                       {record.student?.profile?.first_name}{" "}
                       {record.student?.profile?.last_name}
                     </td>
@@ -171,7 +171,7 @@ export function AttendanceHistory({ classes }: AttendanceHistoryProps) {
                         {record.status.toUpperCase()}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-sm text-slate-500 font-bold">
+                    <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400 font-bold">
                       {record.remarks || "-"}
                     </td>
                   </tr>

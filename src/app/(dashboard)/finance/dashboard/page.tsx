@@ -150,11 +150,11 @@ export default async function FinanceDashboardPage() {
         description="Daily log of all completed transactions"
         icon={<TrendingUp className="h-5 w-5" />}
         color="emerald"
-        className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"
       >
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500">
+            <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
               <tr>
                 <th className="py-4 px-4">Receipt</th>
                 <th className="py-4 px-4">Student Name</th>
@@ -164,11 +164,11 @@ export default async function FinanceDashboardPage() {
                 <th className="py-4 px-4 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               <tr>
                 <td colSpan={6} className="py-4 px-4 text-center">
                    <div className="flex flex-col items-center py-16">
-                      <div className="p-6 bg-slate-50 rounded-full mb-4 animate-pulse">
+                      <div className="p-6 bg-slate-50 dark:bg-slate-950 rounded-full mb-4 animate-pulse">
                          <PieChart className="h-10 w-10 text-slate-200" />
                       </div>
                       <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Loading Transactions...</p>
@@ -192,11 +192,11 @@ function FinanceActionCard({ title, desc, icon: Icon, color }: { title: string; 
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-6 text-center cursor-pointer hover:scale-[1.05] transition-all group hover:shadow-2xl">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 text-center cursor-pointer hover:scale-[1.05] transition-all group hover:shadow-2xl">
       <div className={cn("h-12 w-12 mx-auto rounded-xl border flex items-center justify-center mb-4 transition-all group-hover:rotate-12", colors[color])}>
         <Icon className="h-6 w-6" />
       </div>
-      <p className="text-sm font-black text-slate-900 tracking-tight uppercase mb-1">{title}</p>
+      <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase mb-1">{title}</p>
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{desc}</p>
     </div>
   );

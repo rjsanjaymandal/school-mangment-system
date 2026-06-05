@@ -2,6 +2,8 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 
+import { useTheme } from "@/lib/providers/ThemeProvider";
+
 const activityData = [
     { name: 'Jan', activeUsers: 400, logins: 240, amt: 2400 },
     { name: 'Feb', activeUsers: 300, logins: 139, amt: 2210 },
@@ -21,10 +23,12 @@ const performanceData = [
 ];
 
 export function AdminCharts() {
+    const { theme } = useTheme();
+
     return (
         <div className="grid gap-6 lg:grid-cols-2">
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 pb-2">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 pb-2">
                     Platform Engagement (6 Months)
                 </p>
                 <div className="h-[300px] w-full pt-4">
@@ -40,11 +44,12 @@ export function AdminCharts() {
                                     <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <XAxis dataKey="name" stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
-                            <YAxis stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
+                            <XAxis dataKey="name" stroke="var(--muted-foreground)" fontSize={10} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--muted-foreground)" fontSize={10} tickLine={false} axisLine={false} />
                             <Tooltip
-                                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                                itemStyle={{ fontWeight: 'bold' }}
+                                contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card)' }}
+                                labelStyle={{ color: 'var(--foreground)' }}
+                                itemStyle={{ color: 'var(--foreground)', fontWeight: 'bold' }}
                             />
                             <Area type="monotone" dataKey="activeUsers" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
                             <Area type="monotone" dataKey="logins" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorLogins)" />
@@ -53,23 +58,24 @@ export function AdminCharts() {
                 </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 pb-2">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 pb-2">
                     Academic Performance Index
                 </p>
                 <div className="h-[300px] w-full pt-4">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={performanceData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                            <XAxis dataKey="subject" stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
-                            <YAxis stroke="#cbd5e1" fontSize={10} tickLine={false} axisLine={false} />
+                            <XAxis dataKey="subject" stroke="var(--muted-foreground)" fontSize={10} tickLine={false} axisLine={false} />
+                            <YAxis stroke="var(--muted-foreground)" fontSize={10} tickLine={false} axisLine={false} />
                             <Tooltip
                                 cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }}
-                                contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
-                                itemStyle={{ fontWeight: 'bold' }}
+                                contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card)' }}
+                                labelStyle={{ color: 'var(--foreground)' }}
+                                itemStyle={{ color: 'var(--foreground)', fontWeight: 'bold' }}
                             />
-                            <Legend wrapperStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }} />
+                            <Legend wrapperStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--foreground)' }} />
                             <Bar dataKey="passRate" name="Pass Rate %" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="avgScore" name="Avg Score" fill="#0f172a" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="avgScore" name="Avg Score" fill={theme === 'dark' ? '#f8fafc' : '#0f172a'} radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

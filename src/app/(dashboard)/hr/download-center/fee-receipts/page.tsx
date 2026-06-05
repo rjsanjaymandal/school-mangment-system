@@ -76,14 +76,14 @@ export default function FeeReceiptArchivePage() {
     if (previewMode && selectedPayment) {
         return (
             <div className="space-y-8">
-                <div className="flex items-center justify-between bg-white p-6 rounded-xl border border-slate-200 shadow-sm print:hidden">
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm print:hidden">
                     <div className="flex items-center gap-4">
-                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+                        <button onClick={() => setPreviewMode(false)} className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back
                         </button>
                         <div>
-                            <h2 className="text-xl font-black text-slate-900 tracking-tight">Receipt Preview</h2>
-                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Receipt No: {selectedPayment.receipt_number}</p>
+                            <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Receipt Preview</h2>
+                            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Receipt No: {selectedPayment.receipt_number}</p>
                         </div>
                     </div>
                     <button onClick={() => window.print()} className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-2">
@@ -91,7 +91,7 @@ export default function FeeReceiptArchivePage() {
                     </button>
                 </div>
 
-                <div className="bg-white p-8 max-w-[8.5in] mx-auto border-2 border-slate-900 rounded-xl shadow-2xl relative print:border-none print:shadow-none print-area">
+                <div className="bg-white dark:bg-slate-900 p-8 max-w-[8.5in] mx-auto border-2 border-slate-900 rounded-xl shadow-2xl relative print:border-none print:shadow-none print-area">
                     <ReceiptTemplate 
                         payment={selectedPayment} 
                         settings={settings}
@@ -115,13 +115,13 @@ export default function FeeReceiptArchivePage() {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/hr/download-center">
-                        <button className="h-10 w-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center">
+                        <button className="h-10 w-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center justify-center">
                             <ArrowLeft className="h-5 w-5" />
                         </button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Fee Receipt Archive</h1>
-                        <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-1">Transaction History & Receipt Reprints</p>
+                        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Fee Receipt Archive</h1>
+                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">Transaction History & Receipt Reprints</p>
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@ export default function FeeReceiptArchivePage() {
             <ERPCard accentColor="indigo" className="p-6">
                 <div className="flex flex-col md:flex-row gap-4 items-end mb-8">
                     <div className="flex-1 space-y-3">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Search Receipts</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Search Receipts</label>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <Input 
@@ -137,7 +137,7 @@ export default function FeeReceiptArchivePage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && searchPayments()}
-                                className="pl-10 rounded-xl h-12 border-slate-200"
+                                className="pl-10 rounded-xl h-12 border-slate-200 dark:border-slate-800"
                             />
                         </div>
                     </div>
@@ -146,9 +146,9 @@ export default function FeeReceiptArchivePage() {
                     </button>
                 </div>
 
-                <div className="overflow-hidden border border-slate-100 rounded-2xl">
+                <div className="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-2xl">
                     <table className="w-full text-left">
-                        <thead className="bg-slate-50 border-b border-slate-100">
+                        <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
                             <tr>
                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Receipt No</th>
                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Student</th>
@@ -172,22 +172,22 @@ export default function FeeReceiptArchivePage() {
                             ) : (
                                 payments.map((p) => (
                                     <tr key={p.id} className="hover:bg-indigo-50/30 transition-colors">
-                                        <td className="px-6 py-4 font-mono text-xs font-bold text-slate-900">{p.receipt_number || 'N/A'}</td>
+                                        <td className="px-6 py-4 font-mono text-xs font-bold text-slate-900 dark:text-white">{p.receipt_number || 'N/A'}</td>
                                         <td className="px-6 py-4">
-                                            <p className="text-sm font-bold text-slate-900">{p.student?.full_name}</p>
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{p.student?.admission_number}</p>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{p.student?.full_name}</p>
+                                            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{p.student?.admission_number}</p>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-700">
+                                            <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                                                 {p.fee?.name || 'General Fee'}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-xs font-medium text-slate-500">{new Date(p.payment_date).toLocaleDateString()}</td>
-                                        <td className="px-6 py-4 text-right font-black text-slate-900">₹{p.amount_paid}</td>
+                                        <td className="px-6 py-4 text-xs font-medium text-slate-500 dark:text-slate-400">{new Date(p.payment_date).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4 text-right font-black text-slate-900 dark:text-white">₹{p.amount_paid}</td>
                                         <td className="px-6 py-4 text-center">
                                             <button 
                                                 onClick={() => { setSelectedPayment(p); setPreviewMode(true); }}
-                                                className="h-8 w-8 rounded-lg border border-slate-200 hover:bg-indigo-100 hover:text-indigo-600 flex items-center justify-center transition-all"
+                                                className="h-8 w-8 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-indigo-100 hover:text-indigo-600 flex items-center justify-center transition-all"
                                             >
                                                 <Printer className="h-4 w-4" />
                                             </button>
@@ -209,9 +209,9 @@ function ReceiptTemplate({ payment, settings }: { payment: any, settings: any })
             {/* Header */}
             <div className="flex justify-between items-start border-b-4 border-slate-900 pb-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">{settings?.school_name || "Edu Maysan Academy"}</h1>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{settings?.school_address || "Maysan Valley, Institutional Area"}</p>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Contact: {settings?.school_phone || "+91 98765 43210"}</p>
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">{settings?.school_name || "Edu Maysan Academy"}</h1>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{settings?.school_address || "Maysan Valley, Institutional Area"}</p>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Contact: {settings?.school_phone || "+91 98765 43210"}</p>
                 </div>
                 <div className="text-right">
                     <div className="bg-slate-900 text-white px-6 py-2 rounded-lg text-lg font-black uppercase tracking-widest mb-2">
@@ -237,7 +237,7 @@ function ReceiptTemplate({ payment, settings }: { payment: any, settings: any })
                     <div className="space-y-1">
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none">Student Details</p>
                         <p className="text-sm font-black uppercase tracking-tight">{payment.student?.full_name}</p>
-                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{payment.student?.admission_number} • {payment.student?.class?.name}</p>
+                        <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">{payment.student?.admission_number} • {payment.student?.class?.name}</p>
                     </div>
                 </div>
             </div>
@@ -251,14 +251,14 @@ function ReceiptTemplate({ payment, settings }: { payment: any, settings: any })
                             <th className="px-6 py-3 text-xs font-black uppercase tracking-widest text-right">Amount (₹)</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y-2 divide-slate-100 border-b-2 border-slate-900">
+                    <tbody className="divide-y-2 divide-slate-100 dark:divide-slate-800 border-b-2 border-slate-900">
                         <tr>
                             <td className="px-6 py-8">
-                                <p className="text-md font-black text-slate-900 uppercase tracking-tight">{payment.fee?.name || 'Academic Fee Payment'}</p>
+                                <p className="text-md font-black text-slate-900 dark:text-white uppercase tracking-tight">{payment.fee?.name || 'Academic Fee Payment'}</p>
                                 <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-widest">Method: {payment.payment_method?.toUpperCase()} • Status: SUCCESS</p>
                             </td>
                             <td className="px-6 py-8 text-right align-top">
-                                <p className="text-xl font-black text-slate-900">₹{payment.amount_paid}</p>
+                                <p className="text-xl font-black text-slate-900 dark:text-white">₹{payment.amount_paid}</p>
                             </td>
                         </tr>
                     </tbody>
@@ -266,7 +266,7 @@ function ReceiptTemplate({ payment, settings }: { payment: any, settings: any })
                         <tr>
                             <td className="px-6 py-6 text-right font-black uppercase tracking-widest text-slate-400">Total Amount Received</td>
                             <td className="px-6 py-6 text-right">
-                                <p className="text-3xl font-black text-slate-900 tracking-tighter">₹{payment.amount_paid}</p>
+                                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">₹{payment.amount_paid}</p>
                             </td>
                         </tr>
                     </tfoot>
@@ -274,7 +274,7 @@ function ReceiptTemplate({ payment, settings }: { payment: any, settings: any })
             </div>
 
             {/* Footer */}
-            <div className="pt-12 flex justify-between items-end border-t border-slate-100 mt-12">
+            <div className="pt-12 flex justify-between items-end border-t border-slate-100 dark:border-slate-800 mt-12">
                 <div className="space-y-1 text-slate-400">
                     <div className="flex items-center gap-2">
                         <Wallet className="h-4 w-4" />
@@ -286,10 +286,10 @@ function ReceiptTemplate({ payment, settings }: { payment: any, settings: any })
                     </p>
                 </div>
                 <div className="text-right space-y-4">
-                    <div className="h-20 w-20 ml-auto border-4 border-slate-100 rounded-full flex items-center justify-center opacity-50 -rotate-12">
+                    <div className="h-20 w-20 ml-auto border-4 border-slate-100 dark:border-slate-800 rounded-full flex items-center justify-center opacity-50 -rotate-12">
                         <CheckCircle2 className="h-12 w-12 text-slate-300" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">Accountant Signature</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Accountant Signature</p>
                 </div>
             </div>
         </div>

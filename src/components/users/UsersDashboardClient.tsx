@@ -86,31 +86,31 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
 
             {/* User List */}
             <div className="space-y-6">
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                    <div className="p-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <h3 className="text-lg font-black tracking-tight text-slate-900 flex items-center gap-3">
-                            <Users className="h-5 w-5 text-slate-500" />
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                    <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white flex items-center gap-3">
+                            <Users className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                             User List
                         </h3>
                         
                         <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
                             <select
-                                className="w-full md:w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                className="w-full md:w-[180px] h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                                 value={roleFilter}
                                 onChange={(e) => setRoleFilter(e.target.value)}
                             >
-                                <option value="all">All Roles</option>
-                                <option value="admin">Admins</option>
-                                <option value="teacher">Teachers</option>
-                                <option value="student">Students</option>
-                                <option value="parent">Parents</option>
+                                <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Roles</option>
+                                <option value="admin" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Admins</option>
+                                <option value="teacher" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Teachers</option>
+                                <option value="student" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Students</option>
+                                <option value="parent" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Parents</option>
                             </select>
 
                             <div className="relative flex-1 md:w-80">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                                 <input
                                     placeholder="Search users..."
-                                    className="w-full h-11 pl-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                    className="w-full h-11 pl-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -121,44 +121,44 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="border-b border-slate-100 bg-slate-50">
-                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Name</th>
-                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Email Address</th>
-                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Role</th>
-                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
-                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Actions</th>
+                                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Name</th>
+                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Email Address</th>
+                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Role</th>
+                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Status</th>
+                                    <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredUsers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="py-16 text-center text-slate-500">
+                                        <td colSpan={5} className="py-16 text-center text-slate-500 dark:text-slate-400">
                                             <div className="flex flex-col items-center">
                                                 <Users className="h-12 w-12 mb-4 text-slate-300" />
-                                                <p className="text-sm font-bold text-slate-700">No users found matching your criteria</p>
+                                                <p className="text-sm font-bold text-slate-700 dark:text-slate-300">No users found matching your criteria</p>
                                             </div>
                                         </td>
                                     </tr>
                                 ) : (
                                     filteredUsers.map((user) => (
-                                        <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                                        <tr key={user.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
                                             <td className="py-4 px-4">
                                                 <div className="flex items-center gap-4">
                                                     <div className="h-10 w-10 flex items-center justify-center font-bold text-white text-sm rounded-xl bg-emerald-500/20 text-emerald-700">
                                                         {user.full_name?.[0] || 'U'}
                                                     </div>
                                                     <div className="flex flex-col">
-                                                        <span className="text-sm font-bold text-slate-900 leading-none mb-1">
+                                                        <span className="text-sm font-bold text-slate-900 dark:text-white leading-none mb-1">
                                                             {user.full_name}
                                                         </span>
-                                                        <span className="text-xs text-slate-500 font-mono">
+                                                        <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                                                             ID: {user.id.substring(0, 8)}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="py-4 px-4">
-                                                <span className="text-sm text-slate-500 border border-slate-200 bg-white px-3 py-1.5 rounded-xl font-mono">
+                                                <span className="text-sm text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-xl font-mono">
                                                     {user.email}
                                                 </span>
                                             </td>
@@ -202,7 +202,7 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
             </div>
             
             {/* Security Section */}
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6 relative">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-6 relative">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-6">
                         <div className="h-14 w-14 bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 rounded-xl">
@@ -212,13 +212,13 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                             <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-1">
                                 System Security
                             </p>
-                            <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
                                 User data is continually backed up and synchronized across the platform.
                             </h4>
                         </div>
                     </div>
                     <Link href="/audit">
-                        <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">
+                        <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
                             <Activity className="h-4 w-4 mr-2 inline" />
                             View Audit Logs
                         </button>

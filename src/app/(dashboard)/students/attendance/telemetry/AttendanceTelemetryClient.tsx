@@ -151,16 +151,16 @@ export function AttendanceTelemetryClient({
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="h-10 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md focus-visible:ring-emerald-500/50 font-bold px-3 w-full sm:w-40"
+              className="h-10 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md focus-visible:ring-emerald-500/50 font-bold px-3 w-full sm:w-40 text-slate-800 dark:text-slate-200"
             />
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
               className="h-10 rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md focus-visible:ring-emerald-500/50 font-bold px-3 text-sm text-slate-700 dark:text-slate-300 w-full sm:w-48 outline-none"
             >
-              <option value="all">All Classes</option>
+              <option value="all" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">All Classes</option>
               {classes?.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{c.name}</option>
               ))}
             </select>
           </div>

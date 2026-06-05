@@ -54,25 +54,25 @@ export function FeeList({ initialData }: FeeListProps) {
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-black tracking-tight text-slate-900">Fee Structures</h3>
+          <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Fee Structures</h3>
           <button className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all flex items-center gap-x-2">
             <Plus className="h-4 w-4" />
             Create Fee Type
           </button>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Fee Name</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Amount</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Due Date</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-left py-4 px-4">Description</th>
-                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-right py-4 px-4">Actions</th>
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left py-4 px-4">Fee Name</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left py-4 px-4">Amount</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left py-4 px-4">Due Date</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left py-4 px-4">Description</th>
+                <th className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-right py-4 px-4">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {data.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-20 text-center">
@@ -82,17 +82,17 @@ export function FeeList({ initialData }: FeeListProps) {
               ) : (
                 data.map((fee) => (
                   <tr key={fee.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="py-4 px-4 font-bold text-slate-900">{fee.name}</td>
-                    <td className="py-4 px-4 font-bold text-slate-700">₹{fee.amount}</td>
+                    <td className="py-4 px-4 font-bold text-slate-900 dark:text-white">{fee.name}</td>
+                    <td className="py-4 px-4 font-bold text-slate-700 dark:text-slate-300">₹{fee.amount}</td>
                     <td className="py-4 px-4">
-                      <div className="flex items-center gap-x-2 text-slate-500 text-sm">
+                      <div className="flex items-center gap-x-2 text-slate-500 dark:text-slate-400 text-sm">
                         <Calendar className="h-4 w-4" />
                         {new Date(fee.due_date).toLocaleDateString()}
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-slate-500 text-sm max-w-xs truncate">{fee.description || "N/A"}</td>
+                    <td className="py-4 px-4 text-slate-500 dark:text-slate-400 text-sm max-w-xs truncate">{fee.description || "N/A"}</td>
                     <td className="py-4 px-4 text-right">
-                      <button className="h-8 w-8 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition-all flex items-center justify-center">
+                      <button className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center justify-center">
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
                     </td>

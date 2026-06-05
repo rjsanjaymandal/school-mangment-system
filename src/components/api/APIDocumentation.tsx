@@ -103,22 +103,22 @@ export function APIDocumentation() {
                 <Globe className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900">REST API v1</p>
-                <p className="text-sm text-slate-500">Base URL: https://api.edumaysan.edu/v1</p>
+                <p className="font-semibold text-slate-900 dark:text-white">REST API v1</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Base URL: https://api.edumaysan.edu/v1</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-center">
-                <p className="text-2xl font-semibold text-slate-900">10</p>
-                <p className="text-xs text-slate-500">Endpoints</p>
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">10</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Endpoints</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-semibold text-slate-900">99.9%</p>
-                <p className="text-xs text-slate-500">Uptime</p>
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">99.9%</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Uptime</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-semibold text-slate-900">1.2s</p>
-                <p className="text-xs text-slate-500">Avg Response</p>
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white">1.2s</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Avg Response</p>
               </div>
             </div>
           </div>
@@ -130,51 +130,51 @@ export function APIDocumentation() {
         <Card className="shadow-sm cursor-pointer hover:border-purple-200">
           <CardContent className="p-4 text-center">
             <Key className="h-6 w-6 mx-auto text-purple-500 mb-2" />
-            <p className="font-medium text-slate-900">Authentication</p>
+            <p className="font-medium text-slate-900 dark:text-white">Authentication</p>
           </CardContent>
         </Card>
         <Card className="shadow-sm cursor-pointer hover:border-purple-200">
           <CardContent className="p-4 text-center">
             <Smartphone className="h-6 w-6 mx-auto text-blue-500 mb-2" />
-            <p className="font-medium text-slate-900">Mobile SDK</p>
+            <p className="font-medium text-slate-900 dark:text-white">Mobile SDK</p>
           </CardContent>
         </Card>
         <Card className="shadow-sm cursor-pointer hover:border-purple-200">
           <CardContent className="p-4 text-center">
             <Server className="h-6 w-6 mx-auto text-emerald-500 mb-2" />
-            <p className="font-medium text-slate-900">Webhooks</p>
+            <p className="font-medium text-slate-900 dark:text-white">Webhooks</p>
           </CardContent>
         </Card>
         <Card className="shadow-sm cursor-pointer hover:border-purple-200">
           <CardContent className="p-4 text-center">
             <Shield className="h-6 w-6 mx-auto text-amber-500 mb-2" />
-            <p className="font-medium text-slate-900">Rate Limits</p>
+            <p className="font-medium text-slate-900 dark:text-white">Rate Limits</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Endpoints List */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
-            <Code className="h-4 w-4 text-slate-500" />
+            <Code className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             API Endpoints
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {API_ENDPOINTS.map((endpoint, i) => (
-              <div key={i} className="p-4 hover:bg-slate-50">
+              <div key={i} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-900">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
                     <Badge className={METHOD_COLORS[endpoint.method as keyof typeof METHOD_COLORS]}>
                       {endpoint.method}
                     </Badge>
                     <div>
-                      <code className="text-sm font-mono text-slate-900 bg-slate-100 px-2 py-1 rounded">
+                      <code className="text-sm font-mono text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
                         {endpoint.path}
                       </code>
-                      <p className="text-sm text-slate-600 mt-1">{endpoint.description}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{endpoint.description}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <Badge variant="outline" className="text-xs">{endpoint.category}</Badge>
                         <Badge variant="outline" className="text-xs">{endpoint.auth}</Badge>
@@ -193,9 +193,9 @@ export function APIDocumentation() {
 
       {/* Example Request */}
       <Card className="shadow-sm">
-        <CardHeader className="pb-4 border-b bg-slate-50/50">
+        <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
           <CardTitle className="text-base flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-slate-500" />
+            <BookOpen className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             Example Request
           </CardTitle>
         </CardHeader>

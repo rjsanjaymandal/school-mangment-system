@@ -39,15 +39,15 @@ export default async function AdminDashboard() {
     <div className="p-4 md:p-6 space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <span>Dashboard</span>
             <span>/</span>
-            <span className="text-slate-900 font-medium">Admin</span>
+            <span className="text-slate-900 dark:text-white font-medium">Admin</span>
           </div>
-          <h1 className="text-lg font-black tracking-tight text-slate-900 mt-1">Admin Mission Control</h1>
-          <p className="text-sm text-slate-500">{activeYearName}</p>
+          <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white mt-1">Admin Mission Control</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{activeYearName}</p>
         </div>
-        <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all flex items-center gap-2">
+        <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
           <ShieldAlert className="h-4 w-4" />
           Settings
         </button>
@@ -61,55 +61,55 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
-              <div className="p-1.5 rounded bg-blue-50">
-                <BookOpen className="h-5 w-5 text-blue-600" />
+              <div className="p-1.5 rounded bg-blue-50 dark:bg-blue-950/20">
+                <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">Academic Overview</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Academic Overview</h3>
               </div>
             </div>
           </div>
           <div className="p-5 space-y-4">
-            <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-blue-500 w-[85%] rounded-full" />
             </div>
             <div className="flex justify-between items-center">
-              <p className="text-sm text-slate-500">85% Syllabus Completion</p>
-              <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600">On Track</span>
+              <p className="text-sm text-slate-500 dark:text-slate-400">85% Syllabus Completion</p>
+              <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400">On Track</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
-              <div className="p-1.5 rounded bg-red-50">
-                <ShieldAlert className="h-5 w-5 text-red-600" />
+              <div className="p-1.5 rounded bg-red-50 dark:bg-red-950/20">
+                <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-slate-900">System Security</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">System Security</h3>
               </div>
             </div>
           </div>
           <div className="p-5">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               All gateway entries are monitored. No breaches detected in the last 24 hours.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-100">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded bg-emerald-50">
-              <Building2 className="h-5 w-5 text-emerald-600" />
+            <div className="p-1.5 rounded bg-emerald-50 dark:bg-emerald-950/20">
+              <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">System Analytics</h3>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white">System Analytics</h3>
             </div>
           </div>
         </div>

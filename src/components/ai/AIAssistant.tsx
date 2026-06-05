@@ -116,7 +116,7 @@ export function AIAssistant() {
 
       {/* Chat Panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-xl shadow-2xl border border-slate-200 z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-2 duration-300">
+        <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 z-50 flex flex-col overflow-hidden animate-in slide-in-from-bottom-2 duration-300">
           {/* Header */}
           <div className="p-4 border-b bg-gradient-to-r from-emerald-600 to-blue-600 text-white flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export function AIAssistant() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-950">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -160,7 +160,7 @@ export function AIAssistant() {
                 </div>
                 {msg.role === "user" && (
                   <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0">
-                    <User className="h-4 w-4 text-slate-600" />
+                    <User className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                   </div>
                 )}
               </div>
@@ -170,7 +170,7 @@ export function AIAssistant() {
                 <div className="h-8 w-8 rounded-full bg-gradient-to-r from-emerald-600 to-blue-600 flex items-center justify-center">
                   <Bot className="h-4 w-4 text-white" />
                 </div>
-                <div className="bg-white border border-slate-200 rounded-lg p-3">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3">
                   <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
                 </div>
               </div>
@@ -179,8 +179,8 @@ export function AIAssistant() {
           </div>
 
           {/* Quick Actions */}
-          <div className="p-3 border-t bg-white">
-            <p className="text-xs text-slate-500 mb-2">Quick Actions</p>
+          <div className="p-3 border-t bg-white dark:bg-slate-900">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Quick Actions</p>
             <div className="flex flex-wrap gap-2">
               {QUICK_ACTIONS.map((action, i) => (
                 <Button
@@ -198,7 +198,7 @@ export function AIAssistant() {
           </div>
 
           {/* Input */}
-          <div className="p-3 border-t bg-white">
+          <div className="p-3 border-t bg-white dark:bg-slate-900">
             <form
               onSubmit={(e) => {
                 e.preventDefault();

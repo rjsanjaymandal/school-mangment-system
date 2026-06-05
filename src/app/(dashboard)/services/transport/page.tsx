@@ -104,47 +104,47 @@ export default function TransportPage() {
       </div>
 
       {activeTab === "vehicles" && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
-            <h3 className="text-lg font-black tracking-tight text-slate-900">Fleet Management</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Fleet Management</h3>
           </div>
           <div className="p-5">
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="bg-slate-50 rounded-xl p-4 h-32 animate-pulse" />
+                  <div key={i} className="bg-slate-50 dark:bg-slate-950 rounded-xl p-4 h-32 animate-pulse" />
                 ))}
               </div>
             ) : vehicles.length === 0 ? (
               <div className="py-16 text-center">
                 <Bus className="h-12 w-12 mx-auto mb-4 text-slate-200" />
-                <p className="text-sm text-slate-500 font-bold tracking-tight">No vehicles registered</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-bold tracking-tight">No vehicles registered</p>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Transport module is ready - add vehicles via database</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {vehicles.map(vehicle => (
-                  <div key={vehicle.id} className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all">
+                  <div key={vehicle.id} className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 hover:shadow-md transition-all">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-blue-100 rounded-xl">
                           <Bus className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-bold text-sm text-slate-900">{vehicle.vehicle_number}</p>
+                          <p className="font-bold text-sm text-slate-900 dark:text-white">{vehicle.vehicle_number}</p>
                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{vehicle.vehicle_type}</p>
                         </div>
                       </div>
-                      <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", vehicle.status === "active" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-50 text-slate-500 border border-slate-200")}>
+                      <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", vehicle.status === "active" ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-50 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800")}>
                         {vehicle.status}
                       </span>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                         <Users className="h-4 w-4" />
                         Capacity: {vehicle.capacity}
                       </div>
-                      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
+                      <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                         <Phone className="h-4 w-4" />
                         {vehicle.driver_name} ({vehicle.driver_phone || "N/A"})
                       </div>
@@ -158,34 +158,34 @@ export default function TransportPage() {
       )}
 
       {activeTab === "routes" && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
-            <h3 className="text-lg font-black tracking-tight text-slate-900">Route Management</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Route Management</h3>
           </div>
           <div className="p-5">
             {loading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="bg-slate-50 rounded-xl p-4 h-24 animate-pulse" />
+                  <div key={i} className="bg-slate-50 dark:bg-slate-950 rounded-xl p-4 h-24 animate-pulse" />
                 ))}
               </div>
             ) : routes.length === 0 ? (
               <div className="py-16 text-center">
                 <Route className="h-12 w-12 mx-auto mb-4 text-slate-200" />
-                <p className="text-sm text-slate-500 font-bold tracking-tight">No routes defined</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-bold tracking-tight">No routes defined</p>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">Add routes via database to start</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {routes.map(route => (
-                  <div key={route.id} className="border border-slate-200 rounded-xl p-4">
+                  <div key={route.id} className="border border-slate-200 dark:border-slate-800 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold text-sm text-slate-900">{route.route_name}</h3>
-                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-200">
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-white">{route.route_name}</h3>
+                      <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800">
                         ₹{route.fare}/month
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500">
+                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500 dark:text-slate-400">
                       <div className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         {route.start_point}

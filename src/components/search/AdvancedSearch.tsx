@@ -183,7 +183,7 @@ export function AdvancedSearch() {
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {query && (
-            <button onClick={handleClear} className="p-1 hover:bg-slate-100 rounded">
+            <button onClick={handleClear} className="p-1 hover:bg-slate-100 dark:hover:bg-slate-900 rounded">
               <X className="h-3 w-3" />
             </button>
           )}
@@ -218,7 +218,7 @@ export function AdvancedSearch() {
             {activeFilters.length > 0 && (
               <button
                 onClick={() => setActiveFilters([])}
-                className="text-xs text-slate-500 hover:underline"
+                className="text-xs text-slate-500 dark:text-slate-400 hover:underline"
               >
                 Clear filters
               </button>
@@ -247,7 +247,7 @@ export function AdvancedSearch() {
                 </div>
                 <div className="flex-1 text-left">
                   <p className="font-medium text-sm">{result.title}</p>
-                  <p className="text-xs text-slate-500">{result.subtitle}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{result.subtitle}</p>
                 </div>
                 <Badge variant="outline" className="text-xs capitalize">
                   {result.type}
@@ -261,7 +261,7 @@ export function AdvancedSearch() {
       {/* No results */}
       {query.length >= 2 && results.length === 0 && !isSearching && (
         <div className="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-slate-900 border rounded-lg shadow-lg p-4 z-50">
-          <p className="text-sm text-slate-500 text-center">No results found for "{query}"</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 text-center">No results found for "{query}"</p>
         </div>
       )}
     </div>

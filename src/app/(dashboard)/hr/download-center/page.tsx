@@ -38,22 +38,22 @@ const modules = [
 ];
 
 const colorClasses: Record<string, { bg: string; text: string; border: string }> = {
-    blue: { bg: "bg-blue-50", text: "text-blue-600", border: "border-l-blue-500" },
-    emerald: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-l-emerald-500" },
-    purple: { bg: "bg-purple-50", text: "text-purple-600", border: "border-l-purple-500" },
-    amber: { bg: "bg-amber-50", text: "text-amber-600", border: "border-l-amber-500" },
+    blue: { bg: "bg-blue-50 dark:bg-blue-950/20", text: "text-blue-600 dark:text-blue-400", border: "border-l-blue-500" },
+    emerald: { bg: "bg-emerald-50 dark:bg-emerald-950/20", text: "text-emerald-600 dark:text-emerald-400", border: "border-l-emerald-500" },
+    purple: { bg: "bg-purple-50 dark:bg-purple-950/20", text: "text-purple-600 dark:text-purple-400", border: "border-l-purple-500" },
+    amber: { bg: "bg-amber-50 dark:bg-amber-950/20", text: "text-amber-600 dark:text-amber-400", border: "border-l-amber-500" },
 };
 
 export default function DownloadCenterPage() {
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-700">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-50 rounded-xl border-l-4 border-emerald-500">
-                    <Printer className="h-5 w-5 text-emerald-600" />
+                <div className="p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border-l-4 border-emerald-500">
+                    <Printer className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                    <h1 className="text-lg font-black tracking-tight text-slate-900">Download Center</h1>
-                    <p className="text-sm text-slate-500">Generate and print documents</p>
+                    <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Download Center</h1>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Generate and print documents</p>
                 </div>
             </div>
 
@@ -62,21 +62,21 @@ export default function DownloadCenterPage() {
                     const colors = colorClasses[module.color];
                     return (
                         <Link key={module.title} href={module.href}>
-                            <div className={`bg-white border border-slate-200 rounded-xl shadow-sm border-l-4 ${colors.border} hover:shadow-md transition-shadow h-full`}>
+                            <div className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm border-l-4 ${colors.border} hover:shadow-md transition-shadow h-full`}>
                                 <div className="p-4">
                                     <div className="flex items-start justify-between mb-3">
                                         <div className={`p-3 rounded-xl ${colors.bg}`}>
                                             <module.icon className={`h-6 w-6 ${colors.text}`} />
                                         </div>
-                                        <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", "bg-slate-100 text-slate-600")}>
+                                        <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400")}>
                                             {module.stats}
                                         </span>
                                     </div>
 
-                                    <h3 className="text-lg font-black tracking-tight text-slate-900 mb-2">
+                                    <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white mb-2">
                                         {module.title}
                                     </h3>
-                                    <p className="text-sm text-slate-500 mb-4">
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
                                         {module.description}
                                     </p>
 

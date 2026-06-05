@@ -132,10 +132,10 @@ export function NotificationBell() {
             <Button
                 variant="ghost"
                 size="icon"
-                className="relative h-9 w-9 rounded-xl hover:bg-slate-100 transition-colors"
+                className="relative h-9 w-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
                 onClick={() => setShowPanel(!showPanel)}
             >
-                <Bell className="h-5 w-5 text-slate-600" />
+                <Bell className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                 {unreadCount > 0 && (
                     <span className="absolute -top-0.5 -right-0.5 h-5 w-5 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
                         {unreadCount > 9 ? "9+" : unreadCount}
@@ -144,11 +144,11 @@ export function NotificationBell() {
             </Button>
 
             {showPanel && (
-                <div className="absolute top-full mt-2 right-0 w-96 bg-white rounded-2xl border border-slate-200 shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-200">
-                    <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-slate-50">
+                <div className="absolute top-full mt-2 right-0 w-96 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl z-50 overflow-hidden animate-in slide-in-from-top-2 duration-200">
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-blue-50 to-slate-50">
                         <div className="flex items-center gap-2">
                             <Bell className="h-4 w-4 text-blue-500" />
-                            <h3 className="font-bold text-sm text-slate-900">Notifications</h3>
+                            <h3 className="font-bold text-sm text-slate-900 dark:text-white">Notifications</h3>
                             {unreadCount > 0 && (
                                 <Badge className="bg-blue-500 text-white text-[10px]">{unreadCount} new</Badge>
                             )}
@@ -168,7 +168,7 @@ export function NotificationBell() {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-7 w-7 rounded-md hover:bg-slate-100"
+                                className="h-7 w-7 rounded-md hover:bg-slate-100 dark:hover:bg-slate-900"
                                 onClick={() => setShowPanel(false)}
                             >
                                 <X className="h-4 w-4 text-slate-400" />
@@ -221,7 +221,7 @@ export function NotificationBell() {
                                                             {format(new Date(notification.created_at), "HH:mm")}
                                                         </span>
                                                     </div>
-                                                    <p className="text-xs text-slate-500 truncate">{notification.message}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{notification.message}</p>
                                                     {!notification.is_read && (
                                                         <div className="mt-2 flex items-center gap-2">
                                                             <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
@@ -237,11 +237,11 @@ export function NotificationBell() {
                         )}
                     </div>
 
-                    <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+                    <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
                         <Button
                             variant="ghost"
                             size="sm"
-                            className="w-full text-xs text-slate-500 hover:text-slate-700"
+                            className="w-full text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700"
                             onClick={() => {
                                 setShowPanel(false);
                             }}

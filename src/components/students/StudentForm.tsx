@@ -88,55 +88,55 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
         <div>
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Full Name</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Full Name</label>
           <Input
             placeholder="Enter student name"
             value={formState.full_name}
             onChange={(e) => handleChange("full_name", e.target.value)}
-            className="h-12 rounded-xl border-slate-200 font-bold text-xs tracking-tight"
+            className="h-12 rounded-xl border-slate-200 dark:border-slate-800 font-bold text-xs tracking-tight"
           />
           {errors.full_name && <p className="text-[9px] font-bold text-rose-500 uppercase ml-1 mt-1">{errors.full_name}</p>}
         </div>
         <div>
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Email Address</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Email Address</label>
           <Input
             placeholder="student@example.com"
             value={formState.email}
             onChange={(e) => handleChange("email", e.target.value)}
-            className="h-12 rounded-xl border-slate-200 font-bold text-xs tracking-tight"
+            className="h-12 rounded-xl border-slate-200 dark:border-slate-800 font-bold text-xs tracking-tight"
           />
           {errors.email && <p className="text-[9px] font-bold text-rose-500 uppercase ml-1 mt-1">{errors.email}</p>}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Admission #</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Admission #</label>
             <Input
               placeholder="ADM-001"
               value={formState.admission_number}
               onChange={(e) => handleChange("admission_number", e.target.value)}
-              className="h-12 rounded-xl border-slate-200 font-mono font-black text-xs"
+              className="h-12 rounded-xl border-slate-200 dark:border-slate-800 font-mono font-black text-xs"
             />
             {errors.admission_number && <p className="text-[9px] font-bold text-rose-500 uppercase ml-1 mt-1">{errors.admission_number}</p>}
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Roll #</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Roll #</label>
             <Input
               placeholder="00"
               value={formState.roll_number}
               onChange={(e) => handleChange("roll_number", e.target.value)}
-              className="h-12 rounded-xl border-slate-200 font-mono font-black text-xs"
+              className="h-12 rounded-xl border-slate-200 dark:border-slate-800 font-mono font-black text-xs"
             />
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
             <select
-              className="w-full h-12 rounded-xl border border-slate-200 px-3 text-xs font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+              className="w-full h-12 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
               value={formState.class_id}
               onChange={(e) => handleChange("class_id", e.target.value)}
             >
-              <option value="">Select class</option>
+              <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select class</option>
               {classes.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>
               ))}
             </select>
           </div>
@@ -146,7 +146,7 @@ export function StudentForm({ initialData, classes, onSuccess }: StudentFormProp
         <button
           type="button"
           onClick={() => onSuccess()}
-          className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all"
+          className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
         >
           Cancel
         </button>

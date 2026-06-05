@@ -549,7 +549,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             <Calendar className="h-4 w-4 text-blue-600" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black tracking-tight text-slate-900">
+                            <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
                                 {viewMode === "class" ? "Class Schedule" : "Teacher Schedule"}
                             </h2>
                             <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-0.5">
@@ -580,7 +580,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                 <div className="flex flex-wrap items-center gap-3">
                     {/* View Mode Toggle */}
                     {isAdminOrTeacher && (
-                        <div className="flex items-center bg-slate-100 p-0.5 rounded-xl">
+                        <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl">
                             <button onClick={() => setViewMode("class")}
                                 className={cn("h-9 px-4 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all", viewMode === "class" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700")}>
                                 <LayoutGrid className="h-3.5 w-3.5 inline mr-1.5" /> Class
@@ -594,27 +594,27 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
 
                     {viewMode === "class" ? (
                         <select value={selectedClass} onChange={(e) => handleClassChange(e.target.value)}
-                            className="h-11 rounded-xl border border-slate-200 px-4 text-xs font-bold text-slate-700 bg-white focus:border-blue-300 outline-none min-w-[200px]">
-                            <option value="">Select Class...</option>
-                            {classes.map((c: any) => (<option key={c.id} value={c.id}>{c.name}</option>))}
+                            className="h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-4 text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none min-w-[200px]">
+                            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Class...</option>
+                            {classes.map((c: any) => (<option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>))}
                         </select>
                     ) : (
                         <select value={selectedTeacherId} onChange={(e) => setSelectedTeacher(e.target.value)}
-                            className="h-11 rounded-xl border border-slate-200 px-4 text-xs font-bold text-slate-700 bg-white focus:border-blue-300 outline-none min-w-[200px]">
-                            <option value="">Select Teacher...</option>
-                            {teachers.map((t: any) => (<option key={t.id} value={t.id}>{t.profile?.full_name}</option>))}
+                            className="h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-4 text-xs font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none min-w-[200px]">
+                            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Teacher...</option>
+                            {teachers.map((t: any) => (<option key={t.id} value={t.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{t.profile?.full_name}</option>))}
                         </select>
                     )}
 
                     <button onClick={handlePrint}
-                        className="h-11 w-11 rounded-xl border border-slate-200 bg-white flex items-center justify-center hover:bg-slate-50 transition-all no-print">
-                        <Printer className="h-4 w-4 text-slate-500" />
+                        className="h-11 w-11 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-900 transition-all no-print">
+                        <Printer className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                     </button>
 
                     {isAdminOrTeacher && viewMode === "class" && (
                         <>
                             <button onClick={handleBulkGenerate} disabled={bulkGenerating}
-                                className="h-11 px-4 rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all disabled:opacity-50 flex items-center gap-2">
+                                className="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all disabled:opacity-50 flex items-center gap-2">
                                 {bulkGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LayoutGrid className="h-4 w-4" />}
                                 Bulk Generate
                             </button>
@@ -626,12 +626,12 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className="h-11 w-11 rounded-xl border border-slate-200 bg-white flex items-center justify-center hover:bg-slate-50 transition-all no-print">
-                                        <MoreVertical className="h-4 w-4 text-slate-500" />
+                                    <button className="h-11 w-11 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-900 transition-all no-print">
+                                        <MoreVertical className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                                     </button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-slate-200">
-                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-2 py-1.5">Manage Timetable</DropdownMenuLabel>
+                                <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl border-slate-200 dark:border-slate-800">
+                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 px-2 py-1.5">Manage Timetable</DropdownMenuLabel>
                                     <DropdownMenuItem className="rounded-lg gap-2 text-sm py-2 cursor-pointer"
                                         onClick={() => {
                                             if (confirm("Are you sure you want to clear all slots for this class?")) {
@@ -658,25 +658,25 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             </button>
                             <Dialog open={isAddSlotOpen} onOpenChange={setIsAddSlotOpen}>
                             <DialogContent className="sm:max-w-[500px] rounded-2xl">
-                                <DialogHeader className="p-6 border-b border-slate-100">
+                                <DialogHeader className="p-6 border-b border-slate-100 dark:border-slate-800">
                                     <DialogTitle className="text-lg font-black tracking-tight">Add Schedule Slot</DialogTitle>
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">Configure the class schedule for {selectedDay}</p>
                                 </DialogHeader>
                                 <div className="p-6 space-y-5">
-                                    <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 flex items-start gap-4">
-                                        <div className="p-2 bg-blue-100 rounded-lg">
-                                            <Calendar className="h-5 w-5 text-blue-600" />
+                                    <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 flex items-start gap-4">
+                                        <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
+                                            <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">Target</p>
-                                            <p className="font-bold text-lg text-slate-900">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Target</p>
+                                            <p className="font-bold text-lg text-slate-900 dark:text-white">
                                                 {selectedDay} <span className="text-slate-300 mx-1">/</span> {classes.find((c: any) => c.id === selectedClass)?.name || "—"}
                                             </p>
                                         </div>
                                     </div>
                                     
                                     {(availableSubjects.length === 0 || teachers.length === 0) && (
-                                        <div className="p-3 rounded-xl bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 flex items-start gap-2">
+                                        <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 text-xs font-bold border border-amber-200 dark:border-amber-900/30 flex items-start gap-2">
                                             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
                                             <p>
                                                 {availableSubjects.length === 0 && teachers.length === 0 
@@ -689,32 +689,32 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                     )}
 
                                     {assignedSubjectIds.length > 0 && (
-                                        <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 text-[10px] font-semibold text-blue-600">
+                                        <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 text-[10px] font-semibold text-blue-600 dark:text-blue-400">
                                             Subject options are limited to the subjects assigned to this class for the active academic year.
                                         </div>
                                     )}
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Subject</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Subject</label>
                                             <select value={slotForm.subject_id} onChange={(e) => setSlotForm({ ...slotForm, subject_id: e.target.value })}
-                                                className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                                <option value="">Select Subject...</option>
-                                                {availableSubjects.map((s: any) => (<option key={s.id} value={s.id}>{s.name}</option>))}
+                                                className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                                <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Subject...</option>
+                                                {availableSubjects.map((s: any) => (<option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{s.name}</option>))}
                                             </select>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Teacher</label>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Teacher</label>
                                             <select value={slotForm.teacher_id} onChange={(e) => setSlotForm({ ...slotForm, teacher_id: e.target.value })}
-                                                className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                                <option value="">Select Teacher...</option>
+                                                className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                                <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Teacher...</option>
                                                 {teachers.map((t: any) => {
                                                     const subject = subjects.find(sub => sub.id === slotForm.subject_id);
                                                     const isExpert = subject?.expertise?.required_tags?.some((tag: string) => t.expertise_tags?.includes(tag));
                                                     const teacherLoad = teacherLoadData.find(ld => ld.teacher_id === t.id);
                                                     const isOverloaded = teacherLoad?.is_overloaded;
                                                     return (
-                                                        <option key={t.id} value={t.id} className={cn(isOverloaded && "text-rose-600", isExpert && "text-emerald-600 font-bold")}>
+                                                        <option key={t.id} value={t.id} className={cn("bg-white dark:bg-slate-900 text-slate-900 dark:text-white", isOverloaded && "text-rose-600 dark:text-rose-400", isExpert && "text-emerald-600 dark:text-emerald-400 font-bold")}>
                                                             {t.profile?.full_name}{isExpert ? " (Expert)" : ""}{isOverloaded ? " (Overloaded)" : ""} — {teacherLoad?.daily_hours || 0}/{t.max_daily_hours || 6}h
                                                         </option>
                                                     );
@@ -725,29 +725,29 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
 
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Start Time</label>
-                                            <Input type="time" className="h-11 rounded-xl border-slate-200" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Start Time</label>
+                                            <Input type="time" className="h-11 rounded-xl border-slate-200 dark:border-slate-800" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">End Time</label>
-                                            <Input type="time" className="h-11 rounded-xl border-slate-200" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">End Time</label>
+                                            <Input type="time" className="h-11 rounded-xl border-slate-200 dark:border-slate-800" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
                                         </div>
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Room Number</label>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Room Number</label>
                                         <select value={slotForm.room_number} onChange={(e) => setSlotForm({ ...slotForm, room_number: e.target.value })}
-                                            className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                            <option value="">Select Room...</option>
+                                            className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                            <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Room...</option>
                                             {allRooms.map((room) => {
                                                 const isOccupied = occupiedRooms.has(room);
                                                 return (
-                                                    <option key={room} value={room} disabled={isOccupied} className={cn(isOccupied && "text-rose-500")}>
+                                                    <option key={room} value={room} disabled={isOccupied} className={cn("bg-white dark:bg-slate-900 text-slate-900 dark:text-white", isOccupied && "text-rose-500 dark:text-rose-400")}>
                                                         {room}{isOccupied ? " (Occupied)" : ""}
                                                     </option>
                                                 );
                                             })}
-                                            {allRooms.length === 0 && <option value="" disabled>No rooms defined in classes</option>}
+                                            {allRooms.length === 0 && <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500">No rooms defined in classes</option>}
                                         </select>
                                     </div>
 
@@ -772,11 +772,14 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             <div className="h-[200px]">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={subjectDistribution}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#88888815" vertical={false} />
-                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#88888860", fontSize: 10, fontWeight: "600" }} />
-                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888840", fontSize: 10 }} />
+                                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: "600" }} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} />
                                         <RechartsTooltip cursor={{ fill: "#ffffff03" }}
-                                            contentStyle={{ backgroundColor: "white", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }} />
+                                            contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                            labelStyle={{ color: "var(--foreground)" }}
+                                            itemStyle={{ color: "var(--foreground)" }}
+                                        />
                                         <Bar dataKey="value" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={32} />
                                     </BarChart>
                                 </ResponsiveContainer>
@@ -794,12 +797,12 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                     teacherLoadData.slice(0, 6).map((t: any) => (
                                         <div key={t.teacher_id} className="space-y-1.5">
                                             <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-bold truncate max-w-[120px] text-slate-700">{t.teacher_name}</span>
+                                                <span className="text-[10px] font-bold truncate max-w-[120px] text-slate-700 dark:text-slate-300">{t.teacher_name}</span>
                                                 <span className={cn("text-[9px] font-black", t.is_overloaded ? "text-rose-500" : "text-slate-400")}>
                                                     {t.daily_hours}/{t.max_daily_hours}h
                                                 </span>
                                             </div>
-                                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                            <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                                 <div className={cn("h-full rounded-full transition-all duration-700", t.is_overloaded ? "bg-rose-500" : t.utilization_pct > 80 ? "bg-amber-500" : "bg-blue-500")}
                                                     style={{ width: `${Math.min(100, t.utilization_pct)}%` }} />
                                             </div>
@@ -891,39 +894,39 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                                             <BookOpenCheck className={cn("w-4 h-4", s.is_proxy ? "text-amber-600" : "text-blue-600")}
                                                                 style={!s.is_proxy && s.subject?.name ? { color: getSubjectColor(s.subject.name) } : {}} />
                                                         </div>
-                                                        <h4 className="font-bold text-sm text-slate-900 truncate">{s.subject?.name || "No Subject"}</h4>
+                                                        <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate">{s.subject?.name || "No Subject"}</h4>
                                                     </div>
                                                     {isAdminOrTeacher && viewMode === "class" && (
                                                         <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-all duration-200 shrink-0">
                                                             <button onClick={() => handleEditClick(s)}
-                                                                className="h-7 w-7 rounded-lg bg-slate-100 hover:bg-blue-100 flex items-center justify-center transition-colors">
-                                                                <Settings className="w-3.5 h-3.5 text-slate-500" />
+                                                                className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-100 flex items-center justify-center transition-colors">
+                                                                <Settings className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                                                             </button>
                                                             <button onClick={() => handleDeleteSlot(s.id)}
-                                                                className="h-7 w-7 rounded-lg bg-slate-100 hover:bg-red-100 flex items-center justify-center transition-colors">
-                                                                <Trash2 className="w-3.5 h-3.5 text-slate-500 hover:text-red-500" />
+                                                                className="h-7 w-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-100 flex items-center justify-center transition-colors">
+                                                                <Trash2 className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 hover:text-red-500" />
                                                             </button>
                                                         </div>
                                                     )}
                                                 </div>
                                                 <div className="space-y-2.5">
-                                                    <div className="flex items-center text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1.5 rounded-lg w-fit">
+                                                    <div className="flex items-center text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg w-fit">
                                                         <Clock className="w-3 h-3 mr-1.5 text-slate-400" />
                                                         {s.start_time?.substring(0, 5)} - {s.end_time?.substring(0, 5)}
                                                     </div>
                                                     <div className="flex items-center gap-2.5">
-                                                        <div className="h-8 w-8 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden shrink-0">
+                                                        <div className="h-8 w-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden shrink-0">
                                                             {s.teacher?.profile?.avatar_url ? (<img src={s.teacher.profile.avatar_url} className="h-full w-full object-cover" />) : (<UserCircle className="w-4 h-4 text-slate-400" />)}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-[11px] font-bold text-slate-700 truncate">
+                                                            <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 truncate">
                                                                 {viewMode === "class" ? (s.teacher?.profile?.full_name || "Unassigned") : s.class_name}
                                                             </p>
                                                             {s.is_proxy && <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest flex items-center"><Zap className="w-2.5 h-2.5 mr-1 animate-pulse" /> Proxy</p>}
                                                         </div>
                                                     </div>
                                                     {s.room_number && (
-                                                        <div className="text-[9px] font-bold text-slate-400 border-t border-slate-100 pt-2 mt-2 flex items-center gap-1.5">
+                                                        <div className="text-[9px] font-bold text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-2 mt-2 flex items-center gap-1.5">
                                                             <MapPin className="w-3 h-3" /> Room {s.room_number}
                                                         </div>
                                                     )}
@@ -1029,7 +1032,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             <div className="h-7 w-7 rounded-lg bg-blue-100 flex items-center justify-center">
                                 <Calendar className="h-3.5 w-3.5 text-blue-600" />
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Week Overview</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Week Overview</span>
                             <span className="text-[9px] font-bold text-slate-400 ml-auto">{filledSlotCount} slots filled across {WEEKDAYS.length} days</span>
                         </div>
                         <div className="grid grid-cols-6 gap-3">
@@ -1063,9 +1066,9 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                                 {!hasConflicts && validationIssues.length === 0 ? "No Conflicts" : `${conflictCount + validationIssues.length} Conflict(s)`}
                             </span>
                         </div>
-                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white">
+                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                             <Activity className="h-4 w-4 text-slate-400" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{totalSlots} Total Slots</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400">{totalSlots} Total Slots</span>
                         </div>
                         <div className={cn("flex items-center gap-2 px-4 py-2.5 rounded-xl border",
                             todayProxies.length > 0 ? "bg-amber-50 border-amber-200" : "bg-white border-slate-200")}>
@@ -1079,7 +1082,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
             </div>
 
             {/* Hidden Print Content */}
-            <div className="print-only hidden p-10 bg-white text-black min-h-screen">
+            <div className="print-only hidden p-10 bg-white dark:bg-slate-900 text-black min-h-screen">
                 <div className="flex justify-between items-end mb-10 border-b-2 border-black pb-6">
                     <div>
                         <h1 className="text-4xl font-black uppercase tracking-tighter">Academic Timetable</h1>
@@ -1118,7 +1121,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
             {/* Edit Slot Dialog */}
             <Dialog open={isEditSlotOpen} onOpenChange={setIsEditSlotOpen}>
                 <DialogContent className="sm:max-w-[500px] rounded-2xl">
-                    <DialogHeader className="p-6 border-b border-slate-100">
+                    <DialogHeader className="p-6 border-b border-slate-100 dark:border-slate-800">
                         <DialogTitle className="text-lg font-black tracking-tight">Edit Schedule Slot</DialogTitle>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-1">Modify entry for {selectedDay}</p>
                     </DialogHeader>
@@ -1129,7 +1132,7 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
                             </div>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-amber-600">Editing</p>
-                                <p className="font-bold text-lg text-slate-900">
+                                <p className="font-bold text-lg text-slate-900 dark:text-white">
                                     {selectedDay} <span className="text-slate-300 mx-1">/</span> {editingSlot?.subject?.name || "—"}
                                 </p>
                             </div>
@@ -1137,42 +1140,42 @@ export function TimetableDashboard({ timetables, classes, subjects, teachers, cl
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Subject</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Subject</label>
                                 <select value={slotForm.subject_id} onChange={(e) => setSlotForm({ ...slotForm, subject_id: e.target.value })}
-                                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                    <option value="">Select Subject...</option>
-                                    {availableSubjects.map((sub: any) => (<option key={sub.id} value={sub.id}>{sub.name}</option>))}
+                                    className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                    <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Subject...</option>
+                                    {availableSubjects.map((sub: any) => (<option key={sub.id} value={sub.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{sub.name}</option>))}
                                 </select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Teacher</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Teacher</label>
                                 <select value={slotForm.teacher_id} onChange={(e) => setSlotForm({ ...slotForm, teacher_id: e.target.value })}
-                                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                    <option value="">Select Teacher...</option>
-                                    {teachers.map((t: any) => (<option key={t.id} value={t.id}>{t.profile?.full_name}</option>))}
+                                    className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                    <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Teacher...</option>
+                                    {teachers.map((t: any) => (<option key={t.id} value={t.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{t.profile?.full_name}</option>))}
                                 </select>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Start Time</label>
-                                <Input type="time" className="h-11 rounded-xl border-slate-200" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Start Time</label>
+                                <Input type="time" className="h-11 rounded-xl border-slate-200 dark:border-slate-800" value={slotForm.start_time} onChange={(e) => setSlotForm({ ...slotForm, start_time: e.target.value })} />
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">End Time</label>
-                                <Input type="time" className="h-11 rounded-xl border-slate-200" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">End Time</label>
+                                <Input type="time" className="h-11 rounded-xl border-slate-200 dark:border-slate-800" value={slotForm.end_time} onChange={(e) => setSlotForm({ ...slotForm, end_time: e.target.value })} />
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Room Number</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block">Room Number</label>
                             <select value={slotForm.room_number} onChange={(e) => setSlotForm({ ...slotForm, room_number: e.target.value })}
-                                className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                <option value="">Select Room...</option>
+                                className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Room...</option>
                                 {allRooms.map((room) => {
                                     const isOccupied = occupiedRooms.has(room);
-                                    return (<option key={room} value={room} disabled={isOccupied}>{room}{isOccupied ? " (Occupied)" : ""}</option>);
+                                    return (<option key={room} value={room} disabled={isOccupied} className={cn("bg-white dark:bg-slate-900 text-slate-900 dark:text-white", isOccupied && "text-rose-500 dark:text-rose-400")}>{room}{isOccupied ? " (Occupied)" : ""}</option>);
                                 })}
                             </select>
                         </div>

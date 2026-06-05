@@ -67,11 +67,11 @@ export function ActivityTimeline() {
                 <activity.icon className={`h-2.5 w-2.5 ${activity.color.split(" ")[0]}`} />
               </div>
               
-              <div className="p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+              <div className="p-4 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-medium text-slate-900">{activity.title}</p>
-                    <p className="text-sm text-slate-600 mt-1">{activity.description}</p>
+                    <p className="font-medium text-slate-900 dark:text-white">{activity.title}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{activity.description}</p>
                   </div>
                   <span className="text-xs text-slate-400 flex items-center gap-1 whitespace-nowrap">
                     <Clock className="h-3 w-3" />

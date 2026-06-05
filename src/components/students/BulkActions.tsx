@@ -86,30 +86,30 @@ export function BulkActions({ selectedIds, onClearSelection, onRefresh }: BulkAc
                     </div>
                     <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected</p>
-                        <p className="text-sm font-black text-white">{selectedIds.length} <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Students</span></p>
+                        <p className="text-sm font-black text-white">{selectedIds.length} <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Students</span></p>
                     </div>
                 </div>
                 
                 <div className="flex items-center gap-3">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button className="h-11 px-6 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 gap-2">
+                            <Button className="h-11 px-6 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-900 dark:text-white font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 gap-2">
                                 <Activity className="h-4 w-4" />
                                 Update Status
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 border-none shadow-2xl backdrop-blur-xl bg-white/95">
                             <DropdownMenuLabel className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-3 py-2">Select Status</DropdownMenuLabel>
-                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50" onClick={() => handleBulkStatusChange("active")}>
+                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900" onClick={() => handleBulkStatusChange("active")}>
                                 <UserCheck className="h-4 w-4 text-emerald-500" /> Set Active
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50" onClick={() => handleBulkStatusChange("inactive")}>
+                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900" onClick={() => handleBulkStatusChange("inactive")}>
                                 <UserX className="h-4 w-4 text-slate-400" /> Set Inactive
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50" onClick={() => handleBulkStatusChange("transferred")}>
+                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900" onClick={() => handleBulkStatusChange("transferred")}>
                                 <ArrowRight className="h-4 w-4 text-amber-500" /> Mark Transferred
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50" onClick={() => handleBulkStatusChange("graduated")}>
+                            <DropdownMenuItem className="rounded-xl gap-3 py-3 text-xs font-bold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900" onClick={() => handleBulkStatusChange("graduated")}>
                                 <RefreshCw className="h-4 w-4 text-blue-500" /> Mark Graduated
                             </DropdownMenuItem>
                         </DropdownMenuContent>

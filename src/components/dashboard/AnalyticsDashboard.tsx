@@ -125,7 +125,7 @@ export function AnalyticsDashboard({
                         )}
                     >
                         <div className="flex justify-between items-start mb-3">
-                            <p className="text-xs font-medium text-slate-500 uppercase">{m.title}</p>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase">{m.title}</p>
                             {m.trend !== undefined && (
                                 <div className={cn(
                                     "flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold",
@@ -136,13 +136,13 @@ export function AnalyticsDashboard({
                                 </div>
                             )}
                         </div>
-                        <h3 className="text-xl font-semibold text-slate-900">{m.value}</h3>
+                        <h3 className="text-xl font-semibold text-slate-900 dark:text-white">{m.value}</h3>
                         <p className="text-xs text-slate-400 mt-1">{m.sub}</p>
                         
                         {m.progress !== undefined && (
                             <div className="mt-4">
-                                <Progress value={m.progress} className="h-2 bg-slate-100" />
-                                <p className="text-xs text-slate-500 mt-1">{m.progress.toFixed(1)}%</p>
+                                <Progress value={m.progress} className="h-2 bg-slate-100 dark:bg-slate-800" />
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{m.progress.toFixed(1)}%</p>
                             </div>
                         )}
                     </div>
@@ -174,7 +174,7 @@ export function AnalyticsDashboard({
                                         style={{ height: `${d.actual}%` }} 
                                     />
                                 </div>
-                                <span className="text-xs text-slate-500 uppercase">{months[i]}</span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400 uppercase">{months[i]}</span>
                             </div>
                         ))}
                     </div>
@@ -192,7 +192,7 @@ export function AnalyticsDashboard({
                                 <div className="flex items-start gap-2">
                                     <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
                                     <div>
-                                        <p className="text-sm font-semibold text-slate-900">{alerts.lowAttendanceCount} Students at Risk</p>
+                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">{alerts.lowAttendanceCount} Students at Risk</p>
                                         <p className="text-xs text-red-600 mt-1">Attendance Below 75%</p>
                                         <div className="flex flex-wrap gap-1 mt-2">
                                             {alerts.lowAttendanceNames.slice(0, 3).map(name => (
@@ -211,11 +211,11 @@ export function AnalyticsDashboard({
                                 <div className="flex items-start gap-2">
                                     <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5" />
                                     <div>
-                                        <p className="text-sm font-semibold text-slate-900">Low Inventory</p>
+                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">Low Inventory</p>
                                         <div className="space-y-1 mt-2">
                                             {alerts.lowInventory.map(item => (
                                                 <div key={item} className="flex items-center justify-between text-xs">
-                                                    <span className="text-slate-600">{item}</span>
+                                                    <span className="text-slate-600 dark:text-slate-400">{item}</span>
                                                     <span className="text-amber-600 font-medium">Restock</span>
                                                 </div>
                                             ))}
@@ -225,10 +225,10 @@ export function AnalyticsDashboard({
                             </div>
                         )}
 
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                <span className="text-xs font-medium text-slate-500">Services Active</span>
+                                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Services Active</span>
                             </div>
                         </div>
                     </div>
@@ -240,36 +240,36 @@ export function AnalyticsDashboard({
                 <ERPCard title="Library" description="Book availability" color="emerald">
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-sm text-slate-600">Available</span>
-                            <span className="text-sm font-semibold text-slate-900">{totalBooks - activeLoans}</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Available</span>
+                            <span className="text-sm font-semibold text-slate-900 dark:text-white">{totalBooks - activeLoans}</span>
                         </div>
                         <Progress value={totalBooks > 0 ? ((totalBooks - activeLoans) / totalBooks) * 100 : 100} className="h-2" />
-                        <p className="text-xs text-slate-500">{totalBooks} total books</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{totalBooks} total books</p>
                     </div>
                 </ERPCard>
 
                 <ERPCard title="Revenue" description="Fee collection" color="purple">
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-sm text-slate-600">Collected</span>
-                            <span className="text-sm font-semibold text-slate-900">₹{totalFeesCollected.toLocaleString()}</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Collected</span>
+                            <span className="text-sm font-semibold text-slate-900 dark:text-white">₹{totalFeesCollected.toLocaleString()}</span>
                         </div>
                         <Progress value={collectionProgress} className="h-2" />
-                        <p className="text-xs text-slate-500">{collectionProgress.toFixed(1)}% of target</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{collectionProgress.toFixed(1)}% of target</p>
                     </div>
                 </ERPCard>
 
                 <ERPCard title="Conduct" description="Student behavior" color="blue">
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-sm text-slate-600">Merits</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Merits</span>
                             <span className="text-sm font-semibold text-emerald-600">+{merits}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-sm text-slate-600">Demerits</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">Demerits</span>
                             <span className="text-sm font-semibold text-red-600">-{demerits}</span>
                         </div>
-                        <p className="text-xs text-slate-500">Total: {merits + demerits} records</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Total: {merits + demerits} records</p>
                     </div>
                 </ERPCard>
             </div>

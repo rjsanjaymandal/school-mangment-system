@@ -91,7 +91,7 @@ export function RoleSelection() {
                 <div className="text-center space-y-8 max-w-2xl mx-auto">
                     <div className="inline-flex items-center gap-x-3 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm">
                         <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">System Access</span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">System Access</span>
                     </div>
                     <div className="space-y-4">
                         <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-[1.1]">

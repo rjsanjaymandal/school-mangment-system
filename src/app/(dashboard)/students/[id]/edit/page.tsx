@@ -150,7 +150,7 @@ export default function EditStudentPage() {
                     actions={
                         <div className="flex items-center gap-3">
                             <Link href={`/students/${id}`}>
-                                <button type="button" className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all">
+                                <button type="button" className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
                                     <X className="h-4 w-4 mr-2 inline-block" /> Cancel
                                 </button>
                             </Link>
@@ -186,32 +186,32 @@ export default function EditStudentPage() {
                     >
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2">
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Admission Number</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Admission Number</label>
                                 <div className="relative">
                                     <div className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500/40 group-focus-within:text-emerald-500 transition-colors">
                                         <FileText className="h-4 w-4" />
                                     </div>
                                     <Input 
-                                        className="h-12 pl-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/20 transition-all"
+                                        className="h-12 pl-11 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/20 transition-all"
                                         value={formData.admission_number}
                                         onChange={(e) => setFormData(p => ({ ...p, admission_number: e.target.value }))}
                                     />
                                 </div>
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Roll Number</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Roll Number</label>
                                 <Input 
-                                    className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/20 transition-all"
+                                    className="h-12 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/20 transition-all"
                                     value={formData.roll_number}
                                     onChange={(e) => setFormData(p => ({ ...p, roll_number: e.target.value }))}
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class Stream</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class Stream</label>
                                 <select 
                                     value={formData.class_id}
                                     onChange={(e) => setFormData(p => ({ ...p, class_id: e.target.value }))}
-                                    className="w-full h-12 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-emerald-500/20 outline-none"
+                                    className="w-full h-12 rounded-xl border border-slate-100 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-emerald-500/20 outline-none"
                                 >
                                     <option value="" disabled>Select Class</option>
                                     {classes.map((c: any) => (
@@ -231,28 +231,28 @@ export default function EditStudentPage() {
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-2">
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">First Name</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">First Name</label>
                                 <Input 
-                                    className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
+                                    className="h-12 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
                                     value={formData.first_name}
                                     onChange={(e) => setFormData(p => ({ ...p, first_name: e.target.value }))}
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Last Name</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Last Name</label>
                                 <Input 
-                                    className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
+                                    className="h-12 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
                                     value={formData.last_name}
                                     onChange={(e) => setFormData(p => ({ ...p, last_name: e.target.value }))}
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2 group">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Gender</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Gender</label>
                                     <select 
                                         value={formData.gender}
                                         onChange={(e) => setFormData(p => ({ ...p, gender: e.target.value }))}
-                                        className="w-full h-12 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-blue-500/20 outline-none"
+                                        className="w-full h-12 rounded-xl border border-slate-100 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-500/20 outline-none"
                                     >
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
@@ -260,11 +260,11 @@ export default function EditStudentPage() {
                                     </select>
                                 </div>
                                 <div className="space-y-2 group">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Blood Group</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Blood Group</label>
                                     <select 
                                         value={formData.blood_group}
                                         onChange={(e) => setFormData(p => ({ ...p, blood_group: e.target.value }))}
-                                        className="w-full h-12 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-blue-500/20 outline-none"
+                                        className="w-full h-12 rounded-xl border border-slate-100 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-blue-500/20 outline-none"
                                     >
                                         <option value="" disabled>Select</option>
                                         {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
@@ -274,11 +274,11 @@ export default function EditStudentPage() {
                                 </div>
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Date of Birth</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Date of Birth</label>
                                 <div className="relative">
                                     <Input 
                                         type="date"
-                                        className="h-12 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
+                                        className="h-12 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all"
                                         value={formData.date_of_birth}
                                         onChange={(e) => setFormData(p => ({ ...p, date_of_birth: e.target.value }))}
                                     />
@@ -298,11 +298,11 @@ export default function EditStudentPage() {
                     >
                         <div className="space-y-6 p-1">
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Category</label>
                                 <select 
                                     value={formData.category}
                                     onChange={(e) => setFormData(p => ({ ...p, category: e.target.value }))}
-                                    className="w-full h-11 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-slate-500/20 outline-none"
+                                    className="w-full h-11 rounded-xl border border-slate-100 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-slate-500/20 outline-none"
                                 >
                                     <option value="General">General</option>
                                     <option value="OBC">OBC</option>
@@ -311,19 +311,19 @@ export default function EditStudentPage() {
                                 </select>
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Religion</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Religion</label>
                                 <Input 
-                                    className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-slate-500/10 transition-all"
+                                    className="h-11 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-slate-500/10 transition-all"
                                     value={formData.religion}
                                     onChange={(e) => setFormData(p => ({ ...p, religion: e.target.value }))}
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">RTE Protocol</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">RTE Protocol</label>
                                 <select 
                                     value={formData.rte_status}
                                     onChange={(e) => setFormData(p => ({ ...p, rte_status: e.target.value }))}
-                                    className="w-full h-11 rounded-xl border border-slate-100 px-3 text-sm font-bold text-slate-900 bg-white focus:border-slate-500/20 outline-none"
+                                    className="w-full h-11 rounded-xl border border-slate-100 dark:border-slate-800 px-3 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 focus:border-slate-500/20 outline-none"
                                 >
                                     <option value="true">Active RTE</option>
                                     <option value="false">Non-RTE</option>
@@ -340,10 +340,10 @@ export default function EditStudentPage() {
                     >
                         <div className="space-y-6 p-1">
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Email Channel</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Email Channel</label>
                                 <div className="relative">
                                     <Input 
-                                        className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                        className="h-11 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 transition-all"
                                         type="email"
                                         value={formData.email}
                                         onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))}
@@ -351,19 +351,19 @@ export default function EditStudentPage() {
                                 </div>
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Phone Terminal</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Phone Terminal</label>
                                 <Input 
-                                    className="h-11 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                                    className="h-11 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 transition-all"
                                     value={formData.phone}
                                     onChange={(e) => setFormData(p => ({ ...p, phone: e.target.value }))}
                                 />
                             </div>
                             <div className="space-y-2 group">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Residential Coordinates</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Residential Coordinates</label>
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-indigo-500/40 group-focus-within:text-indigo-500 transition-colors" />
                                     <textarea 
-                                        className="w-full min-h-[100px] pl-10 pt-2.5 rounded-xl bg-slate-50/50 border-slate-100 font-bold text-slate-900 focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all text-xs"
+                                        className="w-full min-h-[100px] pl-10 pt-2.5 rounded-xl bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800 font-bold text-slate-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 focus:outline-none transition-all text-xs"
                                         value={formData.address}
                                         onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))}
                                     />
@@ -380,7 +380,7 @@ export default function EditStudentPage() {
                         className="glass futuristic-card border-none shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500"
                     >
                         <div className="space-y-4 p-1">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Archive State</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Archive State</label>
                             <select 
                                 value={formData.status}
                                 onChange={(e) => setFormData(p => ({ ...p, status: e.target.value }))}
@@ -389,8 +389,8 @@ export default function EditStudentPage() {
                                     formData.status === 'active' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
                                 )}
                             >
-                                <option value="active" className="bg-white text-emerald-600">Active Member</option>
-                                <option value="inactive" className="bg-white text-rose-600">Inactive/Archived</option>
+                                <option value="active" className="bg-white dark:bg-slate-900 text-emerald-600">Active Member</option>
+                                <option value="inactive" className="bg-white dark:bg-slate-900 text-rose-600">Inactive/Archived</option>
                             </select>
                             <p className="text-[9px] text-slate-400 font-medium text-center px-4">
                                 {formData.status === 'active' 

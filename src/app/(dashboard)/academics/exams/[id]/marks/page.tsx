@@ -72,7 +72,7 @@ export default async function MarksPage({
     <div className="space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center gap-x-4">
         <Link href="/academics/exams">
-          <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2">
+          <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
@@ -86,7 +86,7 @@ export default async function MarksPage({
         color="emerald"
       />
 
-      <div className="flex items-center gap-x-4 text-sm text-slate-500">
+      <div className="flex items-center gap-x-4 text-sm text-slate-500 dark:text-slate-400">
         <span className="flex items-center gap-x-1">
           <GraduationCap className="h-4 w-4" />
           {exam?.academic_year?.name}

@@ -105,7 +105,7 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
             </div>
             
             <div className="space-y-3">
-              <div className="grid grid-cols-12 gap-2 text-xs font-medium text-slate-500 uppercase pb-2 border-b">
+              <div className="grid grid-cols-12 gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase pb-2 border-b">
                 <div className="col-span-4">Shortcut</div>
                 <div className="col-span-8">Action</div>
               </div>

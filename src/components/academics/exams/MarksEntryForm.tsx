@@ -104,11 +104,11 @@ export function MarksEntryForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 animate-in fade-in duration-700"
       >
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 flex flex-row items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
             <div className="flex flex-col">
-              <h3 className="text-lg font-black tracking-tight text-slate-900">Performance Registry</h3>
-              <p className="text-[10px] uppercase tracking-widest font-black text-slate-500 mt-1">
+              <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Performance Registry</h3>
+              <p className="text-[10px] uppercase tracking-widest font-black text-slate-500 dark:text-slate-400 mt-1">
                 Bulk Score Entry Interface
               </p>
             </div>
@@ -116,7 +116,7 @@ export function MarksEntryForm({
               <button
                 type="button"
                 onClick={handleExport}
-                className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all hidden md:inline-flex items-center gap-2"
+                className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all hidden md:inline-flex items-center gap-2"
               >
                 <FileDown className="h-4 w-4" />
                 Export
@@ -124,7 +124,7 @@ export function MarksEntryForm({
               <button
                 type="button"
                 onClick={handleImport}
-                className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all hidden md:inline-flex items-center gap-2"
+                className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all hidden md:inline-flex items-center gap-2"
               >
                 <FileUp className="h-4 w-4" />
                 Import
@@ -143,36 +143,36 @@ export function MarksEntryForm({
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-50/50 border-y border-slate-200">
-                    <th className="text-left py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500">Roll Node</th>
-                    <th className="text-left py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500">Subject Identity</th>
-                    <th className="text-center py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500 w-40">Score (Max 100)</th>
-                    <th className="text-center py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500">System Status</th>
+                  <tr className="bg-slate-50/50 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
+                    <th className="text-left py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500 dark:text-slate-400">Roll Node</th>
+                    <th className="text-left py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500 dark:text-slate-400">Subject Identity</th>
+                    <th className="text-center py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500 dark:text-slate-400 w-40">Score (Max 100)</th>
+                    <th className="text-center py-4 px-4 font-black uppercase tracking-widest text-[10px] text-slate-500 dark:text-slate-400">System Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {students.map((student) => (
                     <tr
                       key={student.id}
-                      className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group"
+                      className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 transition-colors group"
                     >
                       <td className="py-4 px-4">
                         <div className="flex flex-col">
-                          <span className="font-bold text-slate-900">
+                          <span className="font-bold text-slate-900 dark:text-white">
                             {student.roll_number || "SYS-0"}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-mono">
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                             ID: {student.id.slice(0, 8)}
                           </span>
                         </div>
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex flex-col">
-                          <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                          <span className="font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
                             {student.profile?.first_name}{" "}
                             {student.profile?.last_name}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-bold tracking-tight">
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold tracking-tight">
                             {className || "Class not assigned"} &bull; {subjectName || "Subject not assigned"}
                           </span>
                         </div>
@@ -186,7 +186,7 @@ export function MarksEntryForm({
                               <FormControl>
                                 <Input
                                   type="number"
-                                  className="text-center bg-white border-2 border-slate-200 rounded-xl font-black text-lg focus-visible:ring-2 focus-visible:ring-blue-100 transition-all h-12"
+                                  className="text-center bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-xl font-black text-lg focus-visible:ring-2 focus-visible:ring-blue-100 transition-all h-12"
                                   placeholder="00"
                                   {...field}
                                 />
@@ -203,7 +203,7 @@ export function MarksEntryForm({
                             PASS
                           </span>
                         ) : form.watch(`marks.${student.id}`) === "" ? (
-                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 text-slate-400">
+                          <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-800 text-slate-400">
                             PENDING
                           </span>
                         ) : (

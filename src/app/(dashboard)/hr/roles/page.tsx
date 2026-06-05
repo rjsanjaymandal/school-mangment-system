@@ -59,10 +59,10 @@ function getInitials(firstName?: string, lastName?: string): string {
 
 function RoleBadge({ role }: { role: string }) {
   if (role === "none") {
-    return <Badge variant="outline" className="bg-slate-100 text-slate-500 border-slate-200 text-[10px] font-black uppercase tracking-widest">No Access</Badge>;
+    return <Badge variant="outline" className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest">No Access</Badge>;
   }
   return (
-    <span className={cn("inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border", ROLE_STYLES[role] || "bg-slate-100 text-slate-700")}>
+    <span className={cn("inline-flex px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border", ROLE_STYLES[role] || "bg-slate-100 text-slate-700 dark:text-slate-300")}>
       {role}
     </span>
   );
@@ -209,11 +209,11 @@ export default function RolesPage() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input placeholder="Search by name, staff ID, or email..."
-            className="pl-11 h-10 rounded-xl bg-white border-slate-200 text-xs font-bold shadow-sm"
+            className="pl-11 h-10 rounded-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs font-bold shadow-sm"
             value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
         <Button variant="outline" onClick={() => setLoadKey(k => k + 1)}
-          className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border-slate-200 gap-2">
+          className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border-slate-200 dark:border-slate-800 gap-2">
           <RefreshCw className="h-4 w-4" /> Refresh
         </Button>
       </div>
@@ -223,12 +223,12 @@ export default function RolesPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500 w-12">#</th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Employee Profile</th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Login Info</th>
-                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Current Role</th>
-                <th className="text-right py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500">Actions</th>
+              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 w-12">#</th>
+                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Employee Profile</th>
+                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Login Info</th>
+                <th className="text-left py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Current Role</th>
+                <th className="text-right py-4 px-6 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -236,7 +236,7 @@ export default function RolesPage() {
                 <tr>
                   <td colSpan={5} className="text-center py-12">
                     <div className="animate-pulse space-y-3 max-w-md mx-auto">
-                      {[1, 2, 3].map((i) => (<div key={i} className="h-12 bg-slate-100 rounded-xl" />))}
+                      {[1, 2, 3].map((i) => (<div key={i} className="h-12 bg-slate-100 dark:bg-slate-800 rounded-xl" />))}
                     </div>
                   </td>
                 </tr>
@@ -244,7 +244,7 @@ export default function RolesPage() {
                 <tr>
                   <td colSpan={5} className="text-center py-16">
                     <div className="flex flex-col items-center">
-                      <div className="h-16 w-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                      <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
                         <Users className="h-8 w-8 text-slate-300" />
                       </div>
                       <p className="text-sm font-bold text-slate-400 mb-1">No staff members found</p>
@@ -268,14 +268,14 @@ export default function RolesPage() {
                           )}
                         </div>
                         <div>
-                          <p className="font-bold text-sm text-slate-900">{staff.first_name} {staff.last_name}</p>
+                          <p className="font-bold text-sm text-slate-900 dark:text-white">{staff.first_name} {staff.last_name}</p>
                           <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{staff.staff_id}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 px-6">
                       <div>
-                        <p className="text-sm font-semibold text-slate-700">{staff.profile?.email || <span className="text-slate-300">No email</span>}</p>
+                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{staff.profile?.email || <span className="text-slate-300">No email</span>}</p>
                         <p className="text-[10px] font-semibold text-slate-400">{staff.profile?.phone || "No phone"}</p>
                       </div>
                     </td>
@@ -287,7 +287,7 @@ export default function RolesPage() {
                         <select value={pendingRoles[staff.id] || "none"}
                           onChange={(e) => handleRoleChange(staff.id, e.target.value)}
                           disabled={updating === staff.id}
-                          className="h-9 rounded-xl border border-slate-200 px-3 text-[10px] font-bold text-slate-700 bg-white focus:border-blue-300 outline-none disabled:opacity-50">
+                          className="h-9 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-[10px] font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none disabled:opacity-50">
                           {ROLE_OPTIONS.map((role) => (
                             <option key={role.value} value={role.value}>{role.label}</option>
                           ))}
@@ -304,9 +304,9 @@ export default function RolesPage() {
                         </button>
                         <button onClick={() => handleResetAccess(staff.id)}
                           disabled={updating === staff.id || staff.currentRole === "none"}
-                          className="h-9 w-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 transition-all disabled:opacity-30"
+                          className="h-9 w-9 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-red-50 hover:border-red-200 transition-all disabled:opacity-30"
                           title="Disable access">
-                          <RotateCcw className="h-3.5 w-3.5 text-slate-500 hover:text-red-500" />
+                          <RotateCcw className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400 hover:text-red-500" />
                         </button>
                       </div>
                     </td>

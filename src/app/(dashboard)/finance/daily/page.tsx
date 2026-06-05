@@ -77,7 +77,7 @@ export default async function DailyCollectionPage() {
             description="Breakdown of how students paid" 
             color="emerald"
             icon={<BarChart3 className="h-5 w-5" />}
-            className="bg-white border border-slate-200 rounded-xl overflow-hidden p-6"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-6"
           >
             <div className="space-y-5 mt-4">
               {Object.entries(modeData).map(([mode, amount]) => {
@@ -86,9 +86,9 @@ export default async function DailyCollectionPage() {
                   <div key={mode} className="space-y-2">
                     <div className="flex items-center justify-between">
                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{mode.replace('_', ' ')}</span>
-                       <span className="text-xs font-black text-slate-900">₹{amount.toLocaleString()}</span>
+                       <span className="text-xs font-black text-slate-900 dark:text-white">₹{amount.toLocaleString()}</span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
+                    <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/50">
                       <div className={cn(
                         "h-full rounded-full transition-all duration-1000 shadow-sm",
                         mode === 'cash' ? "bg-emerald-500" : "bg-blue-500"
@@ -114,11 +114,11 @@ export default async function DailyCollectionPage() {
             description="Recent payments received today" 
             color="blue" 
             icon={<CheckCircle className="h-5 w-5" />}
-            className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden"
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
                   <tr>
                     <th className="py-4 px-4">Time</th>
                     <th className="py-4 px-4">Student</th>
@@ -127,7 +127,7 @@ export default async function DailyCollectionPage() {
                     <th className="py-4 px-4 text-right">Amount</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {todayPayments?.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-20 text-center">
@@ -136,18 +136,18 @@ export default async function DailyCollectionPage() {
                     </tr>
                   ) : (
                     todayPayments?.map((payment: any, i: number) => (
-                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group border-b border-slate-100">
+                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group border-b border-slate-100 dark:border-slate-800">
                         <td className="py-4 px-4 text-slate-400 font-mono text-[10px] font-bold">
                           {payment.payment_date?.substring(11, 16) || "--:--"}
                         </td>
                         <td className="py-4 px-4">
-                          <span className="text-sm font-bold text-slate-900 tracking-tight">{payment.student?.profile?.full_name || "N/A"}</span>
+                          <span className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">{payment.student?.profile?.full_name || "N/A"}</span>
                         </td>
                         <td className="py-4 px-4">
-                           <span className="text-[9px] font-black uppercase text-slate-500 bg-slate-100 px-2 py-1 rounded-md">{payment.student?.class?.name || "N/A"}</span>
+                           <span className="text-[9px] font-black uppercase text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">{payment.student?.class?.name || "N/A"}</span>
                         </td>
                         <td className="py-4 px-4">
-                          <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 px-2.5 py-1 rounded-md tracking-tighter shadow-sm bg-white capitalize">
+                          <span className="text-[9px] font-black uppercase text-slate-400 border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-md tracking-tighter shadow-sm bg-white dark:bg-slate-900 capitalize">
                             {payment.payment_mode?.replace('_', ' ')}
                           </span>
                         </td>

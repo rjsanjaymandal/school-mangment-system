@@ -27,54 +27,54 @@ export function InstitutionalBanner({ metrics }: InstitutionalBannerProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* Academic Footprint */}
-      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-emerald-500">
-        <div className="h-12 w-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-          <Building2 className="h-6 w-6 text-emerald-600" />
+      <div className="glass futuristic-card border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-emerald-500">
+        <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-900/30">
+          <Building2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
         </div>
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Classes</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-2xl font-black text-slate-900 tracking-tighter">{safeMetrics.classes}</span>
+            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{safeMetrics.classes}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
           </div>
         </div>
       </div>
 
-      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-blue-500">
-        <div className="h-12 w-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
-          <LayoutGrid className="h-6 w-6 text-blue-600" />
+      <div className="glass futuristic-card border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-blue-500">
+        <div className="h-12 w-12 rounded-xl bg-blue-50 dark:bg-blue-950/20 flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900/30">
+          <LayoutGrid className="h-6 w-6 text-blue-600 dark:text-blue-400" />
         </div>
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Departments</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-2xl font-black text-slate-900 tracking-tighter">{safeMetrics.departments}</span>
+            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{safeMetrics.departments}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Total</span>
           </div>
         </div>
       </div>
 
       {/* Transport Status */}
-      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-amber-500">
-        <div className="h-12 w-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 border border-amber-100">
-          <Bus className="h-6 w-6 text-amber-600" />
+      <div className="glass futuristic-card border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-amber-500">
+        <div className="h-12 w-12 rounded-xl bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center shrink-0 border border-amber-100 dark:border-amber-900/30">
+          <Bus className="h-6 w-6 text-amber-600 dark:text-amber-400" />
         </div>
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">School Buses</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-2xl font-black text-slate-900 tracking-tighter">{transport.vehicles}</span>
+            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{transport.vehicles}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
           </div>
         </div>
       </div>
 
-      <div className="glass futuristic-card border border-slate-200/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-purple-500">
-        <div className="h-12 w-12 rounded-xl bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100">
-          <Route className="h-6 w-6 text-purple-600" />
+      <div className="glass futuristic-card border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-5 shadow-xl flex items-center gap-5 border-l-4 border-l-purple-500">
+        <div className="h-12 w-12 rounded-xl bg-purple-50 dark:bg-purple-950/20 flex items-center justify-center shrink-0 border border-purple-100 dark:border-purple-900/30">
+          <Route className="h-6 w-6 text-purple-600 dark:text-purple-400" />
         </div>
         <div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Bus Routes</p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-2xl font-black text-slate-900 tracking-tighter">{transport.routes}</span>
+            <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{transport.routes}</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Active</span>
           </div>
         </div>

@@ -43,16 +43,16 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
             {/* Profile Header */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row items-center gap-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col md:flex-row items-center gap-6">
                 <div className="h-20 w-20 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-3xl font-black text-emerald-600">{fullName[0]?.toUpperCase() || "?"}</span>
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">{fullName}</h2>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{fullName}</h2>
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Class {student.class?.name || "N/A"}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Class {student.class?.name || "N/A"}</span>
                         <span className="h-3 w-px bg-slate-200" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Adm: {student.admission_number || "SYS-000"}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Adm: {student.admission_number || "SYS-000"}</span>
                         <span className="h-3 w-px bg-slate-200" />
                         <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest", student.status === "active" ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400")}>
                             {student.status || "Active"}
@@ -62,7 +62,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
             </div>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/60 w-fit overflow-x-auto max-w-full">
+                <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/60 dark:border-slate-800/60 w-fit overflow-x-auto max-w-full">
                     {tabItems.map((tab) => (
                         <button
                             key={tab.id}
@@ -79,7 +79,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                 </div>
                 
                 <div className="flex gap-2 w-full md:w-auto">
-                    <button className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 transition-all flex items-center gap-2 flex-1 md:flex-none">
+                    <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-4 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2 flex-1 md:flex-none">
                         <Printer className="h-4 w-4" />
                         Print Report
                     </button>
@@ -89,22 +89,22 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
             {activeTab === "overview" && (
                 <div className="outline-none animate-in fade-in duration-500">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                             <div className="p-5">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
                                         <ShieldCheck className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-bold text-slate-900">Profile Info</h3>
-                                        <p className="text-[10px] text-slate-500">Core student details</p>
+                                        <h3 className="text-sm font-bold text-slate-900 dark:text-white">Profile Info</h3>
+                                        <p className="text-[10px] text-slate-500 dark:text-slate-400">Core student details</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col items-center text-center">
                                     <div className="h-24 w-24 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/20 flex items-center justify-center mb-4">
                                         <User className="h-12 w-12 text-emerald-600" />
                                     </div>
-                                    <h2 className="text-xl font-black text-slate-900 tracking-tight">
+                                    <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
                                         {student.profile?.first_name} {student.profile?.last_name}
                                     </h2>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Class {student.class?.name || "N/A"}</p>
@@ -116,35 +116,35 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                     </span>
                                 </div>
                                 
-                                <div className="mt-8 pt-8 border-t border-slate-100 space-y-4">
-                                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600">
-                                        <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                                        <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-slate-800">
                                             <Mail className="h-4 w-4" />
                                         </div>
                                         <span className="truncate">{student.profile?.email || "No email"}</span>
                                     </div>
-                                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600">
-                                        <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                                        <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-slate-800">
                                             <Phone className="h-4 w-4" />
                                         </div>
                                         <span>{student.profile?.phone || "No phone"}</span>
                                     </div>
-                                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600">
-                                        <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100">
+                                    <div className="flex items-center gap-4 text-[11px] font-bold text-slate-600 dark:text-slate-400">
+                                        <div className="h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-400 border border-slate-100 dark:border-slate-800">
                                             <MapPin className="h-4 w-4" />
                                         </div>
                                         <span className="truncate">{student.profile?.address || "No address"}</span>
                                     </div>
                                 </div>
 
-                                <div className="mt-8 pt-8 border-t border-slate-100 grid grid-cols-2 gap-4 text-center">
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-4 text-center">
+                                    <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800">
                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Admission #</p>
-                                        <p className="font-mono font-black text-slate-900 text-xs">{student.admission_number || "SYS-000"}</p>
+                                        <p className="font-mono font-black text-slate-900 dark:text-white text-xs">{student.admission_number || "SYS-000"}</p>
                                     </div>
-                                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800">
                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Roll #</p>
-                                        <p className="font-mono font-black text-slate-900 text-xs">{student.roll_number || "\u2014"}</p>
+                                        <p className="font-mono font-black text-slate-900 dark:text-white text-xs">{student.roll_number || "\u2014"}</p>
                                     </div>
                                 </div>
                             </div>
@@ -175,15 +175,15 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                 />
                             </div>
 
-                            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                                 <div className="p-5">
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="p-1.5 rounded bg-blue-50 text-blue-600">
                                             <BarChart3 className="h-4 w-4" />
                                         </div>
                                         <div>
-                                            <h3 className="text-sm font-bold text-slate-900">Personal Details</h3>
-                                            <p className="text-[10px] text-slate-500">Basic student demographic information</p>
+                                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Personal Details</h3>
+                                            <p className="text-[10px] text-slate-500 dark:text-slate-400">Basic student demographic information</p>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -205,19 +205,19 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
             {activeTab === "academics" && (
                 <div className="outline-none animate-in fade-in duration-500">
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                         <div className="p-5">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-1.5 rounded bg-blue-50 text-blue-600">
                                     <TrendingUp className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-slate-900">Academic Record</h3>
-                                    <p className="text-[10px] text-slate-500">Past exam results and term evaluations</p>
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Academic Record</h3>
+                                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Past exam results and term evaluations</p>
                                 </div>
                             </div>
                             {grades.length > 0 ? (
-                                <div className="divide-y divide-slate-100">
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800">
                                     {grades.map((grade: any, idx: number) => (
                                         <div key={idx} className="flex items-center justify-between p-6 hover:bg-slate-50/50 transition-colors">
                                             <div className="flex items-center gap-5">
@@ -225,7 +225,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                                     {Math.round((grade.marks_obtained / (grade.exam?.max_marks || 100)) * 100)}%
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{grade.exam?.name || "Exam"}</p>
+                                                    <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase">{grade.exam?.name || "Exam"}</p>
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
                                                         Score: {grade.marks_obtained} / {grade.exam?.max_marks || 100}
                                                     </p>
@@ -248,19 +248,19 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
             {activeTab === "attendance" && (
                 <div className="outline-none animate-in fade-in duration-500">
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                         <div className="p-5">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
                                     <ClipboardCheck className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-slate-900">Attendance History</h3>
-                                    <p className="text-[10px] text-slate-500">Daily record of institutional presence</p>
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Attendance History</h3>
+                                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Daily record of institutional presence</p>
                                 </div>
                             </div>
                             {attendance.length > 0 ? (
-                                <div className="divide-y divide-slate-100">
+                                <div className="divide-y divide-slate-100 dark:divide-slate-800">
                                     {attendance.map((record: any, idx: number) => (
                                         <div key={idx} className="flex items-center justify-between p-6 hover:bg-slate-50/50 transition-colors">
                                             <div className="flex items-center gap-5">
@@ -271,7 +271,7 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                                                     {record.status === "present" ? <CheckCircle2 className="h-6 w-6" /> : <XCircle className="h-6 w-6" />}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black text-slate-900 tracking-tight uppercase">
+                                                    <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight uppercase">
                                                         {new Date(record.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                                                     </p>
                                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
@@ -306,15 +306,15 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
                         <DashboardStatCard title="Pending Dues" value={`₹${(grades as any)?.pendingDues || 0}`} icon={AlertCircle} color="amber" description="Outstanding amount" />
                         <DashboardStatCard title="Last Payment" value={(grades as any)?.lastPaymentDate || "—"} icon={Activity} color="blue" description="Most recent" />
                     </div>
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                         <div className="p-5">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
                                     <IndianRupee className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-slate-900">Fee Payment History</h3>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Complete financial record</p>
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Fee Payment History</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Complete financial record</p>
                                 </div>
                             </div>
                             <div className="text-center py-12">
@@ -328,15 +328,15 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
 
             {activeTab === "documents" && (
                 <div className="outline-none animate-in fade-in duration-500">
-                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                         <div className="p-5">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-1.5 rounded bg-blue-50 text-blue-600">
                                     <FileText className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-slate-900">Student Documents</h3>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Uploaded files and records</p>
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Student Documents</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Uploaded files and records</p>
                                 </div>
                             </div>
                             <div className="text-center py-12">
@@ -361,7 +361,7 @@ function MetadataItem({ label, value }: { label: string; value: string | null })
     return (
         <div className="space-y-1">
             <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">{label}</p>
-            <p className="text-[11px] font-bold text-slate-900 tracking-tight">{value || "\u2014"}</p>
+            <p className="text-[11px] font-bold text-slate-900 dark:text-white tracking-tight">{value || "\u2014"}</p>
         </div>
     );
 }

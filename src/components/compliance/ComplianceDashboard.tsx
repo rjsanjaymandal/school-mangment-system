@@ -105,31 +105,35 @@ export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
                     <div className="flex justify-between items-start mb-4">
                         <div>
-                            <h3 className="text-lg font-black tracking-tight text-slate-900">Audit Activity</h3>
-                            <p className="text-sm text-slate-500">Recent compliance trail by action</p>
+                            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Audit Activity</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Recent compliance trail by action</p>
                         </div>
                         <Activity className="h-5 w-5 text-slate-300" />
                     </div>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={auditVelocity}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 9, fontWeight: "bold" }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "#94a3b8", fontSize: 9 }} />
-                                <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px" }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 9, fontWeight: "bold" }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 9 }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Legend />
                                 <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5">
                     <div className="mb-4">
-                        <h3 className="text-lg font-black tracking-tight text-slate-900">Document Distribution</h3>
-                        <p className="text-sm text-slate-500">Archive count by category</p>
+                        <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Document Distribution</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Archive count by category</p>
                     </div>
                     <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
@@ -137,7 +141,11 @@ export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]
                                 <Pie data={categoryData} dataKey="count" innerRadius={60} outerRadius={90}>
                                     {categoryData.map((entry, index) => <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />)}
                                 </Pie>
-                                <Tooltip contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px" }} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "12px" }}
+                                    labelStyle={{ color: "var(--foreground)" }}
+                                    itemStyle={{ color: "var(--foreground)" }}
+                                />
                                 <Legend verticalAlign="bottom" height={36} />
                             </PieChart>
                         </ResponsiveContainer>
@@ -147,47 +155,47 @@ export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]
 
             <div className="relative w-full max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 rounded-xl border-slate-200" placeholder="Search documents..." />
+                <Input value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 rounded-xl border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" placeholder="Search documents..." />
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-slate-50/50 border-b border-slate-100">
+                        <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
                             <tr>
-                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Title</th>
-                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Category</th>
-                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Expiry</th>
-                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Security</th>
-                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Actions</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Title</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Category</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Expiry</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Security</th>
+                                <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                             {filteredDocs.length === 0 ? (
-                                <tr><td colSpan={5} className="p-16 text-center text-sm font-bold text-slate-500">No documents found.</td></tr>
+                                <tr><td colSpan={5} className="p-16 text-center text-sm font-bold text-slate-500 dark:text-slate-400">No documents found.</td></tr>
                             ) : (
                                 filteredDocs.map((doc) => (
-                                    <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <tr key={doc.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                         <td className="py-4 px-4">
-                                            <div className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                                            <div className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
                                                 <FileText className="h-4 w-4 text-emerald-600" /> {doc.title}
                                             </div>
                                             <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{doc.file_path || "Metadata only"}</div>
                                         </td>
-                                        <td className="py-4 px-4 text-sm font-bold text-slate-700">{doc.category}</td>
+                                        <td className="py-4 px-4 text-sm font-bold text-slate-700 dark:text-slate-300">{doc.category}</td>
                                         <td className="py-4 px-4">
-                                            <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
+                                            <div className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400">
                                                 <Calendar className="h-4 w-4 text-slate-400" /> {doc.expiry_date || "None"}
                                             </div>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border", doc.is_encrypted ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-50 text-slate-500 border-slate-200")}>
+                                            <span className={cn("px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border", doc.is_encrypted ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-slate-50 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800")}>
                                                 <Lock className="h-3 w-3 inline mr-1" /> {doc.is_encrypted ? "Encrypted" : "Standard"}
                                             </span>
                                         </td>
                                         <td className="py-4 px-4 text-right">
                                             <div className="flex justify-end gap-2">
-                                                <button onClick={() => handleEdit(doc)} className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-100 transition-all">Edit</button>
+                                                <button onClick={() => handleEdit(doc)} className="h-8 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all">Edit</button>
                                                 <button onClick={() => handleDelete(doc.id)} className="h-8 w-8 rounded-xl flex items-center justify-center text-red-500 hover:bg-red-50 transition-all"><Trash2 className="h-4 w-4" /></button>
                                             </div>
                                         </td>
@@ -202,47 +210,47 @@ export function ComplianceDashboard({ documents, auditLogs }: { documents: any[]
             {/* Add/Edit Document Modal */}
             {open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white border border-slate-200 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
-                        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-                            <h3 className="text-lg font-black tracking-tight text-slate-900">{editingDocument ? "Edit Document" : "Add Document"}</h3>
-                            <button onClick={() => { setOpen(false); setEditingDocument(null); }} className="h-8 w-8 rounded-xl hover:bg-slate-100 flex items-center justify-center">
-                                <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+                        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">{editingDocument ? "Edit Document" : "Add Document"}</h3>
+                            <button onClick={() => { setOpen(false); setEditingDocument(null); }} className="h-8 w-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center justify-center">
+                                <svg className="h-4 w-4 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
                         <div className="p-5 space-y-4">
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Title</label>
-                                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="rounded-xl border-slate-200" />
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Title</label>
+                                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Category</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Category</label>
                                     <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                        {CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
+                                        className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                        {CATEGORIES.map((category) => <option key={category} value={category} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{category}</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Expiry Date</label>
-                                    <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Expiry Date</label>
+                                    <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">File Path</label>
-                                    <Input value={form.file_path} onChange={(e) => setForm({ ...form, file_path: e.target.value })} placeholder="/docs/policy.pdf" className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">File Path</label>
+                                    <Input value={form.file_path} onChange={(e) => setForm({ ...form, file_path: e.target.value })} placeholder="/docs/policy.pdf" className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500" />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Version</label>
-                                    <Input type="number" min="1" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} className="rounded-xl border-slate-200" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Version</label>
+                                    <Input type="number" min="1" value={form.version} onChange={(e) => setForm({ ...form, version: e.target.value })} className="rounded-xl border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white bg-white dark:bg-slate-900" />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Encryption</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Encryption</label>
                                 <select value={form.is_encrypted} onChange={(e) => setForm({ ...form, is_encrypted: e.target.value })}
-                                    className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none">
-                                    <option value="false">Standard</option>
-                                    <option value="true">Encrypted</option>
+                                    className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none">
+                                    <option value="false" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Standard</option>
+                                    <option value="true" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">Encrypted</option>
                                 </select>
                             </div>
                             <button onClick={handleSave} disabled={loading} className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">

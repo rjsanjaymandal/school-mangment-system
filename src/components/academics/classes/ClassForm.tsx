@@ -104,7 +104,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="flex items-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-widest">
+                            <FormLabel className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest">
                                 <School className="h-4 w-4 text-emerald-500" /> Class Name
                             </FormLabel>
                             <FormControl>
@@ -127,7 +127,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                         name="capacity"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="flex items-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-widest">
+                                <FormLabel className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest">
                                     <Users className="h-4 w-4 text-blue-500" /> Capacity
                                 </FormLabel>
                                 <FormControl>
@@ -147,7 +147,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                         name="room_number"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="flex items-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-widest">
+                                <FormLabel className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest">
                                     <DoorOpen className="h-4 w-4 text-indigo-500" /> Room Number
                                 </FormLabel>
                                 <FormControl>
@@ -168,7 +168,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                         name="grade_level"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="flex items-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-widest">
+                                <FormLabel className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest">
                                     <GraduationCap className="h-4 w-4 text-purple-500" /> Grade Level
                                 </FormLabel>
                                 <FormControl>
@@ -188,7 +188,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                     name="teacher_id"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="flex items-center gap-2 text-slate-700 font-bold text-xs uppercase tracking-widest">
+                            <FormLabel className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-widest">
                                 <User className="h-4 w-4 text-orange-500" /> Class Teacher
                             </FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -197,7 +197,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                                         <SelectValue placeholder="Select a teacher" />
                                     </SelectTrigger>
                                 </FormControl>
-                                <SelectContent className="rounded-2xl border-slate-200/60 shadow-xl overflow-hidden">
+                                <SelectContent className="rounded-2xl border-slate-200/60 dark:border-slate-800/60 shadow-xl overflow-hidden">
                                     <SelectItem value={"none"}>
                                         -- No Assigned Teacher --
                                     </SelectItem>
@@ -218,7 +218,7 @@ export function ClassForm({ initialData, teachers, onSuccess }: ClassFormProps) 
                         type="button" 
                         variant="ghost"
                         onClick={() => onSuccess()}
-                        className="h-12 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                        className="h-12 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                     >
                         Cancel
                     </Button>

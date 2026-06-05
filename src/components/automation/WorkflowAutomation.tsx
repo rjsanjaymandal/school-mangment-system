@@ -62,26 +62,26 @@ export function WorkflowAutomation() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="border-l-4 border-l-emerald-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Active Workflows</p>
-            <p className="text-2xl font-semibold text-slate-900">5</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Active Workflows</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">5</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-blue-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Total Executions</p>
-            <p className="text-2xl font-semibold text-slate-900">218</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Total Executions</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">218</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-amber-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Success Rate</p>
-            <p className="text-2xl font-semibold text-slate-900">97.2%</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Success Rate</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">97.2%</p>
           </CardContent>
         </Card>
         <Card className="border-l-4 border-l-purple-500 shadow-sm">
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500">Avg. Execution Time</p>
-            <p className="text-2xl font-semibold text-slate-900">2.3s</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Avg. Execution Time</p>
+            <p className="text-2xl font-semibold text-slate-900 dark:text-white">2.3s</p>
           </CardContent>
         </Card>
       </div>
@@ -89,10 +89,10 @@ export function WorkflowAutomation() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Workflows List */}
         <Card className="shadow-sm lg:col-span-2">
-          <CardHeader className="pb-4 border-b bg-slate-50/50">
+          <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
-                <GitBranch className="h-4 w-4 text-slate-500" />
+                <GitBranch className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 Workflows
               </CardTitle>
               <Button size="sm" className="rounded-md bg-emerald-600">
@@ -102,9 +102,9 @@ export function WorkflowAutomation() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
               {workflows.map(workflow => (
-                <div key={workflow.id} className="p-4 hover:bg-slate-50">
+                <div key={workflow.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-900">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
@@ -116,13 +116,13 @@ export function WorkflowAutomation() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-slate-900">{workflow.name}</p>
+                          <p className="font-medium text-slate-900 dark:text-white">{workflow.name}</p>
                           <Badge className={workflow.status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-600"}>
                             {workflow.status}
                           </Badge>
                         </div>
-                        <p className="text-sm text-slate-600 mt-1">{workflow.description}</p>
-                        <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{workflow.description}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400">
                           <span className="flex items-center gap-1">
                             <ArrowRight className="h-3 w-3" />
                             Trigger: {workflow.trigger}
@@ -152,7 +152,7 @@ export function WorkflowAutomation() {
         <div className="space-y-6">
           {/* Available Triggers */}
           <Card className="shadow-sm">
-            <CardHeader className="pb-4 border-b bg-slate-50/50">
+            <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
               <CardTitle className="text-base flex items-center gap-2">
                 <Play className="h-4 w-4 text-blue-500" />
                 Available Triggers
@@ -160,11 +160,11 @@ export function WorkflowAutomation() {
             </CardHeader>
             <CardContent className="p-4 space-y-2">
               {TRIGGERS.map(trigger => (
-                <div key={trigger.id} className="flex items-center gap-3 p-2 rounded hover:bg-slate-50 cursor-pointer">
-                  <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center">
+                <div key={trigger.id} className="flex items-center gap-3 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer">
+                  <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                     <trigger.icon className={`h-4 w-4 ${trigger.color}`} />
                   </div>
-                  <span className="text-sm font-medium text-slate-700">{trigger.name}</span>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{trigger.name}</span>
                 </div>
               ))}
             </CardContent>
@@ -172,22 +172,22 @@ export function WorkflowAutomation() {
 
           {/* Recent Executions */}
           <Card className="shadow-sm">
-            <CardHeader className="pb-4 border-b bg-slate-50/50">
+            <CardHeader className="pb-4 border-b bg-slate-50/50 dark:bg-slate-900/50">
               <CardTitle className="text-base flex items-center gap-2">
-                <Clock className="h-4 w-4 text-slate-500" />
+                <Clock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 Recent Executions
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 space-y-3">
               {RECENT_EXECUTIONS.map((exec, i) => (
-                <div key={i} className="flex items-start gap-3 p-2 rounded hover:bg-slate-50">
+                <div key={i} className="flex items-start gap-3 p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-900">
                   {exec.status === "success" ? 
                     <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5" /> :
                     <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
                   }
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-slate-900">{exec.workflow}</p>
-                    <p className="text-xs text-slate-500">{exec.time} • {exec.steps} steps</p>
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">{exec.workflow}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{exec.time} • {exec.steps} steps</p>
                     {exec.error && <p className="text-xs text-red-500">{exec.error}</p>}
                   </div>
                 </div>

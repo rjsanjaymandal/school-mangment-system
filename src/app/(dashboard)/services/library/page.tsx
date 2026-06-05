@@ -128,14 +128,14 @@ export default function LibraryPage() {
       </div>
 
       {activeTab === "books" && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 flex items-center gap-4">
-            <h3 className="text-lg font-black tracking-tight text-slate-900 flex-1">Book Inventory</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-4">
+            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white flex-1">Book Inventory</h3>
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search books by title, author, ISBN..."
-                className="pl-10 rounded-xl border-slate-200"
+                className="pl-10 rounded-xl border-slate-200 dark:border-slate-800"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -144,32 +144,32 @@ export default function LibraryPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Title</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Author</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">ISBN</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Category</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Total</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Available</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Shelf</th>
+                <tr className="border-b border-slate-100 dark:border-slate-800">
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Title</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Author</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">ISBN</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Category</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Total</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Available</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Shelf</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} className="p-8 text-center text-sm text-slate-500">Loading...</td></tr>
+                  <tr><td colSpan={7} className="p-8 text-center text-sm text-slate-500 dark:text-slate-400">Loading...</td></tr>
                 ) : filteredBooks.length === 0 ? (
                   <tr><td colSpan={7} className="p-16 text-center">
                     <SearchCode className="h-10 w-10 mx-auto mb-3 text-slate-200" />
-                    <p className="text-sm font-bold text-slate-500">No books found</p>
+                    <p className="text-sm font-bold text-slate-500 dark:text-slate-400">No books found</p>
                   </td></tr>
                 ) : (
                   filteredBooks.map(book => (
-                    <tr key={book.id} className="border-b border-slate-100 hover:bg-slate-50/50">
-                      <td className="py-4 px-4 font-bold text-sm text-slate-900">{book.title}</td>
-                      <td className="py-4 px-4 text-sm text-slate-500">{book.author}</td>
-                      <td className="py-4 px-4 text-[11px] font-mono font-bold text-slate-500">{book.isbn || "-"}</td>
+                    <tr key={book.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50">
+                      <td className="py-4 px-4 font-bold text-sm text-slate-900 dark:text-white">{book.title}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400">{book.author}</td>
+                      <td className="py-4 px-4 text-[11px] font-mono font-bold text-slate-500 dark:text-slate-400">{book.isbn || "-"}</td>
                       <td className="py-4 px-4">
-                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-200">{book.category || "General"}</span>
+                        <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800">{book.category || "General"}</span>
                       </td>
                       <td className="py-4 px-4 text-center font-bold text-sm">{book.total_copies || 0}</td>
                       <td className="py-4 px-4 text-center">
@@ -177,7 +177,7 @@ export default function LibraryPage() {
                           {book.available_copies || 0}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-sm text-slate-500">{book.shelf_location || "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400">{book.shelf_location || "-"}</td>
                     </tr>
                   ))
                 )}
@@ -188,38 +188,38 @@ export default function LibraryPage() {
       )}
 
       {activeTab === "circulation" && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
-            <h3 className="text-lg font-black tracking-tight text-slate-900">Circulation History</h3>
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">Circulation History</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Book</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Student</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Issue Date</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Due Date</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-left">Return Date</th>
-                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Status</th>
+                <tr className="border-b border-slate-100 dark:border-slate-800">
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Book</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Student</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Issue Date</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Due Date</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-left">Return Date</th>
+                  <th className="py-4 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 text-center">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="p-8 text-center text-sm text-slate-500">Loading...</td></tr>
+                  <tr><td colSpan={6} className="p-8 text-center text-sm text-slate-500 dark:text-slate-400">Loading...</td></tr>
                 ) : transactions.length === 0 ? (
                   <tr><td colSpan={6} className="p-16 text-center">
                     <Clock className="h-10 w-10 mx-auto mb-3 text-slate-200" />
-                    <p className="text-sm font-bold text-slate-500">No transactions</p>
+                    <p className="text-sm font-bold text-slate-500 dark:text-slate-400">No transactions</p>
                   </td></tr>
                 ) : (
                   transactions.map(t => (
-                    <tr key={t.id} className="border-b border-slate-100 hover:bg-slate-50/50">
-                      <td className="py-4 px-4 font-bold text-sm text-slate-900">{t.book_id}</td>
-                      <td className="py-4 px-4 text-sm text-slate-700">{(t as any).students?.full_name || "-"}</td>
-                      <td className="py-4 px-4 text-sm text-slate-500">{t.issue_date ? new Date(t.issue_date).toLocaleDateString() : "-"}</td>
-                      <td className="py-4 px-4 text-sm text-slate-500">{t.due_date ? new Date(t.due_date).toLocaleDateString() : "-"}</td>
-                      <td className="py-4 px-4 text-sm text-slate-500">{t.return_date ? new Date(t.return_date).toLocaleDateString() : "-"}</td>
+                    <tr key={t.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50">
+                      <td className="py-4 px-4 font-bold text-sm text-slate-900 dark:text-white">{t.book_id}</td>
+                      <td className="py-4 px-4 text-sm text-slate-700 dark:text-slate-300">{(t as any).students?.full_name || "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400">{t.issue_date ? new Date(t.issue_date).toLocaleDateString() : "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400">{t.due_date ? new Date(t.due_date).toLocaleDateString() : "-"}</td>
+                      <td className="py-4 px-4 text-sm text-slate-500 dark:text-slate-400">{t.return_date ? new Date(t.return_date).toLocaleDateString() : "-"}</td>
                       <td className="py-4 px-4 text-center">
                         {t.return_date ? (
                           <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-200">Returned</span>

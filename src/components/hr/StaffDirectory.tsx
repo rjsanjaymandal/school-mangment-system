@@ -52,12 +52,12 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
     return (
         <div className="space-y-6 animate-in fade-in duration-700">
             {/* Filter Hub */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col md:flex-row items-center gap-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 flex flex-col md:flex-row items-center gap-4">
                 <div className="relative flex-1 w-full max-w-sm">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input 
                         placeholder="Search staff by name or ID..." 
-                        className="w-full h-11 pl-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                        className="w-full h-11 pl-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-300 outline-none"
                         value={search}
                         onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                     />
@@ -66,23 +66,23 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                     <select 
                         value={typeFilter} 
                         onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
-                        className="h-11 px-4 rounded-xl border border-slate-200 text-[10px] font-black uppercase tracking-widest bg-white text-slate-700"
+                        className="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 outline-none"
                     >
-                        <option value="all">All Types</option>
-                        <option value="teaching">Teaching</option>
-                        <option value="non_teaching">Non-Teaching</option>
+                        <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Types</option>
+                        <option value="teaching" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Teaching</option>
+                        <option value="non_teaching" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Non-Teaching</option>
                     </select>
                     <select 
                         value={deptFilter} 
                         onChange={(e) => { setDeptFilter(e.target.value); setCurrentPage(1); }}
-                        className="h-11 px-4 rounded-xl border border-slate-200 text-[10px] font-black uppercase tracking-widest bg-white text-slate-700"
+                        className="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 outline-none"
                     >
-                        <option value="all">All Departments</option>
+                        <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Departments</option>
                         {departments.map((d: any) => (
-                            <option key={d.id} value={d.id}>{d.name}</option>
+                            <option key={d.id} value={d.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{d.name}</option>
                         ))}
                     </select>
-                    <div className="flex border border-slate-200 rounded-xl overflow-hidden">
+                    <div className="flex border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                         <button 
                             className={cn(
                                 "h-10 w-10 flex items-center justify-center transition-all",
@@ -115,27 +115,27 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
 
             {/* Main Content Area */}
             {viewMode === "table" ? (
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-                    <div className="p-5 border-b border-slate-100 flex items-center gap-3">
-                        <Users className="h-5 w-5 text-slate-500" />
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                    <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3">
+                        <Users className="h-5 w-5 text-slate-500 dark:text-slate-400" />
                         <div>
-                            <h3 className="text-sm font-bold text-slate-900">Staff List</h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Complete staff and employee records</p>
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Staff List</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Complete staff and employee records</p>
                         </div>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-50/50 border-b border-slate-100">
+                            <thead className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Personnel</th>
-                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">ID & Type</th>
-                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Designation</th>
-                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Contact</th>
-                                    {isAdmin && <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-500">Monthly Salary</th>}
-                                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-500">Actions</th>
+                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Personnel</th>
+                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">ID & Type</th>
+                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Designation</th>
+                                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Contact</th>
+                                    {isAdmin && <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Monthly Salary</th>}
+                                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                                 {paginatedStaff.length === 0 ? (
                                     <tr>
                                         <td colSpan={isAdmin ? 6 : 5} className="px-6 py-20 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest">
@@ -144,7 +144,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                     </tr>
                                 ) : (
                                     paginatedStaff.map((staff) => (
-                                        <tr key={staff.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors group">
+                                        <tr key={staff.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors group">
                                             <td className="px-6 py-5">
                                                 <div className="flex items-center gap-3">
                                                     <div className="h-11 w-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-black text-sm text-emerald-600 group-hover:rotate-3 transition-transform flex-shrink-0">
@@ -155,7 +155,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <div className="font-bold text-slate-900 tracking-tight text-sm">
+                                                        <div className="font-bold text-slate-900 dark:text-white tracking-tight text-sm">
                                                             {staff.first_name} {staff.last_name}
                                                         </div>
                                                         <div className="text-[9px] text-slate-400 font-black uppercase tracking-tighter mt-0.5">
@@ -165,7 +165,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                                 </div>
                                             </td>
                                             <td className="px-6 py-5">
-                                                <div className="font-mono text-[10px] font-black text-slate-500 uppercase tracking-tighter">
+                                                <div className="font-mono text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-tighter">
                                                     {staff.staff_id}
                                                 </div>
                                                 <span className={cn(
@@ -181,7 +181,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-1.5">
                                                         <Briefcase className="h-3 w-3 text-slate-400" />
-                                                        <span className="text-xs font-bold text-slate-700">{staff.designation?.name || "N/A"}</span>
+                                                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{staff.designation?.name || "N/A"}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
                                                         <Building2 className="h-3 w-3 text-slate-400" />
@@ -193,7 +193,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                                 <div className="flex flex-col gap-1">
                                                     <div className="flex items-center gap-1.5">
                                                         <Phone className="h-3 w-3 text-slate-400" />
-                                                        <span className="text-[10px] font-bold text-slate-600">{staff.mobile}</span>
+                                                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{staff.mobile}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
                                                         <Mail className="h-3 w-3 text-slate-400" />
@@ -210,7 +210,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                             )}
                                             <td className="px-6 py-5 text-right relative">
                                                 <button 
-                                                    className="h-9 w-9 rounded-xl hover:bg-slate-100 flex items-center justify-center"
+                                                    className="h-9 w-9 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center justify-center"
                                                     onClick={() => setMenuOpen(menuOpen === staff.id ? null : staff.id)}
                                                 >
                                                     <MoreHorizontal className="h-4 w-4 text-slate-400" />
@@ -218,16 +218,16 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                                 {menuOpen === staff.id && (
                                                     <>
                                                         <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(null)} />
-                                                        <div className="absolute right-4 top-full mt-1 w-56 z-50 bg-white rounded-xl border border-slate-200 shadow-xl p-2 backdrop-blur-xl">
+                                                        <div className="absolute right-4 top-full mt-1 w-56 z-50 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl p-2 backdrop-blur-xl">
                                                             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 py-2">Operations</div>
-                                                            <button className="w-full flex items-center gap-3 rounded-xl py-3 px-3 text-xs font-bold hover:bg-slate-50 transition-all" onClick={() => { router.push(`/hr/staff/${staff.id}`); setMenuOpen(null); }}>
+                                                            <button className="w-full flex items-center gap-3 rounded-xl py-3 px-3 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-900 transition-all" onClick={() => { router.push(`/hr/staff/${staff.id}`); setMenuOpen(null); }}>
                                                                 <Eye className="h-4 w-4 text-blue-500" /> View Profile
                                                             </button>
-                                                            <button className="w-full flex items-center gap-3 rounded-xl py-3 px-3 text-xs font-bold hover:bg-slate-50 transition-all" onClick={() => { router.push(`/hr/staff/${staff.id}/edit`); setMenuOpen(null); }}>
+                                                            <button className="w-full flex items-center gap-3 rounded-xl py-3 px-3 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-900 transition-all" onClick={() => { router.push(`/hr/staff/${staff.id}/edit`); setMenuOpen(null); }}>
                                                                 <Edit className="h-4 w-4 text-amber-500" /> Edit Details
                                                             </button>
-                                                            <div className="my-1 h-px bg-slate-100" />
-                                                            <button className="w-full flex items-center gap-3 rounded-xl py-3 px-3 text-xs font-bold hover:bg-slate-50 transition-all text-emerald-600">
+                                                            <div className="my-1 h-px bg-slate-100 dark:bg-slate-800" />
+                                                            <button className="w-full flex items-center gap-3 rounded-xl py-3 px-3 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-900 transition-all text-emerald-600">
                                                                 <IdCard className="h-4 w-4" /> Generate ID Card
                                                             </button>
                                                         </div>
@@ -265,7 +265,7 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                             paginatedStaff.map((staff) => (
                                 <div 
                                     key={staff.id} 
-                                    className="bg-white border border-slate-200 rounded-xl overflow-hidden group relative p-6 text-center hover:scale-[1.02] transition-all cursor-pointer"
+                                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden group relative p-6 text-center hover:scale-[1.02] transition-all cursor-pointer"
                                     onClick={() => router.push(`/hr/staff/${staff.id}`)}
                                 >
                                     <div className="absolute top-4 right-4">
@@ -286,17 +286,17 @@ export function StaffDirectory({ initialData, departments, userRole }: { initial
                                         )}
                                     </div>
                                     <div className="mt-4">
-                                        <p className="text-lg font-black tracking-tight text-slate-900">{staff.first_name} {staff.last_name}</p>
+                                        <p className="text-lg font-black tracking-tight text-slate-900 dark:text-white">{staff.first_name} {staff.last_name}</p>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{staff.designation?.name || "N/A"}</p>
-                                        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-center gap-4">
+                                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-4">
                                             <div className="flex flex-col items-center">
                                                 <p className="text-[8px] font-black text-slate-300 uppercase tracking-tighter">Staff ID</p>
-                                                <p className="text-[10px] font-black font-mono text-slate-600">{staff.staff_id}</p>
+                                                <p className="text-[10px] font-black font-mono text-slate-600 dark:text-slate-400">{staff.staff_id}</p>
                                             </div>
-                                            <div className="h-6 w-px bg-slate-100" />
+                                            <div className="h-6 w-px bg-slate-100 dark:bg-slate-800" />
                                             <div className="flex flex-col items-center">
                                                 <p className="text-[8px] font-black text-slate-300 uppercase tracking-tighter">Dept</p>
-                                                <p className="text-[10px] font-black text-slate-600 truncate max-w-[60px]">{staff.department?.name || "N/A"}</p>
+                                                <p className="text-[10px] font-black text-slate-600 dark:text-slate-400 truncate max-w-[60px]">{staff.department?.name || "N/A"}</p>
                                             </div>
                                         </div>
                                     </div>

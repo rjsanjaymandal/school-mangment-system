@@ -212,7 +212,7 @@ export function ExamsDashboard({
             />
 
             <div className="flex w-full mb-8">
-                <div className="inline-flex p-1 rounded-2xl border border-slate-200 bg-white shadow-md">
+                <div className="inline-flex p-1 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md">
                     <button
                         onClick={() => setViewMode("list")}
                         className={cn(
@@ -252,7 +252,7 @@ export function ExamsDashboard({
                                     <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                                         Performance Overview
                                     </h3>
-                                    <p className="text-sm font-medium text-slate-500 mt-2">
+                                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2">
                                         Subject-wise average performance
                                     </p>
                                 </div>
@@ -265,17 +265,19 @@ export function ExamsDashboard({
                                                     <stop offset="100%" stopColor="rgb(244, 63, 94)" stopOpacity={0.1} />
                                                 </linearGradient>
                                             </defs>
-                                            <CartesianGrid strokeDasharray="3 3" stroke="#88888815" vertical={false} />
+                                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
                                             <XAxis 
                                                 dataKey="name" 
                                                 axisLine={false} 
                                                 tickLine={false} 
-                                                tick={{ fill: "#88888880", fontSize: 10, fontWeight: "bold" }}
+                                                tick={{ fill: "var(--muted-foreground)", fontSize: 10, fontWeight: "bold" }}
                                             />
-                                            <YAxis axisLine={false} tickLine={false} tick={{ fill: "#88888860", fontSize: 10 }} />
+                                            <YAxis axisLine={false} tickLine={false} tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} />
                                             <Tooltip 
                                                 cursor={{ fill: "rgba(244, 63, 94, 0.05)" }} 
-                                                contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)", backdropFilter: "blur(12px)", borderRadius: "16px", border: "1px solid rgba(226, 232, 240, 0.8)", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                                                contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "16px" }}
+                                                labelStyle={{ color: "var(--foreground)" }}
+                                                itemStyle={{ color: "var(--foreground)" }}
                                             />
                                             <Bar dataKey="avg" fill="url(#barGradient)" radius={[8, 8, 0, 0]} barSize={36} />
                                         </BarChart>
@@ -289,7 +291,7 @@ export function ExamsDashboard({
                                 <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                                     Pass/Fail Ratio
                                 </h3>
-                                <p className="text-sm font-medium text-slate-500 mt-2 text-center">Current exam series</p>
+                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-2 text-center">Current exam series</p>
                             </div>
                             <div className="h-[280px] relative z-10">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -320,7 +322,9 @@ export function ExamsDashboard({
                                             ))}
                                         </Pie>
                                         <Tooltip 
-                                            contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.8)", backdropFilter: "blur(12px)", borderRadius: "16px", border: "1px solid rgba(226, 232, 240, 0.8)", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                                            contentStyle={{ backgroundColor: "var(--card)", border: "1px solid var(--border)", borderRadius: "16px" }}
+                                            labelStyle={{ color: "var(--foreground)" }}
+                                            itemStyle={{ color: "var(--foreground)" }}
                                         />
                                         <Legend verticalAlign="bottom" height={36}/>
                                     </PieChart>
@@ -345,19 +349,19 @@ export function ExamsDashboard({
                             <select
                                 value={filterClass}
                                 onChange={(e) => setFilterClass(e.target.value)}
-                                className="w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 focus:border-blue-300 outline-none"
+                                className="w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 focus:border-blue-300 outline-none"
                             >
-                                <option value="all">All Classes</option>
-                                {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                <option value="all" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">All Classes</option>
+                                {classes.map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{c.name}</option>)}
                             </select>
 
                             <select
                                 value={filterSubject}
                                 onChange={(e) => setFilterSubject(e.target.value)}
-                                className="w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 focus:border-blue-300 outline-none"
+                                className="w-[180px] h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white/50 dark:bg-slate-950/50 border-slate-200/60 dark:border-slate-800/60 focus:border-blue-300 outline-none"
                             >
-                                <option value="all">All Subjects</option>
-                                {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                <option value="all" className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">All Subjects</option>
+                                {subjects.map(s => <option key={s.id} value={s.id} className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white">{s.name}</option>)}
                             </select>
                         </div>
                     </div>
@@ -491,7 +495,7 @@ export function ExamsDashboard({
                     </div>
 
                 {viewMode === "calendar" && (
-                    <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl shadow-sm overflow-hidden">
                         <div className="h-[700px]">
                             <BigCalendar
                                 localizer={localizer}
@@ -511,12 +515,12 @@ export function ExamsDashboard({
             {isCreateOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsCreateOpen(false)} />
-                    <div className="relative bg-white border border-slate-200 overflow-y-auto max-h-[90vh] max-w-2xl w-full mx-4 rounded-2xl shadow-2xl">
-                        <div className="p-6 bg-slate-50 border-b border-slate-100">
-                            <h3 className="text-lg font-black tracking-tight text-slate-900">
+                    <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-y-auto max-h-[90vh] max-w-2xl w-full mx-4 rounded-2xl shadow-2xl">
+                        <div className="p-6 bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                                 Schedule New Exam
                             </h3>
-                            <p className="text-sm text-slate-500 mt-1">
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                                 Setup and publish a new examination or assessment
                             </p>
                         </div>
@@ -524,19 +528,19 @@ export function ExamsDashboard({
                         <div className="p-8 space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Name</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Exam Name</label>
                                     <Input 
                                         placeholder="e.g. First Term Finals" 
-                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
                                         value={examForm.name} 
                                         onChange={(e) => setExamForm({ ...examForm, name: e.target.value })} 
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Exam Date</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Exam Date</label>
                                     <Input 
                                         type="date" 
-                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
                                         value={examForm.date} 
                                         onChange={(e) => setExamForm({ ...examForm, date: e.target.value })} 
                                     />
@@ -545,54 +549,54 @@ export function ExamsDashboard({
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Class</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
                                     <select
-                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                        className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                                         value={examForm.class_id}
                                         onChange={(e) => setExamForm({ ...examForm, class_id: e.target.value })}
                                     >
-                                        <option value="">Select Class</option>
-                                        {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Class</option>
+                                        {classes.map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>)}
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Subject</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Subject</label>
                                     <select
-                                        className="w-full h-11 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700 bg-white focus:border-blue-300 outline-none"
+                                        className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
                                         value={examForm.subject_id}
                                         onChange={(e) => setExamForm({ ...examForm, subject_id: e.target.value })}
                                     >
-                                        <option value="">Select Subject</option>
-                                        {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                        <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Subject</option>
+                                        {subjects.map(s => <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{s.name}</option>)}
                                     </select>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Maximum Marks</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Maximum Marks</label>
                                     <Input 
                                         type="number" 
-                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
                                         value={examForm.max_marks} 
                                         onChange={(e) => setExamForm({ ...examForm, max_marks: e.target.value })} 
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-1.5">Passing Marks</label>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Passing Marks</label>
                                     <Input 
                                         type="number" 
-                                        className="h-11 bg-white border border-slate-200 rounded-xl focus:border-emerald-500/50"
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
                                         value={examForm.passing_marks} 
                                         onChange={(e) => setExamForm({ ...examForm, passing_marks: e.target.value })} 
                                     />
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-end gap-x-4 pt-6 border-t border-slate-100">
+                            <div className="flex items-center justify-end gap-x-4 pt-6 border-t border-slate-100 dark:border-slate-800">
                                 <button
                                     onClick={() => setIsCreateOpen(false)}
-                                    className="h-10 rounded-xl border border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 transition-all"
+                                    className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                                 >
                                     Cancel
                                 </button>
@@ -646,7 +650,7 @@ export function ExamsDashboard({
                                                 <tr key={student.id} className="group hover:bg-slate-50/30 dark:hover:bg-slate-800/10 transition-all duration-300">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-x-4">
-                                                            <div className="h-9 w-9 flex items-center justify-center bg-slate-100 dark:bg-slate-800 font-mono font-bold text-[10px] text-slate-500 border border-slate-200/60 dark:border-slate-700/60 rounded-lg group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">
+                                                            <div className="h-9 w-9 flex items-center justify-center bg-slate-100 dark:bg-slate-800 font-mono font-bold text-[10px] text-slate-500 dark:text-slate-400 border border-slate-200/60 dark:border-slate-700/60 rounded-lg group-hover:bg-rose-500 group-hover:text-white transition-all duration-300">
                                                                 {student.id.slice(0, 3).toUpperCase()}
                                                             </div>
                                                             <div>
@@ -699,7 +703,7 @@ export function ExamsDashboard({
                             <div className="flex items-center gap-x-4">
                                 <button
                                     onClick={() => setIsMarksOpen(false)}
-                                    className="h-11 px-5 text-xs font-black uppercase tracking-wider text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+                                    className="h-11 px-5 text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
                                 >
                                     Discard
                                 </button>
