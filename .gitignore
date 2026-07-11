@@ -59,3 +59,4 @@ build_output.log
 continuous_build_mode.md
 tmp/
 skills-lock.json
+.aider*

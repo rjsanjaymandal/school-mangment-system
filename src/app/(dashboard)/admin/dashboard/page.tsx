@@ -47,7 +47,7 @@ export default async function AdminDashboard() {
           <h1 className="text-lg font-black tracking-tight text-slate-900 dark:text-white mt-1">Admin Mission Control</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">{activeYearName}</p>
         </div>
-        <button className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-2">
+        <button className="h-10 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-white/[0.06] transition-all flex items-center gap-2">
           <ShieldAlert className="h-4 w-4" />
           Settings
         </button>
@@ -61,8 +61,8 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded bg-blue-50 dark:bg-blue-950/20">
                 <BookOpen className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -73,7 +73,7 @@ export default async function AdminDashboard() {
             </div>
           </div>
           <div className="p-5 space-y-4">
-            <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-3 w-full bg-slate-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
               <div className="h-full bg-blue-500 w-[85%] rounded-full" />
             </div>
             <div className="flex justify-between items-center">
@@ -83,8 +83,8 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded bg-red-50 dark:bg-red-950/20">
                 <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -102,8 +102,8 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+      <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+        <div className="p-5 border-b border-slate-100 dark:border-white/10">
           <div className="flex items-center gap-3">
             <div className="p-1.5 rounded bg-emerald-50 dark:bg-emerald-950/20">
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />

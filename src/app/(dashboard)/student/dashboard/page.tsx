@@ -23,7 +23,7 @@ export default async function StudentDashboard() {
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Learning Journey & Academic Achievement Tracking
             </p>
-            <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-green-50 text-green-600">
+            <span className="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-green-50 text-green-600 dark:bg-green-950/20 dark:text-green-400">
               {activeYearName}
             </span>
           </div>
@@ -42,7 +42,7 @@ export default async function StudentDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-5">
+        <div className="lg:col-span-2 bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden p-5">
           <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">
             Academic Milestones
           </h3>
@@ -54,7 +54,7 @@ export default async function StudentDashboard() {
             ].map((m, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:shadow-md transition-all"
+                className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-white/[0.04] border border-slate-100 dark:border-white/10 hover:shadow-md transition-all"
               >
                 <div>
                   <p className="text-sm font-bold text-slate-900 dark:text-white">{m.name}</p>
@@ -65,8 +65,8 @@ export default async function StudentDashboard() {
                 <span className={cn(
                   "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest",
                   m.grade === "Pending"
-                    ? "bg-slate-100 text-slate-500"
-                    : "bg-green-50 text-green-600"
+                    ? "bg-slate-100 text-slate-500 dark:bg-white/[0.06] dark:text-slate-400"
+                    : "bg-green-50 text-green-600 dark:bg-green-950/20 dark:text-green-400"
                 )}>
                   {m.grade}
                 </span>

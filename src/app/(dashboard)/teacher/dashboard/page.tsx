@@ -46,8 +46,8 @@ export default async function TeacherDashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded bg-blue-50 dark:bg-blue-950/20">
                 <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -56,17 +56,17 @@ export default async function TeacherDashboard() {
             </div>
           </div>
           <div className="p-5 space-y-3">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer transition-all">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-white/[0.04] hover:bg-slate-100 dark:hover:bg-white/[0.06] cursor-pointer transition-all">
               <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Advanced Physics (A-102)</span>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-900 cursor-pointer transition-all">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-white/[0.04] hover:bg-slate-100 dark:hover:bg-white/[0.06] cursor-pointer transition-all">
               <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Quantum Theory (B-204)</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded bg-amber-50 dark:bg-amber-950/20">
                 <Calendar className="h-5 w-5 text-amber-600 dark:text-amber-400" />

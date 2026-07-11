@@ -85,9 +85,9 @@ export default function ParentDashboardPage() {
   if (loading) {
     return (
       <div className="p-6 space-y-6 animate-in fade-in duration-700">
-        <div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse" />
+        <div className="h-32 bg-slate-100 dark:bg-white/[0.06] rounded-xl animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1,2,3].map(i => <div key={i} className="h-24 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="h-24 bg-slate-100 dark:bg-white/[0.06] rounded-xl animate-pulse" />)}
         </div>
       </div>
     );
@@ -110,8 +110,8 @@ export default function ParentDashboardPage() {
       {student && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="col-span-2">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-              <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+            <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+              <div className="p-5 border-b border-slate-100 dark:border-white/10">
                 <div className="flex items-center gap-3">
                   <div className="p-1.5 rounded bg-blue-50 dark:bg-blue-950/20">
                     <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -135,8 +135,8 @@ export default function ParentDashboardPage() {
           </div>
           
           <div>
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-5">
-              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-450 text-[10px] font-black uppercase tracking-widest mb-3">
+            <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden p-5">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-3">
                 <CheckCircle className="h-4 w-4" />
                 Attendance
               </div>
@@ -148,8 +148,8 @@ export default function ParentDashboardPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-5">
-          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-450 text-[10px] font-black uppercase tracking-widest mb-3">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden p-5">
+          <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest mb-3">
             <IndianRupee className="h-4 w-4" />
             Total Due
           </div>
@@ -157,8 +157,8 @@ export default function ParentDashboardPage() {
           <p className="text-xs text-slate-500 dark:text-slate-400">{feeDues.length} pending fees</p>
         </div>
         
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-5">
-          <div className="flex items-center gap-2 text-blue-600 dark:text-blue-450 text-[10px] font-black uppercase tracking-widest mb-3">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden p-5">
+          <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest mb-3">
             <BookOpen className="h-4 w-4" />
             Academic Status
           </div>
@@ -166,8 +166,8 @@ export default function ParentDashboardPage() {
           <p className="text-xs text-slate-500 dark:text-slate-400">Current Session</p>
         </div>
         
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden p-5">
-          <div className="flex items-center gap-2 text-purple-600 dark:text-purple-450 text-[10px] font-black uppercase tracking-widest mb-3">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden p-5">
+          <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-widest mb-3">
             <Calendar className="h-4 w-4" />
             Next Event
           </div>
@@ -177,8 +177,8 @@ export default function ParentDashboardPage() {
       </div>
 
       {feeDues.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden">
+          <div className="p-5 border-b border-slate-100 dark:border-white/10">
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded bg-amber-50 dark:bg-amber-950/20">
                 <IndianRupee className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -188,7 +188,7 @@ export default function ParentDashboardPage() {
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-slate-50/50 dark:bg-slate-900/50">
+              <thead className="bg-slate-50/50 dark:bg-white/[0.04]">
                 <tr>
                   <th className="text-left p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Fee Type</th>
                   <th className="text-left p-4 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Due Date</th>
@@ -198,7 +198,7 @@ export default function ParentDashboardPage() {
               </thead>
               <tbody>
                 {feeDues.map(fee => (
-                  <tr key={fee.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                  <tr key={fee.id} className="border-b border-slate-100 dark:border-white/10 hover:bg-slate-50/50 dark:hover:bg-white/[0.06]">
                     <td className="p-4 text-sm font-bold text-slate-700 dark:text-slate-300">{fee.fee_type || "Fee"}</td>
                     <td className="p-4 text-sm text-slate-600 dark:text-slate-400">{fee.due_date ? new Date(fee.due_date).toLocaleDateString() : "-"}</td>
                     <td className="p-4 text-right text-sm font-black text-slate-900 dark:text-white">₹{fee.amount?.toLocaleString()}</td>
@@ -214,19 +214,19 @@ export default function ParentDashboardPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/[0.06] transition-all">
           <FileText className="h-6 w-6 text-blue-600" />
           <span className="text-sm text-slate-700 dark:text-slate-300">View Report Card</span>
         </button>
-        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/[0.06] transition-all">
           <Calendar className="h-6 w-6 text-emerald-600" />
           <span className="text-sm text-slate-700 dark:text-slate-300">View Timetable</span>
         </button>
-        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/[0.06] transition-all">
           <IndianRupee className="h-6 w-6 text-amber-600" />
           <span className="text-sm text-slate-700 dark:text-slate-300">Pay Fees</span>
         </button>
-        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+        <button className="h-auto py-4 flex flex-col items-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-white/[0.06] transition-all">
           <AlertCircle className="h-6 w-6 text-purple-600" />
           <span className="text-sm text-slate-700 dark:text-slate-300">Contact Teacher</span>
         </button>
