@@ -41,6 +41,7 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address").or(z.literal("")).or(z.literal("user@edumaysan.com")), // Handle missing or placeholder scenarios
   password: z.string().optional().or(z.literal("")),
   role: z.enum(["admin", "teacher", "student", "parent"]),
+  is_active: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -58,6 +59,7 @@ export function ManageAccessModal({ user }: { user: any }) {
       email: user.email || "",
       password: "",
       role: user.role || "student",
+      is_active: user.is_active !== false,
     },
   });
 
@@ -197,6 +199,31 @@ export function ManageAccessModal({ user }: { user: any }) {
                       <SelectItem value="teacher" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Teacher</SelectItem>
                       <SelectItem value="student" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Student</SelectItem>
                       <SelectItem value="parent" className="text-xs uppercase font-black tracking-widest focus:bg-primary/10">Parent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-[10px]" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="is_active"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[10px] uppercase font-black tracking-widest">Account Status</FormLabel>
+                  <Select 
+                    onValueChange={(val) => field.onChange(val === "true")} 
+                    defaultValue={field.value ? "true" : "false"}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="rounded-sm bg-card/40 border-border text-xs focus:ring-primary shadow-inner uppercase font-black tracking-widest">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="rounded-sm border-border bg-card">
+                      <SelectItem value="true" className="text-xs uppercase font-black tracking-widest text-emerald-500 focus:bg-emerald-500/10">Active (Access Granted)</SelectItem>
+                      <SelectItem value="false" className="text-xs uppercase font-black tracking-widest text-rose-500 focus:bg-rose-500/10">Inactive (Access Deactivated)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-[10px]" />

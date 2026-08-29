@@ -54,68 +54,167 @@ export default function ReportCardsPage() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const { data: studentsData } = await supabase
-        .from("students")
-        .select(`id, admission_number, profile:profiles(full_name), class:classes(name, section)`)
-        .limit(60);
+      
+      // 1. Fetch students, marks, and attendance
+      const [studentsRes, marksRes, attendanceRes, examsRes] = await Promise.all([
+        supabase
+          .from("students")
+          .select(`id, admission_number, profile:profiles(full_name), class:classes(id, name, section)`)
+          .order("admission_number", { ascending: true })
+          .limit(100),
+        supabase
+          .from("marks")
+          .select(`
+            id,
+            student_id,
+            marks_obtained,
+            subject:subjects(id, name, code),
+            exam:exams(id, name, max_marks, passing_marks, date)
+          `),
+        supabase
+          .from("attendance")
+          .select("student_id, status"),
+        supabase
+          .from("exams")
+          .select("id, name, date")
+          .order("date", { ascending: false })
+          .limit(5)
+      ]);
 
-      const students = studentsData || [];
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const mockTerms = ["Term 1", "Term 2", "Final"];
-      const mockStatuses: ("draft" | "pending" | "published" | "sent")[] = ["draft", "pending", "published", "sent"];
+      const students = studentsRes.data || [];
+      const allMarks = marksRes.data || [];
+      const allAttendance = attendanceRes.data || [];
+      const recentExams = examsRes.data || [];
 
-      const cards: ReportCard[] = students.map((s: any, index: number) => {
-        const term = mockTerms[index % 3];
-        const status = mockStatuses[index % 4];
-        const percentage = Math.floor(Math.random() * 30) + 60;
-        const totalMarks = 500;
-        const overallMarks = Math.floor((percentage / 100) * totalMarks);
-        const grade = percentage >= 90 ? "A+" : percentage >= 80 ? "A" : percentage >= 70 ? "B+" : percentage >= 60 ? "B" : percentage >= 50 ? "C" : "F";
+      const currentYear = new Date().getFullYear();
+      const defaultTerm = recentExams[0]?.name || "Annual Term";
+
+      // 2. Compute attendance percentage per student
+      const attendanceMap: Record<string, { total: number; present: number }> = {};
+      allAttendance.forEach((att: any) => {
+        if (!attendanceMap[att.student_id]) {
+          attendanceMap[att.student_id] = { total: 0, present: 0 };
+        }
+        attendanceMap[att.student_id].total += 1;
+        if (att.status === "present") {
+          attendanceMap[att.student_id].present += 1;
+        }
+      });
+
+      // 3. Compute marks and percentage per student
+      const studentMetrics = students.map((s: any) => {
+        const studentMarks = allMarks.filter((m: any) => m.student_id === s.id);
+        const overallMarks = studentMarks.reduce((sum: number, m: any) => sum + Number(m.marks_obtained || 0), 0);
+        const totalMarks = studentMarks.reduce((sum: number, m: any) => sum + Number(m.exam?.max_marks || 100), 0) || (studentMarks.length > 0 ? studentMarks.length * 100 : 100);
+        const percentage = studentMarks.length > 0 ? Math.round((overallMarks / totalMarks) * 100) : 0;
+
+        const grade = percentage >= 90 ? "A+" : percentage >= 80 ? "A" : percentage >= 70 ? "B+" : percentage >= 60 ? "B" : percentage >= 50 ? "C" : percentage >= 35 ? "D" : studentMarks.length > 0 ? "F" : "N/A";
+        
+        const attStats = attendanceMap[s.id];
+        const attendanceRate = attStats && attStats.total > 0
+          ? Math.round((attStats.present / attStats.total) * 100)
+          : 100;
+
+        const status: "draft" | "pending" | "published" | "sent" = 
+          studentMarks.length === 0 ? "draft" : percentage >= 35 ? "published" : "pending";
 
         return {
-          id: `rc-${s.id}-${term.toLowerCase().replace(" ", "-")}`,
+          id: `rc-${s.id}`,
           student_id: s.id,
-          student_name: s.profile?.full_name || "Unknown",
-          admission_number: s.admission_number || "N/A",
-          class_name: s.class?.name || "N/A",
+          student_name: s.profile?.full_name || "Unknown Student",
+          admission_number: s.admission_number || "SYS-000",
+          class_name: s.class?.name || "Unassigned",
           section: s.class?.section || "-",
-          term,
+          term: defaultTerm,
           year: currentYear,
           status,
           percentage,
           grade,
-          rank: Math.floor(Math.random() * 30) + 1,
-          attendance_rate: Math.floor(Math.random() * 20) + 75,
+          rank: 1, // Will be computed next
+          attendance_rate: attendanceRate,
           overall_marks: overallMarks,
           total_marks: totalMarks,
+          marksCount: studentMarks.length
         };
       });
 
-      setReportCards(cards);
+      // 4. Compute deterministic ranking grouped by class
+      const classGroups: Record<string, typeof studentMetrics> = {};
+      studentMetrics.forEach(st => {
+        const key = `${st.class_name}-${st.section}`;
+        if (!classGroups[key]) classGroups[key] = [];
+        classGroups[key].push(st);
+      });
+
+      Object.values(classGroups).forEach(group => {
+        group.sort((a, b) => b.percentage - a.percentage);
+        group.forEach((st, idx) => {
+          st.rank = idx + 1;
+        });
+      });
+
+      setReportCards(studentMetrics);
     } catch (error) {
-      console.error("Error loading report cards:", error);
+      console.error("Error loading real report cards:", error);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadReportCards();
   }, [loadReportCards]);
 
-  const openReportCard = (card: ReportCard) => {
+  const openReportCard = async (card: ReportCard) => {
     setSelectedCard(card);
-    const subjects = ["Mathematics", "Science", "English", "Hindi", "Social Studies", "Computer"];
-    const marks: SubjectMark[] = subjects.map(sub => {
-      const obtained = Math.floor(Math.random() * 30) + 60;
-      const pct = (obtained / 100) * 100;
-      const grade = pct >= 90 ? "A+" : pct >= 80 ? "A" : pct >= 70 ? "B+" : pct >= 60 ? "B" : pct >= 50 ? "C" : "F";
-      const remarks = pct >= 80 ? "Excellent" : pct >= 60 ? "Good" : pct >= 50 ? "Needs improvement" : "Poor";
-      return { subject: sub, teacher: "T. Teacher", marks_obtained: obtained, max_marks: 100, grade, remarks };
-    });
-    setSubjectMarks(marks);
+    try {
+      const supabase = createClient();
+      const { data: marksData } = await supabase
+        .from("marks")
+        .select(`
+          marks_obtained,
+          subject:subjects(name),
+          exam:exams(name, max_marks, passing_marks)
+        `)
+        .eq("student_id", card.student_id);
+
+      if (marksData && marksData.length > 0) {
+        const formattedMarks: SubjectMark[] = marksData.map((m: any) => {
+          const max = Number(m.exam?.max_marks || 100);
+          const obtained = Number(m.marks_obtained || 0);
+          const pct = max > 0 ? (obtained / max) * 100 : 0;
+          const grade = pct >= 90 ? "A+" : pct >= 80 ? "A" : pct >= 70 ? "B+" : pct >= 60 ? "B" : pct >= 50 ? "C" : pct >= 35 ? "D" : "F";
+          const remarks = pct >= 80 ? "Excellent Performance" : pct >= 60 ? "Good Progress" : pct >= 35 ? "Satisfactory" : "Needs Remedial Attention";
+          return {
+            subject: m.subject?.name || m.exam?.name || "General Subject",
+            teacher: "Faculty",
+            marks_obtained: obtained,
+            max_marks: max,
+            grade,
+            remarks
+          };
+        });
+        setSubjectMarks(formattedMarks);
+      } else {
+        // Fallback to assigned class subjects if marks are not yet uploaded
+        const { data: classSubjects } = await supabase
+          .from("subjects")
+          .select("name")
+          .limit(6);
+
+        const placeholderMarks: SubjectMark[] = (classSubjects || [{ name: "Core Curriculum" }]).map((sub: any) => ({
+          subject: sub.name,
+          teacher: "Faculty",
+          marks_obtained: 0,
+          max_marks: 100,
+          grade: "Pending",
+          remarks: "Evaluation in progress"
+        }));
+        setSubjectMarks(placeholderMarks);
+      }
+    } catch (err) {
+      console.error("Error loading subject marks for student:", err);
+    }
   };
 
   const filteredCards = reportCards.filter(card => {

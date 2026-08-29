@@ -78,14 +78,21 @@ export async function updateIdentity(userId: string, formData: any) {
     const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, updateData);
     if (authError) throw authError;
 
+    const profileUpdate: any = {
+      full_name: formData.full_name,
+      role: formData.role,
+      email: formData.email, // Ensure email is synced if it was missing
+      updated_at: new Date().toISOString()
+    };
+
+    if (typeof formData.is_active === 'boolean') {
+      profileUpdate.is_active = formData.is_active;
+      profileUpdate.status = formData.is_active ? 'active' : 'inactive';
+    }
+
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
-      .update({
-        full_name: formData.full_name,
-        role: formData.role,
-        email: formData.email, // Ensure email is synced if it was missing
-        updated_at: new Date().toISOString()
-      })
+      .update(profileUpdate)
       .eq('id', userId);
 
     if (profileError) {
@@ -98,6 +105,36 @@ export async function updateIdentity(userId: string, formData: any) {
   } catch (error: any) {
     console.error("Error updating identity:", error);
     return { success: false, message: error.message || "Failed to update identity" };
+  }
+}
+
+export async function toggleUserStatusAction(userId: string, isActive: boolean) {
+  const adminCheck = await isAdmin();
+  if (!adminCheck) {
+    return { success: false, message: "Unauthorized: Admin clearance required" };
+  }
+
+  try {
+    const supabaseAdmin = createAdminClient();
+    const { error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        is_active: isActive,
+        status: isActive ? 'active' : 'inactive',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (error) throw error;
+
+    revalidatePath("/users");
+    return { 
+      success: true, 
+      message: `User status changed to ${isActive ? 'Active' : 'Inactive'}` 
+    };
+  } catch (error: any) {
+    console.error("Error toggling user status:", error);
+    return { success: false, message: error.message || "Failed to change user status" };
   }
 }
 

@@ -238,15 +238,17 @@ export default function StaffAttendancePage() {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {STATUS_OPTIONS.slice(0, 3).map((option) => (
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {STATUS_OPTIONS.map((option) => (
                           <button
                             key={option.value}
                             className={cn(
-                              "flex-1 h-10 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300",
-                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400 dark:hover:border-emerald-900/30" :
-                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/20 dark:hover:text-rose-400 dark:hover:border-rose-900/30" :
-                              "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 dark:hover:bg-amber-950/20 dark:hover:text-amber-400 dark:hover:border-amber-900/30"
+                              "h-9 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300",
+                              option.value === 'present' ? "hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 dark:hover:bg-emerald-950/20 dark:hover:text-emerald-400" :
+                              option.value === 'absent' ? "hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/20 dark:hover:text-rose-400" :
+                              option.value === 'on_leave' ? "hover:bg-amber-50 hover:text-amber-600 hover:border-amber-200 dark:hover:bg-amber-950/20 dark:hover:text-amber-400" :
+                              option.value === 'late' ? "hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 dark:hover:bg-orange-950/20 dark:hover:text-orange-400" :
+                              "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 dark:hover:bg-blue-950/20 dark:hover:text-blue-400"
                             )}
                             onClick={() => markAttendance(staff.id, option.value)}
                             disabled={saving}

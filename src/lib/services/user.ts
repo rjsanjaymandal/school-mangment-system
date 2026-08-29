@@ -155,22 +155,21 @@ export const UserService = {
    */
   async deactivateUser(supabase: SupabaseClient, userId: string) {
     try {
-
-      // Get current user for audit log
       const { data: { user: actor } } = await supabase.auth.getUser();
 
-      // Note: Assuming a 'status' or 'is_active' column exists or should be handled.
-      // For now, we'll update a hypothetical 'status' field to 'deactivated'.
       const { data, error } = await supabase
         .from("profiles")
-        .update({ role: 'student' }) // Safe fallback or status update if column exists
+        .update({
+          is_active: false,
+          status: "inactive",
+          updated_at: new Date().toISOString()
+        })
         .eq("id", userId)
         .select()
         .single();
 
       if (error) throw error;
 
-      // Log action
       await AuditService.logAction(supabase, {
         actor_id: actor?.id,
         action: "DEACTIVATE_USER",
@@ -181,6 +180,50 @@ export const UserService = {
       return data;
     } catch (error) {
       return handleServiceError(error);
+    }
+  },
+
+  /**
+   * Admin only: Activates a user's access.
+   */
+  async activateUser(supabase: SupabaseClient, userId: string) {
+    try {
+      const { data: { user: actor } } = await supabase.auth.getUser();
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({
+          is_active: true,
+          status: "active",
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await AuditService.logAction(supabase, {
+        actor_id: actor?.id,
+        action: "ACTIVATE_USER",
+        entity_type: "profile",
+        entity_id: userId
+      });
+
+      return data;
+    } catch (error) {
+      return handleServiceError(error);
+    }
+  },
+
+  /**
+   * Admin only: Toggles active status.
+   */
+  async toggleUserStatus(supabase: SupabaseClient, userId: string, isActive: boolean) {
+    if (isActive) {
+      return this.activateUser(supabase, userId);
+    } else {
+      return this.deactivateUser(supabase, userId);
     }
   },
 

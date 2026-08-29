@@ -69,12 +69,15 @@ export default function AdvancedFeeCollectionPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [collectedToday, setCollectedToday] = useState(0);
-  const [totalRealizable, setTotalRealizable] = useState(1250000);
-  const [defaulterCount, setDefaulterCount] = useState(42);
+  const [totalRealizable, setTotalRealizable] = useState(0);
+  const [defaulterCount, setDefaulterCount] = useState(0);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // 1. Fetch paginated fee collection grid
       const { data: rpcData, error } = await supabase.rpc("get_fee_collection_data", {
         p_search: searchQuery,
         p_limit: pageSize,
@@ -85,6 +88,24 @@ export default function AdvancedFeeCollectionPage() {
 
       setData(rpcData || []);
       setTotalRowCount(rpcData?.[0]?.total_count || 0);
+
+      // 2. Fetch real KPI stats
+      const [todayPaymentsRes, allPaymentsRes, allFeesRes] = await Promise.all([
+        supabase.from("payments").select("amount_paid").eq("payment_date", today).eq("status", "completed"),
+        supabase.from("payments").select("amount_paid").eq("status", "completed"),
+        supabase.from("fees").select("amount")
+      ]);
+
+      const todayTotal = (todayPaymentsRes.data || []).reduce((sum, p) => sum + Number(p.amount_paid || 0), 0);
+      const totalExpected = (allFeesRes.data || []).reduce((sum, f) => sum + Number(f.amount || 0), 0);
+      const totalPaidLifetime = (allPaymentsRes.data || []).reduce((sum, p) => sum + Number(p.amount_paid || 0), 0);
+      const realOutstanding = Math.max(0, totalExpected - totalPaidLifetime);
+
+      setCollectedToday(todayTotal);
+      setTotalRealizable(realOutstanding > 0 ? realOutstanding : (rpcData || []).reduce((acc: number, item: any) => acc + Number(item.outstanding_balance || 0), 0));
+      
+      const defaulters = (rpcData || []).filter((item: any) => Number(item.outstanding_balance) > 0).length;
+      setDefaulterCount(defaulters);
     } catch (err: any) {
       toast.error("Data Load Error", { description: err.message });
     } finally {
@@ -107,20 +128,40 @@ export default function AdvancedFeeCollectionPage() {
     setIsProcessing(true);
 
     try {
-      const { error } = await supabase
+      const amount = parseFloat(paymentAmount);
+      const receiptNo = `RCP-${Date.now().toString().slice(-6)}`;
+      const today = new Date().toISOString().split('T')[0];
+
+      // 1. Insert into payments
+      const { data: paymentRecord, error: paymentError } = await supabase
         .from("payments")
         .insert({
           student_id: selectedStudent.student_id,
-          amount_paid: parseFloat(paymentAmount),
-          payment_mode: paymentMode,
-          payment_date: new Date().toISOString().split('T')[0],
+          amount_paid: amount,
+          payment_method: paymentMode,
+          payment_date: today,
+          receipt_number: receiptNo,
           status: "completed",
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (paymentError) throw paymentError;
 
-      toast.success("Payment Successful", {
-        description: `₹${paymentAmount} collected via ${paymentMode.toUpperCase()}`,
+      // 2. Post record into Transactions Day Book
+      await supabase.from("transactions").insert({
+        date: today,
+        voucher_no: receiptNo,
+        type: "income",
+        category: "Fee Collection",
+        amount: amount,
+        mode: paymentMode.toLowerCase(),
+        description: `Fee Collection - ${selectedStudent.student_name} (${selectedStudent.admission_number || 'Section ' + selectedStudent.class_name})`,
+        reference_id: paymentRecord?.id || selectedStudent.student_id,
+      });
+
+      toast.success("Payment Processed Successfully", {
+        description: `₹${amount.toLocaleString('en-IN')} collected via ${paymentMode.toUpperCase()} | Receipt: ${receiptNo}`,
         icon: <CheckCircle2 className="h-4 w-4 text-emerald-500" />
       });
 

@@ -106,8 +106,24 @@ export function UserManagement() {
     const res = await UserService.deactivateUser(supabase, userId);
     if (res && !("error" in res)) {
       toast.success("User access deactivated");
+      setUsers(
+        users.map((u) => (u.id === userId ? { ...u, is_active: false, status: "inactive" } : u)),
+      );
     } else {
       toast.error("Failed to deactivate access");
+    }
+  };
+
+  const handleActivate = async (userId: string) => {
+    const supabase = createClient();
+    const res = await UserService.activateUser(supabase, userId);
+    if (res && !("error" in res)) {
+      toast.success("User access activated");
+      setUsers(
+        users.map((u) => (u.id === userId ? { ...u, is_active: true, status: "active" } : u)),
+      );
+    } else {
+      toast.error("Failed to activate access");
     }
   };
 
@@ -371,12 +387,21 @@ export function UserManagement() {
                           <Users className="h-4 w-4" /> Make Student
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => handleDeactivate(user.id)}
-                          className="flex items-center gap-3 px-2 py-2 text-sm text-red-500 cursor-pointer rounded-sm hover:text-red-600 focus:text-red-600 focus:bg-red-50"
-                        >
-                          <AlertCircle className="h-4 w-4" /> Deactivate Account
-                        </DropdownMenuItem>
+                        {user.is_active !== false ? (
+                          <DropdownMenuItem
+                            onClick={() => handleDeactivate(user.id)}
+                            className="flex items-center gap-3 px-2 py-2 text-sm text-red-500 cursor-pointer rounded-sm hover:text-red-600 focus:text-red-600 focus:bg-red-50"
+                          >
+                            <AlertCircle className="h-4 w-4" /> Deactivate Account
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            onClick={() => handleActivate(user.id)}
+                            className="flex items-center gap-3 px-2 py-2 text-sm text-emerald-600 cursor-pointer rounded-sm hover:text-emerald-700 focus:text-emerald-700 focus:bg-emerald-50"
+                          >
+                            <ShieldCheck className="h-4 w-4" /> Activate Account
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

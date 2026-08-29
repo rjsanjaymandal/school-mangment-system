@@ -1,4 +1,5 @@
 import { InstitutionalService } from "@/lib/services/institutional";
+import { FeesService } from "@/lib/services/fees";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { ArrowLeft, User, Edit3 } from "lucide-react";
@@ -7,8 +8,6 @@ import { getStudentResults } from "@/app/actions/exams";
 import { getStudentAttendance } from "@/app/actions/attendance";
 import { StudentProfileTabs } from "@/components/students/StudentProfileTabs";
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
-
-import { redirect } from "next/navigation";
 
 export default async function StudentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -27,14 +26,18 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
 
     const resultsResponse = await getStudentResults(id);
     const attendanceResponse = await getStudentAttendance(id);
+    const feesResponse = await FeesService.getStudentFees(id);
+    const paymentHistoryResponse = await FeesService.getPaymentHistory(id);
 
     const grades = resultsResponse.success ? resultsResponse.data : [];
     const attendance = attendanceResponse.success ? attendanceResponse.data : [];
+    const fees = feesResponse.data || [];
+    const payments = paymentHistoryResponse.data || [];
 
     return (
         <div className="p-6 space-y-8 animate-in fade-in duration-700">
             <UnifiedPageHeader 
-                title={`${student.profile?.first_name} ${student.profile?.last_name}`}
+                title={`${student.profile?.first_name || ""} ${student.profile?.last_name || ""}`.trim() || student.profile?.full_name || "Student Details"}
                 subtitle={`Institutional Record: ${student.admission_number || id.slice(0, 8)}`}
                 icon={User}
                 color="emerald"
@@ -56,7 +59,13 @@ export default async function StudentDetailsPage({ params }: { params: Promise<{
                 }
             />
 
-            <StudentProfileTabs student={student} grades={grades} attendance={attendance} />
+            <StudentProfileTabs 
+                student={student} 
+                grades={grades} 
+                attendance={attendance} 
+                fees={fees}
+                payments={payments}
+            />
         </div>
     );
 }

@@ -42,23 +42,9 @@ export default function AuditLogsPage() {
 
       if (error) throw error;
       setLogs(data || []);
-    } catch {
-      const mockLogs: AuditLog[] = Array.from({ length: 30 }, (_, i) => ({
-        id: `log-${i}`,
-        created_at: new Date(Date.now() - i * 3600000).toISOString(),
-        action: ["CREATE", "UPDATE", "DELETE", "LOGIN", "LOGOUT", "EXPORT"][i % 6],
-        entity_type: ["students", "profiles", "payments", "attendance", "marks", "users"][i % 6],
-        entity_id: `ent-${Math.random().toString(36).substr(2, 9)}`,
-        ip_address: `192.168.1.${Math.floor(Math.random() * 255)}`,
-        actor: {
-          id: `user-${i % 5}`,
-          full_name: ["Ravi Kumar", "Priya Sharma", "Amit Singh", "Sneha Patel", "Vikram Rao"][i % 5],
-          email: `user${i % 5}@school.edu`,
-          role: i % 3 === 0 ? "admin" : i % 3 === 1 ? "teacher" : "student",
-        },
-        status: i % 10 === 0 ? "failed" : i % 15 === 0 ? "warning" : "success",
-      }));
-      setLogs(mockLogs);
+    } catch (err) {
+      console.error("Error loading audit logs:", err);
+      setLogs([]);
     } finally {
       setLoading(false);
     }

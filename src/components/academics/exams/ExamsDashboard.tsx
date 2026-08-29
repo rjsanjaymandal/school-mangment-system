@@ -11,7 +11,7 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import { enUS } from "date-fns/locale/en-US";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "@/styles/calendar-overrides.css"; 
-import { createExam, deleteExam, saveMarks, getMarksByExam } from "@/app/actions/exams";
+import { createExam, updateExam, deleteExam, saveMarks, getMarksByExam } from "@/app/actions/exams";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { 
@@ -56,6 +56,8 @@ export function ExamsDashboard({
 }: ExamsDashboardProps) {
     const router = useRouter();
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [editingExamId, setEditingExamId] = useState<string | null>(null);
     const [isMarksOpen, setIsMarksOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [selectedExam, setSelectedExam] = useState<any>(null);
@@ -107,6 +109,11 @@ export function ExamsDashboard({
         academic_year_id: currentAY?.id || "",
     });
 
+    const [editExamForm, setEditExamForm] = useState({
+        name: "", subject_id: "", class_id: "", date: "", max_marks: "100", passing_marks: "35",
+        academic_year_id: currentAY?.id || "",
+    });
+
     const handleCreateExam = async () => {
         setLoading(true);
         const result = await createExam({
@@ -118,6 +125,36 @@ export function ExamsDashboard({
         if (result.success) {
             setIsCreateOpen(false);
             setExamForm({ name: "", subject_id: "", class_id: "", date: "", max_marks: "100", passing_marks: "35", academic_year_id: currentAY?.id || "" });
+            router.refresh();
+        }
+    };
+
+    const handleOpenEdit = (exam: any) => {
+        setEditingExamId(exam.id);
+        setEditExamForm({
+            name: exam.name || "",
+            subject_id: exam.subject_id || "",
+            class_id: exam.class_id || "",
+            date: exam.date || "",
+            max_marks: String(exam.max_marks || 100),
+            passing_marks: String(exam.passing_marks || 35),
+            academic_year_id: exam.academic_year_id || currentAY?.id || "",
+        });
+        setIsEditOpen(true);
+    };
+
+    const handleUpdateExam = async () => {
+        if (!editingExamId) return;
+        setLoading(true);
+        const result = await updateExam(editingExamId, {
+            ...editExamForm,
+            max_marks: parseInt(editExamForm.max_marks) || 100,
+            passing_marks: parseInt(editExamForm.passing_marks) || 35,
+        });
+        setLoading(false);
+        if (result.success) {
+            setIsEditOpen(false);
+            setEditingExamId(null);
             router.refresh();
         }
     };
@@ -474,7 +511,8 @@ export function ExamsDashboard({
                                                     </button>
                                                 )}
                                                 <button
-                                                    className="h-9 w-9 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-slate-200/40 dark:border-slate-800/40 hover:border-rose-500/20 transition-all duration-300 flex items-center justify-center"
+                                                    onClick={() => handleOpenEdit(exam)}
+                                                    className="h-9 w-9 text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-slate-200/40 dark:border-slate-800/40 hover:border-rose-500/20 transition-all duration-300 flex items-center justify-center cursor-pointer"
                                                 >
                                                     <Pencil className="h-4 w-4" />
                                                 </button>
@@ -606,6 +644,108 @@ export function ExamsDashboard({
                                     className="h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
                                 >
                                     {loading ? "Publishing..." : "Publish Exam"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Exam Modal */}
+            {isEditOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsEditOpen(false)} />
+                    <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-y-auto max-h-[90vh] max-w-2xl w-full mx-4 rounded-2xl shadow-2xl">
+                        <div className="p-6 bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
+                            <h3 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
+                                Edit Assessment Configuration
+                            </h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Update exam parameters, dates, and grading targets
+                            </p>
+                        </div>
+                        
+                        <div className="p-8 space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Exam Name</label>
+                                    <Input 
+                                        placeholder="e.g. First Term Finals" 
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
+                                        value={editExamForm.name} 
+                                        onChange={(e) => setEditExamForm({ ...editExamForm, name: e.target.value })} 
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Exam Date</label>
+                                    <Input 
+                                        type="date" 
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
+                                        value={editExamForm.date} 
+                                        onChange={(e) => setEditExamForm({ ...editExamForm, date: e.target.value })} 
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Class</label>
+                                    <select
+                                        className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
+                                        value={editExamForm.class_id}
+                                        onChange={(e) => setEditExamForm({ ...editExamForm, class_id: e.target.value })}
+                                    >
+                                        <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Class</option>
+                                        {classes.map(c => <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{c.name}</option>)}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Subject</label>
+                                    <select
+                                        className="w-full h-11 rounded-xl border border-slate-200 dark:border-slate-800 px-3 text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 focus:border-blue-300 outline-none"
+                                        value={editExamForm.subject_id}
+                                        onChange={(e) => setEditExamForm({ ...editExamForm, subject_id: e.target.value })}
+                                    >
+                                        <option value="" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Select Subject</option>
+                                        {subjects.map(s => <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{s.name}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Maximum Marks</label>
+                                    <Input 
+                                        type="number" 
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
+                                        value={editExamForm.max_marks} 
+                                        onChange={(e) => setEditExamForm({ ...editExamForm, max_marks: e.target.value })} 
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 block mb-1.5">Passing Marks</label>
+                                    <Input 
+                                        type="number" 
+                                        className="h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:border-emerald-500/50"
+                                        value={editExamForm.passing_marks} 
+                                        onChange={(e) => setEditExamForm({ ...editExamForm, passing_marks: e.target.value })} 
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end gap-x-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                                <button
+                                    onClick={() => setIsEditOpen(false)}
+                                    className="h-10 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-black text-[10px] uppercase tracking-widest px-6 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleUpdateExam}
+                                    disabled={loading}
+                                    className="h-10 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-[10px] uppercase tracking-widest px-6 shadow-lg transition-all disabled:opacity-50"
+                                >
+                                    {loading ? "Saving Changes..." : "Save Changes"}
                                 </button>
                             </div>
                         </div>

@@ -79,6 +79,9 @@ export default function LoginPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetSent, setResetSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,6 +97,32 @@ export default function LoginPage() {
     const e = email.toLowerCase().trim();
     return e.endsWith('@edufox.com') || e === 'riya@maysanlabs.com';
   };
+
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!resetEmail || !resetEmail.includes("@")) {
+      setError("Please enter a valid registered email address.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    const supabase = createClient();
+    try {
+      const { error: resetErr } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (resetErr) {
+        setError(resetErr.message);
+      } else {
+        setResetSent(true);
+      }
+    } catch (err: any) {
+      setError(err?.message || "Failed to send reset instructions.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -352,97 +381,179 @@ export default function LoginPage() {
                 </CardContent>
               </div>
 
-              {/* SLIDE 2: Login Form */}
+              {/* SLIDE 2: Login / Forgot Password Form */}
               <div className="w-1/2 flex flex-col shrink-0">
                 <CardHeader className="pb-3 border-b border-slate-200/80 dark:border-white/[0.06] pt-5 bg-slate-50/20 dark:bg-white/[0.01]">
                   <button 
-                    onClick={() => setSelectedRole(null)}
+                    onClick={() => {
+                      if (isForgotPassword) {
+                        setIsForgotPassword(false);
+                        setResetSent(false);
+                        setError(null);
+                      } else {
+                        setSelectedRole(null);
+                      }
+                    }}
                     className="text-xs font-black text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 mb-2.5 text-left flex items-center gap-1 transition-colors uppercase tracking-wider cursor-pointer"
                   >
-                    ← Back to types
+                    ← {isForgotPassword ? "Back to Login" : "Back to types"}
                   </button>
                   <CardTitle className="text-[10px] font-bold text-slate-800 dark:text-white uppercase tracking-wider">
-                    Login as {roleOptions.find(r => r.id === selectedRole)?.label}
+                    {isForgotPassword 
+                      ? "Password Recovery" 
+                      : `Login as ${roleOptions.find(r => r.id === selectedRole)?.label}`}
                   </CardTitle>
                 </CardHeader>
                 
                 <CardContent className="pt-4 pb-6 px-5">
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem className="space-y-1.5">
-                            <div className="flex justify-between items-center">
-                              <FormLabel className="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider">Email</FormLabel>
-                              {SHOW_DEMO_LOGINS && (
+                  {isForgotPassword ? (
+                    <div className="space-y-4">
+                      {resetSent ? (
+                        <div className="space-y-3 py-4 text-center">
+                          <div className="h-10 w-10 mx-auto rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center">
+                            <CheckCircle className="h-6 w-6" />
+                          </div>
+                          <h4 className="text-xs font-bold text-slate-900 dark:text-white">Recovery Email Sent</h4>
+                          <p className="text-[11px] text-slate-500 dark:text-white/60 leading-relaxed">
+                            If an account matches <span className="font-semibold text-emerald-500">{resetEmail}</span>, a secure password reset link has been dispatched to your inbox.
+                          </p>
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              setIsForgotPassword(false);
+                              setResetSent(false);
+                              setError(null);
+                            }}
+                            className="w-full h-9 rounded-lg bg-slate-200 dark:bg-white/10 text-slate-800 dark:text-white font-bold text-[10px] uppercase tracking-wider hover:bg-slate-300 dark:hover:bg-white/20 transition-all"
+                          >
+                            Return to Login
+                          </Button>
+                        </div>
+                      ) : (
+                        <form onSubmit={handleResetPassword} className="space-y-4">
+                          <p className="text-[11px] text-slate-500 dark:text-white/60 leading-relaxed">
+                            Enter your account's registered email address and we'll send a secure password reset link.
+                          </p>
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider">
+                              Email Address
+                            </label>
+                            <Input
+                              type="email"
+                              placeholder="your@email.com"
+                              value={resetEmail}
+                              onChange={(e) => setResetEmail(e.target.value)}
+                              className="rounded-lg bg-slate-100/50 dark:bg-white/[0.02] border-slate-200 dark:border-white/[0.08] focus:border-emerald-500/50 focus:ring-emerald-500/10 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/20 transition-all duration-300 h-10 text-xs"
+                              required
+                            />
+                          </div>
+                          {error && (
+                            <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-medium leading-tight">
+                              {error}
+                            </div>
+                          )}
+                          <Button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full h-10 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40 hover:scale-[1.01] cursor-pointer"
+                          >
+                            {loading ? <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" /> : null}
+                            Send Reset Instructions
+                          </Button>
+                        </form>
+                      )}
+                    </div>
+                  ) : (
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem className="space-y-1.5">
+                              <div className="flex justify-between items-center">
+                                <FormLabel className="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider">Email</FormLabel>
+                                {SHOW_DEMO_LOGINS && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const creds = {
+                                        admin: 'riya@maysanlabs.com',
+                                        teacher: 'aris@edufox.com',
+                                        student: 'std.myra.khan.0@edufox.com',
+                                        parent: 'parent.demo@edufox.com',
+                                      }[selectedRole || ''];
+                                      if (creds) {
+                                        form.setValue('email', creds);
+                                        form.setValue('password', 'password123');
+                                      }
+                                    }}
+                                    className="text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all cursor-pointer"
+                                  >
+                                    Autofill Demo
+                                  </button>
+                                )}
+                              </div>
+                              <FormControl>
+                                <Input 
+                                  placeholder="your@email.com" 
+                                  {...field} 
+                                  className="rounded-lg bg-slate-100/50 dark:bg-white/[0.02] border-slate-200 dark:border-white/[0.08] focus:border-emerald-500/50 focus:ring-emerald-500/10 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/20 transition-all duration-300 h-10 text-xs"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs text-red-500 dark:text-red-400" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem className="space-y-1.5">
+                              <div className="flex justify-between items-center">
+                                <FormLabel className="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider">Password</FormLabel>
                                 <button
                                   type="button"
                                   onClick={() => {
-                                    const creds = {
-                                      admin: 'riya@maysanlabs.com',
-                                      teacher: 'aris@edufox.com',
-                                      student: 'std.myra.khan.0@edufox.com',
-                                      parent: 'parent.demo@edufox.com',
-                                    }[selectedRole || ''];
-                                    if (creds) {
-                                      form.setValue('email', creds);
-                                      form.setValue('password', 'password123');
-                                    }
+                                    setResetEmail(form.getValues('email') || "");
+                                    setIsForgotPassword(true);
+                                    setError(null);
                                   }}
-                                  className="text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all cursor-pointer"
+                                  className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
                                 >
-                                  Autofill Demo
+                                  Forgot?
                                 </button>
-                              )}
-                            </div>
-                            <FormControl>
-                              <Input 
-                                placeholder="your@email.com" 
-                                {...field} 
-                                className="rounded-lg bg-slate-100/50 dark:bg-white/[0.02] border-slate-200 dark:border-white/[0.08] focus:border-emerald-500/50 focus:ring-emerald-500/10 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/20 transition-all duration-300 h-10 text-xs"
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-500 dark:text-red-400" />
-                          </FormItem>
+                              </div>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="••••••••"
+                                  {...field}
+                                  className="rounded-lg bg-slate-100/50 dark:bg-white/[0.02] border-slate-200 dark:border-white/[0.08] focus:border-emerald-500/50 focus:ring-emerald-500/10 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/20 transition-all duration-300 h-10 text-xs"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs text-red-500 dark:text-red-400" />
+                            </FormItem>
+                          )}
+                        />
+                        {error && (
+                          <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-medium leading-tight">
+                            {error}
+                          </div>
                         )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem className="space-y-1.5">
-                            <FormLabel className="text-[10px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider">Password</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                placeholder="••••••••"
-                                {...field}
-                                className="rounded-lg bg-slate-100/50 dark:bg-white/[0.02] border-slate-200 dark:border-white/[0.08] focus:border-emerald-500/50 focus:ring-emerald-500/10 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-white/20 transition-all duration-300 h-10 text-xs"
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-500 dark:text-red-400" />
-                          </FormItem>
-                        )}
-                      />
-                      {error && (
-                        <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-[11px] font-medium leading-tight">
-                          {error}
-                        </div>
-                      )}
-                      <Button 
-                        type="submit" 
-                        className="w-full h-10 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40 hover:scale-[1.01] cursor-pointer" 
-                        disabled={loading}
-                      >
-                        {loading ? (
-                          <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-                        ) : null}
-                        Sign In
-                      </Button>
-                    </form>
-                  </Form>
+                        <Button 
+                          type="submit" 
+                          className="w-full h-10 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40 hover:scale-[1.01] cursor-pointer" 
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                          ) : null}
+                          Sign In
+                        </Button>
+                      </form>
+                    </Form>
+                  )}
                 </CardContent>
               </div>
             </div>

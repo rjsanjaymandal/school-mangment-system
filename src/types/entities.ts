@@ -21,6 +21,7 @@ export interface Profile extends BaseEntity {
   avatar_url?: string;
   role: UserRole;
   is_active?: boolean;
+  status?: "active" | "inactive" | "suspended" | "pending";
 }
 
 export type UserRole = "admin" | "principal" | "teacher" | "clerk" | "receptionist" | "student" | "parent" | "guardian";
@@ -29,6 +30,70 @@ export interface UserRoleAssignment extends BaseEntity {
   user_id: string;
   role: UserRole;
   assigned_by?: string;
+}
+
+export interface FeeAssignment extends BaseEntity {
+  student_id: string;
+  fee_id: string;
+  fee_structure_id?: string;
+  amount: number;
+  discount: number;
+  final_amount: number;
+  status: "unpaid" | "partial" | "paid" | "waived";
+  due_date?: string;
+  fee?: Fee;
+  student?: Student;
+}
+
+export interface Transaction extends BaseEntity {
+  transaction_type: "income" | "expense" | "fee_payment" | "salary_payout" | "refund";
+  amount: number;
+  category?: string;
+  payment_method: string;
+  reference_id?: string;
+  reference_type?: string;
+  description?: string;
+  created_by?: string;
+}
+
+export interface InventoryItem extends BaseEntity {
+  name: string;
+  category?: string;
+  category_id?: string;
+  quantity_in_stock: number;
+  unit_price: number;
+  sku?: string;
+  min_stock_level?: number;
+  location?: string;
+  supplier?: string;
+  status: "in_stock" | "low_stock" | "out_of_stock";
+}
+
+export interface DocumentArchive extends BaseEntity {
+  title: string;
+  category: "Legal" | "Academic" | "HR" | "Financial" | "Administrative";
+  file_path?: string;
+  file_size?: number;
+  uploaded_by?: string;
+  expiry_date?: string;
+  version?: number;
+  is_encrypted?: boolean;
+}
+
+export interface PaymentGatewayConfig extends BaseEntity {
+  name: string;
+  provider: string;
+  is_active: boolean;
+  api_key?: string;
+  secret_key?: string;
+  webhook_secret?: string;
+  config?: Record<string, any>;
+}
+
+export interface SchoolSetting extends BaseEntity {
+  key: string;
+  value?: string;
+  category: string;
 }
 
 // Academic

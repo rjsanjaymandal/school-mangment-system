@@ -32,6 +32,15 @@ import {
     X
 } from "lucide-react";
 import { Student } from "@/types/database";
+import { useRouter } from "next/navigation";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ParentForm } from "../parents/ParentForm";
 import { StudentForm } from "./StudentForm";
 import { StudentAvatar } from "./StudentAvatar";
@@ -51,6 +60,7 @@ interface StudentListProps {
 }
 
 export function StudentList({ initialData, classes, userRole, currentAcademicYearId }: StudentListProps) {
+    const router = useRouter();
     const isAdmin = userRole === "admin";
     const [isPending, startTransition] = useTransition();
     const [isOpen, setIsOpen] = useState(false);
@@ -98,6 +108,17 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
     const onLinkParent = (studentId: string) => {
         setLinkingStudentId(studentId);
         setIsParentOpen(true);
+    };
+
+    const handleDeleteStudent = async (id: string) => {
+        if (!confirm("Are you sure you want to remove this student record? This action cannot be undone.")) return;
+        const res = await deleteStudent(id);
+        if (res.success) {
+            toast.success("Student record removed");
+            router.refresh();
+        } else {
+            toast.error(res.error || "Failed to remove student");
+        }
     };
 
     const toggleSelection = (studentId: string) => {
@@ -350,11 +371,34 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                                                 </span>
                                             </td>
                                             <td className="px-6 py-5 text-right">
-                                                <div className="relative">
-                                                    <button className="h-9 w-9 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl inline-flex items-center justify-center">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </button>
-                                                </div>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <button className="h-9 w-9 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-xl inline-flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48 rounded-xl border-slate-200 dark:border-slate-800 shadow-xl p-1 bg-white dark:bg-slate-900">
+                                                        <DropdownMenuItem asChild>
+                                                            <Link href={`/students/${student.id}`} className="flex items-center gap-2.5 p-2.5 text-xs font-bold cursor-pointer rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                                <Eye className="h-4 w-4 text-slate-400" /> View Profile
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => onEdit(student)} className="flex items-center gap-2.5 p-2.5 text-xs font-bold cursor-pointer rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                            <Pencil className="h-4 w-4 text-slate-400" /> Edit Details
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => onLinkParent(student.id)} className="flex items-center gap-2.5 p-2.5 text-xs font-bold cursor-pointer rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                            <UserPlus className="h-4 w-4 text-slate-400" /> Link Guardian
+                                                        </DropdownMenuItem>
+                                                        {isAdmin && (
+                                                            <>
+                                                                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
+                                                                <DropdownMenuItem onClick={() => handleDeleteStudent(student.id)} className="flex items-center gap-2.5 p-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer rounded-lg">
+                                                                    <Trash2 className="h-4 w-4" /> Delete Student
+                                                                </DropdownMenuItem>
+                                                            </>
+                                                        )}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </td>
                                         </tr>
                                     ))
@@ -367,7 +411,7 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {paginatedData.map(student => (
                                 <div 
-                                    key={student.id}
+                                    key={student.id} 
                                     className={cn(
                                         "group relative p-6 rounded-xl border-2 text-left transition-all duration-500 bg-white dark:bg-slate-900/50",
                                         selectedStudentIds.includes(student.id) 
@@ -421,9 +465,34 @@ export function StudentList({ initialData, classes, userRole, currentAcademicYea
                                                 >
                                                     Profile
                                                 </Link>
-                                                <button className="h-10 w-10 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl inline-flex items-center justify-center text-slate-400">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </button>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <button className="h-10 w-10 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 rounded-xl inline-flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48 rounded-xl border-slate-200 dark:border-slate-800 shadow-xl p-1 bg-white dark:bg-slate-900">
+                                                        <DropdownMenuItem asChild>
+                                                            <Link href={`/students/${student.id}`} className="flex items-center gap-2.5 p-2.5 text-xs font-bold cursor-pointer rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                                <Eye className="h-4 w-4 text-slate-400" /> View Profile
+                                                            </Link>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => onEdit(student)} className="flex items-center gap-2.5 p-2.5 text-xs font-bold cursor-pointer rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                            <Pencil className="h-4 w-4 text-slate-400" /> Edit Details
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => onLinkParent(student.id)} className="flex items-center gap-2.5 p-2.5 text-xs font-bold cursor-pointer rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                                                            <UserPlus className="h-4 w-4 text-slate-400" /> Link Guardian
+                                                        </DropdownMenuItem>
+                                                        {isAdmin && (
+                                                            <>
+                                                                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
+                                                                <DropdownMenuItem onClick={() => handleDeleteStudent(student.id)} className="flex items-center gap-2.5 p-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer rounded-lg">
+                                                                    <Trash2 className="h-4 w-4" /> Delete Student
+                                                                </DropdownMenuItem>
+                                                            </>
+                                                        )}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
                                         </div>
                                     </div>

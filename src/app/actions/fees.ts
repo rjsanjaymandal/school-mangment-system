@@ -87,15 +87,33 @@ export async function recordPayment(data: {
     try {
         const supabase = createAdminClient();
         const receiptNo = `RCP-${Date.now().toString(36).toUpperCase()}`;
+        const today = new Date().toISOString().split("T")[0];
 
-        const { error } = await supabase.from("payments").insert({
+        const { data: paymentRecord, error } = await supabase.from("payments").insert({
             ...data,
             receipt_number: receiptNo,
             status: "completed",
-        });
+            payment_date: today,
+        }).select().single();
 
         if (error) throw error;
+
+        // Auto-post into Transactions Day Book
+        await supabase.from("transactions").insert({
+            date: today,
+            voucher_no: receiptNo,
+            type: "income",
+            category: "Fee Collection",
+            amount: data.amount_paid,
+            mode: (data.payment_method || "cash").toLowerCase(),
+            description: `Fee Payment ${receiptNo} for Student ID ${data.student_id}`,
+            reference_id: paymentRecord?.id || data.student_id,
+        });
+
         revalidatePath("/fees");
+        revalidatePath("/finance/day-book");
+        revalidatePath("/finance/collect-fees");
+        revalidatePath("/finance/daily");
         return { success: true, receipt_number: receiptNo };
     } catch (error: any) {
         return { success: false, error: error.message };

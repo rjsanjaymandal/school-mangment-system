@@ -186,6 +186,8 @@ export const FeesService = {
       const supabase = createAdminClient();
       
       const receiptNumber = `RCP-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+      const paymentDate = new Date().toISOString();
+      const today = paymentDate.split('T')[0];
       
       const { data, error } = await supabase
         .from("payments")
@@ -194,12 +196,25 @@ export const FeesService = {
           payment_method: paymentData.payment_method || 'cash',
           status: paymentData.status || 'completed',
           receipt_number: receiptNumber,
-          payment_date: new Date().toISOString()
+          payment_date: paymentDate
         })
         .select()
         .single();
 
       if (error) throw error;
+
+      // Automatically sync into Day Book transactions ledger
+      await supabase.from("transactions").insert({
+        date: today,
+        voucher_no: receiptNumber,
+        type: "income",
+        category: "Fee Collection",
+        amount: paymentData.amount_paid,
+        mode: (paymentData.payment_method || "cash").toLowerCase(),
+        description: `Fee payment receipt ${receiptNumber}`,
+        reference_id: data.id || paymentData.student_id,
+      });
+
       return { data, error: null };
     } catch (error) {
       return handleServiceError(error);

@@ -42,8 +42,10 @@ import { Class } from "@/types/database";
 import { toast } from "sonner";
 import { ClassForm } from "./ClassForm";
 import { deleteClass } from "@/app/actions/classes";
-import { addSubjectToClass, getClassSubjects, removeSubjectFromClass } from "@/app/actions/class-subjects";
+import { addSubjectToClass, getClassSubjects, removeSubjectFromClass, assignTeacherToClassSubject } from "@/app/actions/class-subjects";
+import { getStudentsByClass } from "@/app/actions/students";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
 
@@ -66,6 +68,13 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
     const [subjectClass, setSubjectClass] = useState<Class | null>(null);
     const [classSubjectRecords, setClassSubjectRecords] = useState<any[]>([]);
     const [selectedSubjectId, setSelectedSubjectId] = useState("");
+    const [selectedTeacherId, setSelectedTeacherId] = useState("");
+
+    // Class Roster State
+    const [isRosterOpen, setIsRosterOpen] = useState(false);
+    const [rosterClass, setRosterClass] = useState<Class | null>(null);
+    const [rosterStudents, setRosterStudents] = useState<any[]>([]);
+    const [isLoadingRoster, setIsLoadingRoster] = useState(false);
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -100,8 +109,27 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
     const onManageSubjects = async (cls: Class) => {
         setSubjectClass(cls);
         setSelectedSubjectId("");
+        setSelectedTeacherId("");
         setIsSubjectsOpen(true);
         await loadClassSubjects(cls.id);
+    };
+
+    const onViewRoster = async (cls: Class) => {
+        setRosterClass(cls);
+        setIsRosterOpen(true);
+        setIsLoadingRoster(true);
+        try {
+            const res = await getStudentsByClass(cls.id);
+            if (res.success) {
+                setRosterStudents(res.students || []);
+            } else {
+                toast.error(res.error || "Failed to load student roster");
+            }
+        } catch {
+            toast.error("Error fetching class roster");
+        } finally {
+            setIsLoadingRoster(false);
+        }
     };
 
     const onDelete = async (id: string) => {
@@ -127,7 +155,12 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
             return;
         }
 
-        const result = await addSubjectToClass(subjectClass.id, selectedSubjectId, currentAcademicYearId);
+        const result = await addSubjectToClass(
+            subjectClass.id, 
+            selectedSubjectId, 
+            currentAcademicYearId,
+            selectedTeacherId || undefined
+        );
         if (!result.success) {
             toast.error(result.error || "Failed to assign subject");
             return;
@@ -135,8 +168,23 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
 
         toast.success("Subject assigned to class");
         setSelectedSubjectId("");
+        setSelectedTeacherId("");
         await loadClassSubjects(subjectClass.id);
         router.refresh();
+    };
+
+    const handleAssignTeacher = async (classSubjectId: string, teacherId: string) => {
+        const targetTeacherId = teacherId === "none" ? null : teacherId;
+        const res = await assignTeacherToClassSubject(classSubjectId, targetTeacherId);
+        if (res.success) {
+            toast.success("Teacher assigned to subject");
+            if (subjectClass) {
+                await loadClassSubjects(subjectClass.id);
+            }
+            router.refresh();
+        } else {
+            toast.error(res.error || "Failed to update teacher assignment");
+        }
     };
 
     const handleRemoveSubject = async (recordId: string) => {
@@ -224,17 +272,20 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                                                     <MoreHorizontal className="h-4 w-4" />
                                                 </Button>
                                             </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-48 rounded-2xl border-slate-200/60 dark:border-slate-800/60 shadow-xl overflow-hidden p-1">
+                                            <DropdownMenuContent align="end" className="w-52 rounded-2xl border-slate-200/60 dark:border-slate-800/60 shadow-xl overflow-hidden p-1">
                                                 <DropdownMenuLabel className="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400 px-3 py-2">Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onClick={() => onViewRoster(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 p-3">
+                                                    <Users className="h-4 w-4" /> View Student Roster
+                                                </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => onEdit(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-emerald-600 dark:focus:text-emerald-400 p-3">
-                                                    <Pencil className="h-4 w-4" /> Edit
+                                                    <Pencil className="h-4 w-4" /> Edit Class
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem onClick={() => onManageSubjects(cls)} className="flex items-center gap-3 cursor-pointer rounded-xl font-bold text-xs text-slate-600 dark:text-slate-400 focus:bg-slate-50 dark:focus:bg-slate-800 focus:text-blue-600 dark:focus:text-blue-400 p-3">
-                                                    <BookOpen className="h-4 w-4" /> Manage Subjects
+                                                    <BookOpen className="h-4 w-4" /> Manage Subjects & Teachers
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
                                                 <DropdownMenuItem onClick={() => onDelete(cls.id)} className="flex items-center gap-3 cursor-pointer text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/35 focus:text-rose-700 dark:focus:text-rose-400 rounded-xl font-bold text-xs p-3">
-                                                    <Trash2 className="h-4 w-4" /> Delete
+                                                    <Trash2 className="h-4 w-4" /> Delete Class
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -278,18 +329,23 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                                     )}
                                 </div>
 
-                                <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 relative z-10 flex items-center gap-3">
-                                    <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 font-black text-xs shadow-inner">
-                                        {((cls as any).teacher?.full_name?.[0] || '?')}
+                                <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 relative z-10 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-600 font-black text-xs shadow-inner">
+                                            {((cls as any).teacher?.full_name?.[0] || '?')}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                                                {(cls as any).teacher?.full_name || "Unassigned"}
+                                            </p>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
+                                                Class Teacher
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                                            {(cls as any).teacher?.full_name || "Unassigned"}
-                                        </p>
-                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
-                                            Class Teacher
-                                        </p>
-                                    </div>
+                                    <Button onClick={() => onViewRoster(cls)} variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-wider text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 h-8 px-2.5 rounded-lg">
+                                        Roster
+                                    </Button>
                                 </div>
                                 
                                 {/* Decorative Bottom Bar */}
@@ -300,6 +356,7 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                 </div>
             </div>
 
+            {/* Add / Edit Class Modal */}
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
                     <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
@@ -322,23 +379,24 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                 </DialogContent>
             </Dialog>
 
+            {/* Manage Subjects & Teachers Dialog */}
             <Dialog open={isSubjectsOpen} onOpenChange={setIsSubjectsOpen}>
-                <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
+                <DialogContent className="sm:max-w-[650px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl">
                     <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50">
-                        <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Manage Subjects</DialogTitle>
+                        <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Subject & Teacher Allocation</DialogTitle>
                         <DialogDescription className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
-                            Add subjects to <span className="text-blue-600 font-bold">{subjectClass?.name}</span>
+                            Assign curriculum subjects and instructors to <span className="text-emerald-600 font-bold">{subjectClass?.name}</span>
                         </DialogDescription>
                     </div>
                     <div className="p-8 space-y-6">
-                        <div className="flex gap-4">
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <Select value={selectedSubjectId} onValueChange={setSelectedSubjectId}>
-                                <SelectTrigger className="h-10 rounded-md flex-1">
-                                    <SelectValue placeholder="Choose a subject to add" />
+                                <SelectTrigger className="h-10 rounded-xl flex-1 bg-white/50 dark:bg-slate-800/50 border-slate-200/60 dark:border-slate-700/60">
+                                    <SelectValue placeholder="Choose Subject" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {availableSubjects.length === 0 ? (
-                                        <SelectItem value="none" disabled>All subjects are already assigned</SelectItem>
+                                        <SelectItem value="none" disabled>All subjects already added</SelectItem>
                                     ) : (
                                         availableSubjects.map((subject) => (
                                             <SelectItem key={subject.id} value={subject.id}>
@@ -348,33 +406,143 @@ export function ClassList({ initialData, userRole, teachers, subjects, currentAc
                                     )}
                                 </SelectContent>
                             </Select>
-                            <Button onClick={handleAddSubject} className="rounded-md bg-emerald-600 hover:bg-emerald-700">Add</Button>
+
+                            <Select value={selectedTeacherId} onValueChange={setSelectedTeacherId}>
+                                <SelectTrigger className="h-10 rounded-xl flex-1 bg-white/50 dark:bg-slate-800/50 border-slate-200/60 dark:border-slate-700/60">
+                                    <SelectValue placeholder="Assign Teacher (Optional)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">No Teacher Assigned</SelectItem>
+                                    {teachers.map((teacher) => (
+                                        <SelectItem key={teacher.id} value={teacher.id}>
+                                            {teacher.full_name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Button onClick={handleAddSubject} className="rounded-xl bg-emerald-600 hover:bg-emerald-700 font-bold text-xs uppercase tracking-wider px-5">
+                                Add
+                            </Button>
                         </div>
 
-                        <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="space-y-3 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
                             {classSubjectRecords.length === 0 ? (
                                 <div className="border-2 border-dashed border-slate-200/60 dark:border-slate-800/60 p-12 text-sm text-slate-500 dark:text-slate-400 font-medium text-center rounded-[2rem]">
-                                    No subjects assigned yet.
+                                    No subjects assigned to this class yet.
                                 </div>
                             ) : (
                                 classSubjectRecords.map((record) => (
-                                    <div key={record.id} className="flex items-center justify-between border border-slate-200/60 dark:border-slate-800/60 p-4 rounded-2xl hover:border-emerald-500/30 transition-all bg-white/50 dark:bg-slate-900/50">
-                                        <div className="flex items-center gap-4">
-                                          <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm font-black shadow-sm ring-1 ring-blue-100 dark:ring-blue-500/20">
-                                            {record.subject?.name?.[0] || 'S'}
-                                          </div>
-                                          <div>
-                                              <p className="font-bold text-slate-900 dark:text-white">{record.subject?.name}</p>
-                                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{record.subject?.code || "NO CODE"}</p>
-                                          </div>
+                                    <div key={record.id} className="flex flex-col sm:flex-row sm:items-center justify-between border border-slate-200/60 dark:border-slate-800/60 p-4 rounded-2xl hover:border-emerald-500/30 transition-all bg-white/50 dark:bg-slate-900/50 gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 flex items-center justify-center text-sm font-black shadow-sm ring-1 ring-blue-100 dark:ring-blue-500/20 flex-shrink-0">
+                                                {record.subject?.name?.[0] || 'S'}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-slate-900 dark:text-white text-sm">{record.subject?.name}</p>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">{record.subject?.code || "NO CODE"}</p>
+                                            </div>
                                         </div>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors" onClick={() => handleRemoveSubject(record.id)}>
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
+
+                                        <div className="flex items-center gap-3">
+                                            <Select 
+                                                value={record.teacher_id || "none"} 
+                                                onValueChange={(val) => handleAssignTeacher(record.id, val)}
+                                            >
+                                                <SelectTrigger className="h-9 w-[180px] text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                                                    <SelectValue placeholder="Assign Teacher" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">Unassigned</SelectItem>
+                                                    {teachers.map((teacher) => (
+                                                        <SelectItem key={teacher.id} value={teacher.id}>
+                                                            {teacher.full_name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+
+                                            <Button variant="ghost" size="icon" className="h-9 w-9 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors" onClick={() => handleRemoveSubject(record.id)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     </div>
                                 ))
                             )}
                         </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Class Roster Dialog */}
+            <Dialog open={isRosterOpen} onOpenChange={setIsRosterOpen}>
+                <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden rounded-[2rem] border-slate-200/60 dark:border-slate-800/60 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-2xl">
+                    <div className="p-8 border-b border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 flex items-center justify-between">
+                        <div>
+                            <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                                Class Roster: {rosterClass?.name}
+                            </DialogTitle>
+                            <DialogDescription className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+                                Enrolled Students ({rosterStudents.length} / {rosterClass?.capacity || "Unlimited"} Capacity)
+                            </DialogDescription>
+                        </div>
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/20 font-bold px-3 py-1">
+                            {rosterStudents.length} Enrolled
+                        </Badge>
+                    </div>
+
+                    <div className="p-6 max-h-[420px] overflow-y-auto custom-scrollbar">
+                        {isLoadingRoster ? (
+                            <div className="py-16 text-center text-slate-400 font-bold text-xs uppercase tracking-widest animate-pulse">
+                                Loading Student Roster...
+                            </div>
+                        ) : rosterStudents.length === 0 ? (
+                            <div className="py-16 text-center">
+                                <Users className="h-12 w-12 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+                                <p className="text-sm font-bold text-slate-500">No students enrolled in this section yet.</p>
+                                <p className="text-xs text-slate-400 mt-1">Assign students via the Students directory or Batch Assignment.</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-slate-100 dark:border-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="pb-3 text-left">Roll #</th>
+                                            <th className="pb-3 text-left">Student Name</th>
+                                            <th className="pb-3 text-left">Admission #</th>
+                                            <th className="pb-3 text-left">Contact</th>
+                                            <th className="pb-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                                        {rosterStudents.map((student: any) => (
+                                            <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                                <td className="py-3 font-mono font-bold text-slate-500">
+                                                    {student.roll_number || "—"}
+                                                </td>
+                                                <td className="py-3 font-bold text-slate-900 dark:text-white">
+                                                    {student.profile?.full_name || "Unknown Student"}
+                                                </td>
+                                                <td className="py-3 font-mono text-[11px] text-slate-500">
+                                                    {student.admission_number || "Pending"}
+                                                </td>
+                                                <td className="py-3 text-slate-500">
+                                                    {student.profile?.phone || student.profile?.email || "—"}
+                                                </td>
+                                                <td className="py-3 text-right">
+                                                    <Link 
+                                                        href={`/students/${student.id}`}
+                                                        className="text-[10px] font-black uppercase tracking-wider text-emerald-600 hover:text-emerald-700 hover:underline inline-flex items-center gap-1"
+                                                    >
+                                                        Profile &rarr;
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 </DialogContent>
             </Dialog>

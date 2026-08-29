@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
     Users,
     UserCheck,
@@ -20,7 +22,9 @@ import {
     Shield,
     Zap,
     Download,
-    Eye
+    Eye,
+    Power,
+    Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,10 +33,31 @@ import { ProvisionUserModal } from "./ProvisionUserModal";
 import { ImpersonationButton } from "./ImpersonationButton";
 import { UnifiedPageHeader } from "@/components/shared/UnifiedPageHeader";
 import { DashboardStatCard } from "@/components/shared/DashboardStatCard";
+import { toggleUserStatusAction } from "@/app/(dashboard)/users/actions";
 
 export default function UsersDashboardClient({ users }: { users: any[] }) {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState<string>("all");
+    const [togglingId, setTogglingId] = useState<string | null>(null);
+
+    const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
+        setTogglingId(userId);
+        try {
+            const nextStatus = !currentStatus;
+            const res = await toggleUserStatusAction(userId, nextStatus);
+            if (res.success) {
+                toast.success(res.message);
+                router.refresh();
+            } else {
+                toast.error(res.message);
+            }
+        } catch (error: any) {
+            toast.error(error.message || "Failed to update user status");
+        } finally {
+            setTogglingId(null);
+        }
+    };
 
     const filteredUsers = users.filter((user) => {
         const matchesSearch = 
@@ -172,18 +197,27 @@ export default function UsersDashboardClient({ users }: { users: any[] }) {
                                                 </span>
                                             </td>
                                             <td className="py-4 px-4 text-center">
-                                                <span className={cn(
-                                                    "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-1.5",
-                                                    user.is_active !== false
-                                                        ? "bg-emerald-50 text-emerald-600"
-                                                        : "bg-slate-100 text-slate-400"
-                                                )}>
-                                                    <span className={cn(
-                                                        "h-1.5 w-1.5 rounded-full",
-                                                        user.is_active !== false ? "bg-emerald-500" : "bg-slate-300"
-                                                    )} />
+                                                <button
+                                                    onClick={() => handleToggleStatus(user.id, user.is_active !== false)}
+                                                    disabled={togglingId === user.id}
+                                                    title={user.is_active !== false ? "Click to deactivate user" : "Click to activate user"}
+                                                    className={cn(
+                                                        "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest inline-flex items-center gap-1.5 transition-all cursor-pointer hover:opacity-80 active:scale-95 disabled:opacity-50",
+                                                        user.is_active !== false
+                                                            ? "bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/20"
+                                                            : "bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-500/10 dark:border-rose-500/20"
+                                                    )}
+                                                >
+                                                    {togglingId === user.id ? (
+                                                        <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                                                    ) : (
+                                                        <span className={cn(
+                                                            "h-1.5 w-1.5 rounded-full",
+                                                            user.is_active !== false ? "bg-emerald-500" : "bg-rose-500"
+                                                        )} />
+                                                    )}
                                                     {user.is_active !== false ? "Active" : "Inactive"}
-                                                </span>
+                                                </button>
                                             </td>
                                             <td className="py-4 px-4 text-right">
                                                 <div className="flex items-center justify-end gap-3">

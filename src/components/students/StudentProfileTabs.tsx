@@ -16,10 +16,12 @@ interface StudentProfileTabsProps {
     student: any;
     grades: any[];
     attendance: any[];
+    fees?: any[];
+    payments?: any[];
     children?: React.ReactNode;
 }
 
-export function StudentProfileTabs({ student, grades, attendance, children }: StudentProfileTabsProps) {
+export function StudentProfileTabs({ student, grades, attendance, fees = [], payments = [], children }: StudentProfileTabsProps) {
     const [activeTab, setActiveTab] = useState("overview");
 
     const attendanceRate = attendance.length > 0
@@ -29,6 +31,18 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
     const avgGrade = grades.length > 0
         ? Math.round(grades.reduce((acc: number, g: any) => acc + g.marks_obtained, 0) / grades.length)
         : 0;
+
+    const totalPaid = payments
+        .filter((p: any) => p.status === "completed")
+        .reduce((sum: number, p: any) => sum + Number(p.amount_paid || 0), 0);
+
+    const totalFees = fees.reduce((sum: number, f: any) => sum + Number(f.amount || 0), 0);
+    const pendingDues = Math.max(0, totalFees - totalPaid);
+
+    const lastPayment = payments.length > 0 ? payments[0] : null;
+    const lastPaymentDate = lastPayment?.payment_date 
+        ? new Date(lastPayment.payment_date).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })
+        : "—";
 
     const tabItems = [
         { id: "overview", label: "Overview", icon: User },
@@ -300,28 +314,125 @@ export function StudentProfileTabs({ student, grades, attendance, children }: St
             )}
 
             {activeTab === "fees" && (
-                <div className="outline-none animate-in fade-in duration-500">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <DashboardStatCard title="Total Paid" value={`₹${(grades as any)?.totalPaid || 0}`} icon={IndianRupee} color="emerald" description="Lifetime payments" />
-                        <DashboardStatCard title="Pending Dues" value={`₹${(grades as any)?.pendingDues || 0}`} icon={AlertCircle} color="amber" description="Outstanding amount" />
-                        <DashboardStatCard title="Last Payment" value={(grades as any)?.lastPaymentDate || "—"} icon={Activity} color="blue" description="Most recent" />
+                <div className="outline-none animate-in fade-in duration-500 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <DashboardStatCard title="Total Paid" value={`₹${totalPaid.toLocaleString('en-IN')}`} icon={IndianRupee} color="emerald" description="Lifetime collections" />
+                        <DashboardStatCard title="Pending Dues" value={`₹${pendingDues.toLocaleString('en-IN')}`} icon={AlertCircle} color={pendingDues > 0 ? "amber" : "emerald"} description="Outstanding balance" />
+                        <DashboardStatCard title="Last Payment" value={lastPaymentDate} icon={Activity} color="blue" description="Most recent txn" />
                     </div>
+
+                    {/* Assigned Fees Breakdown */}
                     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-                        <div className="p-5">
-                            <div className="flex items-center gap-3 mb-4">
+                        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
                                 <div className="p-1.5 rounded bg-emerald-50 text-emerald-600">
                                     <IndianRupee className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Fee Payment History</h3>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Complete financial record</p>
+                                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Assigned Fee Schedule</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Class & term fee obligations</p>
                                 </div>
                             </div>
-                            <div className="text-center py-12">
-                                <Activity className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Fee data will appear once integrated</p>
-                            </div>
+                            <Link href="/finance/collect-fees">
+                                <button className="h-9 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] uppercase tracking-wider transition-all">
+                                    Collect Fee
+                                </button>
+                            </Link>
                         </div>
+                        {fees.length > 0 ? (
+                            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                                {fees.map((fee: any) => (
+                                    <div key={fee.id} className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">{fee.name}</h4>
+                                                <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                                    {fee.fee_type || 'Tuition'}
+                                                </span>
+                                            </div>
+                                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                                Due: {fee.due_date ? new Date(fee.due_date).toLocaleDateString('en-IN') : 'End of term'} &bull; {fee.description || 'Standard academic fee'}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-6">
+                                            <div className="text-right">
+                                                <p className="text-xs font-bold text-slate-900 dark:text-white">₹{Number(fee.amount).toLocaleString('en-IN')}</p>
+                                                <p className="text-[9px] font-semibold text-emerald-600">Paid: ₹{Number(fee.total_paid || 0).toLocaleString('en-IN')}</p>
+                                            </div>
+                                            <span className={cn(
+                                                "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest min-w-[70px] text-center",
+                                                Number(fee.balance || 0) <= 0
+                                                    ? "bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/20"
+                                                    : Number(fee.total_paid || 0) > 0
+                                                    ? "bg-amber-50 text-amber-600 border border-amber-200 dark:bg-amber-500/10 dark:border-amber-500/20"
+                                                    : "bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-500/10 dark:border-rose-500/20"
+                                            )}>
+                                                {Number(fee.balance || 0) <= 0 ? "PAID" : Number(fee.total_paid || 0) > 0 ? "PARTIAL" : "UNPAID"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-slate-400 text-xs">
+                                No specific fee assignments found for this student.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Payment History Table */}
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                        <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Payment Receipts & Ledger</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Past transaction vouchers</p>
+                        </div>
+                        {payments.length > 0 ? (
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                            <th className="py-3 px-4 text-left">Receipt #</th>
+                                            <th className="py-3 px-4 text-left">Fee Head</th>
+                                            <th className="py-3 px-4 text-left">Date</th>
+                                            <th className="py-3 px-4 text-left">Method</th>
+                                            <th className="py-3 px-4 text-right">Amount Paid</th>
+                                            <th className="py-3 px-4 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                                        {payments.map((payment: any) => (
+                                            <tr key={payment.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                                                <td className="py-3 px-4 font-mono text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                                                    {payment.receipt_number || payment.id.slice(0, 8)}
+                                                </td>
+                                                <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">
+                                                    {payment.fee?.name || "General Tuition"}
+                                                </td>
+                                                <td className="py-3 px-4 text-slate-500">
+                                                    {new Date(payment.payment_date).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
+                                                </td>
+                                                <td className="py-3 px-4 uppercase font-bold text-[10px] text-slate-600 dark:text-slate-400">
+                                                    {payment.payment_method || "Cash"}
+                                                </td>
+                                                <td className="py-3 px-4 text-right font-bold text-emerald-600">
+                                                    ₹{Number(payment.amount_paid).toLocaleString("en-IN")}
+                                                </td>
+                                                <td className="py-3 px-4 text-center">
+                                                    <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600">
+                                                        {payment.status || "Completed"}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="text-center py-10">
+                                <Activity className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                                <p className="text-xs text-slate-400">No payment transactions recorded yet.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
